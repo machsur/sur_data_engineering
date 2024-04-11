@@ -1,1 +1,5 @@
+=====
+gcloud auth application-default login    
+Quota project "sur-cloud-fun" was added to ADC which can be used by Google client libraries for billing and quota.
 
+=====
