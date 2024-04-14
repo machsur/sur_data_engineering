@@ -56,6 +56,6 @@ def gcs_to_bq():
     return None
     
 
-if __name__ == '__main':
+if __name__ == '__main__':
     gcs_to_bq()
 
