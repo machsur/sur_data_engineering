@@ -1,1 +1,292 @@
 
+========
+Ways to interact with GCP
+UI
+Cloud shell – preconfigured cli within the GCP
+Terminal/cmd on local machine– need to install cloud sdk to use cli
+Client libraries
+Rest api
+
+=========
+
+For me, and in most of Google Product, serverless means "pay as you use". No traffic, you pay nothing, lot of traffic, the scaling is automatic, and you pay according with the traffic.
+Cloud Run, Cloud Function, AppEngine standard, firestore, datastore, dataproc, dataflow, ai-platform are examples of serverless.
+Other services are managed but not serverless, like Cloud SQL, BigTable or Spanner. You always have a minimal number of VM/node up and you pay for these, traffic or not. However, you have nothing to worry about: patching, updates, networking, backups, HA, redundancy(...) are managed for you. AppEngine flex belong to this category.
+Finally you have hybrid product, like Cloud Storage or BigQuery: you pay as you use the processing (BigQuery) or the traffic (Cloud Storage), but the storage is always billed if you have no traffic.
+This is for GCP. If you look for other cloud provider, the definition is not the same. 
+
+IAM
+================
+Identity: user, groups, SA, domain
+Resource
+Roles – primitive, predefined, custom
+Policy – binding identity with role
+SA- default, user-maintained, google-maintained
+===============
+App on vm – accessing GCS bucket
+On-prim - accessing GCS bucket (long-lived)
+On-prim – GCP API (short-lived)
+Static website - accessing GCS bucket (public access)
+=================
+Bucket level accesses – IAM (uniform)
+Object level accesses – ACL (fine-grained)
+Signed url – user (gcp account not required) can read object from GCS using signurl for specified period.
+================
+
+
+
+
+
+Gcloud commands:
+Gcloud compute project-info
+Gcloud auth
+Gcloud projects
+Gcloud iam
+
+Dataproc clusters:
+Create dataproc clusters – then submit spark / Hadoop / hive/ pig / pyspark jobs
+Create notebook instance with jupyterlab – open jupyterlab – then create cluster – now cluster and jupyterlab ready – write code
+
+GKE:
+ 
+ 
+https://www.okteto.com/blog/kubernetes-basics/
+
+Cloud Monitoring: to get metrics, view dashboard, alerting based on condition.
+Cloud logging: 
+
+
+
+
+
+
+
+
+
+Data base concepts:
+Fact tables - contain numerical data, 
+dimension tables - provide context and background information.
+
+Star schema contains a fact table surrounded by dimension tables.
+Snowflake schema is surrounded by dimension table which are in turn surrounded by dimension table
+
+
+
+
+
+
+Dataprep for data preparation (cleaning, wrangling) for analysis and ML 
+- built by trifacta 3rd party tool – need to share data with trifacta (dis adv)
+- serverless
+- automatically detects schema and anomalies
+Anomaly detection is the identification of rare events, items, or observations which are suspicious because they differ significantly from standard behaviors or patterns. 
+ 
+Raw – prepare data using dataprep – run job on dataflow/trifacta(for small dataset) – dataflow job created – 
+
+
+Cloud functions:
+Trigger function in response to event like file upload in gcd/ message arrived in pubsub/ http invocation received/ eeror log written to logging
+Its serverless – pay for what use like number innvocations
+Two versions:
+ 
+Could build – builds container image deployed to cloud run – cloudrun see metrics, versions, traffic
+Pre-requisites:
+Cloudfunctions api / cloud build api (its ci-cd tool to deploy function)/cloud logging api/ cloud pubsub api/ eventarc api
+
+Project IAM admin role – 
+
+Cloud composer:
+Manages apache airflow env on GCP
+
+Grant the Cloud Composer v2 API Service Agent Extension role to the service-130047147581@cloudcomposer-accounts.iam.gserviceaccount.com service account.
+Service account 130047147581-compute@developer.gserviceaccount.com will be used as a resource.
+
+
+Cloudrun:
+Container to production in sec
+
+Automate Python script execution on GCP
+
+ 
+https://github.com/rafaello9472/c4ds/tree/main/Automate%20Python%20script%20execution%20on%20GCP%20
+
+
+
+
+
+
+
+
+
+
+
+
+=========================
+GCP Bigquery:
+DDL(Data Definition Language) – define structure/schema of database (Create/alter/drop/truncate)
+DML(Data Manipulation Language) – manipulate data (Insert/update/delete/merge)
+DQL(Data Query Language) – select 
+TCL(Transaction Control Language) – commit transaction and role back in case of any errors
+DCL(Data Control Language) – for security and access control 
+Keywords: except / distinct / limit / Round /
+concat / left / right / substring / upper / lower / replace / ltrim / rtrim/ trim / contains_substr() / length() / starts_with() / ends_with() / strpos()
+
+Create table with metadata from existing table – use where 1 = 2
+
+Union all – return with duplicates.
+Union distinct – return without duplicates.
+Table wildcards: SELECT * FROM `hsbc-9460919-opsanalytics-dev.logs_sur2_copy.test_*` where _Table_Suffix > 5
+
+Except distinct – records from table1 which is not present in table2
+
+Intersect distinct – common records from both table
+
+Create table with metadata but not data (where 1=2 / where false)
+
+Permanent table: save query results on BQ storage
+Temporary table/cache – Query results saved on cache and valid for 24 hrs.
+Internal/native table/managed tables: table in BQ storage
+External table: BQ querying data from bigtable, gcs, google drive
+
+Create view: virtual tables / view hits base table and display data / frequent updates on base table/ infrequent data access / 
+Materialized view: data stored on disk / better performance/ frequent access on data / infrequent updates on base table /
+Authorized views and authorized materialized views: let you share query results with particular users and groups without giving them access to the underlying source data.
+
+Partitioning and clustering:
+
+ 
+
+
+
+Joins: -  INNER JOIN (or) JOIN / right join (or) right outer join / left join (or) left outer join / full join (or) full outer join / cross join
+
+With statement
+sub-query block - which can be referenced in several places within the main SQL query. 
+Adv: better performance, code more readable.
+
+
+Time travel: Restore back mistakenly deleted data/updated data (7 days back we can go).
+
+create table logs_sur2_copy.restore_test2 as
+(select * from `hsbc-9460919-opsanalytics-dev.logs_sur2_copy.test2` FOR SYSTEM_TIME AS OF timestamp_sub(current_timestamp(), interval 10 minute))
+
+procedure
+
+select generate_uuid() as id, current_timestamp() as ts, * from `logs_sur2_copy.test1`
+
+conversion functions:
+The CAST function performs a conversion between compatible data types. If the conversion fails due to data type incompatibility or data loss, the query will fail
+
+The SAFE_CAST function also performs a conversion between compatible data types, but it handles conversion errors differently. Instead of failing the query, it returns NULL when the conversion cannot be performed.
+
+declare _CALENDAR_DATE DATE DEFAULT '2021-11-21';
+declare _EMP_ID ARRAY<STRING>;
+
+set _CALENDAR_DATE = '2021-10-19';
+set _EMP_ID = ['44125362', '45632100', '56632215'];
+
+SELECT * FROM `hsbc-9460919-opsanalytics-dev.npm_data_multi_dev.WFM_CBOT_DATA` where CALENDAR_DATE = _CALENDAR_DATE and EMP_ID in unnest(_EMP_ID);
+
+declare name string default 'suresh';
+set name = 'seshu';
+select concat('my name is ', name) as name
+
+commenting:
+-- or # or /* LINES */
+
+Create or replace procedure `pn`
+BEGIN
+  SELECT * from `sur_logs.test2`;
+EXCEPTION WHEN ERROR THEN
+  SELECT @@error.message, @@error.statement_text;
+END;
+
+Call `pn`
+
+
+==================
+If / labels /repeat / while /leave/ break/ continue/ iterate / for
+ 
+
+
+ 
+
+ 
+
+
+
+Pivot / unpivot
+
+Arrays – list of items having same data type
+Struct – record with nested fields having different data types
+ 
+
+Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
+De Normalization – redundant data (high storage cost) – better Query performance 
+Why array & structs? – for better query per and lesser storage costs
+
+ 
+
+
+Window functions:
+= max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn)
+= Row_number() / rank() / dense_rank() 
+= lag(cn) / lead(cn) 
+= first_value(cn) / last_value(cn) / nth_value(cn, n) 
+= ntile(n) – n groups 
+= cum_dist() / percent_rank() /
+SUM(column2) OVER (PARTITION BY column3 ORDER BY column4 ROWS BETWEEN UNBOUNDED PRECEDING or 2 PRECEDING or CURRENT ROW AND CURRENT ROW or UNBOUNDED FOLLOWING or 1 FOLLOWING) AS sum_column2
+Rows consider current row even if duplicates / range considers bottom row of duplicates.
+
+Regular expressions: pattern matching
+= . match any single char except \n
+= \. Match symbol after \
+= [0-3]
+= [^a-c]
+= ^ MATCH AT BEGINNING
+= $ MATCH AT END
+= ab*c match 0 or more occurrences
+= ab+c match 1 or more occurrences
+= ab?c match 0 or one time
+= {m, n} repitations preceding m to n
+= () group
+
+
+Conditions & loops:
+
+= if / case in column use
+= if
+= while
+= for
+
+Sql query execution order: 
+
+From / where / group by / having / select / order by / limit
+
+
+
+ 
+ 
+
+
+Big Query cost optimization:
+BQ data storage –(Billing model: logical / physical)
+Partitioning & clustering
+Data lifecycle management
+
+Query optimization 
+(Use Partitioned Tables: Clustered Tables: Selectively Project Columns: Optimize JOIN Operations: Use WHERE Clauses for Filtering: Avoid Nondeterministic Functions: CURRENT_TIMESTAMP()) in SELECT statements; Aggregate Data at the Source: Use Approximate Aggregations: Utilize approximate aggregation functions (e.g., APPROX_COUNT_DISTINCT(), APPROX_QUANTILES()); Optimize Window Functions: Monitor and Tune Query Performance: )
+
+Big query compute costs(on-demand, flat-rate/bq editions)
+Query Caching
+Cost Controls: Set budget alerts and quotas
+Schedule queries during off-peak hours to take advantage of low on-demand pricing
+
+
+
+
+
+
+
+
+
