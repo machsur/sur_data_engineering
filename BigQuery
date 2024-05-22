@@ -24,91 +24,72 @@ This is for GCP. If you look for other cloud provider, the definition is not the
 ====================
 
 IAM
-
 Identity: user, groups, SA, domain
 Resource
 Roles – primitive, predefined, custom
 Policy – binding identity with role
 SA- default, user-maintained, google-maintained
-===============
+
 App on vm – accessing GCS bucket
 On-prim - accessing GCS bucket (long-lived)
 On-prim – GCP API (short-lived)
 Static website - accessing GCS bucket (public access)
-=================
+
 Bucket level accesses – IAM (uniform)
 Object level accesses – ACL (fine-grained)
 Signed url – user (gcp account not required) can read object from GCS using signurl for specified period.
+
 ================
 
-
-
-
-
-Gcloud commands:
-Gcloud compute project-info
-Gcloud auth
-Gcloud projects
-Gcloud iam
-
-Dataproc clusters:
-Create dataproc clusters – then submit spark / Hadoop / hive/ pig / pyspark jobs
-Create notebook instance with jupyterlab – open jupyterlab – then create cluster – now cluster and jupyterlab ready – write code
-
 GKE:
- 
- 
 https://www.okteto.com/blog/kubernetes-basics/
+
+===============
 
 Cloud Monitoring: to get metrics, view dashboard, alerting based on condition.
 Cloud logging: 
 
+===============
 
-
-
-
-
-
-
-
-Data base concepts:
+data base concepts:
 Fact tables - contain numerical data, 
 dimension tables - provide context and background information.
 
 Star schema contains a fact table surrounded by dimension tables.
 Snowflake schema is surrounded by dimension table which are in turn surrounded by dimension table
 
-
-
-
-
+==================
 
 Dataprep for data preparation (cleaning, wrangling) for analysis and ML 
 - built by trifacta 3rd party tool – need to share data with trifacta (dis adv)
 - serverless
 - automatically detects schema and anomalies
-Anomaly detection is the identification of rare events, items, or observations which are suspicious because they differ significantly from standard behaviors or patterns. 
  
 Raw – prepare data using dataprep – run job on dataflow/trifacta(for small dataset) – dataflow job created – 
 
+================
 
 Cloud functions:
-Trigger function in response to event like file upload in gcd/ message arrived in pubsub/ http invocation received/ eeror log written to logging
+Trigger function in response to event like file upload in gcd/ message arrived in pubsub
+/ http invocation received/ eeror log written to logging
 Its serverless – pay for what use like number innvocations
-Two versions:
- 
+Two versions: 1st gen and 2nd gen
+
+
+
 Could build – builds container image deployed to cloud run – cloudrun see metrics, versions, traffic
 Pre-requisites:
 Cloudfunctions api / cloud build api (its ci-cd tool to deploy function)/cloud logging api/ cloud pubsub api/ eventarc api
 
 Project IAM admin role – 
 
+
+================
+
 Cloud composer:
 Manages apache airflow env on GCP
 
-Grant the Cloud Composer v2 API Service Agent Extension role to the service-130047147581@cloudcomposer-accounts.iam.gserviceaccount.com service account.
-Service account 130047147581-compute@developer.gserviceaccount.com will be used as a resource.
-
+===============
 
 Cloudrun:
 Container to production in sec
@@ -117,17 +98,6 @@ Automate Python script execution on GCP
 
  
 https://github.com/rafaello9472/c4ds/tree/main/Automate%20Python%20script%20execution%20on%20GCP%20
-
-
-
-
-
-
-
-
-
-
-
 
 =========================
 GCP Bigquery:
