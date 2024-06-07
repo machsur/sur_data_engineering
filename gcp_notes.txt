@@ -1,4 +1,27 @@
-=====
+=======
+Secreat Manager: to store, manage and access screats.
+use case- passwords, api keys, tls cert, etc..
+access DB passwords from the secreat manager by python scripts.
+
+================
+GCP cloud logging: store logs in JSON format
+logs - contains timestamp, resorce, payload, activity (admin/dataAccess/systenEvent/policyDenied)
+export logs to gcs/bq/pubsub topic using sinks (has sa and grant req roles)
+
+=================
+pubsub - messaging system for stream analytics (kafca)
+use cases - real time data ingestion, iot devices / parallel processing / replicate data among db 
+
+publisher(IOT, App) --> sends message --> | Topic (here msg storage system) --> Subscription | -->
+message --> subscriber(BQ)
+subscriber ack message from subscription -  pull / push
+one to many / many to many / many to one
+
+IOT (publisher) --> pubsub (stream pipeline) --> dataflow (etl / subscriber) --> BQ--> Looker 
+                        gcs (batch pipeline) -->
+
+==================
+
 gcloud auth application-default login    
 Quota project "sur-cloud-fun" was added to ADC which can be used by Google client libraries for billing and quota.
 
