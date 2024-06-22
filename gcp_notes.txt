@@ -70,9 +70,6 @@ https://www.okteto.com/blog/kubernetes-basics/
 
 ===============
 
-Cloud Monitoring: to get metrics, view dashboard, alerting based on condition.
-Cloud logging: 
-
 ===============
 
 data base concepts:
@@ -124,23 +121,21 @@ Automate Python script execution on GCP
 https://github.com/rafaello9472/c4ds/tree/main/Automate%20Python%20script%20execution%20on%20GCP%20
 
 =========================
+
 GCP Bigquery:
 DDL(Data Definition Language) – define structure/schema of database (Create/alter/drop/truncate)
 DML(Data Manipulation Language) – manipulate data (Insert/update/delete/merge)
 DQL(Data Query Language) – select 
 TCL(Transaction Control Language) – commit transaction and role back in case of any errors
 DCL(Data Control Language) – for security and access control 
+
 Keywords: except / distinct / limit / Round /
 concat / left / right / substring / upper / lower / replace / ltrim / rtrim/ trim / contains_substr() / length() / starts_with() / ends_with() / strpos()
-
-Create table with metadata from existing table – use where 1 = 2
 
 Union all – return with duplicates.
 Union distinct – return without duplicates.
 Table wildcards: SELECT * FROM `hsbc-9460919-opsanalytics-dev.logs_sur2_copy.test_*` where _Table_Suffix > 5
-
 Except distinct – records from table1 which is not present in table2
-
 Intersect distinct – common records from both table
 
 Create table with metadata but not data (where 1=2 / where false)
