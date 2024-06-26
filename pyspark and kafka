@@ -1,1 +1,14 @@
+========
+why PySpark not python for bigdata? :
+python - take sample of data and apply statistics to develop histograms
+pyrhon - can process large datasets with multithreads 
+problem - when data is big and stays in memory / we cant take entire data on compute and use python on it.
+        - data cant stay in one computer and it can be distributed.
+=========
+Apache spark:
+- opensource distributed processing system for big data.
+- in-memory caching
+- uses optimized query execution for fast queries
+- provides api in java, scala, python, r
+- supports batch processing, inetractive queries, real-time analytics, ml and graph processing
 
