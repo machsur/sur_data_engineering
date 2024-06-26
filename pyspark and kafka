@@ -1,4 +1,6 @@
 ========
+big data processing - cant handle by excel , sql db, etc.
+
 why PySpark not python for bigdata? :
 python - take sample of data and apply statistics to develop histograms
 pyrhon - can process large datasets with multithreads 
