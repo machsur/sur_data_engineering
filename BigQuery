@@ -89,15 +89,6 @@ Project IAM admin role –
 Cloud composer:
 Manages apache airflow env on GCP
 
-===============
-
-Cloudrun:
-Container to production in sec
-
-Automate Python script execution on GCP
-
- 
-https://github.com/rafaello9472/c4ds/tree/main/Automate%20Python%20script%20execution%20on%20GCP%20
 
 =========================
 GCP Bigquery:
