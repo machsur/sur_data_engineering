@@ -1,1 +1,5 @@
+class: is design - has attributes, methods
+object: instance from class
+self: referring to the objects
+init - special method - to initialize variables - called init mtd automatically when you instantiate object (we can say construcor)
 
