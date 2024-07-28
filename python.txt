@@ -1,5 +1,37 @@
+=======================
+
 class: is design - has attributes, methods
 object: instance from class
 self: referring to the objects
 init - special method - to initialize variables - called init mtd automatically when you instantiate object (we can say construcor)
+
+========================
+
+variables: instance variable (within init mtd), class variable
+mtd: instance mtd, class mtd, static mtd
+
+class Student:
+    college = 'narayana'  # class variable
+    def __init__(self, m1, m2): # instance variable
+        self.m1 = m1
+        self.m2 = m2
+    def avg(self):   # instance method
+        return (self.m1 + self.m2)/2
+    @classmethod   
+    def get_school(cls):   # class method
+        return cls.college
+    @staticmethod    # static method
+    def fact():
+        print('this returns factorial of number')
+
+
+s1 = Student(20, 40)
+print(s1.college)
+print(Student.college)
+print(s1.m1)
+print(s1.avg())
+print(s1.get_school())
+s1.fact()
+
+===================
 
