@@ -97,6 +97,8 @@ Its serverless – pay for what use like number innvocations
 Two versions: 1st gen and 2nd gen
 
 
+==================
+
 
 Could build – builds container image deployed to cloud run – cloudrun see metrics, versions, traffic
 Pre-requisites:
