@@ -90,11 +90,6 @@ Raw – prepare data using dataprep – run job on dataflow/trifacta(for small d
 
 ================
 
-Cloud functions:
-Trigger function in response to event like file upload in gcd/ message arrived in pubsub
-/ http invocation received/ eeror log written to logging
-Its serverless – pay for what use like number innvocations
-Two versions: 1st gen and 2nd gen
 
 
 ==================
