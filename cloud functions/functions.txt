@@ -4,6 +4,11 @@ Trigger function in response to event like file upload in gcd/ message arrived i
 Its serverless – pay for what use like number innvocations
 Two versions: 1st gen and 2nd gen (built on top of cloud run and event arc)
 
-1st gen: timeout- 1 to 9 min / 2cpu 8 gb ram/ 1 concurent request per fuction instance / only 7 event types support/ app eng sa                   / 
-2nd gen: timeout - 1 t0 10 min for event & 60 min for https/ 4 cpu 16gb ram / upto 1000 per inst / multiple function revisions                       and traffic splitting supported / 90+ event types support /  CE SA /
-                  container image build in backend using cloud build ci/cd pipeline
+>> 1st gen: timeout- 1 to 9 min / 2cpu 8 gb ram
+/ 1 concurent request per fuction instance / only 7 event types support/ 
+app eng sa  / 
+
+>> 2nd gen: timeout - 1 t0 10 min for event & 60 min for https/ 4 cpu 16gb ram /
+upto 1000 per inst / multiple function revisions and traffic splitting supported /
+90+ event types support /  CE SA /
+container image build in backend using cloud build ci/cd pipeline
