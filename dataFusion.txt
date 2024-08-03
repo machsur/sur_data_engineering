@@ -13,8 +13,8 @@ select source (here csv files on GCS) -
 apply transformations (split body column into multiple columns using parse as csv - remove body column - filter remove rows if value is empty - change data type -
 find and replace - mask data - hash data using algorithum ) - 
 click on create pipeline - choose batch / stream here gcs supports batch pipeline - select bigquery target using sink - 
-configure bq properties (poject, dataset, table, review columns - click on validate ) - name your pipeline - deploy pipeline - configure pipeline - 
-schedule or run on demand or airflow orch - y
+configure bq properties (poject, dataset, table, review columns) - click on validate  - name your pipeline - deploy pipeline - configure pipeline - 
+schedule or run on demand or airflow orch - 
 while running pipeline it will create dataproc cluster (provising - starting - failed or success - review logs  ) - 
 pipeline failed - review logs - click on actions - duplicate pipeline - click on wranger properties - remove hash algorithum trans - validate - 
 deploy pipeline - run it again
