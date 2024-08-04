@@ -181,35 +181,66 @@ AS SELECT name, value, range FROM source_table;
 
 ===================
 
-Joins: -  INNER JOIN (or) JOIN / right join (or) right outer join / left join (or) left outer join / full join (or) full outer join / cross join
+Joins: -  combine rows from two or more tables based on a related column between them.
 
-====================
-With statement
-sub-query block - which can be referenced in several places within the main SQL query. 
-Adv: better performance, code more readable.
+INNER JOIN / left join (or) left outer join / right join (or) right outer join
+/ full join (or) full outer join / cross join / self join /
+
+SELECT a.*, b.*
+FROM table_a a
+INNER JOIN table_b b
+ON a.common_column = b.common_column;
+
+>> Best Practices for Joins in BigQuery
+Use Appropriate Join Types: / Filter Early / Avoid Cross Joins When Possible / 
+Use Partitioned and Clustered Tables: If joining large tables / Monitor Query Performance /
+
+ ====================
+
+>> With statement:
+also known as Common Table Expressions (CTEs), allows you to define temporary result sets.
+Adv: code more readable, resusebility - referenced in several places within the main SQL query. 
+
+WITH sales_data AS (
+  SELECT product_id, quantity, price, quantity * price AS total_sales
+  FROM sales
+),
+product_totals AS (
+  SELECT product_id, SUM(total_sales) AS total_sales
+  FROM sales_data
+  GROUP BY product_id
+),
+top_selling_products AS (
+  SELECT product_id, total_sales
+  FROM product_totals
+  ORDER BY total_sales DESC
+  LIMIT 10
+)
+SELECT p.product_name, tsp.total_sales
+FROM top_selling_products tsp
+JOIN products p ON tsp.product_id = p.product_id;
 
 ======================
 
 conversion functions:
-The CAST function performs a conversion between compatible data types. If the conversion fails due to data type incompatibility or data loss, the query will fail
+>> The CAST function performs a conversion between compatible data types. 
+If the conversion fails due to data type incompatibility or data loss, the query will fail
 
-The SAFE_CAST function also performs a conversion between compatible data types, but it handles conversion errors differently. Instead of failing the query, it returns NULL when the conversion cannot be performed.
-
+>> The SAFE_CAST function also performs a conversion between compatible data types, 
+but it handles conversion errors differently. Instead of failing the query, it returns NULL when the conversion cannot be performed.
 
 ======================
+
 commenting:
 -- or # or /* LINES */
 
 ==================
 If / labels /repeat / while /leave/ break/ continue/ iterate / for
- 
 
 
- 
 
  
-
-
+======================
 
 Pivot / unpivot
 
@@ -222,7 +253,7 @@ De Normalization – redundant data (high storage cost) – better Query perform
 Why array & structs? – for better query per and lesser storage costs
 
  
-
+==========================
 
 Window functions:
 = max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn)
@@ -233,6 +264,8 @@ Window functions:
 = cum_dist() / percent_rank() /
 SUM(column2) OVER (PARTITION BY column3 ORDER BY column4 ROWS BETWEEN UNBOUNDED PRECEDING or 2 PRECEDING or CURRENT ROW AND CURRENT ROW or UNBOUNDED FOLLOWING or 1 FOLLOWING) AS sum_column2
 Rows consider current row even if duplicates / range considers bottom row of duplicates.
+
+=====================
 
 Regular expressions: pattern matching
 = . match any single char except \n
@@ -247,25 +280,14 @@ Regular expressions: pattern matching
 = {m, n} repitations preceding m to n
 = () group
 
+===================
 
-Conditions & loops:
-
-= if / case in column use
-= if
-= while
-= for
-
-Sql query execution order: 
-
+>> Sql query execution order: 
 From / where / group by / having / select / order by / limit
 
+==================
 
-
- 
- 
-
-
-Big Query cost optimization:
+>> Big Query cost optimization:
 BQ data storage –(Billing model: logical / physical)
 Partitioning & clustering
 Data lifecycle management
@@ -277,6 +299,8 @@ Big query compute costs(on-demand, flat-rate/bq editions)
 Query Caching
 Cost Controls: Set budget alerts and quotas
 Schedule queries during off-peak hours to take advantage of low on-demand pricing
+
+==================
 
 
 
