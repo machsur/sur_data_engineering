@@ -14,6 +14,10 @@ FOR SYSTEM_TIME AS OF TIMESTAMP '2023-07-29 12:34:56 UTC';
 
 >> Creation of view and auth view: efficiently manage and secure your data access in BigQuery
 
+Create view: virtual tables / view hits base table and display data / frequent updates on base table/ infrequent data access / 
+Materialized view: data stored on disk / better performance/ frequent access on data / infrequent updates on base table /
+Authorized views and authorized materialized views: let you share query results with particular users and groups without giving them access to the underlying source data.
+
 CREATE VIEW my_dataset.joined_view AS
 SELECT
   a.id,
@@ -28,7 +32,7 @@ ON
   a.id = b.customer_id;
 
 ============
-Create BQ procedure:
+>> Create BQ procedure:
 
 CREATE OR REPLACE PROCEDURE `hsbc-9460919-opsanalytics-prod.WDP_work_prod.wdp_cin_account_global_proc`()
 BEGIN
@@ -154,14 +158,27 @@ Internal/native table/managed tables: table in BQ storage
 External table: BQ querying data from bigtable, gcs, google drive
 
 ====================
-Create view: virtual tables / view hits base table and display data / frequent updates on base table/ infrequent data access / 
-Materialized view: data stored on disk / better performance/ frequent access on data / infrequent updates on base table /
-Authorized views and authorized materialized views: let you share query results with particular users and groups without giving them access to the underlying source data.
-
-====================
 Partitioning and clustering:
 
- 
+Improved Query Performance: By scanning only relevant partitions and clustered blocks, queries run faster.
+Cost Efficiency: Reduced data scanned means lower costs, as BigQuery charges based on the amount of data processed.
+
+>> based on ingestion-time
+CREATE TABLE my_dataset.my_table
+PARTITION BY _PARTITIONTIME
+AS SELECT name, value FROM source_table;
+
+>> based on timestame/ date
+CREATE TABLE my_dataset.my_table
+PARTITION BY date
+CLUSTER BY name, value
+AS SELECT name, value, date FROM source_table;
+
+>> based on integer column
+CREATE TABLE my_dataset.my_table
+PARTITION BY RANGE_BUCKET(range, GENERATE_ARRAY(1, 100, 10))
+AS SELECT name, value, range FROM source_table;
+
 ===================
 
 Joins: -  INNER JOIN (or) JOIN / right join (or) right outer join / left join (or) left outer join / full join (or) full outer join / cross join
