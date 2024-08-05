@@ -287,18 +287,21 @@ From / where / group by / having / select / order by / limit
 
 ==================
 
->> Big Query cost optimization:
-BQ data storage –(Billing model: logical / physical)
-Partitioning & clustering
-Data lifecycle management
+>> Big Query compute optimization: on-demaned analysis, bq editions - decide based on your workloads.
+>> BQ data storage – (Billing model: logical / physical) - based on compression ratio
 
-Query optimization 
-(Use Partitioned Tables: Clustered Tables: Selectively Project Columns: Optimize JOIN Operations: Use WHERE Clauses for Filtering: Avoid Nondeterministic Functions: CURRENT_TIMESTAMP()) in SELECT statements; Aggregate Data at the Source: Use Approximate Aggregations: Utilize approximate aggregation functions (e.g., APPROX_COUNT_DISTINCT(), APPROX_QUANTILES()); Optimize Window Functions: Monitor and Tune Query Performance: )
+>> Query optimization 
+Use Partitioned Tables and Clustered Tables
+select columns instead of *
+Use WHERE Clauses for Filtering
+Optimize JOIN Operations
+Avoid Nondeterministic Functions: CURRENT_TIMESTAMP()) in SELECT statements; 
+Aggregate Data at the Source: Use Approximate Aggregations:  
+Optimize Window Functions
+Monitor and Tune Query Performance
 
-Big query compute costs(on-demand, flat-rate/bq editions)
-Query Caching
-Cost Controls: Set budget alerts and quotas
-Schedule queries during off-peak hours to take advantage of low on-demand pricing
+>> Cost Controls: Set budget alerts and quotas
+>> Schedule queries during off-peak hours to take advantage of low on-demand pricing typically at mid-night/early morning
 
 ==================
 
