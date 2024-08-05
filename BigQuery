@@ -242,27 +242,84 @@ If / labels /repeat / while /leave/ break/ continue/ iterate / for
  
 ======================
 
-Pivot / unpivot
+>> Pivoting and unpivoting: help in reshaping your data for analysis or reporting
 
-Arrays – list of items having same data type
-Struct – record with nested fields having different data types
- 
+>> Pivot:
+
+
+>> unpivot:
+SELECT
+  product,
+  region,
+  sales
+FROM
+  sales_pivoted
+UNPIVOT(sales FOR region IN (North, South));
+
+========================
+
+>> Arrays – list of items having same data type
+SELECT element
+FROM mydataset.mytable, UNNEST(my_array) AS element;
+
+>> Struct – record with nested fields having different data types
+SELECT person.id, person.name
+FROM mydataset.mytable;
 
 Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
 De Normalization – redundant data (high storage cost) – better Query performance 
 Why array & structs? – for better query per and lesser storage costs
-
  
 ==========================
 
 Window functions:
-= max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn)
-= Row_number() / rank() / dense_rank() 
-= lag(cn) / lead(cn) 
-= first_value(cn) / last_value(cn) / nth_value(cn, n) 
-= ntile(n) – n groups 
-= cum_dist() / percent_rank() /
-SUM(column2) OVER (PARTITION BY column3 ORDER BY column4 ROWS BETWEEN UNBOUNDED PRECEDING or 2 PRECEDING or CURRENT ROW AND CURRENT ROW or UNBOUNDED FOLLOWING or 1 FOLLOWING) AS sum_column2
+
+>> max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn)
+SELECT
+  column1,
+  column2,
+  SUM(column2) OVER (PARTITION BY column1 ORDER BY column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total,
+  AVG(column2) OVER (PARTITION BY column1 ORDER BY column2 ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS moving_avg
+FROM
+  mydataset.mytable;
+
+>> Row_number() / rank() / dense_rank() 
+SELECT
+  column1,
+  column2,
+  ROW_NUMBER() OVER (PARTITION BY column1 ORDER BY column2) AS row_num
+FROM
+  mydataset.mytable;
+
+>> lag(cn) / lead(cn): Accesses data from a previous or subsequent row in the same result set without the use of a self-join.
+
+SELECT
+  column1,
+  column2,
+  LAG(column2, 1) OVER (PARTITION BY column1 ORDER BY column2) AS previous_value,
+  LEAD(column2, 1) OVER (PARTITION BY column1 ORDER BY column2) AS next_value
+FROM
+  mydataset.mytable;
+
+>> first_value(cn) / last_value(cn) / nth_value(cn, n) 
+SELECT
+  column1,
+  column2,
+  FIRST_VALUE(column2) OVER (PARTITION BY column1 ORDER BY column2) AS first_value,
+  LAST_VALUE(column2) OVER (PARTITION BY column1 ORDER BY column2) AS last_value
+FROM
+  mydataset.mytable;
+
+>> ntile(n) – n groups 
+SELECT
+  column1,
+  column2,
+  NTILE(4) OVER (PARTITION BY column1 ORDER BY column2) AS quartile
+FROM
+  mydataset.mytable;
+
+>> cum_dist() / percent_rank() 
+
 Rows consider current row even if duplicates / range considers bottom row of duplicates.
 
 =====================
