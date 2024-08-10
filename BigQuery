@@ -235,7 +235,18 @@ commenting:
 -- or # or /* LINES */
 
 ==================
-If / labels /repeat / while /leave/ break/ continue/ iterate / for
+If condition
+then
+sql statement;
+end if;
+
+for var in list
+do 
+sql statement;
+end for;
+
+
+/ labels /repeat / while /leave/ break/ continue/ iterate 
 
 
 
@@ -244,10 +255,9 @@ If / labels /repeat / while /leave/ break/ continue/ iterate / for
 
 >> Pivoting and unpivoting: help in reshaping your data for analysis or reporting
 
->> Pivot:
+>> Pivot: row into columns
 
-
->> unpivot:
+>> unpivot: columns into rows
 SELECT
   product,
   region,
