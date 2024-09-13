@@ -60,3 +60,29 @@ logger.error('this is error')
 logger.critical('this is critical')
 
 # logging.error('this name is not valid')
+
+=======================
+
+>>  configparser is a Python module that provides functionality for handling configuration files, similar to .ini files. 
+
+>> These files typically contain sections, each with key-value pairs.
+[Section1]
+key1 = value1
+key2 = value2
+
+>> 
+import configparser
+# Create the config parser object
+config = configparser.ConfigParser()
+# Read from the config file
+config.read(path+'config.ini')
+# Access a value
+config.get('Section1', 'key2')
+
+=====================
+
+In Python, the uuid module provides functions to generate universally unique identifiers (UUIDs). 
+
+=======================
+
+
