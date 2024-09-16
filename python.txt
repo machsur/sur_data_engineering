@@ -1,3 +1,21 @@
+=============
+
+-- dealing with files: open file and read (low level api not recommended, use for properties/schemas), pandas, pyspark
+-- python collects (list, tuple, set, dict) - used for dealing with metadata (mostly list, dict) - for data processing we use pandas/spark
+-- Python Collections:
+list - Group of similar or homogenous elements. Need not be unique.
+tuple - Group of elements of different types.
+set - Group of similar and unique elements.
+dict - Group of key value pairs where keys are unique.
+we see list and dict more often from the perspective of Data Engineering.
+
+
+------------------
+orders_file = open('data/retail_db/orders/part-00000', 'r')
+orders_str = orders_file.read()
+orders = orders_str.splitlines()
+
+
 =======================
 
 class: is design - has attributes, methods
