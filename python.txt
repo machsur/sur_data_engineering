@@ -8,12 +8,8 @@ tuple - Group of elements of different types.
 set - Group of similar and unique elements.
 dict - Group of key value pairs where keys are unique.
 we see list and dict more often from the perspective of Data Engineering.
+-- lambda, list comprehension, filter, map/set, sorted
 
-
-------------------
-orders_file = open('data/retail_db/orders/part-00000', 'r')
-orders_str = orders_file.read()
-orders = orders_str.splitlines()
 
 
 =======================
