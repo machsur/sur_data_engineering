@@ -1,14 +1,30 @@
 =============
 
--- dealing with files: open file and read (low level api not recommended, use for properties/schemas), pandas, pyspark
--- python collects (list, tuple, set, dict) - used for dealing with metadata (mostly list, dict) - for data processing we use pandas/spark
--- Python Collections:
-list - Group of similar or homogenous elements. Need not be unique.
-tuple - Group of elements of different types.
-set - Group of similar and unique elements.
-dict - Group of key value pairs where keys are unique.
-we see list and dict more often from the perspective of Data Engineering.
--- lambda, list comprehension, filter, map/set, sorted
+>> dealing with files: open file and read (low level api not recommended, use for properties/schemas), pandas, pyspark
+>> lambda, list comprehension, filter, map/set, sorted
+
+>> get column names(metadata) from schemas.json
+import json
+file_path = 'data/retail_db/schemas.json'
+schemas = json.load(open(file_path))
+
+def get_column_names(schemas, ds_name, sorting_key='column_position'):
+    column_details = schemas[ds_name]
+    columns = sorted(column_details, key=lambda col: col[sorting_key])
+    return [col['column_name'] for col in columns]
+
+>> read data and process using python - not recommend these low level apis
+orders_file = open('data/retail_db/orders/part-00000', 'r')
+orders_str = orders_file.read()
+orders = orders_str.splitlines()
+list(filter(lambda order: order.split(',')[3] == 'COMPLETE', orders))
+list(filter(lambda order: order.split(',')[3] in ('COMPLETE', 'CLOSED'), orders))
+list(map(lambda order: order.split(',')[3], orders))
+set(map(lambda order: order.split(',')[3], orders))
+sorted(orders, key=lambda order: int(order.split(',')[2]))
+
+>> read data and process using python pandas -  recommend for small/medium datasets
+
 
 
 
