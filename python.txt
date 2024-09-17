@@ -4,29 +4,13 @@
 >> lambda, list comprehension, filter, map/set, sorted
 
 >> get column names(metadata) from schemas.json
-import json
-file_path = 'data/retail_db/schemas.json'
-schemas = json.load(open(file_path))
-
-def get_column_names(schemas, ds_name, sorting_key='column_position'):
-    column_details = schemas[ds_name]
-    columns = sorted(column_details, key=lambda col: col[sorting_key])
-    return [col['column_name'] for col in columns]
 
 >> read data and process using python - not recommend these low level apis
-orders_file = open('data/retail_db/orders/part-00000', 'r')
-orders_str = orders_file.read()
-orders = orders_str.splitlines()
-list(filter(lambda order: order.split(',')[3] == 'COMPLETE', orders))
-list(filter(lambda order: order.split(',')[3] in ('COMPLETE', 'CLOSED'), orders))
-list(map(lambda order: order.split(',')[3], orders))
-set(map(lambda order: order.split(',')[3], orders))
-sorted(orders, key=lambda order: int(order.split(',')[2]))
 
 >> read data and process using python pandas -  recommend for small/medium datasets
 
-
-
+>> To improve the efficiency of our data engineering pipelines, we need to convert these CSV files into JSON files, since JSON is better to use in downstream applications than CSV files. The scope of this project involves converting CSV files into JSON files.
+read files using glob - get column names from schemas - read csv files into df - generate file paths for json target files -- write into json files from df 
 
 =======================
 
