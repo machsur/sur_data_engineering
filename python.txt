@@ -31,6 +31,16 @@ high - few gundred of tb / pb
 Google white papers------> Haddop ecosystem------------> Spark
 HES: tech - HDFS based on GFS, HMR based on GMR, HBASE based on GBT, later introduced Sqoop/dead, flume/dead, hive, oozie - doest use memory efficiently and cloud -so, spark came into picture
 
+>> HDFS - large datasets distribute on multiple machines - replicate them for fault tolerance
+-- map reduce - batch jobs break down - process them across cluster - combine them / HBASE - nosql for real-time access to data / both will provide compute capabilities on top of hdfs
+-- Sqoop - import and export data from/to structured databases into haddop - underhood it uses map reduce
+-- Hive - querying and manage large datasets using sql like lang HiveQL - underhood it uses map reduce
+-- Flume - move large vol of web server log, event data to HDFS or Hbase
+-- Oozie - workflow scheduling tool for Hadoop jobs - underhood it uses map reduce
+
+
+
+
 
 ===========================
 
