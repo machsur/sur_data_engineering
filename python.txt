@@ -13,6 +13,8 @@
 read files using glob - get column names from schemas - read csv files into df - generate file paths for json target files -- write into json files from df 
 
 =======================
+Bigdata and datalakes:
+
 >> databases / use cases / tchnologies / volume: 
 RDBMS - order management system, point of sales, transaction involve b/w two parties - oracle, sql server, mysql, postgres, IBM DB2  - small to medium
 Data lake - low-cost storage (data from all relavant sources)- GCS, S3, ADLS - high
@@ -24,6 +26,10 @@ seach -search quickly - elastic search, solr, lucene - medium
 small - few hundred of gb
 medium - under 1 tb
 high - few gundred of tb / pb
+
+>> Big data: characteristics - volume, varity, velocity - for google search engine, introduced 3 tech GFS, GMR, big table - popular and published white paper in 2000 - then big data tech evolved - based on white papers, hadoop and then spark came into picture.
+Google white papers------> Haddop ecosystem------------> Spark
+HES: tech - HDFS based on GFS, HMR based on GMR, HBASE based on GBT, later introduced Sqoop/dead, flume/dead, hive, oozie - doest use memory efficiently and cloud -so, spark came into picture
 
 
 ===========================
