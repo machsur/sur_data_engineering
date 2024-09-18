@@ -38,7 +38,10 @@ HES: tech - HDFS based on GFS, HMR based on GMR, HBASE based on GBT, later intro
 -- Flume - move large vol of web server log, event data to HDFS or Hbase
 -- Oozie - workflow scheduling tool for Hadoop jobs - underhood it uses map reduce
 
+-- challemges - steep learining curve / setup time and cost / maintanance of cluster / application development life cycle / ineeficient usage of cluster / 
+slow performance during data processing
 
+>> challenges in HES (datalake using HES) are overcome by datalake using cloud
 
 
 
