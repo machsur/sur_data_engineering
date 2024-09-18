@@ -52,6 +52,10 @@ Overview of spark and its architexture
 -- data processing libraries: python pandas/limitations whth large datasets - introduces python dask 
 (uses server efficiently and multi nodes)  - pyspark works well spark clusers with multiple nodes when compared to dask 
 
+-- distributed computung: ex: hadoop and spark
+    single server (etl) - problem is sla in prod and capcity issues even if you use efficiently with multithreading
+    cluster (have multiple server)
+
 
 
 
