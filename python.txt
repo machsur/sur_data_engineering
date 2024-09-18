@@ -13,42 +13,47 @@
 read files using glob - get column names from schemas - read csv files into df - generate file paths for json target files -- write into json files from df 
 
 =======================
-Bigdata and datalakes:
+19. Bigdata and datalakes:
 
->> databases / use cases / tchnologies / volume: 
-RDBMS - order management system, point of sales, transaction involve b/w two parties - oracle, sql server, mysql, postgres, IBM DB2  - small to medium
-Data lake - low-cost storage (data from all relavant sources)- GCS, S3, ADLS - high
-data warehouse - for reporting purpose - snowflake, teradata, databricks (these 3 available on all cloud), oracle exadata, BQ, Amazon redshift, Azure Synapse - medium (typical) to high
-no sql - operational stroes (chats, products catalog in Amazon, endorsements, recommendations) - Bigtable, Amazon Dynamodb, Azusre(multiple), casandra, mangodb - medium (typical) to high
-graph - network -ne04j - small to medium
-seach -search quickly - elastic search, solr, lucene - medium
+-- databases / use cases / tchnologies / volume: 
+    RDBMS - order management system, point of sales, transaction involve b/w two parties - oracle, sql server, mysql,       postgres , IBM DB2  - small to medium
+    Data lake - low-cost storage (data from all relavant sources)- GCS, S3, ADLS - high
+    data warehouse - for reporting purpose - snowflake, teradata, databricks (these 3 available on all cloud), oracle exadata, BQ, Amazon redshift, Azure Synapse - medium (typical) to high
+    no sql - operational stroes (chats, products catalog in Amazon, endorsements, recommendations) - Bigtable, Amazon Dynamodb, Azusre(multiple), casandra, mangodb - medium (typical) to high
+    graph - network -ne04j - small to medium
+    seach -search quickly - elastic search, solr, lucene - medium
 
-small - few hundred of gb
-medium - under 1 tb
-high - few gundred of tb / pb
+    small - few hundred of gb
+    medium - under 1 tb
+    high - few gundred of tb / pb
 
->> Big data: characteristics - volume, varity, velocity - for google search engine, introduced 3 tech GFS, GMR, big table - popular and published white paper in 2000 - then big data tech evolved - based on white papers, hadoop and then spark came into picture.
-Google white papers------> Haddop ecosystem------------> Spark
-HES: tech - HDFS based on GFS, HMR based on GMR, HBASE based on GBT, later introduced Sqoop/dead, flume/dead, hive, oozie - doest use memory efficiently and cloud -so, spark came into picture
+-- Big data: 
+    characteristics - volume, varity, velocity
+    for google search engine, introduced 3 tech GFS, GMR, big table - popular and published white paper in 2000 
+    based on white papers, hadoop and then spark came into picture.
 
->> HDFS - large datasets distribute on multiple machines - replicate them for fault tolerance
--- map reduce - batch jobs break down - process them across cluster - combine them / HBASE - nosql for real-time access to data / both will provide compute capabilities on top of hdfs
--- Sqoop - import and export data from/to structured databases into haddop - underhood it uses map reduce
--- Hive - querying and manage large datasets using sql like lang HiveQL - underhood it uses map reduce
--- Flume - move large vol of web server log, event data to HDFS or Hbase
--- Oozie - workflow scheduling tool for Hadoop jobs - underhood it uses map reduce
+-- Google white papers------> Haddop ecosystem------------> Spark
 
--- challemges - steep learining curve / setup time and cost / maintanance of cluster / application development life cycle / ineeficient usage of cluster / 
-slow performance during data processing
+-- HES: tech - HDFS based on GFS, HMR based on GMR, HBASE based on GBT, later introduced Sqoop/dead, flume/dead, hive, oozie - doest use memory efficiently and cloud -so, spark came into picture
 
--- challenges in HES (datalake using HES) are overcome by datalake using cloud
+    HDFS - large datasets distribute on multiple machines - replicate them for fault tolerance
+    map reduce - batch jobs break down - process them across cluster - combine them / HBASE - nosql for real-time access to data / both will provide compute capabilities on top of hdfs
+    Sqoop - import and export data from/to structured databases into haddop - underhood it uses map reduce
+    Hive - querying and manage large datasets using sql like lang HiveQL - underhood it uses map reduce
+    Flume - move large vol of web server log, event data to HDFS or Hbase
+    Oozie - workflow scheduling tool for Hadoop jobs - underhood it uses map reduce
+
+    challemges - steep learining curve / setup time and cost / maintanance of cluster / application development life cycle / ineeficient usage of cluster / slow performance during data processing
+    
+    These challenges in HES (datalake using HES) are overcome by datalake using cloud
 
 //////////////////////////////////////
 
-Overview of spark and its architexture
+20. Overview of spark and its architexture
 
--- data processing: source (files,db, rest payloads) -----> process (sql, libraries/pandas, frameworks/spark) ------->
+-- data processing: source (files,db, rest payloads) -----> process (sql, libraries/pandas/dask, frameworks/spark) ------->
     target(files,db, rest payloads)
+
 -- data processing libraries: python pandas/limitations whth large datasets - introduces python dask 
 (uses server efficiently and multi nodes)  - pyspark works well spark clusers with multiple nodes when compared to dask 
 
