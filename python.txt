@@ -13,6 +13,20 @@
 read files using glob - get column names from schemas - read csv files into df - generate file paths for json target files -- write into json files from df 
 
 =======================
+>> databases / use cases / tchnologies / volume: 
+RDBMS - order management system, point of sales, transaction involve b/w two parties - oracle, sql server, mysql, postgres, IBM DB2  - small to medium
+Data lake - low-cost storage (data from all relavant sources)- GCS, S3, ADLS - high
+data warehouse - for reporting purpose - snowflake, teradata, databricks (these 3 available on all cloud), oracle exadata, BQ, Amazon redshift, Azure Synapse - medium (typical) to high
+no sql - operational stroes (chats, products catalog in Amazon, endorsements, recommendations) - Bigtable, Amazon Dynamodb, Azusre(multiple), casandra, mangodb - medium (typical) to high
+graph - network -ne04j - small to medium
+seach -search quickly - elastic search, solr, lucene - medium
+
+small - few hundred of gb
+medium - under 1 tb
+high - few gundred of tb / pb
+
+
+===========================
 
 class: is design - has attributes, methods
 object: instance from class
