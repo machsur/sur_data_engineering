@@ -41,7 +41,18 @@ HES: tech - HDFS based on GFS, HMR based on GMR, HBASE based on GBT, later intro
 -- challemges - steep learining curve / setup time and cost / maintanance of cluster / application development life cycle / ineeficient usage of cluster / 
 slow performance during data processing
 
->> challenges in HES (datalake using HES) are overcome by datalake using cloud
+-- challenges in HES (datalake using HES) are overcome by datalake using cloud
+
+//////////////////////////////////////
+
+Overview of spark and its architexture
+
+-- data processing: source (files,db, rest payloads) -----> process (sql, libraries/pandas, frameworks/spark) ------->
+    target(files,db, rest payloads)
+-- data processing libraries: python pandas/limitations whth large datasets - introduces python dask 
+(uses server efficiently and multi nodes)  - pyspark works well spark clusers with multiple nodes when compared to dask 
+
+
 
 
 
