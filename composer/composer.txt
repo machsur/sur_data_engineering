@@ -1,1 +1,22 @@
 
+===========================
+-- Cloud composer: full managed apache airflow version in GCP for workflow orchestration.
+
+-- create composer environment: runs on GKE
+    enable api
+    location
+    image version (cloud composer and airflow)
+    Cloud Composer v2 API Service Agent Extension role to the service account
+    enivronment (schedular, triggerrer, web server, worker)
+    network
+
+| DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
+| py app                             |       dataproc workflow                                            |
+|              cloud composer                                                                              |
+
+
+Architexture of composer: Web server - Dags dir gcs - each dag associated with Executor/scheduler - runs on worker -metadata db stores executor, web server info
+--> create composer environment -  runs on GKE - DAGS folder in gcs - airflow UI
+## Install required dependencies for development
+pip install apache-airflow==2.3.3
+pip install apache-airflow-providers-google
