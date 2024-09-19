@@ -19,6 +19,9 @@
     based on schedule, the Executor/scheduler will trigger the dags - runs on worker 
     - metadata db stores executor, web server info
 
+-- dag constructor/class - with in dag id, default args, keyword args, tasks are created by instntiating operators - it helps to create dag object
+    note: multiple dags in one py script / one dag can spans multiple py scripts
+
 | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
 | py app                             |       dataproc workflow                                            |
 |              cloud composer                                                                              |
