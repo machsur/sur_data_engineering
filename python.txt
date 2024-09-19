@@ -1,3 +1,8 @@
+===============
+https://github.com/itversity
+https://github.com/dgadiraju?tab=repositories
+https://spark.apache.org/
+
 =============
 
 >> dealing with files: open file and read (low level api not recommended, use for properties/schemas), pandas, pyspark
@@ -60,6 +65,16 @@ read files using glob - get column names from schemas - read csv files into df -
 -- distributed computung: ex: hadoop and spark
     single server (etl) - problem is sla in prod and capcity issues even if you use efficiently with multithreading
     cluster (have multiple server)
+
+-- databricks have spark based runtime - AWS (EMR & GLUE), both spark embedded in them - in gcp dataproc, we got hadoop and spark - Azure synaps, spark embedded it - 
+    snow flake most popular DWH they introduced snowpark based on spark
+
+-- spark: multi-language engine for executing data engineering, data science, and machine learning on single-node machines or clusters.
+    key features: batch/streaming data - sql analytics  - datascience at scale - machine learning
+    architexture: https://spark.apache.org/docs/latest/cluster-overview.html
+    cluster capacity, spark cluster: cluster(D,W) nodes/OS/Spark engine/executors/network/
+
+-- 
 
 
 
