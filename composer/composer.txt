@@ -10,13 +10,18 @@
     enivronment (schedular, triggerrer, web server, worker)
     network
 
+-- setup local vs code env and install required dependcies
+    use gcloud commands to intract with cloud composer env
+    deploy airflow dag into composer env by placing into gcs dags folder
+
+
+-- Architexture of composer: Web server (UI) - Dags dir in gcs - each dag associated schedule with it -    
+    based on schedule, the Executor/scheduler will trigger the dags - runs on worker 
+    - metadata db stores executor, web server info
+
 | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
 | py app                             |       dataproc workflow                                            |
 |              cloud composer                                                                              |
 
 
-Architexture of composer: Web server - Dags dir gcs - each dag associated with Executor/scheduler - runs on worker -metadata db stores executor, web server info
---> create composer environment -  runs on GKE - DAGS folder in gcs - airflow UI
-## Install required dependencies for development
-pip install apache-airflow==2.3.3
-pip install apache-airflow-providers-google
+
