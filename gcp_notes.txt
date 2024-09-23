@@ -1,5 +1,5 @@
 ===================
-DataProc / Composer /
+DataProc / Composer / Databricks
 
 =====================
 Dataproc: big data processing
@@ -30,8 +30,37 @@ Dataproc: big data processing
                4. instantiate workflow template (gcloud dataproc workflow-templates instantiate ----)
    >> stop / delete cluster using ui, gcloud
 
+==================
 
-=========
+===========================
+-- Cloud composer: full managed apache airflow version in GCP for workflow orchestration.
+
+-- create composer environment: runs on GKE
+    enable api
+    location
+    image version (cloud composer and airflow)
+    Cloud Composer v2 API Service Agent Extension role to the service account
+    enivronment (schedular, triggerrer, web server, worker)
+    network
+
+-- setup local vs code env and install required dependcies
+    use gcloud commands to intract with cloud composer env
+    deploy airflow dag into composer env by placing into gcs dags folder
+
+
+-- Architexture of composer: Web server (UI) - Dags dir in gcs - each dag associated schedule with it -    
+    based on schedule, the Executor/scheduler will trigger the dags - runs on worker 
+    - metadata db stores executor, web server info
+
+-- dag constructor/class - with in dag id, default args, keyword args, tasks are created by instntiating operators - it helps to create dag object
+    note: multiple dags in one py script / one dag can spans multiple py scripts
+
+| DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
+| py app                             |       dataproc workflow                                            |
+|              cloud composer                                                                              |
+
+
+=====================
 Databricks: big data processing
 1. signup for databricks from marketplace to use on GCP. then page redirected to workspaces.
 2. create databricks workspace on GCP
