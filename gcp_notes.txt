@@ -1,5 +1,5 @@
 ===================
-DataProc / Composer / Databricks
+DataProc / Composer / Databricks / cloud sql (postgresql) /
 
 =====================
 Dataproc: big data processing
@@ -105,6 +105,17 @@ Databricks: big data processing
     --> validata app (tasks) for ELT pipeline using databricks.
     --> build ELT pipeline using databricks job in workflows.
     --> run and review execution elt pipeline using databricks job.
+
+==============
+cloud sql (postgresql)
+Managing PostgreSQL database via UI(pgAdmin), CLI, Python client library
+
+on-prim data files ---> process using python pandas --> Load into PostgreSQL DB --> validate data
+
+read data from PostgreSQL DB --> process using python pandas --> GCS in parquet file --> published into BQ table.
+
+====================
+
 
 
 =======
