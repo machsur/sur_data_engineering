@@ -1,3 +1,5 @@
+================
+Python / pyspark /
 ===============
 https://github.com/itversity
 https://github.com/dgadiraju?tab=repositories
@@ -5,20 +7,22 @@ https://spark.apache.org/
 
 =============
 
->> dealing with files: open file and read (low level api not recommended, use for properties/schemas), pandas, pyspark
->> lambda, list comprehension, filter, map/set, sorted
+Python:
 
->> get column names(metadata) from schemas.json
+>> logging: avoid print - avoid garbage values in prod - helps in debugging, disable/enable logging easily
+>> configparser: handling configuration files, similar to .ini files. 
+>> unique identifiers (UUIDs)
+>> requests module
 
->> read data and process using python - not recommend these low level apis
 
+
+=====================
+PySpark:
+
+>> read data and process using python - not recommend these low level apis (use for reading schemas/properties)
 >> read data and process using python pandas -  recommend for small/medium datasets
 
->> To improve the efficiency of our data engineering pipelines, we need to convert these CSV files into JSON files, since JSON is better to use in downstream applications than CSV files. The scope of this project involves converting CSV files into JSON files.
-read files using glob - get column names from schemas - read csv files into df - generate file paths for json target files -- write into json files from df 
-
-=======================
-19. Bigdata and datalakes:
+>>  Bigdata and datalakes:
 
 -- databases / use cases / tchnologies / volume: 
     RDBMS - order management system, point of sales, transaction involve b/w two parties - oracle, sql server, mysql,       postgres , IBM DB2  - small to medium
@@ -75,91 +79,31 @@ read files using glob - get column names from schemas - read csv files into df -
     cluster capacity, spark cluster: cluster(D,W) nodes/OS/Spark engine/executors(JavaVM) in worker, vcpu or slots unused capacity, tasks used capacity/network/
 
 
-===========================
-
-class: is design - has attributes, methods
-object: instance from class
-self: referring to the objects
-init - special method - to initialize variables - called init mtd automatically when you instantiate object (we can say construcor)
-
-========================
-
-variables: instance variable (within init mtd), class variable
-mtd: instance mtd, class mtd, static mtd
-
-class Student:
-    college = 'narayana'  # class variable
-    def __init__(self, m1, m2): # instance variable
-        self.m1 = m1
-        self.m2 = m2
-    def avg(self):   # instance method
-        return (self.m1 + self.m2)/2
-    @classmethod   
-    def get_school(cls):   # class method
-        return cls.college
-    @staticmethod    # static method
-    def fact():
-        print('this returns factorial of number')
-
-
-s1 = Student(20, 40)
-print(s1.college)
-print(Student.college)
-print(s1.m1)
-print(s1.avg())
-print(s1.get_school())
-s1.fact()
-
-===================
-
-logging: avoid print - its just for testing - not recommended in prod to display these garbage values
-helps in debugging, disable/enable logging easily
-
-import logging
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-f = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-fh = logging.FileHandler('debug.log')
-fh.setFormatter(f)
-logger.addHandler(fh)
-
-# logging.basicConfig(filename='debug.log', filemode='w', level=logging.INFO, 
-# format='%(asctime)s - %(levelname)s - %(message)s')
-
-# logging.disable()
-# levels - DEBUG, INFO, WARNING, ERROR, CRITICAL
-
-logger.debug('this is debug')
-logger.info('this is info')
-logger.warning('this is warning')
-logger.error('this is error')
-logger.critical('this is critical')
-
-# logging.error('this name is not valid')
-
-=======================
-
->>  configparser is a Python module that provides functionality for handling configuration files, similar to .ini files. 
-
->> These files typically contain sections, each with key-value pairs.
-[Section1]
-key1 = value1
-key2 = value2
-
->> 
-import configparser
-# Create the config parser object
-config = configparser.ConfigParser()
-# Read from the config file
-config.read(path+'config.ini')
-# Access a value
-config.get('Section1', 'key2')
-
 =====================
+- problem: big data processing - cant handle by excel , sql db, etc.
+- Sol : parallel processing - spark 
+        https://spark.apache.org/
+- Spark : 
+        > dirver node (spark contest) - cluster/resource manager - worker nodes (executor, task, cache).
+        > ram in worker nodes has divided into partitions - these partitions can be inside specific data structure RDD (write code in py) / DF (strucre databases).
+        > RDD - read only - immutable - fault tolerant using DAG concept - 1. transformation (new rdd - not human readble) 2. action (to read)
 
-In Python, the uuid module provides functions to generate universally unique identifiers (UUIDs). 
+- Platforms for pyspark:
+        > https://colab.research.google.com/
+        > VM vare on desktop version
+        > databricks community edition / on cloud
+        > dataproc on GCP
 
-=======================
 
-
+why PySpark not python for bigdata? :
+python - take sample of data and apply statistics to develop histograms
+pyrhon - can process large datasets with multithreads 
+problem - when data is big and stays in memory / we cant take entire data on compute and use python on it.
+        - data cant stay in one computer and it can be distributed.
+=========
+Apache spark:
+- opensource distributed processing system for big data.
+- in-memory caching
+- uses optimized query execution for fast queries
+- provides api in java, scala, python, r
+- supports batch processing, inetractive queries, real-time analytics, ml and graph processing
