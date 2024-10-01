@@ -257,6 +257,40 @@ Automate Python script execution on GCP
 https://github.com/rafaello9472/c4ds/tree/main/Automate%20Python%20script%20execution%20on%20GCP%20
 
 
+===================
+
+
+======================
+IAM
+>> Create Service account via automation 
+>> Create AD group/user account via HSBC active directory request using SNOW portal - through sync process AD group/user s recognized on GCP via single sign-on. (managed at org level).
+Diff AD vs google cloud 
+>> Assign roles to AD group/SA via automation
+>> creating service account file
+The service account file is used for non-Google environments that need to to communicate with Google Cloud Projects.
+gcloud iam service-accounts add-iam-policy-binding [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com \
+--member group:gcp.[PROJECT_ID].devops-team@hsbc.com \
+--role roles/iam.serviceAccountKeyAdmin
+gcloud iam service-accounts keys create [FILENAME].json --iam-account=[SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com 
+gcloud iam service-accounts keys list --iam-account=[SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com
+gcloud iam service-accounts keys delete [KEY_ID] --iam-account=[SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com
+gcloud iam service-accounts remove-iam-policy-binding [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com \
+--member group:gcp.[PROJECT_ID].devops-team@hsbc.com \
+--role roles/iam.serviceAccountKeyAdmin
+>> service account impersonation
+Benfits: no floting keys, enhance security, short lived tokens
+User/SA (SATokenCreator role)----impersonate-------> SA ------has permissions --------> gcp resources
+gcloud iam service-accounts add-iam-policy-binding [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com \
+--member group:gcp.[PROJECT_ID].devops-team@hsbc.com \
+--role roles/iam.serviceAccountTokenCreator
+gcloud [COMMAND] --impersonate-service-account [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com
+gcloud config set auth/impersonate_service_account [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com
+gcloud config unset auth/impersonate_service_account
+gcloud iam service-accounts remove-iam-policy-binding [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com \
+--member group:gcp.[PROJECT_ID].devops-team@hsbc.com \
+--role roles/iam.serviceAccountTokenCreator
+
+===================
 
 
 
