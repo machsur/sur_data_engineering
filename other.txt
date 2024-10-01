@@ -1,5 +1,15 @@
 ===================
-GIT /
+winscp / CMD vs GIT BASH / GIT commands /
+
+===================
+>> WinSCP (Windows Secure Copy) is a popular open-source SFTP (SSH File Transfer Protocol), SCP (Secure Copy Protocol), 
+and FTP (File Transfer Protocol) client for Windows. 
+>> It provides a graphical interface for securely transferring files between a local computer and a remote server.
+=====================
+CMD vs GIT BASH
+CMD (Command Prompt) and Git Bash are both command-line interfaces used for interacting with the operating system.
+CMD - executing Windows commands, 
+Git Bash - supports Unix commands and Git functionalities, windows commands too.
 
 ==================
 
