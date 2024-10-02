@@ -360,21 +360,17 @@ end for;
    Pivot: row into columns
    unpivot: columns into rows
 
->> Arrays – list of items having same data type
-SELECT element
-FROM mydataset.mytable, UNNEST(my_array) AS element;
+>> Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
+   De Normalization – redundant data (high storage cost) – better Query performance 
+   Why array & structs? – for better query per and lesser storage costs
+   
+   Arrays – list of items having same data type
+   SELECT element FROM mydataset.mytable, UNNEST(my_array) AS element;
 
->> Struct – record with nested fields having different data types
-SELECT person.id, person.name
-FROM mydataset.mytable;
-
-Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
-De Normalization – redundant data (high storage cost) – better Query performance 
-Why array & structs? – for better query per and lesser storage costs
+   Struct – record with nested fields having different data types
+   SELECT person.id, person.name FROM mydataset.mytable;
  
->> Window functions: 
-   helps to perform calculations, without the need for aggregating the data like a GROUP BY would. 
-   useful for tasks such as ranking, calculating running totals, moving averages, and other analytics over ordered data.
+>> Window functions: performing advanced calculations over a set of rows, go beyond simple aggregates or filters
    max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() 
    SUM(column2) OVER (PARTITION BY column1 ORDER BY column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS rt
    lag(cn) / lead(cn): Accesses data from a previous or subsequent row in the same result set without use of a self-join.
@@ -386,7 +382,11 @@ Why array & structs? – for better query per and lesser storage costs
    cum_dist() / percent_rank() 
    Rows consider current row even if duplicates / range considers bottom row of duplicates.
 
->> Regular expressions: pattern matching
+>> Regular expressions: used for pattern matching and string manipulation
+   REGEXP_CONTAINS(column_name, r'pattern')
+   REGEXP_EXTRACT_ALL(column_name, r'pattern')
+   REGEXP_REPLACE(column_name, r'pattern', 'replacement')
+   SPLIT(column_name, r'pattern')
 
 >> Sql query execution order: From / where / group by / having / select / order by / limit
 
