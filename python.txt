@@ -13,9 +13,9 @@ Python:
 >> configparser: handling configuration files, similar to .ini files. 
 >> unique identifiers (UUIDs)
 >> requests module
-
-
-
+>> try: / except ZeroDivisionError as e: # Handling specific exception (division by zero) /  except Exception as e:
+    # Handling any other exceptions / else: # Code to execute if no exception occurred / finally:
+       
 =====================
 PySpark:
 
