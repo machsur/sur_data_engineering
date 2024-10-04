@@ -97,6 +97,8 @@ Apache airflow operators guide: https://airflow.apache.org/docs/apache-airflow/s
 |              cloud composer                                                                              |
 
 >> templating in Airflow : use templating to inject dynamic values (like dates and parameters) into your bash commands in Airflow.
+   use variables
+   Calling bash/py script in different folder / machine by using connections
 
 
 
