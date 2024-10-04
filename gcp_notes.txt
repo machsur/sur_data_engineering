@@ -96,6 +96,9 @@ Apache airflow operators guide: https://airflow.apache.org/docs/apache-airflow/s
 | py app                             |       dataproc workflow                                            |
 |              cloud composer                                                                              |
 
+>> templating in Airflow : use templating to inject dynamic values (like dates and parameters) into your bash commands in Airflow.
+
+
 
 =====================
 Databricks: big data processing
