@@ -65,6 +65,11 @@ gcloud dataproc clusters create dataprocclu1 --enable-component-gateway --region
 ==================
 
 ===========================
+>> 
+Apache airflow operators guide: https://airflow.apache.org/docs/apache-airflow/stable/howto/operator/index.html
+
+-- data pipeline: consists of several tasks or actions
+-- airflow: workflows - made of dags - automation - scheduling
 -- Cloud composer: full managed apache airflow version in GCP for workflow orchestration.
 
 -- create composer environment: runs on GKE
