@@ -97,10 +97,16 @@ Apache airflow operators guide: https://airflow.apache.org/docs/apache-airflow/s
 |              cloud composer                                                                              |
 
 >> templating in Airflow : use templating to inject dynamic values (like dates and parameters) into your bash commands in Airflow.
-   use variables
-   Calling bash/py script in different folder / machine by using connections
+  
+>> use variables
+   
+>> Calling bash/py script in different folder / machine by using connections
 
+>> XCom (Cross-communication) - for passing small pieces of data between tasks - making workflows more dynamic and flexible
 
+>> branching -  allows you to control the execution path of a workflow based on certain conditions - BranchPythonOperator 
+
+>> Subdag : consists group of parellel tasks.
 
 =====================
 Databricks: big data processing
