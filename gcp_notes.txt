@@ -108,6 +108,27 @@ Apache airflow operators guide: https://airflow.apache.org/docs/apache-airflow/s
 
 >> Subdag : consists group of parellel tasks.
 
+>> SLA (Service Level Agreement) - 
+   - is a time-based contract specifying how long a task or DAG should take to run. 
+   - If a task exceeds this time limit, Airflow will trigger an alert to notify that the SLA has been missed.
+
+>> Apache Airflow with Kubernetes allows for a scalable and flexible infrastructure, integrating the dynamic orchestration power of Airflow with the container management capabilities of Kubernetes. This integration provides benefits like dynamic resource allocation, auto-scaling, and isolated task execution in containers. There are two primary ways Kubernetes can be integrated with Airflow:
+
+Kubernetes Executor: Airflow tasks are dynamically launched in Kubernetes pods.
+KubernetesPodOperator: Individual tasks are run inside Kubernetes pods, but Airflow is otherwise deployed with a different executor.
+
+>> Sensors continuously check (or "poke") to see if a condition has been met. 
+   Once the condition is satisfied, the sensor task succeeds, allowing the next task in the workflow to execute. 
+   If the condition is not met within the defined timeout period, the sensor fails.
+
+   Types of Sensors
+   FileSensor: Waits for a file to appear in a directory.
+   ExternalTaskSensor: Waits for another task in a different DAG to complete.
+   HttpSensor: Waits for an HTTP endpoint to return a certain response.
+   S3/GCSKeySensor: Waits for a file to appear in an S3 bucket.
+   TimeSensor: Waits until a specific time of day.
+
+
 =====================
 Databricks: big data processing
 1. signup for databricks from marketplace to use on GCP. then page redirected to workspaces.
