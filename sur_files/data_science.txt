@@ -1,4 +1,5 @@
 =======================
+>> data engineer =
 >> data analyst -  database + python + powerbi/tableu + python lib (numpy / pandas) + prob stats / hypothesis testing
 >> datascience - get insight from data 
     data analyst + 
