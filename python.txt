@@ -1,3 +1,24 @@
+===================
+Interpreter: The programme that runs your code.
+Virtual Environment: A separate "workspace" that uses a Python interpreter but has its own packages and dependencies.
+
+>> setup python, pip
+    configure environment variable path - so that execute programme from terminal
+
+>>  
+    python -m venv myenv                   --- Create a Virtual Environment
+    or
+    pip install virtualenv 
+    virtualenv myenv                     ----- Create a Virtual Environment
+    myenv\Scripts\activate               ---- Activate the Virtual Environment
+    deactivate                            ------ Deactivate the Virtual Environment
+    pip install pandas
+    pip freeze > requirements.txt             ---- download req file from venv
+    pip install -r requirements.txt           ---- navigate to file loc and install into venv
+
+
+
+
 ================
 Python / pyspark /
 ===============
