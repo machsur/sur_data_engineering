@@ -439,7 +439,7 @@ end for;
 >> Sql query execution order: From / where / group by / having / select / order by / limit
 
 >> Big Query compute optimization: on-demaned analysis, bq editions - decide based on your workloads.
-   BQ data storage – (Billing model: logical / physical) - based on compression ratio
+   BQ data storage – (Billing model: logical- data in uncompressed format/ physical- data in compressed format) - based on compression ratio
 
    Query optimization 
    Use Partitioned Tables and Clustered Tables
