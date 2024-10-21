@@ -441,7 +441,12 @@ end for;
 >> BQ 
 >> Big Query cost optimization
    -- compute optimization: on-demaned analysis, bq editions - decide based on your workloads.
-   -- BQ data storage – (Billing model: logical- data in uncompressed format/ physical- data in compressed format) - based          on compression ratio
+   -- BQ data storage – 
+   Billing model: logical- data in uncompressed format/ physical- data in compressed format) 
+   Use Table Expiration Settings 
+   Optimize Data Storage Format (cloumner format - paqruet. ORC)
+   Use Long-Term Storage Pricing (> 90 days)
+
    -- Query optimization 
    Use Partitioned Tables and Clustered Tables
    select columns instead of *
@@ -451,8 +456,12 @@ end for;
    Aggregate Data at the Source: Use Approximate Aggregations:  
    Optimize Window Functions
    Monitor and Tune Query Performance
-   
-   Cost Controls: Set budget alerts and quotas
+   -- Cost Controls: 
+   Set quotas and budget alerts
+   set query limits
+   bq compute cost analysis
+   bq query
+   bq storage cost opti
    Schedule queries during off-peak hours to take advantage of low on-demand pricing typically at mid-night/early morning
 
 ==================
