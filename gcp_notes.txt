@@ -461,6 +461,13 @@ end for;
    Create a materialized view based on frequently run queries.
    Optimize Window Functions
    Monitor and Tune Query Performance
+
+   -- 
+   create dataset in region wehere customer operates
+   use avro format to bigquery data load - google rec compressed avro for quick data load
+   use preview option for bq native table
+   use truncate instead of delete
+
    
    -- Cost Controls: 
    Set quotas and budget alerts
