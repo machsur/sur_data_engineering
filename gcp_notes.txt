@@ -449,26 +449,23 @@ end for;
    Use Long-Term Storage Pricing (> 90 days)
 
    -- Query optimization 
+   create dataset in region wehere customer operates
    Use Partitioned Tables and Clustered Tables
+   use avro format to bigquery data load - google rec compressed avro for quick data load
+   use preview option for bq native table
    select columns instead of *
+   use truncate instead of delete
+   nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
+   Join pattern larger table join smaller tables, Optimize JOIN Operations, avoid cross join
+   where class first condition in such way that eliminates most data
+   late aggregation
    Use WITH Clauses for Subquery Caching (Avoid Repeated Scalar Subqueries)
    Take Advantage of Query Caching
-   Filter Early with WHERE Clauses
-   Optimize JOIN Operations, avoid cross join
-   Avoid Nondeterministic Functions: CURRENT_TIMESTAMP()) in SELECT statements; 
-   Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
    Aggregate Data at the Source: Use Approximate Aggregations: 
    Create a materialized view based on frequently run queries.
    Optimize Window Functions
    Monitor and Tune Query Performance
-
-   -- 
-   create dataset in region wehere customer operates
-   use avro format to bigquery data load - google rec compressed avro for quick data load
-   use preview option for bq native table
-   use truncate instead of delete
-
-   
+  
    -- Cost Controls: 
    Set quotas and budget alerts
    set query limits
