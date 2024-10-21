@@ -440,7 +440,8 @@ end for;
 
 >> BQ 
 >> Big Query cost optimization
-   -- compute optimization: on-demaned analysis, bq editions - decide based on your workloads.
+   -- bq compute optimization: on-demaned analysis, bq editions - decide based on your workloads.
+   
    -- BQ data storage – 
    Billing model: logical- data in uncompressed format/ physical- data in compressed format) 
    Use Table Expiration Settings 
@@ -450,17 +451,23 @@ end for;
    -- Query optimization 
    Use Partitioned Tables and Clustered Tables
    select columns instead of *
-   Use WHERE Clauses for Filtering
-   Optimize JOIN Operations
+   Use WITH Clauses for Subquery Caching (Avoid Repeated Scalar Subqueries)
+   Take Advantage of Query Caching
+   Filter Early with WHERE Clauses
+   Optimize JOIN Operations, avoid cross join
    Avoid Nondeterministic Functions: CURRENT_TIMESTAMP()) in SELECT statements; 
-   Aggregate Data at the Source: Use Approximate Aggregations:  
+   Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
+   Aggregate Data at the Source: Use Approximate Aggregations: 
+   Create a materialized view based on frequently run queries.
    Optimize Window Functions
    Monitor and Tune Query Performance
+   
    -- Cost Controls: 
    Set quotas and budget alerts
    set query limits
+   Analyze Cost Breakdown Using Cloud Billing Reports
    bq compute cost analysis
-   bq query
+   bq query optimi
    bq storage cost opti
    Schedule queries during off-peak hours to take advantage of low on-demand pricing typically at mid-night/early morning
 
