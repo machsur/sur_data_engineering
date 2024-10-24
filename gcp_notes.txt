@@ -372,7 +372,10 @@ DCL(Data Control Language) – for security and access control
 
 >> Create table with metadata from existing table – use where 1 = 2 or false
 
->> except / distinct / limit / Round /
+>> .
+   SELECT * EXCEPT(column1, column2, ...) FROM table_name; 
+   SELECT DISTINCT department FROM employees limit 10;
+   SELECT ROUND(56.14159, -2/-1); / SELECT ROUND(56.14159, 2); /
 
 >> String functions:
 CONCAT('#', LTRIM('   apple   '), '#') / LENGTH('suresh') / SPLIT('apple,banana,orange', ',') / REPEAT('abc', 3) / REVERSE('abc') / REPLACE ('desert pie', 'pie', 'cobbler') 
