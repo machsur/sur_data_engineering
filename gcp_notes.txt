@@ -373,15 +373,17 @@ DCL(Data Control Language) – for security and access control
 >> Create table with metadata from existing table – use where 1 = 2 or false
 
 >> except / distinct / limit / Round /
-concat / 
-left / right / substring / upper / lower / replace 
-/ ltrim / rtrim/ trim / contains_substr() / length() / starts_with() / ends_with() / strpos()
-SELECT LENGTH('Hello World') AS length;
-SPLIT('apple,banana,orange', ',') /
-   INSTR('Hello World', 'World') /
-  FORMAT('%s %d', 'BigQuery', 2024) /   REPEAT('abc', 3) / 
-   / REVERSE('abc') /
-   / RPAD('abc', 10, 'ghd') /
+
+CONCAT('#', LTRIM('   apple   '), '#')
+CONTAINS_SUBSTR('the blue house', CONCAT('Blue ', 'house')) / ENDS_WITH('apple', 'e') / STARTS_WITH('bar', 'b') /
+INSTR('banana', 'an', 1, 1) / STRPOS('foo@example.com', '@') 
+LENGTH('suresh')
+LOWER('FOO BAR BAZ') / UPPER('foo')
+LEFT('banana', 3) / RIGHT('apple', 3)
+LTRIM('   apple   ') / RTRIM('***apple***', '*') / TRIM( '   apple   ') /
+SPLIT('apple,banana,orange', ',') 
+REPEAT('abc', 3) / REVERSE('abc') / REPLACE (dessert, 'pie', 'cobbler') / 
+SUBSTR('apple', 2, 2) / SUBSTRING alias for SUBSTR / 
 
 >> Union all / Union distinct / Table wildcards: test_*` where _Table_Suffix > 5 / Except distinct / Intersect distinct /
 
