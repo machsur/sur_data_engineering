@@ -495,7 +495,9 @@ end for;
 ==================
 
 
+Pipelines:
 
+>> loading data from GCS to BigQuery using cloud functions based on gcs file upload event trigger.
 
 
 
