@@ -374,6 +374,7 @@ DCL(Data Control Language) – for security and access control
 
 >> except / distinct / limit / Round /
 
+>> String functions:
 CONCAT('#', LTRIM('   apple   '), '#')
 CONTAINS_SUBSTR('the blue house', CONCAT('Blue ', 'house')) / ENDS_WITH('apple', 'e') / STARTS_WITH('bar', 'b') /
 INSTR('banana', 'an', 1, 1) / STRPOS('foo@example.com', '@') 
