@@ -360,7 +360,7 @@ DQL(Data Query Language) – select
 TCL(Transaction Control Language) – commit transaction and role back in case of any errors
 DCL(Data Control Language) – for security and access control 
 
->> Sql query execution order: From / where / group by / having / select / order by / limit
+>> Sql query execution order: From / where / group by / having / select / distinct / order by / limit
 
 >> conversion functions:
    The CAST function performs a conversion between compatible data types. 
