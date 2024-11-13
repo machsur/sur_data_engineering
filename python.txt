@@ -16,8 +16,15 @@ Virtual Environment: A separate "workspace" that uses a Python interpreter but h
     pip freeze > requirements.txt             ---- download req file from venv
     pip install -r requirements.txt           ---- navigate to file loc and install into venv
 
+--------------------
 
+>> Types of Config Files 
+.ini or .cfg or .properties files - often used with configparser.
+JSON files: Lightweight and hierarchical, ideal for structured data.
+YAML files: Human-readable and popular for complex configurations.
+Environment files (.env): For environment variables, often used in web development for sensitive settings.
 
+-------------------
 
 ================
 Python / pyspark /
