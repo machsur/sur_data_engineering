@@ -48,7 +48,7 @@ string format method
 
 >> if, if else, nested if, if elif else / while loop / for loop / for else
 
->> List, tuple, set, dictionary
+>> List, tuple, set, dictionary, array
 
 >> functions: reuse block of code / 
     Formal arguments:
@@ -62,32 +62,24 @@ string format method
     reduce: from functools import reduce / sum = reduce(lambda a, b: a + b, lt) /
 
 =================================
+NumPY and Pandas:
 
-Array (module in python): same data type, 1-D
-NumPy (3rd party package): multi-D / matrix operations/ create arrays ways
-
-=================================
-
-
-
-======================================
-
+>>  Array: same data type (1-D) - Simple, basic collections (like lists) for small collections.
+    NumPy: N-D - numerical calculations for large datasets.
+    Pandas: Data analysis library for handling and manipulating structured data, great for dataframes (tables), series.
 
 >> Data scientist or data analytics - Answer the quetions on large data points
-Excel - Can not handle large sets of data
-Python - Need to write code to find answers
-Pandas dataframe: its python modules - makes data scientist life easier and effective
 
->> mathematical based python libraries - numpy (numerical data) & pandas (handles wide variety of data sources)
+>> why Python Pandas
+    Excel - Can not handle large sets of data
+    Python - Need to write code to find answers
+    Pandas dataframe: its python modules - makes data scientist life easier and effective
 
 >> Series is very similar to a NumPy array. 
-    What differentiates the NumPy array from a Series, is that a Series can have axis labels, meaning it can be indexed by a label. 
-    It also doesn't need to hold numeric data, it can hold any arbitrary Python Object.import numpy as np
->> Dataframe : combination of series.
+    Series can have axis labels. 
+    it can hold any arbitrary Python Object.
+    Dataframe : combination of series.
 
->> data mungling/ data wranglinr : Process of cleaning data
-
----------
 
 Create dataframe:
 labels = ['a','b','c']
