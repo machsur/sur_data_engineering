@@ -19,6 +19,11 @@ Python:
     pip install -r requirements.txt           ---- navigate to file loc and install into venv
 
 >> logging: avoid print - avoid garbage values in prod - helps in debugging, disable/enable logging easily
+    DEBUG (10): Example: Variable values during execution.
+    INFO (20): Example: Confirmation that a function has started or completed.
+    WARNING (30):Example: Deprecated features, nearing disk space limit.
+    ERROR (40):Example: Failed database connections.
+    CRITICAL (50):Example: System crashes or unavailable resources.
  
 >> unique identifiers (UUIDs)
 
