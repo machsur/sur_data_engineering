@@ -18,6 +18,8 @@ Python:
     pip freeze > requirements.txt             ---- download req file from venv
     pip install -r requirements.txt           ---- navigate to file loc and install into venv
 
+>> #!/usr/bin/python3.5 : This is a special sequence that tells the operating system to execute the file using the specified program or interpreter.
+
 >> logging: avoid print - avoid garbage values in prod - helps in debugging, disable/enable logging easily
     DEBUG (10): Example: Variable values during execution.
     INFO (20): Example: Confirmation that a function has started or completed.
