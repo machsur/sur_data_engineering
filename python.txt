@@ -39,6 +39,12 @@ Python:
     JSON files: Lightweight and hierarchical, ideal for structured data.
     YAML files: Human-readable and popular for complex configurations.
     Environment files (.env): For environment variables, often used in web development for sensitive settings.
+    
+        Format	    Library	                                            Command
+        .ini/.cfg	configparser	                                    import configparser
+        JSON	    Built-in json	                                    import json
+        YAML	    PyYAML (install: pip install pyyaml)	            import yaml
+        .env	    python-dotenv (install: pip install python-dotenv)	from dotenv import load_dotenv
 
 >> Modules: re-use, no impact on other modules
     datetime module: used to work with dates
