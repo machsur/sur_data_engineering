@@ -32,17 +32,19 @@ Python:
 >> try: / except ZeroDivisionError as e: # Handling specific exception (division by zero) /  except Exception as e:
     # Handling any other exceptions / else: # Code to execute if no exception occurred / finally:
 
+>> with open('sur.log', 'r') as file:
+
 >> Types of Config Files 
-.ini or .cfg or .properties files - often used with configparser.
-JSON files: Lightweight and hierarchical, ideal for structured data.
-YAML files: Human-readable and popular for complex configurations.
-Environment files (.env): For environment variables, often used in web development for sensitive settings.
+    .ini or .cfg or .properties files - often used with configparser.
+    JSON files: Lightweight and hierarchical, ideal for structured data.
+    YAML files: Human-readable and popular for complex configurations.
+    Environment files (.env): For environment variables, often used in web development for sensitive settings.
 
 >> Modules: re-use, no impact on other modules
-datetime module: used to work with dates
-math module: to utilize built-in functions
-user input: we can ask user to provide input
-string format method
+    datetime module: used to work with dates
+    math module: to utilize built-in functions
+    user input: we can ask user to provide input
+    string format method
 
 >> Handlling errors: 
     compile time error: Syntatical - missing :
