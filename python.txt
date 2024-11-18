@@ -125,9 +125,10 @@ df[(df['W']>0) &| (df['Y'] > 1)]
 df.groupby('Company').mean()
 df.groupby('Company').describe().transpose()
 
-pd.concat([df1,df2,df3],axis=1)
-pd.merge(left, right, how='outer/inner/left/right', on=['key1', 'key2']) - based on keys
-left.join(right, how='outer') - based on index
+>>
+    pd.concat([df1,df2,df3],axis=1)
+    pd.merge(left, right, how='outer/inner/left/right', on=['key1', 'key2']) - based on keys
+    left.join(right, how='outer') - combining the columns of two potentially differently-indexed DataFrames into a single result DataFrame.
 
 df['col2'].unique()
 df['col2'].nunique()
