@@ -122,29 +122,22 @@ df.drop('new',axis=1,inplace=True)
 df[df['W']>0][['Y','X']]
 df[(df['W']>0) &| (df['Y'] > 1)]
 
-df.groupby('Company').mean()
-df.groupby('Company').describe().transpose()
+>>  df.groupby('Company')['column'].mean()/std()/min()/max()/count()
+    df.groupby('Company').describe().transpose()
 
->>
-    pd.concat([df1,df2,df3],axis=1)
+>> concat, merge, join
+    pd.concat([df1,df2,df3], axis=1) 
     pd.merge(left, right, how='outer/inner/left/right', on=['key1', 'key2']) - based on keys
-    left.join(right, how='outer') - combining the columns of two potentially differently-indexed DataFrames into a single result DataFrame.
+    left.join(right, how='outer') - combining the columns of two potentially differently-indexed DataFrames 
 
-df['col2'].unique()
-df['col2'].nunique()
-df['col2'].value_counts()
-df['col1'].apply(lambda x: x * 2 (or) times2 function)
-df['col3'].apply(len)
-del df['col1']
-df.columns
-df.index
-df.sort_values(by='col2') #inplace=False by default
-df.isnull()
-df.pivot_table(values='D',index=['A', 'B'],columns=['C'])
+>> df['col2'].unique() / df['col2'].nunique() / df['col2'].value_counts()
+    df['col1'].apply(lambda x: x * 2 (or) times2 function)
+    df['col3'].apply(len) / del df['col1'] / df.columns / df.index
+    df.sort_values(by='col2') #inplace=False by default
+    df.isnull()
+    df.pivot_table(values='D',index=['A', 'B'],columns=['C'])
 
---------------
-
-Spiting:
+>> Spiting:
 
 df[['fn', 'ln']] = df['EmployeeName'].str.split(' ', expand = True)
 or
