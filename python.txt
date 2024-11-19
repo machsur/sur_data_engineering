@@ -113,7 +113,6 @@ df = pd.DataFrame(randn(5,4),index='A B C D E'.split(),columns='W X Y Z'.split()
 df.head(2)
 df.set_index("Id", inplace=True)
 df = df.reindex(new_index)
-df.drop_duplicates(subset=["EmployeeName"], inplace=True)
 
 df['W'] / df[['W', 'Y']] / df['new'] = df['W'] + df['Y']
 df.loc['C'] / df.loc[['C', 'D']] / df.loc['C', 'X'] / df.loc[['C', 'E'], ['X', 'Z']]
@@ -131,10 +130,10 @@ df[(df['W']>0) &| (df['Y'] > 1)]
     left.join(right, how='outer') - combining the columns of two potentially differently-indexed DataFrames 
 
 >> df['col2'].unique() / df['col2'].nunique() / df['col2'].value_counts()
-    df['col1'].apply(lambda x: x * 2 (or) times2 function)
-    df['col3'].apply(len) / del df['col1'] / df.columns / df.index
-    df.sort_values(by='col2') #inplace=False by default
-    df.isnull()
+    df.drop_duplicates(subset='Name') / df.drop_duplicates().reset_index(drop=True) / df.duplicated().sum() / 
+    df['col1'].apply(lambda x: x * 2 (or) times2 function) /  df['col3'].apply(len) /
+    del df['col1'] / df.columns / df.index
+    df.sort_values(by='col2') #inplace=False by default / df.isnull()
     df.pivot_table(values='D',index=['A', 'B'],columns=['C'])
 
 >> Spiting:
