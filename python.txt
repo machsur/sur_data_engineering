@@ -81,7 +81,7 @@ Python:
 NumPY and Pandas:
 
 >>  Array: same data type (1-D) - Simple, basic collections (like lists) for small collections.
-    NumPy: N-D - numerical calculations for large datasets.
+    NumPy: N-D - leniar algebra library - numerical calculations for large datasets.
     Pandas: Data analysis library for handling and manipulating structured data, great for dataframes (tables), series.
 
 >> Data scientist or data analytics - Answer the quetions on large data points
@@ -125,7 +125,7 @@ df[(df['W']>0) &| (df['Y'] > 1)]
 >>  df.groupby('Company')['column'].mean()/std()/min()/max()/count()
     df.groupby('Company').describe().transpose()
 
->> concat, merge, join
+>> combining data frames: concat, merge, join
     pd.concat([df1,df2,df3], axis=1) 
     pd.merge(left, right, how='outer/inner/left/right', on=['key1', 'key2']) - based on keys
     left.join(right, how='outer') - combining the columns of two potentially differently-indexed DataFrames 
