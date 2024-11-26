@@ -77,6 +77,10 @@ Python:
     map: list(map(lambda a: a * 2, lt))
     reduce: from functools import reduce / sum = reduce(lambda a, b: a + b, lt) /
 
+>> memory shared tasklist of each programe, python programme is one of task list - within this portion memory used.
+    Threading: by default, the python programee executes on single threading
+    Multi threading: no control in execution, more memory and faster execution - NO (program execute on one thread and             other threads are pause)
+
 =================================
 NumPY and Pandas:
 
