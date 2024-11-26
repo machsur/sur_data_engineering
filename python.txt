@@ -126,6 +126,11 @@ df.drop('new',axis=1,inplace=True)
 df[df['W']>0][['Y','X']]
 df[(df['W']>0) &| (df['Y'] > 1)]
 
+>>  Cleaning Missing values:
+    df.dropna(axis=0, how='any', thresh=2, subset=['col1', 'col2'], inplace=False)
+    df.fillna(value=2 or df['col1'].mean() or {'col1': 2, 'col2': 4}, method='ffill', axis=0, inplace=False, limit=2)
+    df.interpolate(method='linear', axis=0, limit=None, inplace=False, limit_direction=None)
+
 >>  df.groupby('Company')['column'].mean()/std()/min()/max()/count()
     df.groupby('Company').describe().transpose()
 
@@ -136,6 +141,7 @@ df[(df['W']>0) &| (df['Y'] > 1)]
 
 >> df['col2'].unique() / df['col2'].nunique() / df['col2'].value_counts()
     df.drop_duplicates(subset='Name') / df.drop_duplicates().reset_index(drop=True) / df.duplicated().sum() / 
+    newdf = df[(df['col1']>2) & (df['col2']==444)]
     df['col1'].apply(lambda x: x * 2 (or) times2 function) /  df['col3'].apply(len) /
     del df['col1'] / df.columns / df.index
     df.sort_values(by='col2') #inplace=False by default / df.isnull()
@@ -152,11 +158,7 @@ df.head(2)
 
 ---------------
 
-Cleaning Missing values:
 
-df.dropna(axis=0, how='any', thresh=2, subset=['col1', 'col2'], inplace=False)
-df.fillna(value=2 or df['col1'].mean() or {'col1': 2, 'col2': 4}, method='ffill', axis=0, inplace=False, limit=2)
-df.interpolate(method='linear', axis=0, limit=None, inplace=False, limit_direction=None)
 
 --------------
 data type casting:
