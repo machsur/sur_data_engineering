@@ -140,11 +140,11 @@ df[(df['W']>0) &| (df['Y'] > 1)]
     left.join(right, how='outer') - combining the columns of two potentially differently-indexed DataFrames 
 
 >> df['col2'].unique() / df['col2'].nunique() / df['col2'].value_counts()
-    df.drop_duplicates(subset='Name') / df.drop_duplicates().reset_index(drop=True) / df.duplicated().sum() / 
+    df.drop_duplicates(subset='Name') / df.drop_duplicates(subset=['col2'], keep='last').reset_index(drop=True) / df.duplicated().sum() / 
     newdf = df[(df['col1']>2) & (df['col2']==444)]
     df['col1'].apply(lambda x: x * 2 (or) times2 function) /  df['col3'].apply(len) /
-    del df['col1'] / df.columns / df.index
-    df.sort_values(by='col2') #inplace=False by default / df.isnull()
+    del df['col1'] / df.columns / df.index /  df.isnull() /
+    df.sort_values(by='col2') #inplace=False by default /
     df.pivot_table(values='D',index=['A', 'B'],columns=['C'])
 
 >> Spiting:
