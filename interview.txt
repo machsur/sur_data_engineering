@@ -1,0 +1,1 @@
+>> developed data pipelines using custom juniper pipelines to migrate data from on-prim sources (NAS, MSSQL, Oracle) to GCP targets(GCS, BigQuery).
