@@ -4,6 +4,8 @@
 >> We have created views, auth view, procedures in bigquery.
 >> We have created bigquery sinks to export logs into bigquery for cost analysis and developed reports on tope of it.
 >> We have implemented cost-optimization techiniques - GCS, BigQuery, VM instances.
+>> we have experienced with IAM, DLP, logging, monitoring services.
+>> Also, I have knowledge on Data Fusion, Cloud Functions, Dataproc services.
 
 
 
