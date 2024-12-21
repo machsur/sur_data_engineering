@@ -2,14 +2,37 @@
 serverless vs fully-managed vs hybrid:
 >> "pay as you use". No traffic, you pay nothing. 
    Ex: Cloud Run, Cloud Function, AppEngine standard, firestore, datastore, dataproc, dataflow, ai-platform 
->> managed but not serverless. You always have a minimal number of VM/node up and you pay for these, traffic or not.           However, you have nothing to worry about: patching, updates, networking, backups, HA, redundancy(...) are managed for       you.  
+>> managed but not serverless. 
+   You always have a minimal number of VM/node up and you pay for these, traffic or not.           
+   However, you have nothing to worry about: patching, updates, networking, backups, HA, redundancy(...) are managed for       you.  
    Ex:like Cloud SQL, BigTable or Spanner, AppEngine flex
 >> hybrid product: 
    you pay as you use the processing (BigQuery) or the traffic (Cloud Storage), 
    storage is always billed if you have no traffic.
    ex: Cloud Storage or BigQuery:
 
-hi===================
+===================
+>> strong consistency provides an up-to-date view of the database at all times, ensuring correctness in financial trans.
+>> Patching in Virtual Machines refers to the process of applying updates or fixes to the software running inside a VM. 
+>> Backup: Creating a copy of the database (or VM) at a specific point in time, which can be restored in case of data loss,    corruption, or disaster.
+   eX: 
+   Store this file in a safe location (e.g., cloud storage like AWS S3 or Google Cloud Storage).
+   In case of failure, restore the database using the backup:
+   CRON JOBS TO SCHEDULE
+Backup: Think of it as saving your work in a document periodically. If something goes wrong, you can reopen the saved file.
+>> Redundancy: Ensuring there are multiple copies or replicas of the database available at all times to handle failures         without downtime.
+   eX:
+   Load Balancer with Failover:
+      Use a load balancer to distribute read requests to the replica VM.
+      In case the primary VM fails, the replica becomes the new primary.
+Redundancy: It’s like having two identical copies of your document open on two computers. If one crashes, the other is ready to take over.
+>> synchronously (real-time) or asynchronously (small delayed manner).
+
+
+
+
+
+========================
 Data fusion / DataProc / Composer / Databricks / cloud sql (postgresql) /
 
 =====================
