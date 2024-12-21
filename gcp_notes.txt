@@ -1,7 +1,21 @@
+=======================
+serverless vs fully-managed vs hybrid:
+>> "pay as you use". No traffic, you pay nothing. 
+   Ex: Cloud Run, Cloud Function, AppEngine standard, firestore, datastore, dataproc, dataflow, ai-platform 
+>> managed but not serverless. You always have a minimal number of VM/node up and you pay for these, traffic or not.           However, you have nothing to worry about: patching, updates, networking, backups, HA, redundancy(...) are managed for       you.  
+   Ex:like Cloud SQL, BigTable or Spanner, AppEngine flex
+>> hybrid product: 
+   you pay as you use the processing (BigQuery) or the traffic (Cloud Storage), 
+   storage is always billed if you have no traffic.
+   ex: Cloud Storage or BigQuery:
+
 hi===================
 Data fusion / DataProc / Composer / Databricks / cloud sql (postgresql) /
 
 =====================
+Databses:
+GCP:
+relational db - to store srtucutred data - sql to intract - for transactional queries such as finacial and retail
 
 Data Fusion:
 >> Fully managed , cloud native solution to quickly building data pipelines
