@@ -15,4 +15,10 @@
   type of shell: bash, etc.
   why bash shell: feature-rich, fast, very common
   shell script: file consists series of commands for shell - allow automation, save time, more productive
+
+>> Bash Script structure:
+    shebang line - tell to shell what type of script running like bash, py, etc
+    commands
+    exit statement - 0 successful; 1-255 unsuccessful
+    chmod + to give executable permissions for script
  
