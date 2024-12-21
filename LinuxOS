@@ -21,4 +21,8 @@
     commands
     exit statement - 0 successful; 1-255 unsuccessful
     chmod + to give executable permissions for script
+
+    script more professional: comments (#) / Author: / Date Created / Date Modified / Description / Usage
+
+>> Security: ls -l / chmod 744 script_name 
  
