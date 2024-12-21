@@ -28,18 +28,12 @@ Backup: Think of it as saving your work in a document periodically. If something
 Redundancy: It’s like having two identical copies of your document open on two computers. If one crashes, the other is ready to take over.
 >> synchronously (real-time) or asynchronously (small delayed manner).
 
-
-
-
-
-========================
-Data fusion / DataProc / Composer / Databricks / cloud sql (postgresql) /
-
 =====================
 Databses:
 GCP:
 relational db - to store srtucutred data - sql to intract - for transactional queries such as finacial and retail
 
+=====================
 Data Fusion:
 >> Fully managed , cloud native solution to quickly building data pipelines
 >> Code free, Drag n drop tool
