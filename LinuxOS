@@ -10,3 +10,9 @@
   deamons - run in background 
 
 >> deamon files ends with "d" / data files / configuration files
+
+>> user --> give commands on terminal --> shell(program/CLI) interprets and executes/passes them on --> OS
+  type of shell: bash, etc.
+  why bash shell: feature-rich, fast, very common
+  shell script: file consists series of commands for shell - allow automation, save time, more productive
+ 
