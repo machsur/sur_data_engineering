@@ -25,4 +25,12 @@
     script more professional: comments (#) / Author: / Date Created / Date Modified / Description / Usage
 
 >> Security: ls -l / chmod 744 script_name 
+
+>> Parameters
+  -- user defined variable (lower case):
+      name="Suresh"
+      echo "Hi ${name}, how are you"
+`-- shell/environment  (upper case) :
+
+
  
