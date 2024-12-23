@@ -31,6 +31,8 @@
       name="Suresh"
       echo "Hi ${name}, how are you"
 `-- shell/environment  (upper case) :
+      $ echo "$HOME" (or) $ echo "${HOME}"
+      echo "${HOME,,}" / echo "${HOME^^}" / echo "${#HOME}" / echo ${numbers: -3:2} / echo ${numbers:2:4} - param, offset, length / 
 
 
  
