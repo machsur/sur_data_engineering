@@ -33,6 +33,11 @@
 `-- shell/environment  (upper case) :
       $ echo "$HOME" (or) $ echo "${HOME}"
       echo "${HOME,,}" / echo "${HOME^^}" / echo "${#HOME}" / echo ${numbers: -3:2} / echo ${numbers:2:4} - param, offset, length / 
+  -- command substution
+    nested_output=$(echo "the date is: $(date)")
+    echo "the output is ${nested_output}"
+
+
 
 
  
