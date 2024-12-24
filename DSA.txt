@@ -62,7 +62,28 @@ def quick_sort_helper(list, left, right):
 def quick_sort(list):
     return quick_sort_helper(list, 0, len(list)-1)
 --------------------
+1.
+sum of three elements in a array should close to the target value
 
+class Solution:
+    def sumT(self, list: list[int], target: int) -> int:
+        list.sort()
+        res = sum(list[:3])
+        for i in range(len(list)-2):
+            s = i + 1
+            e = len(list)-1
+            while s < e:
+                sumnum = list[i] + list[s] + list[e]
+                if abs(sumnum-target) < abs(res-target):
+                    res = sumnum
+                if sumnum < target:
+                    s+=1
+                else:
+                    e-=1
+        return res
 
+list = [-1,  -4, 2, 1, 3]
+obj1 = Solution()
+print(obj1.sumT(list, 3))
 
 ===========================
