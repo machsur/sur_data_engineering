@@ -243,7 +243,8 @@ ways to authenticate GCP:
 >> Application Default Credentials (ADC) in GCP
    Local: Use gcloud auth application-default login for local development.
    Cloud: Deploy the code to GCP, where ADC will use the default service account.
-   gcloud auth application-default login    (Quota project "sur-cloud-fun" was added to ADC which can be used by Google client libraries for billing and quota.)
+   gcloud auth application-default set-quota-project powerful-layout-445408-p5 
+   gcloud auth application-default login    (Quota project "powerful-layout-445408-p5" was added to ADC which can be used by Google client libraries for billing and quota.)
    gcloud auth application-default print-access-token (to verofy credintial)
 >> Service Account Key file: used for on-prim app, other cloud, CI/CD pipelines
    export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service-account-key.json"
