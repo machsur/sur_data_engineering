@@ -36,6 +36,13 @@
   -- command substution
     nested_output=$(echo "the date is: $(date)")
     echo "the output is ${nested_output}"
+  -- Arithemataic expansion
+    $ echo $(( 4 / 2 )) - to perform cal on whole numbers - precedence () *
+    $ echo "scale=3; 10/3" | bc  - to deal with decimal numbers - bc command - install bc package - sudo apt install bc
+
+
+
+>> -- tar -cvf [backup_filename] [directory/files]
 
 
 
