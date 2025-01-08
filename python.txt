@@ -78,8 +78,11 @@ Python:
     reduce: from functools import reduce / sum = reduce(lambda a, b: a + b, lt) /
 
 >> create python packages
-    whell (create & install .whl files), setuptools (build and package projects), twine (upload packages to pypi)
-    files, __init__.py, setup.py
+    -- package python code as .whl file
+    -- setuptools (build and package projects), whell (create & install .whl files), twine (upload packages to pypi)
+    -- create code, __init__.py, setup.py 
+        python setup.py bdist_wheel - created wheel file
+        install whl package
 
 >> memory shared tasklist of each programe, python programme is one of task list - within this portion memory used.
     Threading: by default, the python programee executes on single threading
