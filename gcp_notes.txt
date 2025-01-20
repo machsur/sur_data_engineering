@@ -240,18 +240,19 @@ IOT (publisher) --> pubsub (stream pipeline) --> dataflow (etl / subscriber) -->
 
 ==================
 ways to authenticate GCP:
->> Application Default Credentials (ADC) in GCP
+>> Application Default Credentials (ADC) in GCP: Default authentication in GCP-managed environments
    Local: Use gcloud auth application-default login for local development.
    Cloud: Deploy the code to GCP, where ADC will use the default service account.
    gcloud auth application-default set-quota-project powerful-layout-445408-p5 
    gcloud auth application-default login    (Quota project "powerful-layout-445408-p5" was added to ADC which can be used by Google client libraries for billing and quota.)
    gcloud auth application-default print-access-token (to verofy credintial)
->> Service Account Key file: used for on-prim app, other cloud, CI/CD pipelines
-   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service-account-key.json"
-   os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/path/to/service-account-key.json"
->> OAuth 2.0: For user-facing applications where users need to log in.
->> gcloud CLI Credentials: For quick testing or personal projects.
->> Google Cloud Environment: When running directly on GCP services.
+>> Service Account Key file: Local scripts accessing GCP resources.  / used for on-prim app, other cloud, CI/CD pipelines
+   in Bash:   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your-service-account-key.json"
+   In Python: os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/path/to/service-account-key.json"
+>> OAuth 2.0: For web apps requiring user interaction / You are building a web app that allows users to access their Google Drive.
+>> Using User Credentials: Easy for local development
+   gcloud auth login / gcloud auth application-default login
+>> Workload Identity Federation: Your app is running on AWS Lambda, and you need it to access GCP Storage.
 
 =================
 
