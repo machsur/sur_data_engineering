@@ -106,7 +106,9 @@ end for;
    ntile(n) – n groups 
    NTILE(4) OVER (PARTITION BY column1 ORDER BY column2) AS quartile
    cum_dist() / percent_rank() 
-   Rows consider current row even if duplicates / range considers bottom row of duplicates.
+   CUME_DIST= Number of rows with values less than or equal to the current row / Total number of rows
+​   PERCENT_RANK= Rank of current row−1 / Total rows−1
+​   Rows consider current row even if duplicates / range considers bottom row of duplicates.
 
 >> Regular expressions: used for pattern matching and string manipulation
    REGEXP_CONTAINS(column_name, r'pattern')
