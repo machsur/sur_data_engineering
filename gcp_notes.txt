@@ -101,36 +101,28 @@ gcloud dataproc clusters create dataprocclu1 --enable-component-gateway --region
 ==================
 
 ===========================
->> 
-Apache airflow operators guide: https://airflow.apache.org/docs/apache-airflow/stable/howto/operator/index.html
-
--- data pipeline: consists of several tasks or actions
--- airflow: workflows - made of dags - automation - scheduling
--- Cloud composer: full managed apache airflow version in GCP for workflow orchestration.
+>> Cloud Composer: Apache airflow version in GCP for workflow (series of task) orchestration
+   A DAG (Directed Acyclic Graph) in Apache Airflow - is like workflow that tells Airflow what tasks to run, when to run them, and in what order.
+   Apache airflow operators guide: https://airflow.apache.org/docs/apache-airflow/stable/howto/operator/index.html
 
 -- create composer environment: runs on GKE
-    enable api
-    location
-    image version (cloud composer and airflow)
-    Cloud Composer v2 API Service Agent Extension role to the service account
-    enivronment (schedular, triggerrer, web server, worker)
-    network
+    enable api, env_name, location, image version (cloud composer and airflow), Cloud Composer v2 API Service Agent Extension role to the service account
+    enivronment (schedular, triggerrer, web server, worker), network, bucket, cmek, ...
 
--- setup local vs code env and install required dependcies
+-- Architexture of composer: Dags dir in gcs - each dag associated schedule with it - based on schedule, scheduler will trigger the dags - 
+   the Executor within scheduler, runs dag on worker nodes, metadata db stores info, Web server (for airflow UI)
+
+-- setup local vs code env and install required dependcies (pip install apache-airflow==2.3.3, pip install apache-airflow-providers-google)
     use gcloud commands to intract with cloud composer env
     deploy airflow dag into composer env by placing into gcs dags folder
 
+-- Advantage of cloud composer:
+   | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
+   | py app                             |       dataproc workflow                                            |
+   |              cloud composer                                                                              |
 
--- Architexture of composer: Web server (UI) - Dags dir in gcs - each dag associated schedule with it -    
-    based on schedule, the Executor/scheduler will trigger the dags - runs on worker 
-    - metadata db stores executor, web server info
-
--- dag constructor/class - with in dag id, default args, keyword args, tasks are created by instntiating operators - it helps to create dag object
+>> dag constructor/class - with in dag id, default args, keyword args, tasks are created by instntiating operators - it helps to create dag object
     note: multiple dags in one py script / one dag can spans multiple py scripts
-
-| DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
-| py app                             |       dataproc workflow                                            |
-|              cloud composer                                                                              |
 
 >> templating in Airflow : use templating to inject dynamic values (like dates and parameters) into your bash commands in Airflow.
   
