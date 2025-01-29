@@ -123,32 +123,28 @@ gcloud dataproc clusters create dataprocclu1 --enable-component-gateway --region
 
 >> dag constructor/class - with in dag id, default args, keyword args, tasks are created by instntiating operators - it helps to create dag object
     note: multiple dags in one py script / one dag can spans multiple py scripts
+    Dags, task, operator (execute task at its scheduled time), sensor(pause task until specified condition mets ex: file arrives, record update)
 
->> templating in Airflow : use templating to inject dynamic values (like dates and parameters) into your bash commands in Airflow.
-  
->> use variables
-   
 >> Calling bash/py script in different folder / machine by using connections
 
->> XCom (Cross-communication) - for passing small pieces of data between tasks - making workflows more dynamic and flexible
-
->> branching -  allows you to control the execution path of a workflow based on certain conditions - BranchPythonOperator 
-
->> Subdag : consists group of parellel tasks.
-
 >> 
-SLA (Service Level Agreement) - 
-   - is a time-based contract specifying how long a task or DAG should take to run. 
-   - If a task exceeds this time limit, Airflow will trigger an alert to notify that the SLA has been missed.
+   templating in Airflow : use templating to inject dynamic values (like dates and parameters) into your bash commands in Airflow.
+   use variables
+   XCom (Cross-communication) - for passing small pieces of data between tasks - making workflows more dynamic and flexible
+   branching -  allows you to control the execution path of a workflow based on certain conditions - BranchPythonOperator 
+   Subdag : consists group of parellel tasks.
+   SLA (Service Level Agreement) - 
+      - is a time-based contract specifying how long a task or DAG should take to run. 
+      - If a task exceeds this time limit, Airflow will trigger an alert to notify that the SLA has been missed.
 
-Apache Airflow with Kubernetes allows for a scalable and flexible infrastructure, integrating the dynamic orchestration power of Airflow with the container management capabilities of Kubernetes. This integration provides benefits like dynamic resource allocation, auto-scaling, and isolated task execution in containers. There are two primary ways Kubernetes can be integrated with Airflow:
+>>
+   Apache Airflow with Kubernetes allows for a scalable and flexible infrastructure, integrating the dynamic orchestration power of Airflow with the container management       capabilities of Kubernetes. This integration provides benefits like dynamic resource allocation, auto-scaling, and isolated task execution in containers. There are two       primary ways Kubernetes can be integrated with Airflow:
+   --   Kubernetes Executor: Airflow tasks are dynamically launched in Kubernetes pods.
+   --   KubernetesPodOperator: Individual tasks are run inside Kubernetes pods, but Airflow is otherwise deployed with a different executor.
 
-   Kubernetes Executor: Airflow tasks are dynamically launched in Kubernetes pods.
-   KubernetesPodOperator: Individual tasks are run inside Kubernetes pods, but Airflow is otherwise deployed with a             different executor.
-
-Sensors continuously check (or "poke") to see if a condition has been met. 
-   Once the condition is satisfied, the sensor task succeeds, allowing the next task in the workflow to execute. 
-   If the condition is not met within the defined timeout period, the sensor fails.
+>> Sensors continuously check (or "poke") to see if a condition has been met. 
+      Once the condition is satisfied, the sensor task succeeds, allowing the next task in the workflow to execute. 
+      If the condition is not met within the defined timeout period, the sensor fails.
 
    Types of Sensors
    FileSensor: Waits for a file to appear in a directory.
