@@ -124,11 +124,10 @@ gcloud dataproc clusters create dataprocclu1 --enable-component-gateway --region
 >> dag constructor/class - with in dag id, default args, keyword args, tasks are created by instntiating operators - it helps to create dag object
     note: multiple dags in one py script / one dag can spans multiple py scripts
     Dags, task, operator (execute task at its scheduled time), sensor(pause task until specified condition mets ex: file arrives, record update)
+    Calling bash/py script in different folder / machine by using connections
 
->> Calling bash/py script in different folder / machine by using connections
-
->> 
-   templating in Airflow : use templating to inject dynamic values (like dates and parameters) into your bash commands in Airflow.
+>> templating in Airflow : use templating to inject dynamic values (like macros and parameters) into your bash commands in Airflow.
+      https://airflow.apache.org/docs/apache-airflow/1.10.13/macros-ref.html#
    
 >> variables - key value pairs - stroes airflow metadata db - adv: avoid hardcoding, reusebility, flexibility, efficiency
    -- my_var = Variable.get("my_variable")
