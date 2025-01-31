@@ -135,7 +135,8 @@ gcloud dataproc clusters create dataprocclu1 --enable-component-gateway --region
    -- Key: config & Value: {"retry_count": 3, "email": "admin@example.com"} / config = json.loads(Variable.get("config")) /       print(config["retry_count"])  # Output: 3
    -- If you use Jinja in an Airflow task, you can access variables like {{ var.value.var_key }}
 
-
+>> why connection: CC connects with external machines usinng ssh and run the scripts.
+      in gcp - create custom connection for bq,gcs in cc - composer sa, download json key, place it in gcs, use gcs path - assign roles to sa
 
    XCom (Cross-communication) - for passing small pieces of data between tasks - making workflows more dynamic and flexible
    branching -  allows you to control the execution path of a workflow based on certain conditions - BranchPythonOperator 
