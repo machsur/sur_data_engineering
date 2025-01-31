@@ -60,16 +60,16 @@ deploy pipeline - run it again
 Dataproc: big data processing
 >> enable API, create dataproc cluster on vm/gke.
    -- cluster type: single node 1m0w, standard for dev team 1m Nw, high availability for prod 3m Nw
-   
->> validate ssh connectivity to master node vm of dataproc cluster: gcloud ssh cammand helps to copy key on vm and able to       ssh vm (external ip is emphemeral)
-   >> establish an SSH connection to a remote server VM instance:
-      gcloud compute ssh --zone "us-central1-a" "dataprocclu1-m" --project "possible-dream-433814-b4"
-      or
-      ssh -i C:\Users\surmacha\.ssh\google_compute_engine surmacha@35.184.234.232
+   -- allocate static ip to it >> vm instance - external ip - view details - n/w page ip addresses - reseve to static 
 
->> allocate static ip to it >> vm instance - external ip - view details - n/w page ip addresses - reseve to static 
+>> validate ssh connectivity to master node vm of dataproc cluster: gcloud ssh cammand helps to copy key on vm and able to ssh vm (gcloud compute ssh --zone "us-central1-a"    "dataprocclu1-m" --project "possible-dream-433814-b4")
+   -- establish an SSH connection to a remote server VM instance: ssh -i C:\Users\surmacha\.ssh\google_compute_engine surmacha@35.184.234.232
+   -- setup vs code remote window for dataproc vm of master node - create below config file in .ssh - select remote window button on vs code - host in search 
+   Host Sur-DP-Cluster-VSC
+    HostName 35.238.68.160
+    IdentityFile C:\Users\surmacha\.ssh\google_compute_engine
+    User surmacha
 
->> setup vs code remote window for dataproc vm of master node.
 5. copy local files/ gcs blobs into hdfs on dataproc.
 6. validate pyspark / spark-shell (spark scala) / spark-sql CLI in dataproc cluster.
 7. submit dataproc job using spark sql in UI
