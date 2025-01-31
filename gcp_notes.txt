@@ -100,6 +100,10 @@ Dataproc: big data processing
                4. instantiate workflow template (gcloud dataproc workflow-templates instantiate ----)
    >> stop / delete cluster using ui, gcloud
 
+-----------------
+commands:
+> pyspark
+
 ==================
 
 ===========================
