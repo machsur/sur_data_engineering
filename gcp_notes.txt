@@ -69,8 +69,15 @@ Dataproc: big data processing
     HostName 35.238.68.160
     IdentityFile C:\Users\surmacha\.ssh\google_compute_engine
     User surmacha
+   -- copy material to the VM master node using git clone command.
 
-5. copy local files/ gcs blobs into hdfs on dataproc.
+>> copy local files in master node of vm to hdfs in dataproc/ gcs blobs into hdfs on dataproc.
+   hdfs dfs -ls /  ----    hdfs dfs -ls -R /public/retail_db
+   hdfs dfs -mkdir /public
+   hdfs dfs -put data/retail_db /public (local to hdfs -put)
+   hdfs dfs -cp gs://surretail/retail_db /public/retail_db (hdfs to hdfs, gcs to hdfs, hdfs to gcs, gcs to gcs -cp)
+   hdfs dfs -rm -R -skipTrash /public/retail_db
+
 6. validate pyspark / spark-shell (spark scala) / spark-sql CLI in dataproc cluster.
 7. submit dataproc job using spark sql in UI
 8. create dataproc workflow using jobs
