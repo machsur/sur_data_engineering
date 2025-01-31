@@ -58,23 +58,18 @@ deploy pipeline - run it again
    Google Cloud Dataproc is a managed service that runs Apache Spark (and other frameworks), making it easier to manage,       scale, and integrate with Google Cloud services.
 
 Dataproc: big data processing
-1. enable api 
-2. create dataproc cluster on vm/gke.
-   cluster type: single node 1m0w, standard for dev team 1m Nw, high availability for prod 3m Nw
-   configure nodes
-   network
-
-gcloud dataproc clusters create dataprocclu1 --enable-component-gateway --region us-central1 --subnet default --no-address --zone us-central1-a --single-node --master-machine-type n1-standard-4 --master-boot-disk-size 500 --image-version 2.2-debian12 --optional-components JUPYTER --scopes 'https://www.googleapis.com/auth/cloud-platform' --project possible-dream-433814-b4
-
-3. validate ssh connectivity to master node vm of dataproc cluster: gcloud ssh cammand helps to copy key on vm and able to       ssh vm (external ip is emphemeral)
+>> enable API, create dataproc cluster on vm/gke.
+   -- cluster type: single node 1m0w, standard for dev team 1m Nw, high availability for prod 3m Nw
+   
+>> validate ssh connectivity to master node vm of dataproc cluster: gcloud ssh cammand helps to copy key on vm and able to       ssh vm (external ip is emphemeral)
    >> establish an SSH connection to a remote server VM instance:
       gcloud compute ssh --zone "us-central1-a" "dataprocclu1-m" --project "possible-dream-433814-b4"
       or
       ssh -i C:\Users\surmacha\.ssh\google_compute_engine surmacha@35.184.234.232
 
-3.1. allocate static ip to it.
+>> allocate static ip to it >> vm instance - external ip - view details - n/w page ip addresses - reseve to static 
 
-4. setup vs code remote window for dataproc vm of master node.
+>> setup vs code remote window for dataproc vm of master node.
 5. copy local files/ gcs blobs into hdfs on dataproc.
 6. validate pyspark / spark-shell (spark scala) / spark-sql CLI in dataproc cluster.
 7. submit dataproc job using spark sql in UI
