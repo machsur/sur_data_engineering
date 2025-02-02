@@ -113,9 +113,15 @@ Dataproc: big data processing
    -- df_selected = df.select("name", "age")
    -- df_with_new_column = df.withColumn("age_plus_5", col("age") + 5)
    -- df_filtered.show() / df_filtered.collect() - Collect Data to Python list / df_filtered.count()
+   -- df_renamed = df.withColumnRenamed("age", "years_old")
+   -- df_dropped = df.drop("age")
+   -- df_sorted = df.orderBy(df.age.desc())
+   -- df_unique = df_dup.dropDuplicates(["name", "age"])
+   -- df_grouped = df.groupBy("age").count()
+   -- df_joined = df1.join(df2, "id", "inner")  # Inner Join
+   -- df_casted = df.withColumn("age", col("age").cast("string")) / df_casted.printSchema()
 
-
-
+Provide more advanced transformations (like explode(), pivot(), window functions)?
    
 ==================
 
