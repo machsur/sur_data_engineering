@@ -101,10 +101,21 @@ Dataproc: big data processing
    >> stop / delete cluster using ui, gcloud
 
 -----------------
-pysparl commands:
->> order_items = spark.read.csv('/public/retail_db/order_items', schema='''order_item_id INT, order_item_order_id INT, order_item_product_id INT, 
-            order_item_quantity INT, order_item_subtotal FLOAT, order_item_product_price FLOAT''')
->> orders_f = orders.filter(orders['order_status']=='CLOSED')  /or/   orders_fc = orders.filter(col('order_status')=='CLOSED')
+>> Execution Flow in PySpark
+   Start SparkSession → spark = SparkSession.builder.appName("App").getOrCreate()
+   Load Data (from a list, CSV, Parquet, etc.)
+   Apply Transformations (e.g., filter(), select(), groupBy())
+   Trigger an Action (e.g., show(), collect(), count())
+   Stop SparkSession → spark.stop()
+>> pysparl commands:
+   -- orders = spark.read.csv("/public/retail_db/orders", schema = "order_id INT, order_date DATE, order_customer_id INT, order_status STRING")
+   -- orders_f = orders.filter(orders['order_status']=='CLOSED')  /or/   orders_fc = orders.filter(col('order_status')=='CLOSED')
+   -- df_selected = df.select("name", "age")
+   -- df_with_new_column = df.withColumn("age_plus_5", col("age") + 5)
+   -- df_filtered.show() / df_filtered.collect() - Collect Data to Python list / df_filtered.count()
+
+
+
    
 ==================
 
