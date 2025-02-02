@@ -101,9 +101,11 @@ Dataproc: big data processing
    >> stop / delete cluster using ui, gcloud
 
 -----------------
-commands:
-> pyspark
-
+pysparl commands:
+>> order_items = spark.read.csv('/public/retail_db/order_items', schema='''order_item_id INT, order_item_order_id INT, order_item_product_id INT, 
+            order_item_quantity INT, order_item_subtotal FLOAT, order_item_product_price FLOAT''')
+>> orders_f = orders.filter(orders['order_status']=='CLOSED')  /or/   orders_fc = orders.filter(col('order_status')=='CLOSED')
+   
 ==================
 
 ===========================
