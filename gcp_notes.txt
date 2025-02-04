@@ -99,7 +99,11 @@ Dataproc: big data processing
                3. add jobs to workflow template (gcloud dataproc workflow-templates add-job ----)
                4. instantiate workflow template (gcloud dataproc workflow-templates instantiate ----)
    >> stop / delete cluster using ui, gcloud
-
+----------------
+>> place script in gcs location: gs://surretail/scripts/daily_product_revenue/gcsToBq.py (or) gcsToBq.sql (or) gcsToBq.scala
+>> execute script on Master node of VM:
+   for pyspark: spark-submit -f gs://surretail/scripts/daily_product_revenue/gcsToBq.sql
+   for sparksql: spark-sql --conf spark.sql.legacy.createHiveTableByDefault=false -f gs://surretail/scripts/daily_product_revenue/gcsToBq.sql
 -----------------
 >> Execution Flow in PySpark
    Start SparkSession → spark = SparkSession.builder.appName("App").getOrCreate()
