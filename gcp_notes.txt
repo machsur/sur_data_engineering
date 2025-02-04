@@ -101,9 +101,11 @@ Dataproc: big data processing
    >> stop / delete cluster using ui, gcloud
 ----------------
 >> place script in gcs location: gs://surretail/scripts/daily_product_revenue/gcsToBq.py (or) gcsToBq.sql (or) gcsToBq.scala
->> execute script on Master node of VM:
-   for pyspark: spark-submit -f gs://surretail/scripts/daily_product_revenue/gcsToBq.sql
-   for sparksql: spark-sql --conf spark.sql.legacy.createHiveTableByDefault=false -f gs://surretail/scripts/daily_product_revenue/gcsToBq.sql
+>> execute gcs script 
+   ---> run pyspark script on master node of VM (ex: spark-submit -f gs://surretail/scripts/daily_product_revenue/gcsToBq.py)
+   ---> submit pyspark job using UI 
+   ---> submit spark-sql job using gcloud (gcloud dataproc jobs submit spark-sql --cluster=cluster-a695 -f          
+        gs://surretail/scripts/daily_product_revenue/compute_daily_product_revenue.sql --params=bucket_name=surretail)
 -----------------
 >> Execution Flow in PySpark
    Start SparkSession → spark = SparkSession.builder.appName("App").getOrCreate()
