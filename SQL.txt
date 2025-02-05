@@ -1,1 +1,11 @@
 
+>> Constraint - rule applied to a column or table to ensure the accuracy, consistency, and integrity of the data.
+  ✔ Accuracy: Data should be correct and valid (e.g., no negative ages).
+  ✔ Consistency: Data follows rules (e.g., employees must belong to existing departments).
+  ✔ Integrity: Data relationships are protected (e.g., prevent deleting a department with employees).
+  PRIMARY KEY	Ensures each value in a column is unique and not NULL --	PRIMARY KEY (ID)
+  FOREIGN KEY	Links two tables --✅ DEPTNO in EMPLOYEE must exist in DEPARTMENT, preventing orphan records. --	FOREIGN KEY (DEPTNO) REFERENCES DEPT(DEPTNO)
+  NOT NULL	Prevents NULL values in a column.	-- NAME VARCHAR(50) NOT NULL
+  UNIQUE	Ensures that all values in a column are distinct.	-- UNIQUE (EMAIL)
+  CHECK	Restricts values based on a condition.	-- CHECK (AGE >= 18)
+  DEFAULT	Assigns a default value if no value is provided.--	STATUS VARCHAR(10) DEFAULT 'Active'
