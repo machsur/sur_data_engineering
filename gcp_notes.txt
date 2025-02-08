@@ -130,7 +130,9 @@ Dataproc: big data processing
    -- df_casted = df.withColumn("age", col("age").cast("string")) / df_casted.printSchema()
 
 Provide more advanced transformations (like explode(), pivot(), window functions)?
-   
+   -- windowSpec = Window.partitionBy("cat").orderBy(desc("value")).rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
+      df.withColumn("maxc", sum("value").over(windowSpec))  == max/min/avg/count/sum/row_number/rank/dense_rank/lag/lead
+
 ==================
 
 ===========================
