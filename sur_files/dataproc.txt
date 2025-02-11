@@ -1,0 +1,80 @@
+>> Apache Spark - multi-language engine for executing data engineering, data science, and machine learning on single-node       machines or clusters.
+
+>> Apache Spark is the core distributed data processing engine, suitable for large-scale data workloads, and can be             deployed on-premises or in the cloud.
+   Google Cloud Dataproc is a managed service that runs Apache Spark (and other frameworks), making it easier to manage,       scale, and integrate with Google Cloud services.
+
+Dataproc: big data processing
+>> enable API, create dataproc cluster on vm/gke.
+   -- cluster type: single node 1m0w, standard for dev team 1m Nw, high availability for prod 3m Nw
+   -- allocate static ip to it >> vm instance - external ip - view details - n/w page ip addresses - reseve to static 
+
+>> validate ssh connectivity to master node vm of dataproc cluster: gcloud ssh cammand helps to copy key on vm and able to ssh vm (gcloud compute ssh --zone "us-central1-a"    "dataprocclu1-m" --project "possible-dream-433814-b4")
+   -- establish an SSH connection to a remote server VM instance: ssh -i C:\Users\surmacha\.ssh\google_compute_engine surmacha@35.184.234.232
+   -- setup vs code remote window for dataproc vm of master node - create below config file in .ssh - select remote window button on vs code - host in search 
+   Host Sur-DP-Cluster-VSC
+    HostName 35.238.68.160
+    IdentityFile C:\Users\surmacha\.ssh\google_compute_engine
+    User surmacha
+   -- copy material to the VM master node using git clone command.
+
+>> copy local files in master node of vm to hdfs in dataproc/ gcs blobs into hdfs on dataproc.
+   hdfs dfs -ls /  ----    hdfs dfs -ls -R /public/retail_db
+   hdfs dfs -mkdir /public
+   hdfs dfs -put data/retail_db /public (local to hdfs -put)
+   hdfs dfs -cp gs://surretail/retail_db /public/retail_db (hdfs to hdfs, gcs to hdfs, hdfs to gcs, gcs to gcs -cp)
+   hdfs dfs -rm -R -skipTrash /public/retail_db
+
+6. validate pyspark / spark-shell (spark scala) / spark-sql CLI in dataproc cluster.
+7. submit dataproc job using spark sql in UI
+8. create dataproc workflow using jobs
+   cleanup --> convert json file to parquet for orders/order_items --> compute daily product revenue and save back to gcs.
+   >> review the scripts.
+   >> apply unit tests/validation in local vs code environment configured with dataproc cluster master node.
+   >> use scripts in gcs rather then hdfs (temproray based on cluster)
+   >> copy spark-sql scripts to gcs location.
+   >> run and validate spark-sql scripts placed in gcs using vs code configured with dataproc master node
+   >> limitations of running spark sql scripts using dataproc jobs
+         submtting jobs by defining query file in gcs via ui is not working (gcloud cli is working).
+         submit jobs using gcloud from external cli but not from vs code dataproc master node
+   >> submit spark sql jobs: list spark-sql scripts in gcs and review content then submit job using dataproc gcloud command.
+   >> dataproc workflow templates: orchestrated pipeline within gcp dataproc
+         UI- create template using jobs defined by query text (query file not working in job) - not use in practical
+         gcloud commands (more flexibility than ui):
+               1. create dataproc workflow template (gcloud dataproc workflow-templates create ----)
+               2. attach workflow template with existing cluster (gcloud dataproc workflow-templates add-cluster-selector---)
+               3. add jobs to workflow template (gcloud dataproc workflow-templates add-job ----)
+               4. instantiate workflow template (gcloud dataproc workflow-templates instantiate ----)
+   >> stop / delete cluster using ui, gcloud
+----------------
+>> place script in gcs location: gs://surretail/scripts/daily_product_revenue/gcsToBq.py (or) gcsToBq.sql (or) gcsToBq.scala
+>> execute gcs script 
+   ---> run pyspark script on master node of VM (ex: spark-submit -f gs://surretail/scripts/daily_product_revenue/gcsToBq.py)
+   ---> submit pyspark job using UI 
+   ---> submit spark-sql job using gcloud (gcloud dataproc jobs submit spark-sql --cluster=cluster-a695 -f          
+        gs://surretail/scripts/daily_product_revenue/compute_daily_product_revenue.sql --params=bucket_name=surretail)
+-----------------
+>> Execution Flow in PySpark
+   Start SparkSession → spark = SparkSession.builder.appName("App").getOrCreate()
+   Load Data (from a list, CSV, Parquet, etc.)
+   Apply Transformations (e.g., filter(), select(), groupBy())
+   Trigger an Action (e.g., show(), collect(), count())
+   Stop SparkSession → spark.stop()
+>> pysparl commands:
+   -- orders = spark.read.csv("/public/retail_db/orders", schema = "order_id INT, order_date DATE, order_customer_id INT, order_status STRING")
+   -- orders_f = orders.filter(orders['order_status'] /or/ orders.order_status /or/ col('order_status') =='CLOSED')  
+      df_filt = df_selected.filter(df_selected.customer_id.between(20, 30))
+      orders_f2 = orders.filter(orders.order_status.isin("COMPLETE", "CLOSED"))
+   -- df_selected = df.select("name", "age")
+   -- df_with_new_column = df.withColumn("age_plus_5", col("age") + 5)
+   -- df_filtered.show() / df_filtered.collect() - Collect Data to Python list / df_filtered.count()
+   -- df_renamed = df.withColumnRenamed("age", "years_old")
+   -- df_dropped = df.drop("age")
+   -- df_sorted = df.orderBy(df.age.desc())
+   -- df_unique = df_dup.dropDuplicates(["name", "age"])
+   -- df_grouped = df.groupBy("age").count()
+   -- df_joined = df1.join(df2, "id", "inner")  # Inner Join
+   -- df_casted = df.withColumn("age", col("age").cast("string")) / df_casted.printSchema()
+
+Provide more advanced transformations (like explode(), pivot(), window functions)?
+   -- windowSpec = Window.partitionBy("cat").orderBy(desc("value")).rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
+      df.withColumn("maxc", sum("value").over(windowSpec))  == max/min/avg/count/sum/row_number/rank/dense_rank/lag/lead
