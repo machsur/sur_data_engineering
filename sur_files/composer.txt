@@ -1,0 +1,65 @@
+>> Cloud Composer: Apache airflow version in GCP for workflow (series of task) orchestration
+   A DAG (Directed Acyclic Graph) in Apache Airflow - is like workflow that tells Airflow what tasks to run, when to run them, and in what order.
+   Apache airflow operators guide: https://airflow.apache.org/docs/apache-airflow/stable/howto/operator/index.html
+
+-- create composer environment: runs on GKE
+    enable api, env_name, location, image version (cloud composer and airflow), Cloud Composer v2 API Service Agent Extension role to the service account
+    enivronment (schedular, triggerrer, web server, worker), network, bucket, cmek, ...
+
+-- Architexture of composer: Dags dir in gcs - each dag associated schedule with it - based on schedule, scheduler will trigger the dags - 
+   the Executor within scheduler, runs dag on worker nodes, metadata db stores info, Web server (for airflow UI)
+
+-- setup local vs code env and install required dependcies (pip install apache-airflow==2.3.3, pip install apache-airflow-providers-google)
+    use gcloud commands to intract with cloud composer env
+    deploy airflow dag into composer env by placing into gcs dags folder
+
+-- Advantage of cloud composer:
+   | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
+   | py app                             |       dataproc workflow                                            |
+   |              cloud composer                                                                              |
+
+>> dag constructor/class - with in dag id, default args, keyword args, tasks are created by instntiating operators - it helps to create dag object
+    note: multiple dags in one py script / one dag can spans multiple py scripts
+    Dags, task, operator (execute task at its scheduled time), sensor(pause task until specified condition mets ex: file arrives, record update)
+    Calling bash/py script in different folder / machine by using connections
+
+>> templating in Airflow : use templating to inject dynamic values (like macros and parameters) into your bash commands in Airflow.
+      https://airflow.apache.org/docs/apache-airflow/1.10.13/macros-ref.html#
+   
+>> variables - key value pairs - stroes airflow metadata db - adv: avoid hardcoding, reusebility, flexibility, efficiency
+   -- my_var = Variable.get("my_variable")
+   -- my_var = Variable.get("non_existent_variable", default_var="Default Value")
+   -- Key: config & Value: {"retry_count": 3, "email": "admin@example.com"} / config = json.loads(Variable.get("config")) /       print(config["retry_count"])  # Output: 3
+   -- If you use Jinja in an Airflow task, you can access variables like {{ var.value.var_key }}
+
+>> why connection: CC connects with external machines usinng ssh and run the scripts.
+      in gcp - create custom connection for bq,gcs in cc - composer sa, download json key, place it in gcs, use gcs path - assign roles to sa
+
+   XCom (Cross-communication) - for passing small pieces of data between tasks - making workflows more dynamic and flexible
+   branching -  allows you to control the execution path of a workflow based on certain conditions - BranchPythonOperator 
+   Subdag : consists group of parellel tasks.
+   SLA (Service Level Agreement) - 
+      - is a time-based contract specifying how long a task or DAG should take to run. 
+      - If a task exceeds this time limit, Airflow will trigger an alert to notify that the SLA has been missed.
+
+>>
+   Apache Airflow with Kubernetes allows for a scalable and flexible infrastructure, integrating the dynamic orchestration power of Airflow with the container management       capabilities of Kubernetes. This integration provides benefits like dynamic resource allocation, auto-scaling, and isolated task execution in containers. There are two       primary ways Kubernetes can be integrated with Airflow:
+   --   Kubernetes Executor: Airflow tasks are dynamically launched in Kubernetes pods.
+   --   KubernetesPodOperator: Individual tasks are run inside Kubernetes pods, but Airflow is otherwise deployed with a different executor.
+
+>> Sensors continuously check (or "poke") to see if a condition has been met. 
+      Once the condition is satisfied, the sensor task succeeds, allowing the next task in the workflow to execute. 
+      If the condition is not met within the defined timeout period, the sensor fails.
+
+   Types of Sensors
+   FileSensor: Waits for a file to appear in a directory.
+   ExternalTaskSensor: Waits for another task in a different DAG to complete.
+   HttpSensor: Waits for an HTTP endpoint to return a certain response.
+   S3/GCSKeySensor: Waits for a file to appear in an S3 bucket.
+   TimeSensor: Waits until a specific time of day.
+
+>> Apache Airflow vs beam vs spark
+   Airflow: schedule and monitor workflows
+   Beam: data processing pipeline (google has cloud dataflow)
+   Spark: fast and general processing engine compatible with hadoop eco system. (Dataproc in Google)
+
