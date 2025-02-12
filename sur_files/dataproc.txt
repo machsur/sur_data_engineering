@@ -1,4 +1,4 @@
->> Apache Spark - multi-language engine (single-node machines or clusters) suitable for large-scale data workloads, and can be        deployed on-premises or in the cloud.
+>> Apache Spark - multi-language engine (single-node machines or clusters) suitable for large-scale data workloads, and can be        ---deployed on-premises or in the cloud.
 Google Cloud Dataproc is a managed service that runs Apache Spark (and other frameworks),
 
 >> enable API, create dataproc cluster on vm/gke.
