@@ -1,9 +1,6 @@
->> Apache Spark - multi-language engine for executing data engineering, data science, and machine learning on single-node       machines or clusters.
+>> Apache Spark - multi-language engine (single-node machines or clusters) suitable for large-scale data workloads, and can be             deployed on-premises or in the cloud.
+   Google Cloud Dataproc is a managed service that runs Apache Spark (and other frameworks),
 
->> Apache Spark is the core distributed data processing engine, suitable for large-scale data workloads, and can be             deployed on-premises or in the cloud.
-   Google Cloud Dataproc is a managed service that runs Apache Spark (and other frameworks), making it easier to manage,       scale, and integrate with Google Cloud services.
-
-Dataproc: big data processing
 >> enable API, create dataproc cluster on vm/gke.
    -- cluster type: single node 1m0w, standard for dev team 1m Nw, high availability for prod 3m Nw
    -- allocate static ip to it >> vm instance - external ip - view details - n/w page ip addresses - reseve to static 
