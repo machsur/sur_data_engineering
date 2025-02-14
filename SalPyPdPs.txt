@@ -1,1 +1,22 @@
+===========
+>> SQL: FROM: JOIN: WHERE: GROUP BY: Aggregate: HAVING: SELECT: ORDER BY: LIMIT: 
 
+>> Pandas: Read Data: Merge: Filter Rows: Select Columns: Group By: Aggregate: Filter Groups: Sort: Limit:
+    join_df = pd.merge(employees, departments, left_on='department_id', right_on='id', how='left')
+    filtered_df = df[df['age'] > 30]
+    selected_df = filtered_df[['name', 'department']]
+    grouped_df = selected_df.groupby('department').size().reset_index(name='count')
+    having_df = grouped_df[grouped_df['count'] > 1]
+    sorted_df = having_df.sort_values(by='department')
+    result = sorted_df.head(10)
+    print(result)
+>> PySpark: Read Data: Join: Filter Rows: Group By: Aggregate: Filter Groups: Select Columns: Sort: Limit: 
+    df_employees = spark.createDataFrame(employees) /// df_departments = spark.createDataFrame(departments)
+    joined_df = df_employees.join(df_departments, df_employees.department_id == df_departments.id)
+    filtered_df = joined_df.filter(joined_df['age'] > 30)
+    grouped_df = filtered_df.groupBy('department').count()
+    having_df = grouped_df.filter(grouped_df['count'] > 1)
+    selected_df = having_df.select('department', 'count')
+    sorted_df = selected_df.orderBy('department')
+    result = sorted_df.limit(10)
+    result.show()
