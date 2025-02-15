@@ -22,3 +22,11 @@
     sorted_df = selected_df.orderBy('department')
     result = sorted_df.limit(10)
     result.show()
+
+=====================
+ >>   SELECT column1 FROM table1
+    UNION DISTINCT/UNION ALL/EXCEPT DISTINCT/INTERSECT DISTINCT
+    SELECT column1 FROM table2;
+>> union_distinct = pd.concat([df1, df2]).drop_duplicates()  / union_all = pd.concat([df1, df2])
+>> union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/
+
