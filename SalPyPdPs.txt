@@ -42,5 +42,6 @@ pyspark:
     result_df = df.select( col("EmployeeID"), ltrim(col("Name")).alias("ltrim_Name"), lpad(col("Name"), 10, "X").alias("lpad_Name"))
 >> splitng column, size of array, indexing, explode, array_contains  ---------> df = df.select(split(df.FullName, " ").alias('cn'))
 >> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
+>> create date, timestamp columns in df, add/subtract days, 
 
 
