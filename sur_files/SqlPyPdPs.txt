@@ -1,8 +1,55 @@
-===================
+===========
+>>  execution order
+SQL: FROM: JOIN: WHERE: GROUP BY: Aggregate: HAVING: SELECT: ORDER BY: LIMIT: 
+    SELECT d.department, COUNT(e.id) AS employee_count 
+    FROM `project.dataset.employees` e JOIN `project.dataset.departments` d ON e.department_id = d.id
+    WHERE e.age > 30 GROUP BY d.department HAVING COUNT(e.id) > 1 ORDER BY d.department LIMIT 10;
+    
+Pandas: Read Data: Merge: Filter Rows: Select Columns: Group By: Aggregate: Filter Groups: Sort: Limit:
+    join_df = pd.merge(employees, departments, left_on='department_id', right_on='id', how='left')
+    filtered_df = df[df['age'] > 30]
+    selected_df = filtered_df[['name', 'department']]
+    grouped_df = selected_df.groupby('department').size().reset_index(name='count')
+    having_df = grouped_df[grouped_df['count'] > 1]
+    sorted_df = having_df.sort_values(by='department')
+    result = sorted_df.head(10)
+    print(result)
+PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit: 
+    df_employees = spark.createDataFrame(employees) 
+    outer_join_df = df_employees.join(df_departments, df_employees.department_id == df_departments.id, how='outer')
+    filtered_df = joined_df.filter(joined_df['age'] > 30)  ---> joined_df['age'] or joined_df.age or col('age')
+    grouped_df = filtered_df.groupBy('department').count()
+    having_df = grouped_df.filter(grouped_df['count'] > 1)
+    selected_df = having_df.select('department', 'count')
+    sorted_df = selected_df.orderBy(asc('department'))
+    result = sorted_df.limit(10)
+    result.show()
+
+>>  union tables: 
+	SELECT column1 FROM table1 UNION DISTINCT/UNION ALL/EXCEPT DISTINCT/INTERSECT DISTINCT SELECT column1 FROM table2;
+	union_distinct = pd.concat([df1, df2]).drop_duplicates()  / union_all = pd.concat([df1, df2])
+	union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/
+
+
+>> Requirements:
+	select columns, list columns, add new column, drop columns, column name change, column type change
+	filter dataframe, null values, non-null values ---> df.filter(df['cn'] > 10 / .isNull() / .isNotNull())
+	df distanct values, count, drop duplicates ----> df.select('cn1', 'cn2').distinct().count() ----> df.dropDuplicates(['cn1', 'cn2'])
+	agg functions --> df.select(sum('CN')).show() -----> max, min, avg, count, countDistanct  ------> note: ignore null values
+	grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show() -------> min, max, avg, count
+	captialization -----> df.select(initcap('CN'))----------> lower, upper 
+	triming spaces, padding values (ltrim, rteim, trim, lpad, rpad)
+	result_df = df.select( col("EmployeeID"), ltrim(col("Name")).alias("ltrim_Name"), lpad(col("Name"), 10, "X").alias("lpad_Name"))
+	splitng column, size of array, indexing, explode, array_contains  ---------> df = df.select(split(df.FullName, " ").alias('cn'))
+	concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
+	create date, timestamp columns in df, add/subtract days, 
+
+
+=====================
 Python:
 
 >> Interpreter: The programme that runs your code.
-    Virtual Environment: A separate "workspace" that uses a Python interpreter but has its own packages and dependencies.
+   Virtual Environment: A separate "workspace" that uses a Python interpreter but has its own packages and dependencies.
 
 >> setup python, pip
     configure environment variable path - so that execute programme from terminal
@@ -220,13 +267,6 @@ https://github.com/itversity
 https://github.com/dgadiraju?tab=repositories
 https://spark.apache.org/
 
-=============
-
-
-       
-=====================
-PySpark:
-
 >> read data and process using python - not recommend these low level apis (use for reading schemas/properties)
 >> read data and process using python pandas -  recommend for small/medium datasets
 
@@ -315,3 +355,6 @@ Apache spark:
 - uses optimized query execution for fast queries
 - provides api in java, scala, python, r
 - supports batch processing, inetractive queries, real-time analytics, ml and graph processing
+
+
+

@@ -1,0 +1,142 @@
+
+===================
+>> WinSCP (Windows Secure Copy) is a popular open-source SFTP (SSH File Transfer Protocol), SCP (Secure Copy Protocol), 
+    and FTP (File Transfer Protocol) client for Windows. 
+    It provides a graphical interface for securely transferring files between a local computer and a remote server.
+
+==================
+>> CMD vs GIT BASH - command-line interfaces for intract with OS.
+    CMD - executing Windows commands, 
+    Git Bash - supports Unix commands and Git functionalities, windows commands too.
+
+>> GitHub is a platform for hosting and managing code. It’s built on top of Git
+    GitHub helps developers storing code, VCS, collaborate, track changes, and manage software projects effectively.
+
+>> GIT: distributed version control system
+    local VCS - my machine - i want to collaborate with others - system crashes
+    centralized VCS - server repo / working copy - copy on server and current version on user machine
+    distributed VCS - server repo / repository /  working copy 
+    Working directory  ---> .git local repository (stagging area and commit history)---> git remote repository (when         
+      collaborate with team)
+
+    git --version
+    git config
+    git config --global --list
+    git config --global user.name "surmacha"
+    git config --global user.email suresh.machavarapu91@gmail.com
+    git status
+    git log
+    
+    ==========
+    git diff / git diff --staged
+    git rm --cached file.txt
+    
+    >> clone git repo into local directory
+    git clone https://alm-github.systems.uk.hsbc/google-cloud-projects/hsbc-9460919-opsanalytics-dev.git
+    
+    >> 
+    mkdir git-course
+    cd git-course
+    echo "this is suresh" >> READ.md
+    ====================
+    
+    git init / git init -b main  (to create git local repository)
+    git add file.txt / git add . : add to git stagging area
+    git commit -m "my first commit" / git commit -a -m "my first commit" (skip staging dir)
+    
+    ===================
+    git remote add origin https://alm-github.systems.uk.hsbc/google-cloud-projects/hsbc-9460919-opsanalytics-dev.git 
+    (one-time to establish connection b/w local git repo and remote github repo)
+    git push -u origin brnach_name
+    
+    git remote -v
+    git log --pretty=oneline
+    git tag
+    git show 1.79.0
+    git tag v1.1 -m "27th june release"
+    git push origin v1.1
+    
+    >> work with different branches
+    git checkout/switch feature1
+    git checkout -b / switch -c feature1
+    git branch / --all (for remote too) / - going back branch / -d bn: to delete
+    git push origin feature1
+    git merge feature1 (active main branch)
+    git push origin main
+    
+>> Control-M: scheduling tool in HSBC on-prim env
+    -- deploy control-m jobs (XML file) on control-m server via digBA portal using CR in production
+    -- control-m server sends instructions to control-m agent installed on win/linux to run the script at scheduled time.
+
+>> Constraint - rule applied to a column or table to ensure the accuracy, consistency, and integrity of the data.
+  ✔ Accuracy: Data should be correct and valid (e.g., no negative ages).
+  ✔ Consistency: Data follows rules (e.g., employees must belong to existing departments).
+  ✔ Integrity: Data relationships are protected (e.g., prevent deleting a department with employees).
+  PRIMARY KEY	Ensures each value in a column is unique and not NULL --	PRIMARY KEY (ID)
+  FOREIGN KEY	Links two tables --✅ DEPTNO in EMPLOYEE must exist in DEPARTMENT, preventing orphan records. --	FOREIGN KEY (DEPTNO) REFERENCES DEPT(DEPTNO)
+  NOT NULL	Prevents NULL values in a column.	-- NAME VARCHAR(50) NOT NULL
+  UNIQUE	Ensures that all values in a column are distinct.	-- UNIQUE (EMAIL)
+  CHECK	Restricts values based on a condition.	-- CHECK (AGE >= 18)
+  DEFAULT	Assigns a default value if no value is provided.--	STATUS VARCHAR(10) DEFAULT 'Active'
+
+
+>> Why linux rather than winndows, macos
+  open source & free to use, multi-users work on shared system , good security (no antivirus req), stable and reliable
+
+>> Architexture
+  Hardware
+  Software
+  kernel - to connect hardware and software app - middle man
+  shell - instructions are given ro kernel by user via shell
+  deamons - run in background 
+
+>> deamon files ends with "d" / data files / configuration files
+
+>> user --> give commands on terminal --> shell(program/CLI) interprets and executes/passes them on --> OS
+  type of shell: bash, etc.
+  why bash shell: feature-rich, fast, very common
+  shell script: file consists series of commands for shell - allow automation, save time, more productive
+
+>> Bash Script structure:
+    shebang line - tell to shell what type of script running like bash, py, etc
+    commands
+    exit statement - 0 successful; 1-255 unsuccessful
+    chmod + to give executable permissions for script
+
+    script more professional: comments (#) / Author: / Date Created / Date Modified / Description / Usage
+
+>> Security: ls -l / chmod 744 script_name 
+
+>> Parameters
+  -- user defined variable (lower case):
+      name="Suresh"
+      echo "Hi ${name}, how are you"
+`-- shell/environment  (upper case) :
+      $ echo "$HOME" (or) $ echo "${HOME}"
+      echo "${HOME,,}" / echo "${HOME^^}" / echo "${#HOME}" / echo ${numbers: -3:2} / echo ${numbers:2:4} - param, offset, length / 
+  -- command substution
+    nested_output=$(echo "the date is: $(date)")
+    echo "the output is ${nested_output}"
+  -- Arithemataic expansion
+    $ echo $(( 4 / 2 )) - to perform cal on whole numbers - precedence () *
+    $ echo "scale=3; 10/3" | bc  - to deal with decimal numbers - bc command - install bc package - sudo apt install bc
+  -- Tilda (~) expansion
+    echo $HOME or echo ~ 
+    echo $PWD or echo ~+
+    echo $OLDPWD or echo ~- / cd ~-
+  -- brace expansion
+    string list: echo {1,3,suresh,d,5,k}
+    range lists: mkdir month{00..12} / echo {00..10..2} / month{00..12}/touch day{00..31}.txt
+
+
+
+
+>> -- tar -cvf [backup_filename] [directory/files]
+
+
+
+
+ 
+
+
+
