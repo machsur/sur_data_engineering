@@ -51,8 +51,7 @@ Python:
 >> Interpreter: The programme that runs your code.
    Virtual Environment: A separate "workspace" that uses a Python interpreter but has its own packages and dependencies.
 
->> setup python, pip
-    configure environment variable path - so that execute programme from terminal
+>> configure environment variable path - so that execute programme from terminal
 
 >>  
     python -m venv myenv                   --- Create a Virtual Environment
@@ -74,6 +73,8 @@ Python:
     WARNING (30):Example: Deprecated features, nearing disk space limit.
     ERROR (40):Example: Failed database connections.
     CRITICAL (50):Example: System crashes or unavailable resources.
+
+>> Hiding Passwords and Secret Keys in Environment Variables (linux/mac/Windows) and access them into code -------> os.environ.get("key")
  
 >> unique identifiers (UUIDs)
 
