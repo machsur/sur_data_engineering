@@ -69,3 +69,5 @@
    Beam: data processing pipeline (google has cloud dataflow)
    Spark: fast and general processing engine compatible with hadoop eco system. (Dataproc in Google)
 
+>> BashOperator --> running bash command / running bash script, python script placed in gcs data folder / running gcloud command
+
