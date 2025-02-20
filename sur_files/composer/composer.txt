@@ -13,6 +13,7 @@
     use gcloud commands to intract with cloud composer env
     deploy airflow dag into composer env by placing into gcs dags folder
 
+
 -- Advantage of cloud composer:
    | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
    | py app                             |       dataproc workflow                                            |
@@ -25,7 +26,12 @@
 
 >> templating in Airflow : use templating to inject dynamic values (like macros and parameters) into your bash commands in Airflow.
       https://airflow.apache.org/docs/apache-airflow/1.10.13/macros-ref.html#
-   
+
+
+>> install packages in a Cloud Composer environment:
+   UI
+   gcloud composer environments update my-composer-env --location us-central1 --update-pypi-packages-from-file requirements.txt or --update-pypi-packages=pandas==1.3.3
+
 >> variables - key value pairs - stroes airflow metadata db - adv: avoid hardcoding, reusebility, flexibility, efficiency
    -- my_var = Variable.get("my_variable")
    -- my_var = Variable.get("non_existent_variable", default_var="Default Value")
