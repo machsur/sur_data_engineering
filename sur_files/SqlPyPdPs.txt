@@ -53,6 +53,8 @@ Python:
 
 >> configure environment variable path - so that execute programme from terminal
 
+>> pip - tool for install python packages
+   pypi - centralized repository for py packages
 >>  
     python -m venv myenv                   --- Create a Virtual Environment
     or
