@@ -5,6 +5,11 @@ ans. builtin mtds, sorting, python code
 
 ==============================
 pyspark:
+>> ✅ Given a DataFrame, split the data into two columns (Even, Odd) where:
+Even numbers are populated in the Even column
+Odd numbers are populated in the Odd column.
+Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
+
 
 ===============================
 SQL:
@@ -46,3 +51,10 @@ Ans.
 
 =================================
 others:
+
+✅ Tell me about yourself, your projects, and the tech stack you have used.
+✅ What does your day-to-day work look like?
+✅ Why are you using the tech stack you are using?
+✅ What is an alternative to Medallion Architecture?
+✅ What is the kind and size of data you deal with on a daily basis?
+✅ If the business is using JSON as a file format, how would you convince them to use Parquet instead?
