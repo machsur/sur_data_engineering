@@ -1,0 +1,48 @@
+================================
+python:
+>> Given an array, find the minimum and maximum values.
+ans. builtin mtds, sorting, python code
+
+==============================
+pyspark:
+
+===============================
+SQL:
+>> ✅ Given two tables, find the count of records for Left Outer Join and Inner Join:
+Table A: Table B:
+1 1
+1 1
+1 1 
+1 
+Ans. 12 & 12
+
+>> ✅ Give the output for DENSE_RANK() and RANK() functions for the below dataset:
+Nums 
+85 
+85 
+80 
+75 
+75 
+70
+
+>> 𝐒𝐐𝐋 𝐏𝐫𝐨𝐛𝐥𝐞𝐦
+✅ Given a table with column 'Country', select data in the below sequence:
+Table: Matches
+Country 
+India 
+Australia 
+Pakistan 
+Output:
+India vs Australia 
+India vs Pakistan 
+Australia vs Pakistan
+Ans. 
+    SELECT a.countryc || ' vs ' || b.countryc as country
+    FROM
+      `powerful-layout-445408-p5.sur_test_ds.countryt` a
+    join
+      `powerful-layout-445408-p5.sur_test_ds.countryt` b
+    on a.countryc > b.countryc;  -----> or <
+
+=================================
+others:
