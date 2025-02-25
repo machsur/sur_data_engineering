@@ -16,7 +16,8 @@ Pandas: Read Data: Merge: Filter Rows: Select Columns: Group By: Aggregate: Filt
     print(result)
 PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit: 
     df_employees = spark.createDataFrame(employees) 
-    outer_join_df = df_employees.join(df_departments, df_employees.department_id == df_departments.id, how='outer')
+    join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
+    join_df = df1.crossjoin(df2)
     filtered_df = joined_df.filter(joined_df['age'] > 30)  ---> joined_df['age'] or joined_df.age or col('age')
     grouped_df = filtered_df.groupBy('department').count()
     having_df = grouped_df.filter(grouped_df['count'] > 1)
