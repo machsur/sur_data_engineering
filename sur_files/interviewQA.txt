@@ -17,7 +17,10 @@ Even numbers are populated in the Even column
 Odd numbers are populated in the Odd column.
 Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
 
-
+✅ Read a CSV file and create a DataFrame with properties.
+✅ Create a DataFrame with two columns:
+Column 1: Default String
+Column 2: Default Integer
 ===============================
 SQL:
 >> ✅ Given two tables, find the count of records for Left Outer Join and Inner Join:
