@@ -2,6 +2,13 @@
 python:
 >> Given an array, find the minimum and maximum values.
 ans. builtin mtds, sorting, python code
+>> ✅ Given a string, count the occurrences of each word in a dictionary:
+Input: 'aaabbbccddeeeee'
+Output: { “a” : 3 , “b” : 3, “c” : 2, “d” : 2 , “e” : 5 }
+>> ✅ Write a Python program to count occurrences of an input string in a file.
+Example:
+Find the number of occurrences of the word ‘The’ in the sentence:
+"The lazy fox jumps over the sleeping rabbit. The lazy rabbit doesn’t wake up."
 
 ==============================
 pyspark:
@@ -48,7 +55,17 @@ Ans.
     join
       `powerful-layout-445408-p5.sur_test_ds.countryt` b
     on a.countryc > b.countryc;  -----> or <
-
+>> ✅ Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS.
+Table1:
+col1 
+---- 
+1 
+1 
+Table2:
+---- 
+b 
+a 
+1 
 =================================
 others:
 
@@ -58,3 +75,15 @@ others:
 ✅ What is an alternative to Medallion Architecture?
 ✅ What is the kind and size of data you deal with on a daily basis?
 ✅ If the business is using JSON as a file format, how would you convince them to use Parquet instead?
+✅ Tell me about yourself, projects, and tech stack.
+✅ Explain the Spark architecture.
+✅ Explain how jobs run in Spark.
+✅ Follow-up: What does the Catalyst Optimizer do?
+✅ Difference between Logical Plan and Physical Plan.
+✅ ORC vs. Parquet – What’s the difference?
+𝐑𝐨𝐮𝐧𝐝 𝟑 – 𝐇𝐢𝐫𝐢𝐧𝐠 𝐌𝐚𝐧𝐚𝐠𝐞𝐫 𝐃𝐢𝐬𝐜𝐮𝐬𝐬𝐢𝐨𝐧
+✅Difference between Data Lake and Delta Lake.
+✅ Why did you quit your previous job?
+✅ Even though you have an offer in hand, why did you apply again?
+✅ If we offer you the same salary as your current offer, will you accept it?
+✅ You are settled in Hyderabad; why are you willing to relocate to Bangalore?
