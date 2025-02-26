@@ -18,6 +18,8 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
     df_employees = spark.createDataFrame(employees) 
     join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
     join_df = df1.crossjoin(df2)
+    broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
+
     filtered_df = joined_df.filter(joined_df['age'] > 30)  ---> joined_df['age'] or joined_df.age or col('age')
     grouped_df = filtered_df.groupBy('department').count()
     having_df = grouped_df.filter(grouped_df['count'] > 1)
@@ -264,38 +266,29 @@ bigo - measure running time or space rwuirements for programme as input size gro
 
 time complexity (o(1) // log(n) //  o(n) // o(n2) //
 
-================
-Python / pyspark /
-===============
-https://github.com/itversity
-https://github.com/dgadiraju?tab=repositories
-https://spark.apache.org/
+=============================================
+pyspark:
 
 >> read data and process using python - not recommend these low level apis (use for reading schemas/properties)
 >> read data and process using python pandas -  recommend for small/medium datasets
 
->>  Bigdata and datalakes:
-
--- databases / use cases / tchnologies / volume: 
-    RDBMS - order management system, point of sales, transaction involve b/w two parties - oracle, sql server, mysql,       postgres , IBM DB2  - small to medium
+>> databases / use cases / tchnologies / volume: 
+    RDBMS - transaction involve b/w two parties - oracle, sql server, mysql,  postgres , IBM DB2  - small to medium
     Data lake - low-cost storage (data from all relavant sources)- GCS, S3, ADLS - high
-    data warehouse - for reporting purpose - snowflake, teradata, databricks (these 3 available on all cloud), oracle exadata, BQ, Amazon redshift, Azure Synapse - medium (typical) to high
-    no sql - operational stroes (chats, products catalog in Amazon, endorsements, recommendations) - Bigtable, Amazon Dynamodb, Azusre(multiple), casandra, mangodb - medium (typical) to high
+    data warehouse - for reporting purpose - BQ, Amazon redshift, Azure Synapse - medium (typical) to high
+    no sql - operational stroes (chats, products catalog in Amazon, endorsements, recommendations) - Bigtable - medium (typical) to high
     graph - network -ne04j - small to medium
     seach -search quickly - elastic search, solr, lucene - medium
 
-    small - few hundred of gb
-    medium - under 1 tb
-    high - few gundred of tb / pb
+    small - few hundred of gb /    medium - under 1 tb /    high - few gundred of tb / pb
 
--- Big data: 
+>> Big data: 
     characteristics - volume, varity, velocity
     for google search engine, introduced 3 tech GFS, GMR, big table - popular and published white paper in 2000 
     based on white papers, hadoop and then spark came into picture.
+	 Google white papers------> Haddop ecosystem------------> Spark
 
--- Google white papers------> Haddop ecosystem------------> Spark
-
--- HES: tech - HDFS based on GFS, HMR based on GMR, HBASE based on GBT, later introduced Sqoop/dead, flume/dead, hive, oozie - doest use memory efficiently and cloud -so, spark came into picture
+>> HES: tech - HDFS based on GFS, HMR based on GMR, HBASE based on GBT, later introduced Sqoop/dead, flume/dead, hive, oozie - doest use memory efficiently and cloud -so, spark came into picture
 
     HDFS - large datasets distribute on multiple machines - replicate them for fault tolerance
     map reduce - batch jobs break down - process them across cluster - combine them / HBASE - nosql for real-time access to data / both will provide compute capabilities on top of hdfs
@@ -308,8 +301,12 @@ https://spark.apache.org/
     
     These challenges in HES (datalake using HES) are overcome by datalake using cloud
 
-//////////////////////////////////////
-
+>> Apache spark:
+- opensource distributed/cluster/parallel processing system for big data.
+- in-memory caching
+- uses optimized query execution for fast queries
+- provides api in java, scala, python, r
+- supports batch processing, inetractive queries, real-time analytics, ml and graph processing
 20. Overview of spark and its architexture
 
 -- data processing: source (files,db, rest payloads) -----> process (sql, libraries/pandas/dask, frameworks/spark) ------->
@@ -340,6 +337,11 @@ https://spark.apache.org/
         > ram in worker nodes has divided into partitions - these partitions can be inside specific data structure RDD (write code in py) / DF (strucre databases).
         > RDD - read only - immutable - fault tolerant using DAG concept - 1. transformation (new rdd - not human readble) 2. action (to read)
 
+why PySpark not python for bigdata? :
+python - take sample of data and apply statistics to develop histograms
+pyrhon - can process large datasets with multithreads 
+problem - when data is big and stays in memory / we cant take entire data on compute and use python on it.
+        - data cant stay in one computer and it can be distributed.
 - Platforms for pyspark:
         > https://colab.research.google.com/
         > VM vare on desktop version
@@ -347,18 +349,11 @@ https://spark.apache.org/
         > dataproc on GCP
 
 
-why PySpark not python for bigdata? :
-python - take sample of data and apply statistics to develop histograms
-pyrhon - can process large datasets with multithreads 
-problem - when data is big and stays in memory / we cant take entire data on compute and use python on it.
-        - data cant stay in one computer and it can be distributed.
+
 =========
-Apache spark:
-- opensource distributed processing system for big data.
-- in-memory caching
-- uses optimized query execution for fast queries
-- provides api in java, scala, python, r
-- supports batch processing, inetractive queries, real-time analytics, ml and graph processing
+https://github.com/itversity
+https://github.com/dgadiraju?tab=repositories
+https://spark.apache.org/
 
 
 
