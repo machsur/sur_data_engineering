@@ -272,30 +272,20 @@ pyspark:
 >> read data and process using python - not recommend these low level apis (use for reading schemas/properties)
 >> read data and process using python pandas -  recommend for small/medium datasets
 
->> databases / use cases / tchnologies / volume: 
-    RDBMS - transaction involve b/w two parties - oracle, sql server, mysql,  postgres , IBM DB2  - small to medium
-    Data lake - low-cost storage (data from all relavant sources)- GCS, S3, ADLS - high
-    data warehouse - for reporting purpose - BQ, Amazon redshift, Azure Synapse - medium (typical) to high
-    no sql - operational stroes (chats, products catalog in Amazon, endorsements, recommendations) - Bigtable - medium (typical) to high
-    graph - network -ne04j - small to medium
-    seach -search quickly - elastic search, solr, lucene - medium
+>> Big data problem: volume, varity, velocity (rdbms failed to handle)
+>> Big data solution
+	Monolithic approach: massive resource (massive system) - vartical scalable, not foult tolerant, expensive
+	distributed approach: resource pool (cluster) - Horizantal scalable, foult tolerable & HA, economica
 
-    small - few hundred of gb /    medium - under 1 tb /    high - few gundred of tb / pb
-
->> Big data: 
-    characteristics - volume, varity, velocity
-    for google search engine, introduced 3 tech GFS, GMR, big table - popular and published white paper in 2000 
-    based on white papers, hadoop and then spark came into picture.
-	 Google white papers------> Haddop ecosystem------------> Spark
-
->> HES: tech - HDFS based on GFS, HMR based on GMR, HBASE based on GBT, later introduced Sqoop/dead, flume/dead, hive, oozie - doest use memory efficiently and cloud -so, spark came into picture
-
-    HDFS - large datasets distribute on multiple machines - replicate them for fault tolerance
-    map reduce - batch jobs break down - process them across cluster - combine them / HBASE - nosql for real-time access to data / both will provide compute capabilities on top of hdfs
-    Sqoop - import and export data from/to structured databases into haddop - underhood it uses map reduce
-    Hive - querying and manage large datasets using sql like lang HiveQL - underhood it uses map reduce
-    Flume - move large vol of web server log, event data to HDFS or Hbase
-    Oozie - workflow scheduling tool for Hadoop jobs - underhood it uses map reduce
+>> Haddop came as disributed big data processing platform
+	Google white papers------> Haddop ecosystem------------> Spark
+	Yarn (cluster operating system), HDFS (distributed storage), HMR (distributed computing)
+	other tools developed on top hadoop core platform:
+	HBASE hive - databases
+	Sqoop - data ingetion tool
+	pig - scripting language
+	Flume - move large vol of web server log, event data to HDFS or Hbase
+	Oozie - workflow scheduling tool for Hadoop jobs
 
     challemges - steep learining curve / setup time and cost / maintanance of cluster / application development life cycle / ineeficient usage of cluster / slow performance during data processing
     
