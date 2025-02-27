@@ -50,86 +50,31 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
 
 =====================
 Python:
-
 >> Interpreter: The programme that runs your code.
    Virtual Environment: A separate "workspace" that uses a Python interpreter but has its own packages and dependencies.
-
->> configure environment variable path - so that execute programme from terminal
-
 >> pip - tool for install python packages
    pypi - centralized repository for py packages
->>  
-    python -m venv myenv                   --- Create a Virtual Environment
-    or
-    pip install virtualenv 
-    virtualenv myenv                     ----- Create a Virtual Environment
-    myenv\Scripts\activate               ---- Activate the Virtual Environment
-    deactivate                            ------ Deactivate the Virtual Environment
-    pip install pandas
-    pip freeze > requirements.txt             ---- download req file from venv
-    pip install -r requirements.txt           ---- navigate to file loc and install into venv
-
->> exit(0) - terminate the programme
-    #!/usr/bin/python3.5 : This is a special sequence that tells the operating system to execute the file using the             specified program or interpreter.
-
->> logging: avoid print - avoid garbage values in prod - helps in debugging, disable/enable logging easily
-    DEBUG (10): Example: Variable values during execution.
-    INFO (20): Example: Confirmation that a function has started or completed.
-    WARNING (30):Example: Deprecated features, nearing disk space limit.
-    ERROR (40):Example: Failed database connections.
-    CRITICAL (50):Example: System crashes or unavailable resources.
-
+>>  Create a Virtual Environment, Activate the Virtual Environment, Deactivate the Virtual Environment
+    install packages into virtual env, download packages from venv
+>> terminate the python programme, execute the file using the specified program or interpreter (#!/usr/bin/python3.5)
+>> logging
 >> Hiding Passwords and Secret Keys in Environment Variables (linux/mac/Windows) and access them into code -------> os.environ.get("key")
- 
->> unique identifiers (UUIDs)
-
->> requests module
-
->> try: / except ZeroDivisionError as e: # Handling specific exception (division by zero) /  except Exception as e:
-    # Handling any other exceptions / else: # Code to execute if no exception occurred / finally:
-
+>> try: / except / else / finally:
 >> with open('sur.log', 'r') as file:
-
->> Types of Config Files 
-    .ini or .cfg or .properties files - often used with configparser.
-    JSON files: Lightweight and hierarchical, ideal for structured data.
-    YAML files: Human-readable and popular for complex configurations.
-    Environment files (.env): For environment variables, often used in web development for sensitive settings.
-    
-        Format	    Library	                                            Command
-        .ini/.cfg	configparser	                                    import configparser
-        JSON	    Built-in json	                                    import json
-        YAML	    PyYAML (install: pip install pyyaml)	            import yaml
-        .env	    python-dotenv (install: pip install python-dotenv)	from dotenv import load_dotenv
-
->> Modules: re-use, no impact on other modules
-    datetime module: used to work with dates
-    math module: to utilize built-in functions
-    user input: we can ask user to provide input
-    string format method
-
->> Handlling errors: 
-    compile time error: Syntatical - missing :
-    Logical error: wrong output 2+3 = 7
-    run time error: not running for specific time (mistake use done by user: 5/0) - as a devloper u have to understand user     prospective 
-
+>> Types of Config Files, requests module, unique identifiers (UUIDs)
+>> Modules (py file) vs package (collection of modules)
+>> Handlling errors: compile time error: Syntatical - missing /Logical error: wrong output 2+3 = 7 /run time error:  5/0.
 >>  break / continue / pass
-
 >> if, if else, nested if, if elif else / while loop / for loop / for else
-
 >> List, tuple, set, dictionary, array
-
 >> functions: reuse block of code / 
-    Formal arguments:
-    Actuval arguments:
-    positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data):  /
+    Formal arguments/ Actuval arguments/ positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data):  /
     Global variable (outside fun) / local variable (inside fun)
     recursion: function calling it self ex: factorial
     anonymous function: x = lambda a: a * a / print(x(5))
     filter: list(filter(lambda a: a%2 == 0, lt))
     map: list(map(lambda a: a * 2, lt))
     reduce: from functools import reduce / sum = reduce(lambda a, b: a + b, lt) /
-
 >> create python packages
     -- package python code as .whl file
     -- setuptools (build and package projects), whell (create & install .whl files), twine (upload packages to pypi)
