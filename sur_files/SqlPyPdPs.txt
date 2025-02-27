@@ -68,7 +68,7 @@ Python:
 >> if, if else, nested if, if elif else / while loop / for loop / for else
 >> List, tuple, set, dictionary, array
 >> functions: reuse block of code / 
-    Formal arguments/ Actuval arguments/ positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data):  /
+    positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data)
     Global variable (outside fun) / local variable (inside fun)
     recursion: function calling it self ex: factorial
     anonymous function: x = lambda a: a * a / print(x(5))
