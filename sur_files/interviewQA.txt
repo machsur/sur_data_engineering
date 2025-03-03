@@ -10,6 +10,17 @@ Example:
 Find the number of occurrences of the word ‘The’ in the sentence:
 "The lazy fox jumps over the sleeping rabbit. The lazy rabbit doesn’t wake up."
 
+>> Reversing a String using an Extended Slicing techniques.
+>> Count Vowels from Given words .
+>> Find the highest occurrences of each word from string and sort them in order.
+>> Remove Duplicates from List.
+>> Sort a List without using Sort keyword.
+>> Find the pair of numbers in this list whose sum is n no.
+>> Find the max and min no in the list without using inbuilt functions.
+>> Calculate the Intersection of Two Lists without using Built-in Functions
+>> Write Python code to make API requests to a public API (e.g., weather API) and process the JSON response.
+>> Implement a function to fetch data from a database table, perform data manipulation, and update the database.
+
 ==============================
 pyspark:
 >> ✅ Given a DataFrame, split the data into two columns (Even, Odd) where:
