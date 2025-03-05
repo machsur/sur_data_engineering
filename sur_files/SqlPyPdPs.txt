@@ -15,7 +15,18 @@ Pandas: Read Data: Merge: Filter Rows: Select Columns: Group By: Aggregate: Filt
     result = sorted_df.head(10)
     print(result)
 PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit: 
-    df_employees = spark.createDataFrame(employees) 
+    -----------------
+    df = spark.createDataFrame(data, columns)
+    df_from_pandas = spark.createDataFrame(pandas_df/data_dict)
+    df_empty = spark.createDataFrame([], columns)
+    df_csv = spark.read.csv("/path/to/file.csv", header=True, inferSchema=True)
+    from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DoubleType
+    custom_schema = StructType([StructField("id", IntegerType(), True), StructField("name", StringType(), True), StructField("age", IntegerType(), True)])
+    custom_schema = ''' ID Integer, Name String, Age Integer, Salary Double '''
+    df = spark.read.csv("your_file.csv", schema=custom_schema, header=True)
+    file_paths = ["file1.csv", "file2.csv", "file3.csv"] 
+    df = spark.read.csv(file_paths, header=True, inferSchema=True, sep=',')
+    -----------------
     join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
     join_df = df1.crossjoin(df2)
     broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
@@ -26,7 +37,8 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
     selected_df = having_df.select('department', 'count')
     sorted_df = selected_df.orderBy(asc('department'))
     result = sorted_df.limit(10)
-    result.show()
+
+    df.show(n=3, truncate=25, vertical=True) / df.printSchema() / display(df)
 
 >>  union tables: 
 	SELECT column1 FROM table1 UNION DISTINCT/UNION ALL/EXCEPT DISTINCT/INTERSECT DISTINCT SELECT column1 FROM table2;
