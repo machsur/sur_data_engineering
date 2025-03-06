@@ -231,16 +231,11 @@ time complexity (o(1) // log(n) //  o(n) // o(n2) //
 =============================================
 pyspark:
 
->> read data and process using python - not recommend these low level apis (use for reading schemas/properties)
->> read data and process using python pandas -  recommend for small/medium datasets
-
 >> Big data problem: volume, varity, velocity (rdbms failed to handle)
->> Big data solution
+   Big data solution
 	Monolithic approach: massive resource (massive system) - vartical scalable, not foult tolerant, expensive
 	distributed approach: resource pool (cluster) - Horizantal scalable, foult tolerable & HA, economica
-
->> Haddop came as disributed big data processing platform
-	Google white papers------> Haddop ecosystem------------> Spark
+   Haddop came as disributed big data processing platform
 	Yarn (cluster operating system), HDFS (distributed storage), HMR (distributed computing)
 	other tools developed on top hadoop core platform:
 	HBASE hive - databases
@@ -249,17 +244,12 @@ pyspark:
 	Flume - move large vol of web server log, event data to HDFS or Hbase
 	Oozie - workflow scheduling tool for Hadoop jobs
 
-    challemges - steep learining curve / setup time and cost / maintanance of cluster / application development life cycle / ineeficient usage of cluster / slow performance during data processing
-    
-    These challenges in HES (datalake using HES) are overcome by datalake using cloud
+>> Why Apache spark:
+	- opensource in-memory distributed/cluster/parallel processing engine for big data.
+	- provides api in java, scala, python, r
+	- supports batch processing, real-time analytics, ml and graph processing
 
->> Apache spark:
-- opensource distributed/cluster/parallel processing system for big data.
-- in-memory caching
-- uses optimized query execution for fast queries
-- provides api in java, scala, python, r
-- supports batch processing, inetractive queries, real-time analytics, ml and graph processing
-20. Overview of spark and its architexture
+>> Overview of spark and its architexture
 
 -- data processing: source (files,db, rest payloads) -----> process (sql, libraries/pandas/dask, frameworks/spark) ------->
     target(files,db, rest payloads)
