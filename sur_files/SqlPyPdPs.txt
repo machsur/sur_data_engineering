@@ -35,8 +35,8 @@ join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/righ
     having_df = grouped_df.filter(grouped_df['count'] > 1)
     ==> selected_df = df.select("customer_id", col("Name").alias('EmployeeName'), column("last_name"), df.email, df["city"] )
                     = df.selectExpr("Name as EmployeeName", "Salary as EmployeeSalary", "Department").show()
-    sorted_df = selected_df.orderBy(asc('department'))
-    result = sorted_df.limit(10)
+    ==>> sorted_df = df.orderBy(asc('department'), col("country).desc(), nulls_last=True)
+    ==>> result = df.limit(10)
     ==>> df.show(n=3, truncate=25, vertical=True) / df.printSchema() / display(df) / print(df1.columns)
 
 
@@ -52,14 +52,16 @@ join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/righ
 	drop columns -->> df2 = df.drop("Country", "Region")
 	column name change -->> new_df = df.withColumnRenamed("oldColumnName", "newColumnName")
 	column type change --> df = df.withColumn("Phone", col("Phone").cast("string"))
-	==> df distanct values, count, drop duplicates ----> df.select('cn1', 'cn2').distinct().count() ----> df.dropDuplicates(['cn1', 'cn2'])
-	agg functions --> df.select(sum('CN')).show() -----> max, min, avg, count, countDistanct  ------> note: ignore null values
+	==>> df distanct values, count, drop duplicates ----> df.select('cn1', 'cn2').distinct().count() ----> df.dropDuplicates(['cn1', 'cn2'])
+	==>> df.select(initcap(col("country")))  -->> initcap / lower / upper
+	==>> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
+			  --> df.select(concat_ws(' | ', col("Region"), col("Country")))
+agg functions --> df.select(sum('CN')).show() -----> max, min, avg, count, countDistanct  ------> note: ignore null values
 	grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show() -------> min, max, avg, count
 	captialization -----> df.select(initcap('CN'))----------> lower, upper 
 	triming spaces, padding values (ltrim, rteim, trim, lpad, rpad)
 	result_df = df.select( col("EmployeeID"), ltrim(col("Name")).alias("ltrim_Name"), lpad(col("Name"), 10, "X").alias("lpad_Name"))
 	splitng column, size of array, indexing, explode, array_contains  ---------> df = df.select(split(df.FullName, " ").alias('cn'))
-	concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
 	create date, timestamp columns in df, add/subtract days, 
 	==>>
 	DataFrames are immutable in Spark—transformations result in new DataFrames, leaving the original unchanged.
