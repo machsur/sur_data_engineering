@@ -34,6 +34,198 @@ Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColum
 ✅ Create a DataFrame with two columns:
 Column 1: Default String
 Column 2: Default Integer
+
+1. Explain the key differences between Apache Spark's DataFrame and RDD APIs. In which scenarios would you prefer one over the other?
+
+2. Describe the concept of lazy evaluation in PySpark. How does it impact the execution of Spark jobs?
+
+3. What are broadcast variables in PySpark, and how do they optimize join operations? Provide an example scenario where a broadcast join would be beneficial.
+
+4. Discuss the various persistence levels available in PySpark's caching mechanism. When would you use `MEMORY_ONLY` versus `MEMORY_AND_DISK_SER`?
+
+5. How does PySpark handle data skew, and what strategies can be employed to mitigate its effects in a large dataset?
+
+6. Explain the role of the Catalyst optimizer in PySpark. How does it improve the performance of Spark SQL queries?
+
+7. What is the significance of partitioning in PySpark, and how does it affect the performance of data processing tasks?
+
+8. Describe the process of handling real-time streaming data using PySpark's Structured Streaming. What are the key components involved?
+
+9. How would you implement window functions in PySpark to calculate a moving average over a specific time window?
+
+10. Explain the concept of checkpointing in PySpark. Why is it important in streaming applications?
+
+11. Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
+ +-------------+----------+
+ | City    | Population|
+ +-------------+----------+
+ | Mumbai   | 20411000 |
+ | Delhi    | 16787941 |
+ | Bangalore  | 8443675 |
+ | Hyderabad  | 6809970 |
+ | Ahmedabad  | 5570585 |
+ | Chennai   | 4681087 |
+ | Kolkata   | 4486679 |
+ | Surat    | 4467797 |
+ | Pune    | 3124458 |
+ | Jaipur   | 3046163 |
+ +-------------+----------+
+ 
+12. Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
+ +-----------+----------+--------+
+ | EmployeeID| Department| Salary |
+ +-----------+----------+--------+
+ | 1     | HR    | 50000 |
+ | 2     | IT    | 75000 |
+ | 3     | Finance | 62000 |
+ | 4     | IT    | 82000 |
+ | 5     | HR    | 52000 |
+ | 6     | Finance | 60000 |
+ +-----------+----------+--------+
+13. Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
+
+ +------------+----------------+-------------------+
+ | customer_id| transaction_id | transaction_date |
+ +------------+----------------+-------------------+
+ | 1     | 1001      | 2025-02-01    |
+ | 2     | 1002      | 2025-02-03    |
+ | 1     | 1003      | 2025-02-01    |
+ | 3     | 1004      | 2025-02-10    |
+ | 2     | 1005      | 2025-02-15    |
+ | 1     | 1006      | 2025-02-07    |
+ +------------+-----------------+
+
+🎇 Differences between Apache spark & Pyspark:
+📗 PySpark is the Python API for Apache Spark, enabling Python programmers to take advantage of Spark’s distributed data processing capabilities. It is build on the same core of Apache spark.
+📗 Apache Spark is a unified analytics engine for large-scale data processing. It supports batch processing, real-time data streaming, machine learning, and graph processing. Developed by the Apache Software Foundation.
+
+1️⃣ Language
+Apache spark which is written in scala needs knowledge of java and scala to work.
+Pyspark offers the functionalities in python language.
+
+2️⃣ Performance
+Spark when performed with scala does the optimal execution and more execution speed than pyspark.
+Pyspark has some overhead due to interaction between JVM and eventually python & slower performance than spark.
+
+3️⃣ Data processing
+Spark functionality revolves around its data processing engine, which can handle batch and real-time data processing at scale.
+PySpark provides an API for data processing, enabling operations such as filtering, aggregating, and joining datasets in a distributed manner. It simplifies the development of data pipelines by allowing these tasks to be defined in Python code.
+
+4️⃣ Data ingestion
+Spark supports data ingestion across a range of sources. Its built-in connectors and APIs enable direct access to storage systems, databases, and streaming sources. 
+PySpark simplifies the process of data ingestion from various sources, including HDFS, Kafka, and cloud storage services like AWS S3.
+
+5️⃣ Deployment
+Spark’s deployment capabilities are equally versatile, supporting a range of cluster managers and cloud platforms. 
+PySpark applications benefit from the ease of deployment inherent to Python scripts, allowing integration with CI/CD pipelines and containerization technologies such as Docker and Kubernetes. 
+
+𝐑𝐨𝐮𝐧𝐝 𝟏: 𝐓𝐞𝐜𝐡𝐧𝐢𝐜𝐚𝐥 - 𝟏
+
+𝐒𝐩𝐚𝐫𝐤 (𝐏𝐲𝐒𝐩𝐚𝐫𝐤):
+
+1)Modify the word count code to display results in descending order of frequency.
+2)Why is reduceByKey preferred over groupByKey?
+3)What is lineage in Spark?
+4)Difference between cache and persist in Spark.
+5)Is fault tolerance the same in Spark and Hadoop?
+
+ 𝐒𝐐𝐋
+
+6)Explain query execution order.
+7)What are the different types of joins in SQL?
+8)Explain the difference between DENSE_RANK and RANK.
+9)What is a cursor in SQL?10)What is a stored procedure in SQL?
+
+ 𝐏𝐲𝐭𝐡𝐨𝐧
+
+10)What is a docstring in Python?
+11)What is pass in Python? When is it used?
+12)Which data structure occupies more memory: list or tuple? Why?
+13)Write a Python script to count the frequency of characters in a text file.
+14)Write a Python script to create a palindrome with a given number of alphabets.
+Example: For n=3 (alphabets: a, b, c) → Palindrome: abcba
+
+1️⃣ 𝐖𝐡𝐚𝐭 𝐢𝐬 𝐩𝐚𝐫𝐭𝐢𝐭𝐢𝐨𝐧𝐢𝐧𝐠 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤, 𝐚𝐧𝐝 𝐰𝐡𝐲 𝐢𝐬 𝐢𝐭 𝐢𝐦𝐩𝐨𝐫𝐭𝐚𝐧𝐭?
+𝐇𝐢𝐧𝐭: Discuss how partitioning divides data into smaller chunks for parallel processing and its role in minimizing shuffling.
+2️⃣ 𝐇𝐨𝐰 𝐜𝐚𝐧 𝐲𝐨𝐮 𝐜𝐨𝐧𝐭𝐫𝐨𝐥 𝐭𝐡𝐞 𝐧𝐮𝐦𝐛𝐞𝐫 𝐨𝐟 𝐩𝐚𝐫𝐭𝐢𝐭𝐢𝐨𝐧𝐬 𝐢𝐧 𝐚𝐧 𝐑𝐃𝐃?
+𝐇𝐢𝐧𝐭: repartition() and coalesce() are key methods.
+3️⃣ 𝐖𝐡𝐚𝐭 𝐡𝐚𝐩𝐩𝐞𝐧𝐬 𝐢𝐟 𝐭𝐡𝐞 𝐩𝐚𝐫𝐭𝐢𝐭𝐢𝐨𝐧𝐬 𝐚𝐫𝐞 𝐧𝐨𝐭 𝐝𝐢𝐬𝐭𝐫𝐢𝐛𝐮𝐭𝐞𝐝 𝐞𝐯𝐞𝐧𝐥𝐲 𝐚𝐜𝐫𝐨𝐬𝐬 𝐭𝐡𝐞 𝐜𝐥𝐮𝐬𝐭𝐞𝐫?
+𝐇𝐢𝐧𝐭: Talk about data skew and its impact on performance.
+
+🔎 𝐊𝐞𝐲 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: 𝐋𝐚𝐳𝐲 𝐄𝐯𝐚𝐥𝐮𝐚𝐭𝐢𝐨𝐧:
+4️⃣ 𝐖𝐡𝐚𝐭 𝐢𝐬 𝐥𝐚𝐳𝐲 𝐞𝐯𝐚𝐥𝐮𝐚𝐭𝐢𝐨𝐧 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤, 𝐚𝐧𝐝 𝐡𝐨𝐰 𝐝𝐨𝐞𝐬 𝐢𝐭 𝐨𝐩𝐭𝐢𝐦𝐢𝐳𝐞 𝐩𝐞𝐫𝐟𝐨𝐫𝐦𝐚𝐧𝐜𝐞?
+𝐇𝐢𝐧𝐭: Transformations are only evaluated when an action is invoked, allowing Spark to build an optimized DAG.
+5️⃣ 𝐍𝐚𝐦𝐞 𝐚 𝐟𝐞𝐰 𝐭𝐫𝐚𝐧𝐬𝐟𝐨𝐫𝐦𝐚𝐭𝐢𝐨𝐧𝐬 𝐚𝐧𝐝 𝐚𝐜𝐭𝐢𝐨𝐧𝐬 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤. 𝐇𝐨𝐰 𝐝𝐨 𝐭𝐡𝐞𝐲 𝐝𝐢𝐟𝐟𝐞𝐫?
+𝐇𝐢𝐧𝐭: Examples include map() and filter() (transformations) vs. count() and collect() (actions).
+
+🔎 Key Questions: Lineage
+6️⃣ 𝐖𝐡𝐚𝐭 𝐢𝐬 𝐥𝐢𝐧𝐞𝐚𝐠𝐞 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤, 𝐚𝐧𝐝 𝐰𝐡𝐲 𝐢𝐬 𝐢𝐭 𝐢𝐦𝐩𝐨𝐫𝐭𝐚𝐧𝐭 𝐟𝐨𝐫 𝐟𝐚𝐮𝐥𝐭 𝐭𝐨𝐥𝐞𝐫𝐚𝐧𝐜𝐞?
+𝐇𝐢𝐧𝐭: Lineage helps Spark track the series of transformations, enabling recomputation of lost partitions.
+7️⃣ 𝐇𝐨𝐰 𝐝𝐨𝐞𝐬 𝐒𝐩𝐚𝐫𝐤 𝐫𝐞𝐜𝐨𝐦𝐩𝐮𝐭𝐞 𝐦𝐢𝐬𝐬𝐢𝐧𝐠 𝐝𝐚𝐭𝐚 𝐮𝐬𝐢𝐧𝐠 𝐥𝐢𝐧𝐞𝐚𝐠𝐞?
+𝐇𝐢𝐧𝐭: It rebuilds only the affected partition based on the transformation chain.
+
+🔎 𝐊𝐞𝐲 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: 𝐃𝐀𝐆 (𝐃𝐢𝐫𝐞𝐜𝐭𝐞𝐝 𝐀𝐜𝐲𝐜𝐥𝐢𝐜 𝐆𝐫𝐚𝐩𝐡)
+8️⃣ 𝐄𝐱𝐩𝐥𝐚𝐢𝐧 𝐭𝐡𝐞 𝐫𝐨𝐥𝐞 𝐨𝐟 𝐃𝐀𝐆 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤. 𝐇𝐨𝐰 𝐝𝐨𝐞𝐬 𝐢𝐭 𝐝𝐢𝐟𝐟𝐞𝐫 𝐟𝐫𝐨𝐦 𝐌𝐚𝐩𝐑𝐞𝐝𝐮𝐜𝐞?
+𝐇𝐢𝐧𝐭: DAG allows Spark to execute operations as a graph of stages, enabling better optimization compared to MapReduce.
+9️⃣ 𝐖𝐡𝐚𝐭 𝐢𝐬 𝐭𝐡𝐞 𝐬𝐢𝐠𝐧𝐢𝐟𝐢𝐜𝐚𝐧𝐜𝐞 𝐨𝐟 𝐬𝐭𝐚𝐠𝐞𝐬 𝐢𝐧 𝐃𝐀𝐆 𝐞𝐱𝐞𝐜𝐮𝐭𝐢𝐨𝐧?
+𝐇𝐢𝐧𝐭: Stages are determined by shuffle boundaries, and each stage can be executed in parallel.
+
+🔎 𝐊𝐞𝐲 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: 𝐏𝐞𝐫𝐬𝐢𝐬𝐭𝐞𝐧𝐜𝐞/𝐒𝐭𝐨𝐫𝐚𝐠𝐞 𝐋𝐞𝐯𝐞𝐥𝐬
+
+🔟 𝐖𝐡𝐚𝐭 𝐚𝐫𝐞 𝐭𝐡𝐞 𝐬𝐭𝐨𝐫𝐚𝐠𝐞 𝐥𝐞𝐯𝐞𝐥𝐬 𝐚𝐯𝐚𝐢𝐥𝐚𝐛𝐥𝐞 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤, 𝐚𝐧𝐝 𝐰𝐡𝐞𝐧 𝐰𝐨𝐮𝐥𝐝 𝐲𝐨𝐮 𝐮𝐬𝐞 𝐞𝐚𝐜𝐡?
+𝐇𝐢𝐧𝐭: MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY, etc., depending on memory availability and use case.
+
+Here are some interview questions to test your knowledge of transformations:
+1️⃣ Why are transformations lazy in Spark?
+2️⃣ What are narrow and wide transformations? Provide examples.
+3️⃣ What is the difference between .map() and .flatMap()?
+4️⃣ Explain .filter() transformation with a real-world example.
+5️⃣ When would you use .reduceByKey() vs .groupByKey()?
+6️⃣ What is the difference between .union() and .intersection() transformations?
+7️⃣ Can you explain the .join() operation on RDDs?
+
+1️⃣ What are the most commonly used RDD actions, and how do they differ?
+2️⃣ How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided?
+3️⃣ Explain .countByKey() with an example.
+4️⃣ What are some use cases for .take() and .takeOrdered()?
+5️⃣ How does .saveAsTextFile() handle data partitioning during output?
+6️⃣ What is the role of .foreach() in Spark?
+7️⃣ What is the difference between .countByValue() and .countByKey()
+
+𝐑𝐃𝐃 (𝐑𝐞𝐬𝐢𝐥𝐢𝐞𝐧𝐭 𝐃𝐢𝐬𝐭𝐫𝐢𝐛𝐮𝐭𝐞𝐝 𝐃𝐚𝐭𝐚𝐬𝐞𝐭) :
+
+1)What is an RDD in Spark, and why is it called resilient?
+2)Explain how RDDs achieve fault tolerance.
+3What are the two types of RDD operations, and how do they differ?
+4)What are narrow and wide transformations? Provide examples.
+5)How is data partitioning handled in RDDs, and why is it important?
+6)What are the limitations of RDDs compared to DataFrames and Datasets?
+7)How do you create an RDD from an external file or in-memory collection?
+8)Explain the difference between map() and flatMap() transformations in RDD.
+9)How does caching or persistence work in RDDs, and why is it used?10)What are the pros and cons of RDDs compared to DataFrames and Datasets?.
+
+𝐃𝐚𝐭𝐚𝐅𝐫𝐚𝐦𝐞𝐬:
+
+11)What is a DataFrame in Spark, and how is it different from an RDD?
+12)Explain the role of Catalyst Optimizer in Spark DataFrames.
+13)What are the advantages of using DataFrames over RDDs?
+14)How can you create a DataFrame from a CSV, JSON, or Parquet file?
+15)What are the common operations performed on DataFrames, such as select, filter, and groupBy?
+16)How do you handle schema in DataFrames?
+17)What is the difference between createOrReplaceTempView and createGlobalTempView in DataFrames?
+18)Explain the integration of DataFrames with Spark SQL.
+19)How do you optimize DataFrame operations for better performance?
+20)Can you explain the difference between DataFrame.cache() and DataFrame.persist()?
+
+𝐃𝐚𝐭𝐚𝐬𝐞𝐭𝐬:
+
+21)What is a Dataset in Spark, and how is it different from a DataFrame?
+22)Explain the significance of type safety in Datasets.
+23)What are the key advantages of Datasets over DataFrames and RDDs?
+24)How can you create a Dataset in Spark?
+25)What is the difference between map() in RDDs and Datasets?
+26)xplain the concept of Encoders in Spark Datasets.
+27)What are some use cases where you would prefer a Dataset over a DataFrame?
 ===============================
 SQL:
 >> ✅ Given two tables, find the count of records for Left Outer Join and Inner Join:
