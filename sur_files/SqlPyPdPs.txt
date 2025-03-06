@@ -55,13 +55,19 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
 	==>> df.select(initcap(col("country")))  -->> initcap / lower / upper
 	==>> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
 			  --> df.select(concat_ws(' | ', col("Region"), col("Country")))
+	==>> splitng column -->> df = df.select(split(df.FullName, " ").alias('cn'))  -->> size of array, indexing, explode, array_contains  x
+	==>> result_df = df.select( col("EmployeeID"), ltrim(col("Name")), lpad(col("Name"), 10, "X"))  -->> rtrim / trim / rpad
+	==>> create date, timestamp columns in df, add/subtract days, 
+	     df = spark.range(10).withColumn('today', current_date())
+	     df = spark.range(10).withColumn('now', current_timestamp())
+	     date_sub(col("today"), 5) / date_add(col("today"), 5) / datediff(col("week_ago"), col("today")/ 
+	     months_between(to_date(lit("2016-01-01")), to_date(lit("2017-01-01")) / to_date / to_timestamp / 
+
+
 agg functions --> df.select(sum('CN')).show() -----> max, min, avg, count, countDistanct  ------> note: ignore null values
 	grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show() -------> min, max, avg, count
 	captialization -----> df.select(initcap('CN'))----------> lower, upper 
 	triming spaces, padding values (ltrim, rteim, trim, lpad, rpad)
-	result_df = df.select( col("EmployeeID"), ltrim(col("Name")).alias("ltrim_Name"), lpad(col("Name"), 10, "X").alias("lpad_Name"))
-	splitng column, size of array, indexing, explode, array_contains  ---------> df = df.select(split(df.FullName, " ").alias('cn'))
-	create date, timestamp columns in df, add/subtract days, 
 	==>>
 	DataFrames are immutable in Spark—transformations result in new DataFrames, leaving the original unchanged.
 
