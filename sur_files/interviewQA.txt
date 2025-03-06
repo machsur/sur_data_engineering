@@ -2,22 +2,24 @@
 python:
 >> Given an array, find the minimum and maximum values.
 ans. builtin mtds, sorting, python code
->> ✅ Given a string, count the occurrences of each word in a dictionary:
+>> Given a string, count the occurrences of each word in a dictionary:
 Input: 'aaabbbccddeeeee'
 Output: { “a” : 3 , “b” : 3, “c” : 2, “d” : 2 , “e” : 5 }
->> ✅ Write a Python program to count occurrences of an input string in a file.
-Example:
-Find the number of occurrences of the word ‘The’ in the sentence:
-"The lazy fox jumps over the sleeping rabbit. The lazy rabbit doesn’t wake up."
-
->> Reversing a String using an Extended Slicing techniques.
+>> Write a Python program to count occurrences of an input string in a file.
+    Find the number of occurrences of the word ‘The’ in the sentence:
+    "The lazy fox jumps over the sleeping rabbit. The lazy rabbit doesn’t wake up."
+>> Reversing a String using an Extended Slicing techniques. builtin / slicing / code
 >> Count Vowels from Given words .
 >> Find the highest occurrences of each word from string and sort them in order.
 >> Remove Duplicates from List.
 >> Sort a List without using Sort keyword.
 >> Find the pair of numbers in this list whose sum is n no.
 >> Find the max and min no in the list without using inbuilt functions.
+>> Read and print values from an Excel file using Pandas.
+    df = pd.read_excel('your_file.xlsx')
+>> Handle file exceptions (missing or corrupted Excel files) gracefully.
 >> Calculate the Intersection of Two Lists without using Built-in Functions
+
 >> Write Python code to make API requests to a public API (e.g., weather API) and process the JSON response.
 >> Implement a function to fetch data from a database table, perform data manipulation, and update the database.
 
@@ -80,6 +82,16 @@ Table2:
 b 
 a 
 1 
+
+✅ SQL Challenges
+🔹 Find the 777th highest salary from a table.
+🔹 Identify customers who placed orders in consecutive months.
+🔹 Query to get the total number of patients per doctor, including unassigned patients.
+🔹 Handling NULL values in employee salary using the average salary.
+✅ Performance Optimization & Data Engineering Concepts
+🔹 Difference between Subquery and Materialized Views.
+🔹 CTE vs Subquery in SQL and their performance impact.
+🔹 Steps to debug a slow SQL query.
 =================================
 others:
 
