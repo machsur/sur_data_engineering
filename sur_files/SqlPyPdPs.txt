@@ -244,7 +244,7 @@ pyspark:
 	Oozie - workflow scheduling tool for Hadoop jobs
 
 >> Why Apache spark:
-	- opensource in-memory distributed/cluster/parallel processing engine for big data.
+	- opensource in-memory distributed/cluster/parallel processing engine for big data. (cluster - Haddop Yarn/ k8s / apache mesos/ apache standlone
 	- provides api in java, scala, python, r
 	- supports batch processing, real-time analytics, ml and graph processing
 
