@@ -39,13 +39,7 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
     ==>> df.show(n=3, truncate=25, vertical=True) / df.printSchema() / display(df) / print(df1.columns)
 
 
->>  union tables: 
-	SELECT column1 FROM table1 UNION DISTINCT/UNION ALL/EXCEPT DISTINCT/INTERSECT DISTINCT SELECT column1 FROM table2;
-	union_distinct = pd.concat([df1, df2]).drop_duplicates()  / union_all = pd.concat([df1, df2])
-	union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/
-
-
->> Requirements:
+	==>> union tables: union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/
 	==>> 
 	add new column ---> newdf = df.withColumn("NewColumn", lit(1))
 	drop columns -->> df2 = df.drop("Country", "Region")
@@ -62,12 +56,11 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
 	     df = spark.range(10).withColumn('now', current_timestamp())
 	     date_sub(col("today"), 5) / date_add(col("today"), 5) / datediff(col("week_ago"), col("today")/ 
 	     months_between(to_date(lit("2016-01-01")), to_date(lit("2017-01-01")) / to_date / to_timestamp / 
-
-
-agg functions --> df.select(sum('CN')).show() -----> max, min, avg, count, countDistanct  ------> note: ignore null values
-	grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show() -------> min, max, avg, count
-	captialization -----> df.select(initcap('CN'))----------> lower, upper 
-	triming spaces, padding values (ltrim, rteim, trim, lpad, rpad)
+	==>> df.dropna("All" subset=['cn1", "cn2"]) / df.fillna("N/A" subset=['cn1", "cn2"]) / df.na.fill({'cn1':'val1', 'cn2': 'val2'}) / is null('CN') 
+	==>> coalesce('cn1', 'cn2','cn3') - return first non-null value from list of columns
+	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0))
+	==>> agg functions --> df.select(sum('CN')).show() -----> max, min, avg, count, countDistanct, stddev, variance, sumDistinct  ------> note: ignore null values
+	     grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show() -------> min, max, avg, count, concat_ws(', ', collect_list('cn')), first, last
 	==>>
 	DataFrames are immutable in Spark—transformations result in new DataFrames, leaving the original unchanged.
 
