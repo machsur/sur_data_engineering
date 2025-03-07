@@ -25,19 +25,17 @@ Output: { “a” : 3 , “b” : 3, “c” : 2, “d” : 2 , “e” : 5 }
 
 ==============================
 pyspark:
+
 >> ✅ Given a DataFrame, split the data into two columns (Even, Odd) where:
-Even numbers are populated in the Even column
-Odd numbers are populated in the Odd column.
-Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
-
-✅ Read a CSV file and create a DataFrame with properties.
-✅ Create a DataFrame with two columns:
-Column 1: Default String
-Column 2: Default Integer
-
-1. Explain the key differences between Apache Spark's DataFrame and RDD APIs. In which scenarios would you prefer one over the other?
-
-2. Describe the concept of lazy evaluation in PySpark. How does it impact the execution of Spark jobs?
+    Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
+>> Read a CSV file and create a DataFrame with properties.
+>> Create a DataFrame with two columns:
+    Column 1: Default String
+    Column 2: Default Integer
+>> Explain the key differences between Apache Spark's DataFrame and RDD APIs. In which scenarios would you prefer one over the other?
+    esay of use, performance, schema
+>> Describe the concept of lazy evaluation in PySpark. How does it impact the execution of Spark jobs?
+    Lazy evaluation allows Spark to optimize the execution plan.
 
 3. What are broadcast variables in PySpark, and how do they optimize join operations? Provide an example scenario where a broadcast join would be beneficial.
 
