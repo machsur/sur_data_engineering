@@ -26,7 +26,7 @@ Output: { “a” : 3 , “b” : 3, “c” : 2, “d” : 2 , “e” : 5 }
 ==============================
 pyspark:
 
->> ✅ Given a DataFrame, split the data into two columns (Even, Odd) where:
+>> Given a DataFrame, split the data into two columns (Even, Odd) where:
     Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
 >> Read a CSV file and create a DataFrame with properties.
 >> Create a DataFrame with two columns:
@@ -41,6 +41,14 @@ pyspark:
     RDD: no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
     DF: catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
     DS: optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
+>> What is the difference between map() and flatMap() inPySpark?
+    map() when you want to apply a function that returns a single value for each input element
+    flatMap() when the function can return multiple values for each input element
+>> How do you handle missing values in PySpark?
+    select(): Use when you need to select columns without transformations.
+    selectExpr(): Use when you need to apply SQL expressions or transformations while selecting columns.
+>> What are transformations and actions in PySpark? Giveexamples.
+
 3. What are broadcast variables in PySpark, and how do they optimize join operations? Provide an example scenario where a broadcast join would be beneficial.
 
 4. Discuss the various persistence levels available in PySpark's caching mechanism. When would you use `MEMORY_ONLY` versus `MEMORY_AND_DISK_SER`?
