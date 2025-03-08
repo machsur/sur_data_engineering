@@ -36,7 +36,11 @@ pyspark:
     esay of use, performance, schema
 >> Describe the concept of lazy evaluation in PySpark. How does it impact the execution of Spark jobs?
     Lazy evaluation allows Spark to optimize the execution plan.
-
+>> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
+    similarities in 3 apis : foult tolerant, distributed, in-memory computation, immutable, lazy evaluation, internally processing as rdd for all 3 codes
+    RDD: no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
+    DF: catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
+    DS: optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
 3. What are broadcast variables in PySpark, and how do they optimize join operations? Provide an example scenario where a broadcast join would be beneficial.
 
 4. Discuss the various persistence levels available in PySpark's caching mechanism. When would you use `MEMORY_ONLY` versus `MEMORY_AND_DISK_SER`?
