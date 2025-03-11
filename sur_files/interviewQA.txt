@@ -1,13 +1,12 @@
 ================================
 python:
 >> Given an array, find the minimum and maximum values.
-ans. builtin mtds, sorting, python code
->> Given a string, count the occurrences of each word in a dictionary:
-Input: 'aaabbbccddeeeee'
-Output: { “a” : 3 , “b” : 3, “c” : 2, “d” : 2 , “e” : 5 }
->> Write a Python program to count occurrences of an input string in a file.
-    Find the number of occurrences of the word ‘The’ in the sentence:
-    "The lazy fox jumps over the sleeping rabbit. The lazy rabbit doesn’t wake up."
+    ans. builtin mtds, sorting, python code
+>> Given a string, count the char occurrences of word in a dictionary:
+    Input: 'aaabbbccddeeeee'
+    Output: { “a” : 3 , “b” : 3, “c” : 2, “d” : 2 , “e” : 5 }
+>> Write a Python script to count the frequency of characters in a text file.
+>> Write a Python program to count the frequency of an word in a text file.
 >> Reversing a String using an Extended Slicing techniques. builtin / slicing / code
 >> Count Vowels from Given words .
 >> Find the highest occurrences of each word from string and sort them in order.
@@ -20,11 +19,25 @@ Output: { “a” : 3 , “b” : 3, “c” : 2, “d” : 2 , “e” : 5 }
 >> Handle file exceptions (missing or corrupted Excel files) gracefully.
 >> Calculate the Intersection of Two Lists without using Built-in Functions
 
+>> What is a docstring in Python?
+    special kind of comment used to document what a function, class, or module does. 
+    appears right after the definition of a function, method, class, or module. 
+    Docstrings are enclosed in triple quotes (""" or ''') and can span multiple lines.
+>> What is pass in Python? When is it used?
+    Placeholder for future class/function/loop definition
+    It does nothing when executed 
+>> Which data structure occupies more memory: list or tuple? Why?
+    In Python, lists generally occupy more memory than tuples. 
+    This is because lists are mutable, meaning their size and contents can change, while tuples are immutable, meaning their size and contents are fixed once created.
+
+
+Write a Python script to create a palindrome with a given number of alphabets.
+    Example: For n=3 (alphabets: a, b, c) → Palindrome: abcba
 >> Write Python code to make API requests to a public API (e.g., weather API) and process the JSON response.
 >> Implement a function to fetch data from a database table, perform data manipulation, and update the database.
 
-==============================
-pyspark:
+===============================================================================================================
+pyspark QA:
 
 >> Given a DataFrame, split the data into two columns (Even, Odd) where:
     Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
@@ -73,18 +86,12 @@ pyspark:
 >> Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
     avg_salary_by_dept = df.groupBy("Department").agg(avg("Salary").alias("AverageSalary"))
 
-13. Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
+>> Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
+     +------------+----------------+-------------------+
+     | customer_id| transaction_id | transaction_date |
+     +------------+----------------+-------------------+
+    df_no_duplicates = df.dropDuplicates(["customer_id", "transaction_date"])
 
- +------------+----------------+-------------------+
- | customer_id| transaction_id | transaction_date |
- +------------+----------------+-------------------+
- | 1     | 1001      | 2025-02-01    |
- | 2     | 1002      | 2025-02-03    |
- | 1     | 1003      | 2025-02-01    |
- | 3     | 1004      | 2025-02-10    |
- | 2     | 1005      | 2025-02-15    |
- | 1     | 1006      | 2025-02-07    |
- +------------+-----------------+
 
 🎇 Differences between Apache spark & Pyspark:
 📗 PySpark is the Python API for Apache Spark, enabling Python programmers to take advantage of Spark’s distributed data processing capabilities. It is build on the same core of Apache spark.
@@ -127,14 +134,6 @@ PySpark applications benefit from the ease of deployment inherent to Python scri
 8)Explain the difference between DENSE_RANK and RANK.
 9)What is a cursor in SQL?10)What is a stored procedure in SQL?
 
- 𝐏𝐲𝐭𝐡𝐨𝐧
-
-10)What is a docstring in Python?
-11)What is pass in Python? When is it used?
-12)Which data structure occupies more memory: list or tuple? Why?
-13)Write a Python script to count the frequency of characters in a text file.
-14)Write a Python script to create a palindrome with a given number of alphabets.
-Example: For n=3 (alphabets: a, b, c) → Palindrome: abcba
 
 1️⃣ 𝐖𝐡𝐚𝐭 𝐢𝐬 𝐩𝐚𝐫𝐭𝐢𝐭𝐢𝐨𝐧𝐢𝐧𝐠 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤, 𝐚𝐧𝐝 𝐰𝐡𝐲 𝐢𝐬 𝐢𝐭 𝐢𝐦𝐩𝐨𝐫𝐭𝐚𝐧𝐭?
 𝐇𝐢𝐧𝐭: Discuss how partitioning divides data into smaller chunks for parallel processing and its role in minimizing shuffling.
