@@ -65,33 +65,14 @@ pyspark:
 
 10. Explain the concept of checkpointing in PySpark. Why is it important in streaming applications?
 
-11. Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
- +-------------+----------+
- | City    | Population|
- +-------------+----------+
- | Mumbai   | 20411000 |
- | Delhi    | 16787941 |
- | Bangalore  | 8443675 |
- | Hyderabad  | 6809970 |
- | Ahmedabad  | 5570585 |
- | Chennai   | 4681087 |
- | Kolkata   | 4486679 |
- | Surat    | 4467797 |
- | Pune    | 3124458 |
- | Jaipur   | 3046163 |
- +-------------+----------+
- 
-12. Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
- +-----------+----------+--------+
- | EmployeeID| Department| Salary |
- +-----------+----------+--------+
- | 1     | HR    | 50000 |
- | 2     | IT    | 75000 |
- | 3     | Finance | 62000 |
- | 4     | IT    | 82000 |
- | 5     | HR    | 52000 |
- | 6     | Finance | 60000 |
- +-----------+----------+--------+
+>> Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
+     +-------------+----------+
+     | City    | Population|
+     +-------------+----------+
+    top_5_cities = df.orderBy(col("Population").desc()).limit(5)
+>> Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
+    avg_salary_by_dept = df.groupBy("Department").agg(avg("Salary").alias("AverageSalary"))
+
 13. Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
 
  +------------+----------------+-------------------+
@@ -236,17 +217,19 @@ Here are some interview questions to test your knowledge of transformations:
 25)What is the difference between map() in RDDs and Datasets?
 26)xplain the concept of Encoders in Spark Datasets.
 27)What are some use cases where you would prefer a Dataset over a DataFrame?
-===============================
-SQL:
->> ✅ Given two tables, find the count of records for Left Outer Join and Inner Join:
+
+
+
+====================================================================================
+SQL QA:
+>> Given two tables, find the count of records for Left Outer Join and Inner Join:
 Table A: Table B:
 1 1
 1 1
 1 1 
 1 
 Ans. 12 & 12
-
->> ✅ Give the output for DENSE_RANK() and RANK() functions for the below dataset:
+>> Give the output for DENSE_RANK() and RANK() functions for the below dataset:
 Nums 
 85 
 85 
@@ -255,8 +238,7 @@ Nums
 75 
 70
 
->> 𝐒𝐐𝐋 𝐏𝐫𝐨𝐛𝐥𝐞𝐦
-✅ Given a table with column 'Country', select data in the below sequence:
+>> Given a table with column 'Country', select data in the below sequence:
 Table: Matches
 Country 
 India 
@@ -273,7 +255,7 @@ Ans.
     join
       `powerful-layout-445408-p5.sur_test_ds.countryt` b
     on a.countryc > b.countryc;  -----> or <
->> ✅ Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS.
+>> Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS.
 Table1:
 col1 
 ---- 
@@ -284,17 +266,27 @@ Table2:
 b 
 a 
 1 
-
-✅ SQL Challenges
-🔹 Find the 777th highest salary from a table.
+>> Find the 777th highest salary from a table.
 🔹 Identify customers who placed orders in consecutive months.
 🔹 Query to get the total number of patients per doctor, including unassigned patients.
-🔹 Handling NULL values in employee salary using the average salary.
-✅ Performance Optimization & Data Engineering Concepts
-🔹 Difference between Subquery and Materialized Views.
-🔹 CTE vs Subquery in SQL and their performance impact.
+>> Handling NULL values in employee salary using the average salary.
+    IFNULL(expression, replacement_value) -->> It takes two arguments. If the first argument is NULL, it returns the second argument.
+    COALESCE(expression1, expression2, ..., expressionN) -->> It can take multiple arguments. It returns the first non-NULL argument from the list.
+>> Difference between Subquery and Materialized Views.
+    Performance: Materialized views can improve query performance by storing precomputed results, while subqueries are recalculated each time the main query runs.
+    Storage: Materialized views consume storage space to store the precomputed results, whereas subqueries do not.
+    Maintenance: Materialized views need to be refreshed to stay up-to-date with the underlying data, while subqueries always reflect the current state of the data.
+>> CTE vs Subquery in SQL and their performance impact.
+    Readability and Maintainability:
+    Optimization: Subquery Treated similarly to CTEs in terms of optimization. The query optimizer will attempt to optimize the entire query, including the subqueries.
+    Reusability:
 🔹 Steps to debug a slow SQL query.
-=================================
+
+
+
+
+
+===============================================================================================
 others:
 
 ✅ Tell me about yourself, your projects, and the tech stack you have used.
