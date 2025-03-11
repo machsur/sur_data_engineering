@@ -1,3 +1,46 @@
+1. ✅ What is the difference between ETL and ELT?
+
+2. ✅ How do you handle schema evolution in a data pipeline?
+
+3. ✅ Explain the CAP theorem and its impact on distributed systems?
+
+4. ✅ What are the different types of partitioning in databases, and why are they important?
+
+💡 𝗦𝗤𝗟 & 𝗗𝗮𝘁𝗮 𝗠𝗼𝗱𝗲𝗹𝗶𝗻𝗴:
+
+5. ✅ How do you optimize complex SQL queries?
+
+6. ✅ What is a slowly changing dimension (SCD), and how do you implement it?
+
+7. ✅ How do you handle duplicate records in a large dataset?
+
+8. ✅ What are common indexing techniques to improve query performance?
+
+⚡ 𝗕𝗶𝗴 𝗗𝗮𝘁𝗮 & 𝗖𝗹𝗼𝘂𝗱:
+
+9. ✅ Compare Apache Spark and Apache Flink for data processing?
+
+10. ✅ How does Kafka ensure message durability and fault tolerance?
+
+11. ✅ When would you choose Databricks over AWS Glue or Azure Data Factory?
+
+12. ✅ Explain the differences between Delta Lake, Apache Iceberg, and Hudi?
+
+𝗣𝘆𝘁𝗵𝗼𝗻 & 𝗖𝗼𝗱𝗶𝗻𝗴 𝗖𝗵𝗮𝗹𝗹𝗲𝗻𝗴𝗲𝘀:
+
+✅ Write a Python script to process a 1TB CSV file efficiently?
+
+✅ How would you implement a real-time data deduplication system?
+
+✅ Explain the use of Pandas, NumPy, and PySpark for data engineering?
+
+🔍 𝗦𝗰𝗲𝗻𝗮𝗿𝗶𝗼-𝗕𝗮𝘀𝗲𝗱 𝗤𝘂𝗲𝘀𝘁𝗶𝗼𝗻𝘀:
+
+✅ What steps would you take if an incremental data load pipeline fails?
+
+✅ How would you design a scalable data pipeline for streaming and batch processing?
+
+✅ You need to migrate petabytes of data from an on-premises system to the cloud—what approach would you take?
 ================================
 python:
 >> Given an array, find the minimum and maximum values.
