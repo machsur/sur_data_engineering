@@ -1,9 +1,14 @@
 Cloud functions:
 
->> cloud functions renaned to cloud run functions -->> then aligned with cloud run UI 
->> Trigger function in response to event like file upload in gcs / message arrived in pubsub / http invocation received/ eeror log written to logging
+>> cloud functions (ist gen, 2nd gen) renaned to cloud run functions -->> then aligned with cloud run UI 
+    
+>> deploy function in cloud run
+    1) Deploy one revision from an existing container image (in Artifact Registry, Docker Hub)
+    2) Continuously deploy from a GitHub repository (source or function)
+    3) Use an inline editor to create a function
+
+>> trigger function based on event
 >> Its serverless – pay for what use like number innvocations
->> Two versions: 1st gen and 2nd gen (built on top of cloud run and event arc)
 
 >> 1st gen: timeout- 1 to 9 min / 2cpu 8 gb ram / 1 concurent request per fuction instance / only 7 event types support/ app eng sa  / 
 
