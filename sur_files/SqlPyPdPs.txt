@@ -39,13 +39,14 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
     ==>> df.show(n=3, truncate=25, vertical=True) / df.printSchema() / display(df) / print(df1.columns)
 
 
-	==>> union tables: union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/
+	==>> union tables: union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/   -->> positional col match / schema must be identical
+	     union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col match by name / schema can differ / missing col handle with null values
+	     distanct values/drop duplicates ----> df.select('cn1', 'cn2').distinct() ----> df.dropDuplicates(['cn1', 'cn2'])
 	==>> 
 	add new column ---> newdf = df.withColumn("NewColumn", lit(1))
 	drop columns -->> df2 = df.drop("Country", "Region")
 	column name change -->> new_df = df.withColumnRenamed("oldColumnName", "newColumnName")
 	column type change --> df = df.withColumn("Phone", col("Phone").cast("string"))
-	==>> df distanct values, count, drop duplicates ----> df.select('cn1', 'cn2').distinct().count() ----> df.dropDuplicates(['cn1', 'cn2'])
 	==>> df.select(initcap(col("country")))  -->> initcap / lower / upper
 	==>> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
 			  --> df.select(concat_ws(' | ', col("Region"), col("Country")))
@@ -61,6 +62,9 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
 	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0))
 	==>> agg functions --> df.select(sum('CN')).show() -----> max, min, avg, count, countDistanct, stddev, variance, sumDistinct  ------> note: ignore null values
 	     grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show() -------> min, max, avg, count, concat_ws(', ', collect_list('cn')), first, last
+	==>> when&otherwise -->> df = ( df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult")).withColumn("income_bracket", when(df.salary < 4000, "Low") 					.when((df.salary >= 4000) & (df.salary <= 4500), "Medium") .otherwise("High")) )
+	==>>cast data types -->> df = df.withColumn("column_name", col("column_name").cast("target_data_type"))
+			    -->> cast_expr = [col("column1_name").cast("target_data_type1"), col("column2_name").cast("target_data_type2")] / df = df.select(*cast_expr)
 	==>>
 	DataFrames are immutable in Spark—transformations result in new DataFrames, leaving the original unchanged.
 
