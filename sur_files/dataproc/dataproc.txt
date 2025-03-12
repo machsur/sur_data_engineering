@@ -49,29 +49,11 @@
    ---> submit pyspark job using UI 
    ---> submit spark-sql job using gcloud (gcloud dataproc jobs submit spark-sql --cluster=cluster-a695 -f          
         gs://surretail/scripts/daily_product_revenue/compute_daily_product_revenue.sql --params=bucket_name=surretail)
------------------
+-------------------------------
 >> Execution Flow in PySpark
    Start SparkSession → spark = SparkSession.builder.appName("App").getOrCreate()
    Load Data (from a list, CSV, Parquet, etc.)
    Apply Transformations (e.g., filter(), select(), groupBy())
    Trigger an Action (e.g., show(), collect(), count())
    Stop SparkSession → spark.stop()
->> pysparl commands:
-   -- orders = spark.read.csv("/public/retail_db/orders", schema = "order_id INT, order_date DATE, order_customer_id INT, order_status STRING")
-   -- orders_f = orders.filter(orders['order_status'] /or/ orders.order_status /or/ col('order_status') =='CLOSED')  
-      df_filt = df_selected.filter(df_selected.customer_id.between(20, 30))
-      orders_f2 = orders.filter(orders.order_status.isin("COMPLETE", "CLOSED"))
-   -- df_selected = df.select("name", "age")
-   -- df_with_new_column = df.withColumn("age_plus_5", col("age") + 5)
-   -- df_filtered.show() / df_filtered.collect() - Collect Data to Python list / df_filtered.count()
-   -- df_renamed = df.withColumnRenamed("age", "years_old")
-   -- df_dropped = df.drop("age")
-   -- df_sorted = df.orderBy(df.age.desc())
-   -- df_unique = df_dup.dropDuplicates(["name", "age"])
-   -- df_grouped = df.groupBy("age").count()
-   -- df_joined = df1.join(df2, "id", "inner")  # Inner Join
-   -- df_casted = df.withColumn("age", col("age").cast("string")) / df_casted.printSchema()
-
-Provide more advanced transformations (like explode(), pivot(), window functions)?
-   -- windowSpec = Window.partitionBy("cat").orderBy(desc("value")).rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
-      df.withColumn("maxc", sum("value").over(windowSpec))  == max/min/avg/count/sum/row_number/rank/dense_rank/lag/lead
+------------------------------
