@@ -65,7 +65,9 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
 	==>> when&otherwise -->> df = ( df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult")).withColumn("income_bracket", when(df.salary < 4000, "Low") 					.when((df.salary >= 4000) & (df.salary <= 4500), "Medium") .otherwise("High")) )
 	==>>cast data types -->> df = df.withColumn("column_name", col("column_name").cast("target_data_type"))
 			    -->> cast_expr = [col("column1_name").cast("target_data_type1"), col("column2_name").cast("target_data_type2")] / df = df.select(*cast_expr)
-	==>> window functions -->> window_spec = Window.partitionBy("category", "sub_category").orderBy(col("timestamp"), col("score"))
+	==>> window functions -->> window_spec = Window.partitionBy("category", "sub_category").orderBy(asc("timestamp"), col("score").desc()) \
+                    				.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
+				   window_spec = Window.partitionBy("category", "sub_category").orderBy(col("timestamp"), col("score")).rowsBetween(-2, 3)
 				   df = df.withColumn("row_number", F.row_number().over(window_spec))  -->> rank(), dense_rank(), lead('cn'), lag('cn')
 				   df = df.withColumn("avg_value", F.avg("value").over(window_spec))   -->> sum / min /max /
 
