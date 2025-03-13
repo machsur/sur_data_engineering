@@ -1,53 +1,4 @@
-1. Explain the difference between RDD, DataFrame, and Dataset in PySpark.
-2. What is the difference between cache() and persist() in PySpark?
-3. How does Lazy Evaluation work in PySpark?
-4. What are wide and narrow transformations in PySpark?
-5. Explain shuffle operations in PySpark and their impact on performance.
-6. What are the different persistence levels available in PySpark?
-7. How does PySpark handle schema evolution in DataFrames?
-8. What is broadcast join, and when should we use it?
-9. Explain the difference between groupBy() and reduceByKey() in PySpark.
-10. What is the use of explode() function in PySpark?
-11. Find the top 3 highest-paid employees from each department.
-Sample Data:
-data = [
-(1, "Amit", "IT", 90000),
-(2, "Neha", "HR", 50000),
-(3, "Raj", "IT", 85000),
-(4, "Priya", "HR", 60000),
-(5, "Suresh", "Finance", 75000),
-(6, "Anjali", "Finance", 80000),
-(7, "Vikas", "IT", 92000),
-(8, "Rohan", "HR", 58000),
-(9, "Meera", "Finance", 82000)
-]
-12. Write a PySpark query to count the number of null values in each column of a DataFrame.
 
-13. Write a PySpark code to remove duplicate records based on a specific column.
-Sample Data:
-data = [
-(101, "Mumbai", "Maharashtra"),
-(102, "Delhi", "Delhi"),
-(103, "Bangalore", "Karnataka"),
-(101, "Mumbai", "Maharashtra"),
-(104, "Pune", "Maharashtra")
-]
-
-14. Write a PySpark query to replace null values in a specific column with the previous non-null value.
-
-15. Write a PySpark query to calculate the moving average of sales over the last 3 months.
-Basic Pyspark Questions:
-
-📍 What is PySpark, and how is it different from Apache Spark?
-📍 How do you initialize a SparkSession in PySpark?
-📍 What are RDDs in PySpark, and how are they created?
-📍 Explain transformations and actions in RDDs.
-📍 What is a DataFrame in PySpark, and how does it differ from an RDD?
-📍 How do you perform basic operations on DataFrames in PySpark?
-📍 What is SparkSQL, and how do you perform SQL operations on DataFrames?
-📍 How do you read and write data in different formats (CSV, JSON, Parquet) using PySpark?
-📍 What is lazy evaluation in PySpark, and why is it important?
-📍 Explain the role of caching and persistence in PySpark.
 
 Python is the go-to language for data engineering, but it comes with hidden traps! Here’s how to crush them:
 🔹 𝟭. 𝗜𝗻𝗲𝗳𝗳𝗶𝗰𝗶𝗲𝗻𝘁 𝗟𝗼𝗼𝗽𝘀 𝗼𝗻 𝗟𝗮𝗿𝗴𝗲 𝗗𝗮𝘁𝗮𝘀𝗲𝘁𝘀
@@ -166,6 +117,54 @@ Write a Python script to create a palindrome with a given number of alphabets.
 ===============================================================================================================
 pyspark QA:
 
+2. What is the difference between cache() and persist() in PySpark?
+3. How does Lazy Evaluation work in PySpark?
+4. What are wide and narrow transformations in PySpark?
+5. Explain shuffle operations in PySpark and their impact on performance.
+6. What are the different persistence levels available in PySpark?
+7. How does PySpark handle schema evolution in DataFrames?
+8. What is broadcast join, and when should we use it?
+9. Explain the difference between groupBy() and reduceByKey() in PySpark.
+10. What is the use of explode() function in PySpark?
+11. Find the top 3 highest-paid employees from each department.
+Sample Data:
+data = [
+(1, "Amit", "IT", 90000),
+(2, "Neha", "HR", 50000),
+(3, "Raj", "IT", 85000),
+(4, "Priya", "HR", 60000),
+(5, "Suresh", "Finance", 75000),
+(6, "Anjali", "Finance", 80000),
+(7, "Vikas", "IT", 92000),
+(8, "Rohan", "HR", 58000),
+(9, "Meera", "Finance", 82000)
+]
+12. Write a PySpark query to count the number of null values in each column of a DataFrame.
+
+13. Write a PySpark code to remove duplicate records based on a specific column.
+Sample Data:
+data = [
+(101, "Mumbai", "Maharashtra"),
+(102, "Delhi", "Delhi"),
+(103, "Bangalore", "Karnataka"),
+(101, "Mumbai", "Maharashtra"),
+(104, "Pune", "Maharashtra")
+]
+
+14. Write a PySpark query to replace null values in a specific column with the previous non-null value.
+
+15. Write a PySpark query to calculate the moving average of sales over the last 3 months.
+Basic Pyspark Questions:
+
+📍 What is PySpark, and how is it different from Apache Spark?
+📍 How do you initialize a SparkSession in PySpark?
+📍 What are RDDs in PySpark, and how are they created?
+📍 Explain transformations and actions in RDDs.
+📍 How do you perform basic operations on DataFrames in PySpark?
+📍 What is SparkSQL, and how do you perform SQL operations on DataFrames?
+📍 How do you read and write data in different formats (CSV, JSON, Parquet) using PySpark?
+📍 What is lazy evaluation in PySpark, and why is it important?
+📍 Explain the role of caching and persistence in PySpark.
 >> Given a DataFrame, split the data into two columns (Even, Odd) where:
     Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
 >> Read a CSV file and create a DataFrame with properties.
@@ -178,9 +177,9 @@ pyspark QA:
     Lazy evaluation allows Spark to optimize the execution plan.
 >> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
     similarities in 3 apis : foult tolerant, distributed, in-memory computation, immutable, lazy evaluation, internally processing as rdd for all 3 codes
-    RDD: no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
-    DF: catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
-    DS: optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
+    RDD: low-level api / no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
+    DF: high-level api / catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
+    DS: high-level api / optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
 >> What is the difference between map() and flatMap() inPySpark?
     map() when you want to apply a function that returns a single value for each input element
     flatMap() when the function can return multiple values for each input element
@@ -219,30 +218,6 @@ pyspark QA:
      +------------+----------------+-------------------+
     df_no_duplicates = df.dropDuplicates(["customer_id", "transaction_date"])
 
-
-🎇 Differences between Apache spark & Pyspark:
-📗 PySpark is the Python API for Apache Spark, enabling Python programmers to take advantage of Spark’s distributed data processing capabilities. It is build on the same core of Apache spark.
-📗 Apache Spark is a unified analytics engine for large-scale data processing. It supports batch processing, real-time data streaming, machine learning, and graph processing. Developed by the Apache Software Foundation.
-
-1️⃣ Language
-Apache spark which is written in scala needs knowledge of java and scala to work.
-Pyspark offers the functionalities in python language.
-
-2️⃣ Performance
-Spark when performed with scala does the optimal execution and more execution speed than pyspark.
-Pyspark has some overhead due to interaction between JVM and eventually python & slower performance than spark.
-
-3️⃣ Data processing
-Spark functionality revolves around its data processing engine, which can handle batch and real-time data processing at scale.
-PySpark provides an API for data processing, enabling operations such as filtering, aggregating, and joining datasets in a distributed manner. It simplifies the development of data pipelines by allowing these tasks to be defined in Python code.
-
-4️⃣ Data ingestion
-Spark supports data ingestion across a range of sources. Its built-in connectors and APIs enable direct access to storage systems, databases, and streaming sources. 
-PySpark simplifies the process of data ingestion from various sources, including HDFS, Kafka, and cloud storage services like AWS S3.
-
-5️⃣ Deployment
-Spark’s deployment capabilities are equally versatile, supporting a range of cluster managers and cloud platforms. 
-PySpark applications benefit from the ease of deployment inherent to Python scripts, allowing integration with CI/CD pipelines and containerization technologies such as Docker and Kubernetes. 
 
 𝐑𝐨𝐮𝐧𝐝 𝟏: 𝐓𝐞𝐜𝐡𝐧𝐢𝐜𝐚𝐥 - 𝟏
 
