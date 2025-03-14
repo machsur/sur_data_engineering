@@ -1,4 +1,37 @@
+1. How to handle out of memory exception
+2. Word count program in pyspark
+3. How to get average salary in pyspark
+4. How to join 3 or more tables in sql
+5. Difference between salting, coalesce and repartition
+6. What is yarn?
+7. Difference between sortby and orderby?
+8. what is scd and it's types?
+9. what is map and flatmap?
+10. what is the default block size in hdfs and how to change it?
+explain about the steps after spark submit?
 
+2️⃣ what is repartition and coalesce?
+
+3️⃣ what are the optimisation techniques used in your project?
+
+4️⃣ what is data skewness and salting technique?
+
+5️⃣ Explain about out of memory issue in spark?
+
+6️⃣ What is difference between spark session and spark context?
+
+7️⃣ what is collect list and collect set and when do we use it?
+
+8️⃣ input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
+ output 
++---+---------------+----------+---------+
+| ID| Name|First_Name|Last_Name|
++---+---------------+----------+---------+
+| 1|Sagar-Prajapati| Sagar|Prajapati|
+| 2| Alex-John| Alex| John|
+| 3| John Cena| John| Cena|
+| 4| Kim Joe| Kim| Joe|
++---+---------------+----------+---------+
 
 Python is the go-to language for data engineering, but it comes with hidden traps! Here’s how to crush them:
 🔹 𝟭. 𝗜𝗻𝗲𝗳𝗳𝗶𝗰𝗶𝗲𝗻𝘁 𝗟𝗼𝗼𝗽𝘀 𝗼𝗻 𝗟𝗮𝗿𝗴𝗲 𝗗𝗮𝘁𝗮𝘀𝗲𝘁𝘀
