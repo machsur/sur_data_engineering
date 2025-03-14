@@ -72,4 +72,6 @@
 ======================
 >> BashOperator --> running bash command / running bash script, python script placed in gcs data folder / running gcloud command
 >> pythonoperator -->> calling 1. py function (2. executes gcs py script) from dag / 
-
+>> The BranchPythonOperator : conditionally branch your DAG based on the output of a Python function. 
+>> DummyOperator: it does nothing / improve the readability and structure of the DAG. / act as a placeholder, or ensure that certain paths in the DAG are not left empty. 
+>> EmptyOperator: tasks that do nothing / used as a placeholder for tasks that will be defined later 
