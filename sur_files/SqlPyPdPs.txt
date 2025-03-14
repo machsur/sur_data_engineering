@@ -70,6 +70,8 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
 				   window_spec = Window.partitionBy("category", "sub_category").orderBy(col("timestamp"), col("score")).rowsBetween(-2, 3)
 				   df = df.withColumn("row_number", F.row_number().over(window_spec))  -->> rank(), dense_rank(), lead('cn'), lag('cn')
 				   df = df.withColumn("avg_value", F.avg("value").over(window_spec))   -->> sum / min /max /
+	==>> explode/explode_outer: exploded_df = df.select("Name", explode("Subjects").alias("Subject"))  -->> explode_outer
+		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
 
 	==>>
 	DataFrames are immutable in Spark—transformations result in new DataFrames, leaving the original unchanged.
