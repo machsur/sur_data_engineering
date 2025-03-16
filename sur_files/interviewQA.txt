@@ -221,6 +221,11 @@ Basic Pyspark Questions:
     selectExpr(): Use when you need to apply SQL expressions or transformations while selecting columns.
 >> What are transformations and actions in PySpark? Giveexamples.
 
+>> df1 = df.select('name', explode(split(df.language, ',')))
+>> df1 = df.withColumn('nc', coalesce(when(df.city1=="", None).otherwise(df.city1), when(df.city2=="", None).otherwise(df.city2), 
+         when(df.city3=="", None).otherwise(df.city3)))
+
+
 3. What are broadcast variables in PySpark, and how do they optimize join operations? Provide an example scenario where a broadcast join would be beneficial.
 
 4. Discuss the various persistence levels available in PySpark's caching mechanism. When would you use `MEMORY_ONLY` versus `MEMORY_AND_DISK_SER`?
