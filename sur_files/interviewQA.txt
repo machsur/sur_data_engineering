@@ -150,8 +150,12 @@ Write a Python script to create a palindrome with a given number of alphabets.
 ===============================================================================================================
 pyspark QA:
 
-2. What is the difference between cache() and persist() in PySpark?
-3. How does Lazy Evaluation work in PySpark?
+>> What is the difference between cache() and persist() in PySpark?
+   cache(): Default Storage Level: cache() uses the default storage level, which is MEMORY_ONLY. 
+   persist(): Flexible Storage Levels: persist() allows you to specify different storage levels, such as MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY, etc.
+>> How does Lazy Evaluation work in PySpark?
+   the execution of transformations on RDDs (Resilient Distributed Datasets) or DataFrames is deferred until an action is performed. This allows PySpark to optimize the 
+   execution plan and improve performance.
 4. What are wide and narrow transformations in PySpark?
 5. Explain shuffle operations in PySpark and their impact on performance.
 6. What are the different persistence levels available in PySpark?
@@ -159,35 +163,20 @@ pyspark QA:
 8. What is broadcast join, and when should we use it?
 9. Explain the difference between groupBy() and reduceByKey() in PySpark.
 10. What is the use of explode() function in PySpark?
-11. Find the top 3 highest-paid employees from each department.
-Sample Data:
-data = [
-(1, "Amit", "IT", 90000),
-(2, "Neha", "HR", 50000),
-(3, "Raj", "IT", 85000),
-(4, "Priya", "HR", 60000),
-(5, "Suresh", "Finance", 75000),
-(6, "Anjali", "Finance", 80000),
-(7, "Vikas", "IT", 92000),
-(8, "Rohan", "HR", 58000),
-(9, "Meera", "Finance", 82000)
-]
+
+>> Find the top 3 highest-paid employees from each department.
+   data = [(1, "Amit", "IT", 90000),
+
 12. Write a PySpark query to count the number of null values in each column of a DataFrame.
 
-13. Write a PySpark code to remove duplicate records based on a specific column.
-Sample Data:
-data = [
-(101, "Mumbai", "Maharashtra"),
-(102, "Delhi", "Delhi"),
-(103, "Bangalore", "Karnataka"),
-(101, "Mumbai", "Maharashtra"),
-(104, "Pune", "Maharashtra")
-]
+>> Write a PySpark code to remove duplicate records based on a specific column.
+   data = [(101, "Mumbai", "Maharashtra"), ]
 
 14. Write a PySpark query to replace null values in a specific column with the previous non-null value.
 
-15. Write a PySpark query to calculate the moving average of sales over the last 3 months.
-Basic Pyspark Questions:
+>> Write a PySpark query to calculate the moving average of sales over the last 3 months.
+    window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
+    df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
 
 📍 What is PySpark, and how is it different from Apache Spark?
 📍 How do you initialize a SparkSession in PySpark?
