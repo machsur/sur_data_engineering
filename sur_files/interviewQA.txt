@@ -156,13 +156,16 @@ pyspark QA:
 >> How does Lazy Evaluation work in PySpark?
    the execution of transformations on RDDs (Resilient Distributed Datasets) or DataFrames is deferred until an action is performed. This allows PySpark to optimize the 
    execution plan and improve performance.
-4. What are wide and narrow transformations in PySpark?
+>> What are wide and narrow transformations in PySpark?
+   Narrow transformations are those where each input partition contributes to only one output partition. Examples include: map() / filter() / flatMap()
+   Wide transformations involve shuffling data across the network, as input partitions contribute to multiple output partitions. 
+   groupByKey(): Groups elements with the same key. / reduceByKey(): Combines values with the same key using a specified function. /join(): Joins two datasets 
 5. Explain shuffle operations in PySpark and their impact on performance.
 6. What are the different persistence levels available in PySpark?
 7. How does PySpark handle schema evolution in DataFrames?
-8. What is broadcast join, and when should we use it?
-9. Explain the difference between groupBy() and reduceByKey() in PySpark.
-10. What is the use of explode() function in PySpark?
+>> What is broadcast join, and when should we use it?
+>> Explain the difference between groupBy() and reduceByKey() in PySpark.
+>> What is the use of explode() function in PySpark?
 
 >> Find the top 3 highest-paid employees from each department.
    data = [(1, "Amit", "IT", 90000),
