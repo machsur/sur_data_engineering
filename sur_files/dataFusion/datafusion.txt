@@ -16,3 +16,6 @@ configure bq properties (poject, dataset, table, review columns) - click on vali
 while running pipeline it will create dataproc cluster (provising - starting - running - failed or Succeeded - review logs  ) - 
 pipeline failed - review logs - click on actions - duplicate pipeline - click on wranger properties - remove hash algorithum trans - validate - 
 deploy pipeline - run it again
+
+
+>> use data fusion pipeline RunID to filter logs in logs explorer / use data fusion console to check logs.
