@@ -30,7 +30,7 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
          join_df = df1.crossjoin(df2)
          broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
     ==>> filtered_df = df.filter(df['cn'] > 10 / .isNull() / .isNotNull())  or df.filter((df["Age"] > 30) &| (df["Department"] == "IT"))
-    ==>> grouped_df = df.groupBy('department').agg(max("sal"))   -->> count() / max("sal") / min("sal") / avg("sal") / sum("sal")
+    ==>> grouped_df = df.groupBy('department').agg(max("sal"))   -->> count() / agg(max("sal")) or agg(sum('Age'), sum('sal')) or max('age', 'sal) -- min avg sum /
     ==>> having_df = df.filter(grouped_df['count'] > 1)
     ==>> selected_df = df.select("customer_id", col("Name").alias('EmployeeName'), column("last_name"), df.email, df["city"] )
                     = df.selectExpr("Name as EmployeeName", "Salary as EmployeeSalary", "Department").show()
