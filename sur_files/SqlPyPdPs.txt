@@ -350,7 +350,11 @@ editing path variable (./hello.py - hello.py works now)
 echo $PATH
 export PATH=$PATH:/home/surmacha/scripts
 adding comments
-	-- variables: make script generic & dynamic, 
+-- variables: 
+	make script generic & dynamic 
+	datatype is blind/untyped, 
+	constant variable (cant reassign later ex-PI) - readonly PI=3.1452
+	command substution -- today=$(command) or `command` -- echo $today
 
 
 
