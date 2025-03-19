@@ -336,5 +336,22 @@ https://spark.apache.org/
 
     script more professional: comments (#) / Author: / Date Created / Date Modified / Description / Usage
 
+>> 
+cat /etc/shells
+echo $SHELL
+ls -a , ls -l, ls
+mkdir DN
+touch FN
+vi/vim/nano FN
+cat FN
+bash FN
+convert shell script onto bash script (shebang)
+editing path variable (./hello.py - hello.py works now)
+echo $PATH
+export PATH=$PATH:/home/surmacha/scripts
+adding comments
+	-- variables: make script generic & dynamic, 
+
+
 
 
