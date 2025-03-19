@@ -311,22 +311,11 @@ https://spark.apache.org/
 =================
 
 ==========================
->> Why linux rather than winndows, macos
-  open source & free to use, multi-users work on shared system , good security (no antivirus req), stable and reliable
-
->> Architexture
-  Hardware
-  Software
-  kernel - to connect hardware and software app - middle man
-  shell - instructions are given ro kernel by user via shell
-  deamons - run in background 
-
->> deamon files ends with "d" / data files / configuration files
+>> Why linux rather than winndows, macos:  open source & free to use, multi-users work on shared system , good security (no antivirus req), stable and reliable
 
 >> user --> give commands on terminal --> shell(program/CLI) interprets and executes/passes them on --> OS
   type of shell: bash, etc.
   why bash shell: feature-rich, fast, very common
-  shell script: file consists series of commands for shell - allow automation, save time, more productive
 
 >> Bash Script structure:
     shebang line - tell to shell what type of script running like bash, py, etc
@@ -337,19 +326,13 @@ https://spark.apache.org/
     script more professional: comments (#) / Author: / Date Created / Date Modified / Description / Usage
 
 >> 
-cat /etc/shells
-echo $SHELL
-ls -a , ls -l, ls
-mkdir DN
-touch FN
-vi/vim/nano FN
-cat FN
-bash FN
-convert shell script onto bash script (shebang)
-editing path variable (./hello.py - hello.py works now)
-echo $PATH
-export PATH=$PATH:/home/surmacha/scripts
-adding comments
+-- sudo su - , useradd - seshuu , passwd seshuu, su - seshuu , sudo apt install ncal
+-- nproc, cal 2023, cat /etc/shells, echo $SHELL
+-- touch FN, vi/vim/nano FN
+-- execute script: bash script_name, script_name (once user has X permission) 
+-- convert shell script onto bash script (shebang) -- #!/bin/bash (in first line of script)
+-- editing path variable (./hello.py - hello.py works now) --- echo $PATH, export PATH=$PATH:/home/surmacha/scripts
+-- adding comments #
 -- variables: 
 	make script generic & dynamic 
 	datatype is blind/untyped, 
