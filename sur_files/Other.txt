@@ -37,31 +37,7 @@ DB concepts:
   CHECK	Restricts values based on a condition.	-- CHECK (AGE >= 18)
   DEFAULT	Assigns a default value if no value is provided.--	STATUS VARCHAR(10) DEFAULT 'Active'
 
-==========================
->> Why linux rather than winndows, macos
-  open source & free to use, multi-users work on shared system , good security (no antivirus req), stable and reliable
 
->> Architexture
-  Hardware
-  Software
-  kernel - to connect hardware and software app - middle man
-  shell - instructions are given ro kernel by user via shell
-  deamons - run in background 
-
->> deamon files ends with "d" / data files / configuration files
-
->> user --> give commands on terminal --> shell(program/CLI) interprets and executes/passes them on --> OS
-  type of shell: bash, etc.
-  why bash shell: feature-rich, fast, very common
-  shell script: file consists series of commands for shell - allow automation, save time, more productive
-
->> Bash Script structure:
-    shebang line - tell to shell what type of script running like bash, py, etc
-    commands
-    exit statement - 0 successful; 1-255 unsuccessful
-    chmod + to give executable permissions for script
-
-    script more professional: comments (#) / Author: / Date Created / Date Modified / Description / Usage
 
 ============================
 
