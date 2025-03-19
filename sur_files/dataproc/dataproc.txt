@@ -1,9 +1,13 @@
 >> Apache Spark - multi-language engine (single-node machines or clusters) suitable for large-scale data workloads, and can be --         deployed on-premises or in the cloud.
    Google Cloud Dataproc is a managed service that runs Apache Spark (and other frameworks),
 
+>> Haddop Yarn Cluster -- master node (Yarn RM), worker node
+   worker node --> App Master container (pyspark driver --> py4j --> JVM driver), executors (each 4cpu 16 gb ram - means 4 slots and memory common for 4 slots)
+   Script or spark app --> divide into jobs based on action --> job divide into stages based wide trans --> shuffle/sort --> tasks (these tasks run slots)
+
 >> enable API, create dataproc cluster on vm/gke.
    -- cluster type: single node 1m0w, standard for dev team 1m Nw, high availability for prod 3m Nw
-   -- allocate static ip to it >> vm instance - external ip - view details - n/w page ip addresses - reseve to static 
+   -- allocate static ip to it >> vm instance - external ip - view detais - n/w page ip addresses - reseve to static 
 
 >> validate ssh connectivity to master node vm of dataproc cluster: gcloud ssh cammand helps to copy key on vm and able to ssh vm (gcloud compute ssh --zone "us-central1-a"    "dataprocclu1-m" --project "possible-dream-433814-b4")
    -- establish an SSH connection to a remote server VM instance: ssh -i C:\Users\surmacha\.ssh\google_compute_engine surmacha@35.184.234.232
