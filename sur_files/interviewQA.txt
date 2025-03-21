@@ -161,11 +161,15 @@ pyspark QA:
    Wide transformations involve shuffling data across the network, as input partitions contribute to multiple output partitions. 
    groupByKey(): Groups elements with the same key. / reduceByKey(): Combines values with the same key using a specified function. /join(): Joins two datasets 
 5. Explain shuffle operations in PySpark and their impact on performance.
-6. What are the different persistence levels available in PySpark?
-7. How does PySpark handle schema evolution in DataFrames?
+>> What are the different persistence levels available in PySpark?
+>> How does PySpark handle schema evolution in DataFrames?
 >> What is broadcast join, and when should we use it?
 >> Explain the difference between groupBy() and reduceByKey() in PySpark.
 >> What is the use of explode() function in PySpark?
+
+>> Key Differences
+   Memory Management: On-heap memory (data in deserilization -ready for eat) is managed by the JVM and subject to GC, while off-heap memory (data in serilization form - raw format) is managed outside the JVM and not subject to GC.
+   Performance: Off-heap memory can reduce GC overhead and improve performance for large datasets, but may introduce serialization/deserialization overhead12.
 
 >> Find the top 3 highest-paid employees from each department.
    data = [(1, "Amit", "IT", 90000),
@@ -181,15 +185,17 @@ pyspark QA:
     window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
     df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
 
-📍 What is PySpark, and how is it different from Apache Spark?
-📍 How do you initialize a SparkSession in PySpark?
+>> What is PySpark (python api let u use spark with python), and how is it different from Apache Spark (big data engine).
+>> How do you initialize a SparkSession in PySpark?
 📍 What are RDDs in PySpark, and how are they created?
 📍 Explain transformations and actions in RDDs.
-📍 How do you perform basic operations on DataFrames in PySpark?
-📍 What is SparkSQL, and how do you perform SQL operations on DataFrames?
-📍 How do you read and write data in different formats (CSV, JSON, Parquet) using PySpark?
-📍 What is lazy evaluation in PySpark, and why is it important?
-📍 Explain the role of caching and persistence in PySpark.
+>> How do you perform basic operations on DataFrames in PySpark?
+>> What is SparkSQL, and how do you perform SQL operations on DataFrames?
+   Registering the DataFrame as a Temporary View: df.createOrReplaceTempView("people")
+   Running SQL Queries: spark.sql("SELECT Name, Age FROM people WHERE Age > 30").show()
+>> How do you read and write data in different formats (CSV, JSON, Parquet) using PySpark?
+>> What is lazy evaluation in PySpark, and why is it important?
+>> Explain the role of caching and persistence in PySpark.
 >> Given a DataFrame, split the data into two columns (Even, Odd) where:
     Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
 >> Read a CSV file and create a DataFrame with properties.
