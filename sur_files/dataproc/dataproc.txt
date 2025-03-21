@@ -5,6 +5,8 @@
    worker node --> App Master container (pyspark driver --> py4j --> JVM driver), executors (each 4cpu 16 gb ram - means 4 slots and memory common for 4 slots)
    Script or spark app --> divide into jobs based on action --> job divide into stages based wide trans --> shuffle/sort --> tasks (these tasks run slots)
 
+   -- Dynamic Partition pruning in spark3.0:
+
 >> enable API, create dataproc cluster on vm/gke.
    -- cluster type: single node 1m0w, standard for dev team 1m Nw, high availability for prod 3m Nw
    -- allocate static ip to it >> vm instance - external ip - view detais - n/w page ip addresses - reseve to static 
