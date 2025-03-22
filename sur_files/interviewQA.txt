@@ -1,143 +1,4 @@
->> How to set the partitions in pyspark?
-   Reading Data: The option("numPartitions", 10) sets the number of partitions when loading the data.
-   repartition Method: This method increases or decreases the number of partitions and shuffles the data.
-   coalesce Method: This method reduces the number of partitions without a full shuffle, which is more efficient for reducing partitions.
 
->> what are the optimization techniques in pyspark?
-1. Use DataFrame/Dataset over RDD
-DataFrames and Datasets are optimized for performance and provide a higher-level API compared to RDDs. They leverage Spark's Catalyst optimizer and Tungsten execution engine for efficient query planning and execution12.
-2. Avoid User Defined Functions (UDFs)
-UDFs can be a performance bottleneck because they are not optimized by Spark's Catalyst optimizer. Instead, use built-in functions whenever possible2.
-3. Optimize Partitions
-Repartition: Use repartition() to increase the number of partitions for better parallelism.
-Coalesce: Use coalesce() to reduce the number of partitions without a full shuffle, which is more efficient12.
-4. Cache Data
-Caching intermediate DataFrames can save time on repeated computations. Use df.cache() to store DataFrames in memory2.
-5. Optimize Joins
-Broadcast Joins: Use broadcast() for small DataFrames to avoid shuffling large datasets.
-Sort-Merge Joins: Ensure data is partitioned and sorted on join keys to optimize join operations1.
-6. Use Efficient Serialization Formats
-Kryo Serialization: Use Kryo serialization for faster and more compact serialization compared to Java serialization3.
-7. Reduce Shuffle Operations
-Minimize expensive shuffle operations by optimizing data partitioning and using operations like mapPartitions() instead of map()1.
-8. Disable DEBUG and INFO Logging
-Reduce logging overhead by setting the log level to WARN or ERROR in production environments2.
-
->> what is Repartiton and coalesce?
->> How to submit the spark job?
-8.How to handle the null values in pyspark?
-10.When do we need to do the repartition?1. 
-How to handle out of memory exception
-2. Word count program in pyspark
-3. How to get average salary in pyspark
-4. How to join 3 or more tables in sql
-5. Difference between salting, coalesce and repartition
-6. What is yarn?
-7. Difference between sortby and orderby?
-8. what is scd and it's types?
-9. what is map and flatmap?
-10. what is the default block size in hdfs and how to change it?
-explain about the steps after spark submit?
-
-2️⃣ what is repartition and coalesce?
-
-3️⃣ what are the optimisation techniques used in your project?
-
-4️⃣ what is data skewness and salting technique?
-
-5️⃣ Explain about out of memory issue in spark?
-
-6️⃣ What is difference between spark session and spark context?
-
-7️⃣ what is collect list and collect set and when do we use it?
-
-8️⃣ input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
- output 
-+---+---------------+----------+---------+
-| ID| Name|First_Name|Last_Name|
-+---+---------------+----------+---------+
-| 1|Sagar-Prajapati| Sagar|Prajapati|
-| 2| Alex-John| Alex| John|
-| 3| John Cena| John| Cena|
-| 4| Kim Joe| Kim| Joe|
-+---+---------------+----------+---------+
-
-Python is the go-to language for data engineering, but it comes with hidden traps! Here’s how to crush them:
-🔹 𝟭. 𝗜𝗻𝗲𝗳𝗳𝗶𝗰𝗶𝗲𝗻𝘁 𝗟𝗼𝗼𝗽𝘀 𝗼𝗻 𝗟𝗮𝗿𝗴𝗲 𝗗𝗮𝘁𝗮𝘀𝗲𝘁𝘀
-❌ Using for loops on millions of records.
-✅ Use vectorized operations with Pandas (df.apply(), df.groupby()), or leverage PySpark for big data.
-🔹 𝟮. 𝗠𝗲𝗺𝗼𝗿𝘆 𝗟𝗲𝗮𝗸𝘀 𝘄𝗶𝘁𝗵 𝗟𝗮𝗿𝗴𝗲 𝗗𝗮𝘁𝗮𝗙𝗿𝗮𝗺𝗲𝘀
-❌ Keeping huge DataFrames in memory.
-✅ Use chunking (pd.read_csv(chunksize=10000)) or Dask for parallel processing.
-🔹 𝟯. 𝗠𝘂𝘁𝗮𝗯𝗹𝗲 𝗗𝗲𝗳𝗮𝘂𝗹𝘁 𝗔𝗿𝗴𝘂𝗺𝗲𝗻𝘁𝘀
-❌ Defining functions like def my_func(data=[]): (mutable lists persist across calls!)
-✅ Use None instead: def my_func(data=None): data = data or [].
-🔹 𝟰. 𝗜𝗴𝗻𝗼𝗿𝗶𝗻𝗴 𝗘𝘅𝗰𝗲𝗽𝘁𝗶𝗼𝗻 𝗛𝗮𝗻𝗱𝗹𝗶𝗻𝗴 𝗶𝗻 𝗣𝗶𝗽𝗲𝗹𝗶𝗻𝗲𝘀
-❌ Assuming everything will work smoothly.
-✅ Use try-except, logging, and monitoring tools like Airflow & Datadog.
-🔹 𝟱. 𝗣𝗼𝗼𝗿 𝗣𝗮𝗿𝗮𝗹𝗹𝗲𝗹𝗶𝘀𝗺 𝗦𝘁𝗿𝗮𝘁𝗲𝗴𝘆
-❌ Using Python’s multiprocessing in distributed environments (doesn't work well with Spark!).
-✅ Use Spark, Dask, or Ray for true parallel execution across clusters.
-🔹 𝟲. 𝗙𝗮𝗶𝗹𝗶𝗻𝗴 𝘁𝗼 𝗢𝗽𝘁𝗶𝗺𝗶𝘇𝗲 𝗦𝗤𝗟 𝗤𝘂𝗲𝗿𝗶𝗲𝘀 𝗶𝗻 𝗣𝘆𝘁𝗵𝗼𝗻
-❌ Writing inefficient SQL queries inside Python (pandas.read_sql()).
-✅ Use EXPLAIN plans, indexing, and Snowflake’s query optimization.
-🔹 𝟳. 𝗢𝘃𝗲𝗿𝘂𝘀𝗶𝗻𝗴 𝗣𝗮𝗻𝗱𝗮𝘀 𝗳𝗼𝗿 𝗕𝗶𝗴 𝗗𝗮𝘁𝗮
-❌ Pandas struggles with GBs/TBs of data.
-✅ Use PySpark, Dask, or DuckDB instead for scalability.
-🔹 𝟴. 𝗛𝗮𝗿𝗱𝗰𝗼𝗱𝗶𝗻𝗴 𝗖𝗼𝗻𝗳𝗶𝗴𝘂𝗿𝗮𝘁𝗶𝗼𝗻𝘀
-❌ Storing database credentials directly in code.
-✅ Use environment variables, .env files, or secrets management tools.
-🔹 𝟵. 𝗡𝗼𝘁 𝗨𝘀𝗶𝗻𝗴 𝗧𝘆𝗽𝗲 𝗛𝗶𝗻𝘁𝘀 & 𝗟𝗶𝗻𝘁𝗶𝗻𝗴
-❌ Writing messy, unstructured code.
-✅ Use mypy for type checking, Black for formatting, and pylint for better code quality.
-🔹 𝟭𝟬. 𝗢𝘃𝗲𝗿𝗹𝗼𝗼𝗸𝗶𝗻𝗴 𝗟𝗼𝗴𝗴𝗶𝗻𝗴 & 𝗠𝗼𝗻𝗶𝘁𝗼𝗿𝗶𝗻𝗴
-❌ Debugging with print() statements.
-✅ Use logging module, centralized logging (like ELK, Datadog), and structured logs for debugging.
-
-
-1. ✅ What is the difference between ETL and ELT?
-
-2. ✅ How do you handle schema evolution in a data pipeline?
-
-3. ✅ Explain the CAP theorem and its impact on distributed systems?
-
-4. ✅ What are the different types of partitioning in databases, and why are they important?
-
-💡 𝗦𝗤𝗟 & 𝗗𝗮𝘁𝗮 𝗠𝗼𝗱𝗲𝗹𝗶𝗻𝗴:
-
-5. ✅ How do you optimize complex SQL queries?
-
-6. ✅ What is a slowly changing dimension (SCD), and how do you implement it?
-
-7. ✅ How do you handle duplicate records in a large dataset?
-
-8. ✅ What are common indexing techniques to improve query performance?
-
-⚡ 𝗕𝗶𝗴 𝗗𝗮𝘁𝗮 & 𝗖𝗹𝗼𝘂𝗱:
-
-9. ✅ Compare Apache Spark and Apache Flink for data processing?
-
-10. ✅ How does Kafka ensure message durability and fault tolerance?
-
-11. ✅ When would you choose Databricks over AWS Glue or Azure Data Factory?
-
-12. ✅ Explain the differences between Delta Lake, Apache Iceberg, and Hudi?
-
-𝗣𝘆𝘁𝗵𝗼𝗻 & 𝗖𝗼𝗱𝗶𝗻𝗴 𝗖𝗵𝗮𝗹𝗹𝗲𝗻𝗴𝗲𝘀:
-
-✅ Write a Python script to process a 1TB CSV file efficiently?
-
-✅ How would you implement a real-time data deduplication system?
-
-✅ Explain the use of Pandas, NumPy, and PySpark for data engineering?
-
-🔍 𝗦𝗰𝗲𝗻𝗮𝗿𝗶𝗼-𝗕𝗮𝘀𝗲𝗱 𝗤𝘂𝗲𝘀𝘁𝗶𝗼𝗻𝘀:
-
-✅ What steps would you take if an incremental data load pipeline fails?
-
-✅ How would you design a scalable data pipeline for streaming and batch processing?
-
-✅ You need to migrate petabytes of data from an on-premises system to the cloud—what approach would you take?
 ================================
 python:
 >> Given an array, find the minimum and maximum values.
@@ -216,8 +77,6 @@ pyspark QA:
 
 >> What is PySpark (python api let u use spark with python), and how is it different from Apache Spark (big data engine).
 >> How do you initialize a SparkSession in PySpark?
-📍 What are RDDs in PySpark, and how are they created?
-📍 Explain transformations and actions in RDDs.
 >> How do you perform basic operations on DataFrames in PySpark?
 >> What is SparkSQL, and how do you perform SQL operations on DataFrames?
    Registering the DataFrame as a Temporary View: df.createOrReplaceTempView("people")
@@ -255,17 +114,13 @@ pyspark QA:
 
 3. What are broadcast variables in PySpark, and how do they optimize join operations? Provide an example scenario where a broadcast join would be beneficial.
 
-4. Discuss the various persistence levels available in PySpark's caching mechanism. When would you use `MEMORY_ONLY` versus `MEMORY_AND_DISK_SER`?
-
 5. How does PySpark handle data skew, and what strategies can be employed to mitigate its effects in a large dataset?
 
 6. Explain the role of the Catalyst optimizer in PySpark. How does it improve the performance of Spark SQL queries?
 
-7. What is the significance of partitioning in PySpark, and how does it affect the performance of data processing tasks?
+>> What is the significance of partitioning in PySpark, and how does it affect the performance of data processing tasks?
 
-8. Describe the process of handling real-time streaming data using PySpark's Structured Streaming. What are the key components involved?
-
-9. How would you implement window functions in PySpark to calculate a moving average over a specific time window?
+>> How would you implement window functions in PySpark to calculate a moving average over a specific time window?
 
 10. Explain the concept of checkpointing in PySpark. Why is it important in streaming applications?
 
@@ -284,64 +139,8 @@ pyspark QA:
     df_no_duplicates = df.dropDuplicates(["customer_id", "transaction_date"])
 
 
-𝐑𝐨𝐮𝐧𝐝 𝟏: 𝐓𝐞𝐜𝐡𝐧𝐢𝐜𝐚𝐥 - 𝟏
-
-𝐒𝐩𝐚𝐫𝐤 (𝐏𝐲𝐒𝐩𝐚𝐫𝐤):
-
-1)Modify the word count code to display results in descending order of frequency.
-2)Why is reduceByKey preferred over groupByKey?
-3)What is lineage in Spark?
-4)Difference between cache and persist in Spark.
-5)Is fault tolerance the same in Spark and Hadoop?
-
- 𝐒𝐐𝐋
-
-6)Explain query execution order.
-7)What are the different types of joins in SQL?
-8)Explain the difference between DENSE_RANK and RANK.
-9)What is a cursor in SQL?10)What is a stored procedure in SQL?
 
 
-1️⃣ 𝐖𝐡𝐚𝐭 𝐢𝐬 𝐩𝐚𝐫𝐭𝐢𝐭𝐢𝐨𝐧𝐢𝐧𝐠 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤, 𝐚𝐧𝐝 𝐰𝐡𝐲 𝐢𝐬 𝐢𝐭 𝐢𝐦𝐩𝐨𝐫𝐭𝐚𝐧𝐭?
-𝐇𝐢𝐧𝐭: Discuss how partitioning divides data into smaller chunks for parallel processing and its role in minimizing shuffling.
-2️⃣ 𝐇𝐨𝐰 𝐜𝐚𝐧 𝐲𝐨𝐮 𝐜𝐨𝐧𝐭𝐫𝐨𝐥 𝐭𝐡𝐞 𝐧𝐮𝐦𝐛𝐞𝐫 𝐨𝐟 𝐩𝐚𝐫𝐭𝐢𝐭𝐢𝐨𝐧𝐬 𝐢𝐧 𝐚𝐧 𝐑𝐃𝐃?
-𝐇𝐢𝐧𝐭: repartition() and coalesce() are key methods.
-3️⃣ 𝐖𝐡𝐚𝐭 𝐡𝐚𝐩𝐩𝐞𝐧𝐬 𝐢𝐟 𝐭𝐡𝐞 𝐩𝐚𝐫𝐭𝐢𝐭𝐢𝐨𝐧𝐬 𝐚𝐫𝐞 𝐧𝐨𝐭 𝐝𝐢𝐬𝐭𝐫𝐢𝐛𝐮𝐭𝐞𝐝 𝐞𝐯𝐞𝐧𝐥𝐲 𝐚𝐜𝐫𝐨𝐬𝐬 𝐭𝐡𝐞 𝐜𝐥𝐮𝐬𝐭𝐞𝐫?
-𝐇𝐢𝐧𝐭: Talk about data skew and its impact on performance.
-
-🔎 𝐊𝐞𝐲 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: 𝐋𝐚𝐳𝐲 𝐄𝐯𝐚𝐥𝐮𝐚𝐭𝐢𝐨𝐧:
-4️⃣ 𝐖𝐡𝐚𝐭 𝐢𝐬 𝐥𝐚𝐳𝐲 𝐞𝐯𝐚𝐥𝐮𝐚𝐭𝐢𝐨𝐧 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤, 𝐚𝐧𝐝 𝐡𝐨𝐰 𝐝𝐨𝐞𝐬 𝐢𝐭 𝐨𝐩𝐭𝐢𝐦𝐢𝐳𝐞 𝐩𝐞𝐫𝐟𝐨𝐫𝐦𝐚𝐧𝐜𝐞?
-𝐇𝐢𝐧𝐭: Transformations are only evaluated when an action is invoked, allowing Spark to build an optimized DAG.
-5️⃣ 𝐍𝐚𝐦𝐞 𝐚 𝐟𝐞𝐰 𝐭𝐫𝐚𝐧𝐬𝐟𝐨𝐫𝐦𝐚𝐭𝐢𝐨𝐧𝐬 𝐚𝐧𝐝 𝐚𝐜𝐭𝐢𝐨𝐧𝐬 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤. 𝐇𝐨𝐰 𝐝𝐨 𝐭𝐡𝐞𝐲 𝐝𝐢𝐟𝐟𝐞𝐫?
-𝐇𝐢𝐧𝐭: Examples include map() and filter() (transformations) vs. count() and collect() (actions).
-
-🔎 Key Questions: Lineage
-6️⃣ 𝐖𝐡𝐚𝐭 𝐢𝐬 𝐥𝐢𝐧𝐞𝐚𝐠𝐞 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤, 𝐚𝐧𝐝 𝐰𝐡𝐲 𝐢𝐬 𝐢𝐭 𝐢𝐦𝐩𝐨𝐫𝐭𝐚𝐧𝐭 𝐟𝐨𝐫 𝐟𝐚𝐮𝐥𝐭 𝐭𝐨𝐥𝐞𝐫𝐚𝐧𝐜𝐞?
-𝐇𝐢𝐧𝐭: Lineage helps Spark track the series of transformations, enabling recomputation of lost partitions.
-7️⃣ 𝐇𝐨𝐰 𝐝𝐨𝐞𝐬 𝐒𝐩𝐚𝐫𝐤 𝐫𝐞𝐜𝐨𝐦𝐩𝐮𝐭𝐞 𝐦𝐢𝐬𝐬𝐢𝐧𝐠 𝐝𝐚𝐭𝐚 𝐮𝐬𝐢𝐧𝐠 𝐥𝐢𝐧𝐞𝐚𝐠𝐞?
-𝐇𝐢𝐧𝐭: It rebuilds only the affected partition based on the transformation chain.
-
-🔎 𝐊𝐞𝐲 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: 𝐃𝐀𝐆 (𝐃𝐢𝐫𝐞𝐜𝐭𝐞𝐝 𝐀𝐜𝐲𝐜𝐥𝐢𝐜 𝐆𝐫𝐚𝐩𝐡)
-8️⃣ 𝐄𝐱𝐩𝐥𝐚𝐢𝐧 𝐭𝐡𝐞 𝐫𝐨𝐥𝐞 𝐨𝐟 𝐃𝐀𝐆 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤. 𝐇𝐨𝐰 𝐝𝐨𝐞𝐬 𝐢𝐭 𝐝𝐢𝐟𝐟𝐞𝐫 𝐟𝐫𝐨𝐦 𝐌𝐚𝐩𝐑𝐞𝐝𝐮𝐜𝐞?
-𝐇𝐢𝐧𝐭: DAG allows Spark to execute operations as a graph of stages, enabling better optimization compared to MapReduce.
-9️⃣ 𝐖𝐡𝐚𝐭 𝐢𝐬 𝐭𝐡𝐞 𝐬𝐢𝐠𝐧𝐢𝐟𝐢𝐜𝐚𝐧𝐜𝐞 𝐨𝐟 𝐬𝐭𝐚𝐠𝐞𝐬 𝐢𝐧 𝐃𝐀𝐆 𝐞𝐱𝐞𝐜𝐮𝐭𝐢𝐨𝐧?
-𝐇𝐢𝐧𝐭: Stages are determined by shuffle boundaries, and each stage can be executed in parallel.
-
-🔎 𝐊𝐞𝐲 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: 𝐏𝐞𝐫𝐬𝐢𝐬𝐭𝐞𝐧𝐜𝐞/𝐒𝐭𝐨𝐫𝐚𝐠𝐞 𝐋𝐞𝐯𝐞𝐥𝐬
-
-🔟 𝐖𝐡𝐚𝐭 𝐚𝐫𝐞 𝐭𝐡𝐞 𝐬𝐭𝐨𝐫𝐚𝐠𝐞 𝐥𝐞𝐯𝐞𝐥𝐬 𝐚𝐯𝐚𝐢𝐥𝐚𝐛𝐥𝐞 𝐢𝐧 𝐒𝐩𝐚𝐫𝐤, 𝐚𝐧𝐝 𝐰𝐡𝐞𝐧 𝐰𝐨𝐮𝐥𝐝 𝐲𝐨𝐮 𝐮𝐬𝐞 𝐞𝐚𝐜𝐡?
-𝐇𝐢𝐧𝐭: MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY, etc., depending on memory availability and use case.
-
-Here are some interview questions to test your knowledge of transformations:
-1️⃣ Why are transformations lazy in Spark?
-2️⃣ What are narrow and wide transformations? Provide examples.
-3️⃣ What is the difference between .map() and .flatMap()?
-4️⃣ Explain .filter() transformation with a real-world example.
-5️⃣ When would you use .reduceByKey() vs .groupByKey()?
-6️⃣ What is the difference between .union() and .intersection() transformations?
-7️⃣ Can you explain the .join() operation on RDDs?
-
-1️⃣ What are the most commonly used RDD actions, and how do they differ?
 2️⃣ How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided?
 3️⃣ Explain .countByKey() with an example.
 4️⃣ What are some use cases for .take() and .takeOrdered()?
@@ -349,42 +148,113 @@ Here are some interview questions to test your knowledge of transformations:
 6️⃣ What is the role of .foreach() in Spark?
 7️⃣ What is the difference between .countByValue() and .countByKey()
 
-𝐑𝐃𝐃 (𝐑𝐞𝐬𝐢𝐥𝐢𝐞𝐧𝐭 𝐃𝐢𝐬𝐭𝐫𝐢𝐛𝐮𝐭𝐞𝐝 𝐃𝐚𝐭𝐚𝐬𝐞𝐭) :
 
-1)What is an RDD in Spark, and why is it called resilient?
-2)Explain how RDDs achieve fault tolerance.
-3What are the two types of RDD operations, and how do they differ?
-4)What are narrow and wide transformations? Provide examples.
-5)How is data partitioning handled in RDDs, and why is it important?
-6)What are the limitations of RDDs compared to DataFrames and Datasets?
-7)How do you create an RDD from an external file or in-memory collection?
-8)Explain the difference between map() and flatMap() transformations in RDD.
-9)How does caching or persistence work in RDDs, and why is it used?10)What are the pros and cons of RDDs compared to DataFrames and Datasets?.
-
-𝐃𝐚𝐭𝐚𝐅𝐫𝐚𝐦𝐞𝐬:
-
-11)What is a DataFrame in Spark, and how is it different from an RDD?
-12)Explain the role of Catalyst Optimizer in Spark DataFrames.
-13)What are the advantages of using DataFrames over RDDs?
-14)How can you create a DataFrame from a CSV, JSON, or Parquet file?
-15)What are the common operations performed on DataFrames, such as select, filter, and groupBy?
-16)How do you handle schema in DataFrames?
-17)What is the difference between createOrReplaceTempView and createGlobalTempView in DataFrames?
+>> What is the difference between createOrReplaceTempView and createGlobalTempView in DataFrames?
+   Scope:
+   createOrReplaceTempView creates a view local to the SparkSession.
+   createGlobalTempView creates a view accessible across all SparkSessions within the same application.
+   Lifetime:
+   createOrReplaceTempView views are dropped when the SparkSession ends.
+   createGlobalTempView views persist until the Spark application terminates.
 18)Explain the integration of DataFrames with Spark SQL.
 19)How do you optimize DataFrame operations for better performance?
 20)Can you explain the difference between DataFrame.cache() and DataFrame.persist()?
 
-𝐃𝐚𝐭𝐚𝐬𝐞𝐭𝐬:
 
-21)What is a Dataset in Spark, and how is it different from a DataFrame?
-22)Explain the significance of type safety in Datasets.
-23)What are the key advantages of Datasets over DataFrames and RDDs?
-24)How can you create a Dataset in Spark?
-25)What is the difference between map() in RDDs and Datasets?
 26)xplain the concept of Encoders in Spark Datasets.
-27)What are some use cases where you would prefer a Dataset over a DataFrame?
 
+>> How to set the partitions in pyspark?
+   Reading Data: The option("numPartitions", 10) sets the number of partitions when loading the data.
+   repartition Method: This method increases or decreases the number of partitions and shuffles the data.
+   df1 = df.repartition(3)
+   print(f"Number of partitions  repartitioning: {df1.rdd.getNumPartitions()}")
+   coalesce Method: This method reduces the number of partitions without a full shuffle, which is more efficient for reducing partitions.
+   df_coalesced = df.coalesce(2)
+   print(f"Number of partitions after coalescing: {df_coalesced.rdd.getNumPartitions()}")
 
+>> Default file format in Spark (is Parquet), Why Parquet?
+      Efficient Storage: Columnar format allows for better compression and encoding.
+      Performance: Optimized for query performance, especially for read-heavy operations.
+      Compatibility: Widely supported across various big data tools and frameworks.
+
+>> what are the optimization techniques in pyspark?
+1. Use DataFrame/Dataset over RDD
+DataFrames and Datasets are optimized for performance and provide a higher-level API compared to RDDs. They leverage Spark's Catalyst optimizer and Tungsten execution engine for efficient query planning and execution12.
+2. Avoid User Defined Functions (UDFs)
+UDFs can be a performance bottleneck because they are not optimized by Spark's Catalyst optimizer. Instead, use built-in functions whenever possible2.
+3. Optimize Partitions
+Repartition: Use repartition() to increase the number of partitions for better parallelism.
+Coalesce: Use coalesce() to reduce the number of partitions without a full shuffle, which is more efficient12.
+4. Cache Data
+Caching intermediate DataFrames can save time on repeated computations. Use df.cache() to store DataFrames in memory2.
+5. Optimize Joins
+Broadcast Joins: Use broadcast() for small DataFrames to avoid shuffling large datasets.
+Sort-Merge Joins: Ensure data is partitioned and sorted on join keys to optimize join operations1.
+6. Use Efficient Serialization Formats
+Kryo Serialization: Use Kryo serialization for faster and more compact serialization compared to Java serialization3.
+7. Reduce Shuffle Operations
+Minimize expensive shuffle operations by optimizing data partitioning and using operations like mapPartitions() instead of map()1.
+8. Disable DEBUG and INFO Logging
+Reduce logging overhead by setting the log level to WARN or ERROR in production environments2.
+
+>> what is Repartiton and coalesce?
+
+>> How to submit the spark job?
+
+>> When do we need to do the repartition?
+   Data Skew / Increasing Parallelism / Optimizing Joins / Writing to Disk: 
+
+2. Word count program in pyspark
+
+>> Difference between sortby and orderby?
+   sortBy is used with RDDs.
+   orderBy is used with DataFrames.
+
+>> what is map and flatmap?
+
+>> what is the default block size (128 MB) in hdfs and how to change it?
+   Edit the hdfs-site.xml File:
+   <property>
+       <name>dfs.blocksize</name>
+       <value>268435456</value> <!-- 256 MB in bytes -->
+   </property>
+
+>> what is data skewness and salting technique?
+   df.repartition(10)
+   df.rdd.getNumPartitions()
+   df.select(spark_partition_id().alias("partid")).groupBy("partid").count()
+
+>> Explain about out of memory issue in spark?
+   Causes of Out of Memory Issues: 
+   Driver Memory:
+   Collect Operations: Using collect() to gather large datasets to the driver can cause memory overflow. The driver tries to merge all results into a single object, which      might be too large to fit into the driver's memory1.
+   Large Broadcast Variables: Broadcasting large variables can consume significant memory on the driver.
+   Executor Memory:
+   Task Execution: Executors run tasks and store intermediate data. If the tasks require more memory than allocated, it can lead to out of memory errors1.
+   Shuffling Data: During operations like groupBy or join, data shuffling can cause memory issues if the data size exceeds the executor's memory capacity2.
+   Solutions to Out of Memory Issues
+   Increase Driver Memory: Adjust the driver memory settings using spark.driver.memory to allocate more memory to the driver2.
+   Limit Result Size: Use spark.driver.maxResultSize to limit the size of results collected to the driver1.
+   Increase Executor Memory: Configure executor memory using spark.executor.memory to allocate sufficient memory for task execution2.
+   Memory Overhead: Set spark.executor.memoryOverhead to account for additional memory required for JVM overhead3.
+   Repartition Data: Repartition large datasets to reduce the size of data processed by each executor1.
+
+>> What is difference between spark session and spark context?
+
+>> what is collect list and collect set and when do we use it?
+   result = df.groupBy("name").agg(collect_list("value").alias("values_list")) - allows duplicates in list
+   result = df.groupBy("name").agg(collect_set("value").alias("values_set")) - no duplicates in list
+
+>> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
+    output 
+   +---+---------------+----------+---------+
+   | ID| Name|First_Name|Last_Name|
+   +---+---------------+----------+---------+
+   | 1|Sagar-Prajapati| Sagar|Prajapati|
+   | 2| Alex-John| Alex| John|
+   | 3| John Cena| John| Cena|
+   | 4| Kim Joe| Kim| Joe|
+   +---+---------------+----------+---------+
 
 ====================================================================================
 SQL QA:
