@@ -26,6 +26,7 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
     df = spark.read.csv("your_file.csv", schema=custom_schema, header=True)
     file_paths = ["file1.csv", "file2.csv", "file3.csv"] 
     df = spark.read.csv(file_paths, header=True, inferSchema=True, sep=',')
+    df = spark.read.option("modifiedBefore", "2022-02-27T05:30:00").json("file:///path_to_file/data_files/")
     ==>> join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
          join_df = df1.crossjoin(df2)
          broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
@@ -72,7 +73,9 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
 				   df = df.withColumn("avg_value", F.avg("value").over(window_spec))   -->> sum / min /max /
 	==>> explode/explode_outer: exploded_df = df.select("Name", explode("Subjects").alias("Subject"))  -->> explode_outer
 		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
-
+	==>> print(set(df1.schema)-set(df2.schema))
+	==>> df2=df1.groupBy(df1.EmpName).agg(collect_list(df1.Skill).alias('Skill'))
+	     df3=df2.select(df2.EmpName,concat_ws(',',df2.Skill).alias('Skills'))
 	==>>
 	DataFrames are immutable in Spark—transformations result in new DataFrames, leaving the original unchanged.
 
