@@ -3,10 +3,10 @@
 BIGQUERY:
 
 >> Bigquery arch
-   storage and compute isolated
-   colossus - is google file system storage layer - column orientaed - 
-      in a distubuted manner so maintain replica for fault-   tolerant.
-   dremel - is compute engine - have root server (co-ordinate mixers & leaf nodes) / mixers (do aggreagtions) / leaf nodes        (read data from storage)
+   storage and compute - decoupled/isolated (cost efficient)
+   layers:
+   colossus - is google distributed file system storage layer in column orientaed - fault tolerance by data replicas across different machines.
+   dremel - is compute engine - have root server (co-ordinate mixers & leaf nodes) / mixers (do aggreagtions) / leaf nodes (read data from storage)
    jupiter- high speed n/w connector - to connect dremel with colossus
    borg - scheduling jobs like run queries
 
