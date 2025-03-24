@@ -51,7 +51,7 @@ PySpark: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit
 	==>> df.select(initcap(col("country")))  -->> initcap / lower / upper
 	==>> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
 			  --> df.select(concat_ws(' | ', col("Region"), col("Country")))
-	==>> splitng column -->> df = df.select(split(df.FullName, " ").alias('cn'))  -->> size of array, indexing, explode, array_contains  x
+	==>> splitng column -->> df = df.select(split(df.FullName, " ").alias('cn'))  -->> size, [0], explode, array_contains
 	==>> result_df = df.select( col("EmployeeID"), ltrim(col("Name")), lpad(col("Name"), 10, "X"))  -->> rtrim / trim / rpad
 	==>> create date, timestamp columns in df, add/subtract days, 
 	     df = spark.range(10).withColumn('today', current_date())
