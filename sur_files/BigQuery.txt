@@ -152,4 +152,10 @@ end for;
    bq storage cost opti
    Schedule queries during off-peak hours to take advantage of low on-demand pricing typically at mid-night/early morning
 
+>> To find the department names where no employees are found, you can use the following SQL query:
+   emp -->> employee_id	employee_name	dept_id
+   Department Table -->> dept_id	dept_name
+   SELECT d.dept_name FROM dept d LEFT JOIN employee e ON d.dept_id = e.dept_id WHERE e.dept_id IS NULL;
+   
+
 ==================
