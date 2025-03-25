@@ -222,19 +222,7 @@ pyspark QA:
 
 10. Explain the concept of checkpointing in PySpark. Why is it important in streaming applications?
 
->> Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
-     +-------------+----------+
-     | City    | Population|
-     +-------------+----------+
-    top_5_cities = df.orderBy(col("Population").desc()).limit(5)
->> Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
-    avg_salary_by_dept = df.groupBy("Department").agg(avg("Salary").alias("AverageSalary"))
 
->> Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
-     +------------+----------------+-------------------+
-     | customer_id| transaction_id | transaction_date |
-     +------------+----------------+-------------------+
-    df_no_duplicates = df.dropDuplicates(["customer_id", "transaction_date"])
 
 
 
@@ -343,6 +331,20 @@ Reduce logging overhead by setting the log level to WARN or ERROR in production 
    result = df.groupBy("name").agg(collect_list("value").alias("values_list")) - allows duplicates in list
    result = df.groupBy("name").agg(collect_set("value").alias("values_set")) - no duplicates in list
 
+>> Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
+     +-------------+----------+
+     | City    | Population|
+     +-------------+----------+
+    top_5_cities = df.orderBy(col("Population").desc()).limit(5)
+
+>> Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
+    avg_salary_by_dept = df.groupBy("Department").agg(avg("Salary").alias("AverageSalary"))
+
+>> Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
+     +------------+----------------+-------------------+
+     | customer_id| transaction_id | transaction_date |
+     +------------+----------------+-------------------+
+    df_no_duplicates = df.dropDuplicates(["customer_id", "transaction_date"])
 >> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
     output 
    +---+---------------+----------+---------+
@@ -353,3 +355,4 @@ Reduce logging overhead by setting the log level to WARN or ERROR in production 
    | 3| John Cena| John| Cena|
    | 4| Kim Joe| Kim| Joe|
    +---+---------------+----------+---------+
+	df = df.withColumn("fn", split(df.Name, "[- ]").getItem(0)).withColumn("ln", split(df.Name, "[- ]")[1])
