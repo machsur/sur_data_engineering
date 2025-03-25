@@ -161,7 +161,16 @@ pyspark QA:
 	if data shuffle partion is too large --> tune by increasing num of partitions required
 	if data per shuffle partition is very less --> tune by decewasing no of SP, find size of SP based on available cores.
 	default shuffile partitions is 200 / data size per shuffle partition b/w 1-200 mb
+	# Set the number of shuffle partitions --> spark.conf.set("spark.sql.shuffle.partitions", 100)
+	# Verify the setting --> print(spark.conf.get("spark.sql.shuffle.partitions"))
 
+>> what is data skewness and salting technique? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
+   skewed partition : uneven data distribution
+	job is taking time, unutilization of resources, oom or data spill (write results to disk -- very costly)
+	fix --> repartition, salting, AQE, broadcasting
+   df.repartition(10)
+   df.rdd.getNumPartitions()
+   df.select(spark_partition_id().alias("partid")).groupBy("partid").count()
 
 >> How does PySpark handle schema evolution in DataFrames?
 >> What is broadcast join, and when should we use it?
@@ -169,7 +178,6 @@ pyspark QA:
 >> Key Differences
    Memory Management: On-heap memory (data in deserilization -ready for eat) is managed by the JVM and subject to GC, while off-heap memory (data in serilization form - raw format) is managed outside the JVM and not subject to GC.
    Performance: Off-heap memory can reduce GC overhead and improve performance for large datasets, but may introduce serialization/deserialization overhead12.
-
 
 
 >> What is PySpark (python api let u use spark with python), and how is it different from Apache Spark (big data engine).
