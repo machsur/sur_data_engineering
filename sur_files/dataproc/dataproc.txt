@@ -1,12 +1,6 @@
 >> Apache Spark - multi-language engine (single-node machines or clusters) suitable for large-scale data workloads, and can be --         deployed on-premises or in the cloud.
    Google Cloud Dataproc is a managed service that runs Apache Spark (and other frameworks),
 
->> Haddop Yarn Cluster -- master node (Yarn RM), worker node
-   worker node --> App Master container (pyspark driver --> py4j --> JVM driver), executors (each 4cpu 16 gb ram - means 4 slots and memory common for 4 slots)
-   Script or spark app --> divide into jobs based on action --> job divide into stages based wide trans --> shuffle/sort --> tasks (these tasks run slots)
-
-   -- Dynamic Partition pruning in spark3.0:
-
 >> enable API, create dataproc cluster on vm/gke.
    -- cluster type: single node 1m0w, standard for dev team 1m Nw, high availability for prod 3m Nw
    -- allocate static ip to it >> vm instance - external ip - view detais - n/w page ip addresses - reseve to static 
@@ -89,7 +83,7 @@ PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy 
                     = df.selectExpr("Name as EmployeeName", "Salary as EmployeeSalary", "Department").show()
     ==>> sorted_df = df.orderBy(asc('department'), col("country).desc(), nulls_last=True)
     ==>> result = df.limit(10)
-    ==>> df.show(n=3, truncate=25, vertical=True) / print(df.count()) / df.printSchema() / display(df) / print(df1.columns) 
+    ==>> df.show(n=3, truncate=25, vertical=True) / print(df.collect()) / print(df.count()) / df.printSchema() / display(df) / print(df1.columns) 
 
 
 	==>> union tables: union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/   -->> positional col match / schema must be identical
@@ -138,6 +132,17 @@ Pyspark Interview QA:
 
 pyspark QA:
 
+>> what is spark, features, architecture
+
+>> Haddop Yarn Cluster 
+	-- master node (Yarn RM)
+   	-- worker node --> App Master container (pyspark driver --> py4j --> JVM driver), executors (each 4cpu 16 gb ram - means 4 slots and memory common for 4 slots)
+   	-- Script or spark app submit --> spark launches driver app --> driver app create spark session/conset --> spark context  request executor resources from YARN rm -->
+	   in parallel, driver app divide spark app into small tasks (app -> jobs based on action --> stages based on wide trans --> shuffle/sort --> 
+	   tasks (these tasks run on executor slots)
+
+   -- Dynamic Partition pruning in spark3.0:
+
 >> What is the difference between cache() and persist() in PySpark?
    cache() and persist() are used to store DataFrame or RDD in memory to speed up subsequent actions.
    cache(): cache() uses the default storage level, which is MEMORY_ONLY.
@@ -172,56 +177,44 @@ pyspark QA:
    df.rdd.getNumPartitions()
    df.select(spark_partition_id().alias("partid")).groupBy("partid").count()
 
->> How does PySpark handle schema evolution in DataFrames?
 >> What is broadcast join, and when should we use it?
+	type of join operation where a small dataset is broadcasted to all worker nodes in the cluster. 
+	This allows the join to be performed locally on each node, significantly improving performance by reducing the amount of data shuffled across the network.
 
 >> Key Differences
    Memory Management: On-heap memory (data in deserilization -ready for eat) is managed by the JVM and subject to GC, while off-heap memory (data in serilization form - raw format) is managed outside the JVM and not subject to GC.
    Performance: Off-heap memory can reduce GC overhead and improve performance for large datasets, but may introduce serialization/deserialization overhead12.
 
-
 >> What is PySpark (python api let u use spark with python), and how is it different from Apache Spark (big data engine).
+
 >> How do you initialize a SparkSession in PySpark?
->> How do you perform basic operations on DataFrames in PySpark?
->> What is SparkSQL, and how do you perform SQL operations on DataFrames?
-   Registering the DataFrame as a Temporary View: df.createOrReplaceTempView("people")
-   Running SQL Queries: spark.sql("SELECT Name, Age FROM people WHERE Age > 30").show()
->> How do you read and write data in different formats (CSV, JSON, Parquet) using PySpark?
->> What is lazy evaluation in PySpark, and why is it important?
->> Explain the role of caching and persistence in PySpark.
->> Given a DataFrame, split the data into two columns (Even, Odd) where:
-    Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
->> Read a CSV file and create a DataFrame with properties.
->> Create a DataFrame with two columns:
-    Column 1: Default String
-    Column 2: Default Integer
->> Explain the key differences between Apache Spark's DataFrame and RDD APIs. In which scenarios would you prefer one over the other?
-    esay of use, performance, schema
->> Describe the concept of lazy evaluation in PySpark. How does it impact the execution of Spark jobs?
-    Lazy evaluation allows Spark to optimize the execution plan.
+
 >> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
     similarities in 3 apis : foult tolerant, distributed, in-memory computation, immutable, lazy evaluation, internally processing as rdd for all 3 codes
     RDD: low-level api / no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
     DF: high-level api / catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
     DS: high-level api / optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
+
 >> What is the difference between map() and flatMap() inPySpark?
     map() when you want to apply a function that returns a single value for each input element
     flatMap() when the function can return multiple values for each input element
+
 >> How do you handle missing values in PySpark?
-    select(): Use when you need to select columns without transformations.
-    selectExpr(): Use when you need to apply SQL expressions or transformations while selecting columns.
->> What are transformations and actions in PySpark? Giveexamples.
+	df_replaced = df.replace(to_replace=4, value=0)
+	fillna / dropna --> see above
+	    
+>> select(): Simple column selection. --> df2 = df.select("name")
+   selectExpr(): Column selection with transformations. --> df2 = df.selectExpr("id as identifier", "name")
+
+>> What are transformations (select, filter, groupBy, ..) and actions (collect, show, count,...) in PySpark? Giveexamples.
 
 
-3. What are broadcast variables in PySpark, and how do they optimize join operations? Provide an example scenario where a broadcast join would be beneficial.
 
 5. How does PySpark handle data skew, and what strategies can be employed to mitigate its effects in a large dataset?
 
-6. Explain the role of the Catalyst optimizer in PySpark. How does it improve the performance of Spark SQL queries?
 
 >> What is the significance of partitioning in PySpark, and how does it affect the performance of data processing tasks?
 
->> How would you implement window functions in PySpark to calculate a moving average over a specific time window?
 
 10. Explain the concept of checkpointing in PySpark. Why is it important in streaming applications?
 
@@ -370,11 +363,23 @@ Reduce logging overhead by setting the log level to WARN or ERROR in production 
     window_spec = Window.orderBy("Month").rowsBetween(Window.unboundedPreceding, Window.currentRow)
     df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
 
-12. Write a PySpark query to count the number of null values in each column of a DataFrame.
-14. Write a PySpark query to replace null values in a specific column with the previous non-null value.
+>> What is SparkSQL, and how do you perform SQL operations on DataFrames?
+   Registering the DataFrame as a Temporary View: df.createOrReplaceTempView("people")
+   Running SQL Queries: spark.sql("SELECT Name, Age FROM people WHERE Age > 30").show()
+
+>> Given a DataFrame, split the data into two columns (Even, Odd) where:
+    Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
+
+>> Create a DataFrame with two columns:
+    Column 1: Default String
+    Column 2: Default Integer
 
 >> Word count program in pyspark
     df1 = df.select(explode(split(df["name"], " ")).alias("word")).groupBy("word").agg(count("*").alias("count"))
+
+12. Write a PySpark query to count the number of null values in each column of a DataFrame.
+14. Write a PySpark query to replace null values in a specific column with the previous non-null value.
+>> How does PySpark handle schema evolution in DataFrames?
 
 
 
