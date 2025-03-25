@@ -214,17 +214,8 @@ pyspark QA:
 	Bucketing: Divides data into a fixed number of buckets based on the hash of a column. Best for join queries.
 	df.write.bucketBy(4, "user_id").saveAsTable("bucketed_sales")
 
-
-
 >> How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided (memory constraints, performance issues) ?
 	When you call .collect(), PySpark gathers all the partitions of the DataFrame or RDD and brings them to the driver node. This means that the data is no longer 		distributed across the cluster but is instead stored in the memory of the driver program
-
-3️⃣ Explain .countByKey() with an example.
-4️⃣ What are some use cases for .take() and .takeOrdered()?
-5️⃣ How does .saveAsTextFile() handle data partitioning during output?
-6️⃣ What is the role of .foreach() in Spark?
-7️⃣ What is the difference between .countByValue() and .countByKey()
-
 
 >> What is the difference between createOrReplaceTempView and createGlobalTempView in DataFrames?
    Scope:
@@ -233,12 +224,6 @@ pyspark QA:
    Lifetime:
    createOrReplaceTempView views are dropped when the SparkSession ends.
    createGlobalTempView views persist until the Spark application terminates.
-18)Explain the integration of DataFrames with Spark SQL.
-19)How do you optimize DataFrame operations for better performance?
-20)Can you explain the difference between DataFrame.cache() and DataFrame.persist()?
-
-
-26)xplain the concept of Encoders in Spark Datasets.
 
 >> How to set the partitions in pyspark?
    Reading Data: The option("numPartitions", 10) sets the number of partitions when loading the data.
@@ -255,38 +240,19 @@ pyspark QA:
       Compatibility: Widely supported across various big data tools and frameworks.
 
 >> what are the optimization techniques in pyspark?
-1. Use DataFrame/Dataset over RDD
-DataFrames and Datasets are optimized for performance and provide a higher-level API compared to RDDs. They leverage Spark's Catalyst optimizer and Tungsten execution engine for efficient query planning and execution12.
-2. Avoid User Defined Functions (UDFs)
-UDFs can be a performance bottleneck because they are not optimized by Spark's Catalyst optimizer. Instead, use built-in functions whenever possible2.
-3. Optimize Partitions
-Repartition: Use repartition() to increase the number of partitions for better parallelism.
-Coalesce: Use coalesce() to reduce the number of partitions without a full shuffle, which is more efficient12.
-4. Cache Data
-Caching intermediate DataFrames can save time on repeated computations. Use df.cache() to store DataFrames in memory2.
-5. Optimize Joins
-Broadcast Joins: Use broadcast() for small DataFrames to avoid shuffling large datasets.
-Sort-Merge Joins: Ensure data is partitioned and sorted on join keys to optimize join operations1.
-6. Use Efficient Serialization Formats
-Kryo Serialization: Use Kryo serialization for faster and more compact serialization compared to Java serialization3.
-7. Reduce Shuffle Operations
-Minimize expensive shuffle operations by optimizing data partitioning and using operations like mapPartitions() instead of map()1.
-8. Disable DEBUG and INFO Logging
-Reduce logging overhead by setting the log level to WARN or ERROR in production environments2.
-
->> what is Repartiton and coalesce?
-
->> How to submit the spark job?
-
->> When do we need to do the repartition?
-   Data Skew / Increasing Parallelism / Optimizing Joins / Writing to Disk: 
-
+	Use DataFrame/Dataset over RDD
+	use col format files 
+	filter data erly
+	Cache Data or persist data
+	use broadcast to Optimize Joins
+	Optimize shuffle Partitions: Repartition / Coalesce
+	enable AQE, salting
+	partitioning & bucketing for frequently accessed based on specific column
+	Avoid User Defined Functions (UDFs)
 
 >> Difference between sortby and orderby?
    sortBy is used with RDDs.
    orderBy is used with DataFrames.
-
->> what is map and flatmap?
 
 >> what is the default block size (128 MB) in hdfs and how to change it?
    Edit the hdfs-site.xml File:
