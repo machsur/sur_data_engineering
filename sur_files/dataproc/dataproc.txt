@@ -89,7 +89,7 @@ PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy 
                     = df.selectExpr("Name as EmployeeName", "Salary as EmployeeSalary", "Department").show()
     ==>> sorted_df = df.orderBy(asc('department'), col("country).desc(), nulls_last=True)
     ==>> result = df.limit(10)
-    ==>> df.show(n=3, truncate=25, vertical=True) / df.printSchema() / display(df) / print(df1.columns)
+    ==>> df.show(n=3, truncate=25, vertical=True) / print(df.count()) / df.printSchema() / display(df) / print(df1.columns) 
 
 
 	==>> union tables: union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/   -->> positional col match / schema must be identical
@@ -139,21 +139,32 @@ Pyspark Interview QA:
 pyspark QA:
 
 >> What is the difference between cache() and persist() in PySpark?
-   cache(): Default Storage Level: cache() uses the default storage level, which is MEMORY_ONLY. 
-   persist(): Flexible Storage Levels: persist() allows you to specify different storage levels, such as MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY, etc.
+   cache() and persist() are used to store DataFrame or RDD in memory to speed up subsequent actions.
+   cache(): cache() uses the default storage level, which is MEMORY_ONLY.
+	df.cache()
+   persist(): persist() allows you to specify different storage levels, such as MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY, etc.
+	from pyspark import StorageLevel
+	df.persist(StorageLevel.MEMORY_AND_DISK)
+
 >> How does Lazy Evaluation work in PySpark?
-   the execution of transformations on RDDs (Resilient Distributed Datasets) or DataFrames is deferred until an action is performed. This allows PySpark to optimize the 
-   execution plan and improve performance.
+   the execution of transformations on RDDs (Resilient Distributed Datasets) or DataFrames is deferred until an action is performed. 
+   This allows PySpark to optimize the execution plan and improve performance.
+
 >> What are wide and narrow transformations in PySpark?
    Narrow transformations are those where each input partition contributes to only one output partition. Examples include: map() / filter() / flatMap()
    Wide transformations involve shuffling data across the network, as input partitions contribute to multiple output partitions. 
    groupByKey(): Groups elements with the same key. / reduceByKey(): Combines values with the same key using a specified function. /join(): Joins two datasets 
-5. Explain shuffle operations in PySpark and their impact on performance.
->> What are the different persistence levels available in PySpark?
+
+>> Explain shuffle operations in PySpark and their impact on performance.
+	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupByKey, reduceByKey, join, and distinct.
+	suppose if have suffle partions lesser than cluster capacity --> slow completion time, underutilization of cluster
+	if data shuffle partion is too large --> tune by increasing num of partitions required
+	if data per shuffle partition is very less --> tune by decewasing no of SP, find size of SP based on available cores.
+	default shuffile partitions is 200 / data size per shuffle partition b/w 1-200 mb
+
+
 >> How does PySpark handle schema evolution in DataFrames?
 >> What is broadcast join, and when should we use it?
->> Explain the difference between groupBy() and reduceByKey() in PySpark.
->> What is the use of explode() function in PySpark?
 
 >> Key Differences
    Memory Management: On-heap memory (data in deserilization -ready for eat) is managed by the JVM and subject to GC, while off-heap memory (data in serilization form - raw format) is managed outside the JVM and not subject to GC.
