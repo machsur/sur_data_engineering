@@ -208,22 +208,17 @@ pyspark QA:
 
 >> What are transformations (select, filter, groupBy, ..) and actions (collect, show, count,...) in PySpark? Giveexamples.
 
-
-
-5. How does PySpark handle data skew, and what strategies can be employed to mitigate its effects in a large dataset?
-
-
->> What is the significance of partitioning in PySpark, and how does it affect the performance of data processing tasks?
-
-
-10. Explain the concept of checkpointing in PySpark. Why is it important in streaming applications?
+>> What is the significance of partitioning and bucketing in PySpark, and how does it affect the performance of data processing tasks?
+	Partitioning: Divides data based on column values, creating separate directories for each partition. Best for filtering queries.
+	df.write.partitionBy("country", "year").parquet("output/partitioned_sales")
+	Bucketing: Divides data into a fixed number of buckets based on the hash of a column. Best for join queries.
+	df.write.bucketBy(4, "user_id").saveAsTable("bucketed_sales")
 
 
 
+>> How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided (memory constraints, performance issues) ?
+	When you call .collect(), PySpark gathers all the partitions of the DataFrame or RDD and brings them to the driver node. This means that the data is no longer 		distributed across the cluster but is instead stored in the memory of the driver program
 
-
-
-2️⃣ How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided?
 3️⃣ Explain .countByKey() with an example.
 4️⃣ What are some use cases for .take() and .takeOrdered()?
 5️⃣ How does .saveAsTextFile() handle data partitioning during output?
