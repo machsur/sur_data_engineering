@@ -159,19 +159,7 @@ pyspark QA:
    Memory Management: On-heap memory (data in deserilization -ready for eat) is managed by the JVM and subject to GC, while off-heap memory (data in serilization form - raw format) is managed outside the JVM and not subject to GC.
    Performance: Off-heap memory can reduce GC overhead and improve performance for large datasets, but may introduce serialization/deserialization overhead12.
 
->> Find the top 3 highest-paid employees from each department.
-   data = [(1, "Amit", "IT", 90000),
 
-12. Write a PySpark query to count the number of null values in each column of a DataFrame.
-
->> Write a PySpark code to remove duplicate records based on a specific column.
-   data = [(101, "Mumbai", "Maharashtra"), ]
-
-14. Write a PySpark query to replace null values in a specific column with the previous non-null value.
-
->> Write a PySpark query to calculate the moving average of sales over the last 3 months.
-    window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
-    df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
 
 >> What is PySpark (python api let u use spark with python), and how is it different from Apache Spark (big data engine).
 >> How do you initialize a SparkSession in PySpark?
@@ -204,10 +192,6 @@ pyspark QA:
     select(): Use when you need to select columns without transformations.
     selectExpr(): Use when you need to apply SQL expressions or transformations while selecting columns.
 >> What are transformations and actions in PySpark? Giveexamples.
-
->> df1 = df.select('name', explode(split(df.language, ',')))
->> df1 = df.withColumn('nc', coalesce(when(df.city1=="", None).otherwise(df.city1), when(df.city2=="", None).otherwise(df.city2), 
-         when(df.city3=="", None).otherwise(df.city3)))
 
 
 3. What are broadcast variables in PySpark, and how do they optimize join operations? Provide an example scenario where a broadcast join would be beneficial.
@@ -290,7 +274,6 @@ Reduce logging overhead by setting the log level to WARN or ERROR in production 
 >> When do we need to do the repartition?
    Data Skew / Increasing Parallelism / Optimizing Joins / Writing to Disk: 
 
-2. Word count program in pyspark
 
 >> Difference between sortby and orderby?
    sortBy is used with RDDs.
@@ -356,3 +339,23 @@ Reduce logging overhead by setting the log level to WARN or ERROR in production 
    | 4| Kim Joe| Kim| Joe|
    +---+---------------+----------+---------+
 	df = df.withColumn("fn", split(df.Name, "[- ]").getItem(0)).withColumn("ln", split(df.Name, "[- ]")[1])
+
+>> Find the top 3 highest-paid employees from each department.
+   data = [(1, "Amit", "IT", 90000),
+
+>> Write a PySpark code to remove duplicate records based on a specific column.
+   data = [(101, "Mumbai", "Maharashtra"), ]
+
+>> Write a PySpark query to calculate the moving average of sales over the last 3 months.
+    window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
+    window_spec = Window.orderBy("Month").rowsBetween(Window.unboundedPreceding, Window.currentRow)
+    df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
+
+12. Write a PySpark query to count the number of null values in each column of a DataFrame.
+14. Write a PySpark query to replace null values in a specific column with the previous non-null value.
+
+>> Word count program in pyspark
+    df1 = df.select(explode(split(df["name"], " ")).alias("word")).groupBy("word").agg(count("*").alias("count"))
+
+
+
