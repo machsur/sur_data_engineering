@@ -260,3 +260,48 @@ https://spark.apache.org/
 	datatype is blind/untyped, 
 	constant variable (cant reassign later ex-PI) - readonly PI=3.1452
 	command substution -- today=$(command) or `command` -- echo $today
+
+
+=================================================================================================================================
+
+Q&A
+
+>> Given an array, find the minimum and maximum values.
+    ans. builtin mtds, sorting, python code
+>> Given a string, count the char occurrences of word in a dictionary:
+    Input: 'aaabbbccddeeeee'
+    Output: { “a” : 3 , “b” : 3, “c” : 2, “d” : 2 , “e” : 5 }
+>> Write a Python script to count the frequency of characters in a text file.
+>> Write a Python program to count the frequency of an word in a text file.
+>> Reversing a String using an Extended Slicing techniques. builtin / slicing / code
+>> Count Vowels from Given words .
+>> Find the highest occurrences of each word from string and sort them in order.
+>> Remove Duplicates from List.
+>> Sort a List without using Sort keyword.
+>> Find the pair of numbers in this list whose sum is n no.
+>> Find the max and min no in the list without using inbuilt functions.
+>> Read and print values from an Excel file using Pandas.
+    df = pd.read_excel('your_file.xlsx')
+>> Handle file exceptions (missing or corrupted Excel files) gracefully.
+>> Calculate the Intersection of Two Lists without using Built-in Functions
+
+>> What is a docstring in Python?
+    special kind of comment used to document what a function, class, or module does. 
+    appears right after the definition of a function, method, class, or module. 
+    Docstrings are enclosed in triple quotes (""" or ''') and can span multiple lines.
+>> What is pass in Python? When is it used?
+    Placeholder for future class/function/loop definition
+    It does nothing when executed 
+>> Which data structure occupies more memory: list or tuple? Why?
+    In Python, lists generally occupy more memory than tuples. 
+    This is because lists are mutable, meaning their size and contents can change, while tuples are immutable, meaning their size and contents are fixed once created.
+
+
+Write a Python script to create a palindrome with a given number of alphabets.
+    Example: For n=3 (alphabets: a, b, c) → Palindrome: abcba
+>> Write Python code to make API requests to a public API (e.g., weather API) and process the JSON response.
+>> Implement a function to fetch data from a database table, perform data manipulation, and update the database.
+
+===============================================================================================================
+
+
