@@ -348,4 +348,7 @@ pyspark QA:
 	or spark.conf.set("spark.sql.files.maxPartitionBytes", "64 * 1024 * 1024")
 	# Read data with the specified maxPartitionBytes setting
 	df = spark.read.parquet("path/to/parquet/files")
+
+>> 
+config("spark.sql.files.maxPartitionBytes", "1000")
 	
