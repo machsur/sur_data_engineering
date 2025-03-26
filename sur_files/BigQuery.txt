@@ -152,15 +152,18 @@ end for;
    bq storage cost opti
    Schedule queries during off-peak hours to take advantage of low on-demand pricing typically at mid-night/early morning
 
->> To find the department names where no employees are found, you can use the following SQL query:
-   emp -->> employee_id	employee_name	dept_id
-   Department Table -->> dept_id	dept_name
-   SELECT d.dept_name FROM dept d LEFT JOIN employee e ON d.dept_id = e.dept_id WHERE e.dept_id IS NULL;
+
    
 
 ====================================================================================================================================================
 
 SQL QA:
+
+>> To find the department names where no employees are found, you can use the following SQL query:
+   emp -->> employee_id	employee_name	dept_id
+   Department Table -->> dept_id	dept_name
+   SELECT d.dept_name FROM dept d LEFT JOIN employee e ON d.dept_id = e.dept_id WHERE e.dept_id IS NULL;
+
 >> Given two tables, find the count of records for Left Outer Join and Inner Join:
 Table A: Table B:
 1 1
@@ -168,6 +171,7 @@ Table A: Table B:
 1 1 
 1 
 Ans. 12 & 12
+
 >> Give the output for DENSE_RANK() and RANK() functions for the below dataset:
 Nums 
 85 
@@ -194,6 +198,7 @@ Ans.
     join
       `powerful-layout-445408-p5.sur_test_ds.countryt` b
     on a.countryc > b.countryc;  -----> or <
+
 >> Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS.
 Table1:
 col1 
@@ -205,21 +210,77 @@ Table2:
 b 
 a 
 1 
+
 >> Find the 777th highest salary from a table.
-🔹 Identify customers who placed orders in consecutive months.
-🔹 Query to get the total number of patients per doctor, including unassigned patients.
+      SELECT salary
+      FROM (
+        SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num
+        FROM `your_dataset.your_table`
+      )
+      WHERE row_num = 777
+
+>> Identify customers who placed orders in consecutive months.
+         WITH orders AS (
+           SELECT
+             customer_id,
+             DATE_TRUNC(order_date, MONTH) AS order_month
+           FROM
+             `your_dataset.your_table`
+         ),
+         consecutive_orders AS (
+           SELECT
+             customer_id,
+             order_month,
+             LEAD(order_month) OVER (PARTITION BY customer_id ORDER BY order_month) AS next_order_month
+           FROM
+             orders
+         )
+         SELECT
+           customer_id,
+           order_month,
+           next_order_month
+         FROM
+           consecutive_orders
+         WHERE
+           DATE_DIFF(next_order_month, order_month, MONTH) = 1
+
+>> Query to get the total number of patients per doctor, including unassigned patients.
+         SELECT
+           d.doctor_id,
+           COUNT(p.patient_id) AS total_patients
+         FROM
+           `your_dataset.doctors` d
+         LEFT JOIN
+           `your_dataset.patients` p
+         ON
+           d.doctor_id = p.doctor_id
+         GROUP BY
+           d.doctor_id
+
 >> Handling NULL values in employee salary using the average salary.
     IFNULL(expression, replacement_value) -->> It takes two arguments. If the first argument is NULL, it returns the second argument.
     COALESCE(expression1, expression2, ..., expressionN) -->> It can take multiple arguments. It returns the first non-NULL argument from the list.
+         WITH avg_salary AS (
+           SELECT AVG(salary) AS average_salary
+           FROM `your_dataset.your_table`
+         )
+         SELECT
+           employee_id,
+           COALESCE(salary, (SELECT average_salary FROM avg_salary)) AS adjusted_salary
+         FROM
+           `your_dataset.your_table`
+
 >> Difference between Subquery and Materialized Views.
     Performance: Materialized views can improve query performance by storing precomputed results, while subqueries are recalculated each time the main query runs.
     Storage: Materialized views consume storage space to store the precomputed results, whereas subqueries do not.
     Maintenance: Materialized views need to be refreshed to stay up-to-date with the underlying data, while subqueries always reflect the current state of the data.
+
 >> CTE vs Subquery in SQL and their performance impact.
     Readability and Maintainability:
     Optimization: Subquery Treated similarly to CTEs in terms of optimization. The query optimizer will attempt to optimize the entire query, including the subqueries.
     Reusability:
-🔹 Steps to debug a slow SQL query.
+
+>> Steps to debug a slow SQL query.
 
 
 
