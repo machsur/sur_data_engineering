@@ -257,11 +257,9 @@ pyspark QA:
        <value>268435456</value> <!-- 256 MB in bytes -->
    </property>
 
->> what is data skewness and salting technique?
-   df.repartition(10)
-   df.rdd.getNumPartitions()
-   df.select(spark_partition_id().alias("partid")).groupBy("partid").count()
-
+>> what is data skewness 
+   Sol: salting technique, AQE, broadcastjoin
+ 
 >> Explain about out of memory issue in spark?
    Causes of Out of Memory Issues: 
    Driver Memory:
@@ -349,6 +347,19 @@ pyspark QA:
 	# Read data with the specified maxPartitionBytes setting
 	df = spark.read.parquet("path/to/parquet/files")
 
+>> partitioning
+folder: df.write.partitionBy("date").mode("overwrite").parquet("/tmp/folder_partitioned_data")
+file: repartitioned_df.write.mode("overwrite").parquet("/tmp/file_partitioned_data")
+combine: repartitioned_df = df.repartition(3).write.partitionBy("date").mode("overwrite").parquet("/tmp/combined_partitioned_data")
+
 >> 
 config("spark.sql.files.maxPartitionBytes", "1000")
+
+# Set the auto broadcast join threshold to 100MB
+spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 104857600)
+# Disable auto broadcast join
+spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
+
+.config("spark.sql.adaptive.enabled", "true") \
+.config("spark.sql.adaptive.skewJoin.enabled", "true") \
 	
