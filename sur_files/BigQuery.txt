@@ -118,7 +118,7 @@ end for;
  
 >> Window functions: performing advanced calculations over a set of rows, go beyond simple aggregates or filters
    max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() 
-   SUM(column2) OVER (PARTITION BY column1 ORDER BY column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS rt
+   SUM(column2) OVER (PARTITION BY column1 ORDER BY column2 ROWS BETWEEN UNBOUNDED/2 PRECEDING AND CURRENT ROW) AS rt
    lag(cn) / lead(cn): Accesses data from a previous or subsequent row in the same result set without use of a self-join.
    LAG(column2, 1) OVER (PARTITION BY column1 ORDER BY column2) AS previous_value,
    first_value(cn) / last_value(cn) / nth_value(cn, n) 
@@ -134,7 +134,7 @@ end for;
    REGEXP_CONTAINS(column_name, r'pattern')
    REGEXP_EXTRACT_ALL(column_name, r'pattern')
    REGEXP_REPLACE(column_name, r'pattern', 'replacement')
-   SPLIT(column_name, r'pattern')
+   SPLIT(column_name, r'pattern') --> select  SPLIT("mach suresh", ' ')[OFFSET(0)] AS first_name,
 
 >> Big Query cost optimization
    -- bq compute optimization: on-demaned analysis, bq editions - decide based on your workloads.
@@ -167,13 +167,7 @@ end for;
    Set quotas and budget alerts
    set query limits
    Analyze Cost Breakdown Using Cloud Billing Reports
-   bq compute cost analysis
-   bq query optimi
-   bq storage cost opti
    Schedule queries during off-peak hours to take advantage of low on-demand pricing typically at mid-night/early morning
-
-
-   
 
 ====================================================================================================================================================
 
