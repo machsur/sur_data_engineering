@@ -158,4 +158,68 @@ end for;
    SELECT d.dept_name FROM dept d LEFT JOIN employee e ON d.dept_id = e.dept_id WHERE e.dept_id IS NULL;
    
 
-==================
+====================================================================================================================================================
+
+SQL QA:
+>> Given two tables, find the count of records for Left Outer Join and Inner Join:
+Table A: Table B:
+1 1
+1 1
+1 1 
+1 
+Ans. 12 & 12
+>> Give the output for DENSE_RANK() and RANK() functions for the below dataset:
+Nums 
+85 
+85 
+80 
+75 
+75 
+70
+
+>> Given a table with column 'Country', select data in the below sequence:
+Table: Matches
+Country 
+India 
+Australia 
+Pakistan 
+Output:
+India vs Australia 
+India vs Pakistan 
+Australia vs Pakistan
+Ans. 
+    SELECT a.countryc || ' vs ' || b.countryc as country
+    FROM
+      `powerful-layout-445408-p5.sur_test_ds.countryt` a
+    join
+      `powerful-layout-445408-p5.sur_test_ds.countryt` b
+    on a.countryc > b.countryc;  -----> or <
+>> Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS.
+Table1:
+col1 
+---- 
+1 
+1 
+Table2:
+---- 
+b 
+a 
+1 
+>> Find the 777th highest salary from a table.
+🔹 Identify customers who placed orders in consecutive months.
+🔹 Query to get the total number of patients per doctor, including unassigned patients.
+>> Handling NULL values in employee salary using the average salary.
+    IFNULL(expression, replacement_value) -->> It takes two arguments. If the first argument is NULL, it returns the second argument.
+    COALESCE(expression1, expression2, ..., expressionN) -->> It can take multiple arguments. It returns the first non-NULL argument from the list.
+>> Difference between Subquery and Materialized Views.
+    Performance: Materialized views can improve query performance by storing precomputed results, while subqueries are recalculated each time the main query runs.
+    Storage: Materialized views consume storage space to store the precomputed results, whereas subqueries do not.
+    Maintenance: Materialized views need to be refreshed to stay up-to-date with the underlying data, while subqueries always reflect the current state of the data.
+>> CTE vs Subquery in SQL and their performance impact.
+    Readability and Maintainability:
+    Optimization: Subquery Treated similarly to CTEs in terms of optimization. The query optimizer will attempt to optimize the entire query, including the subqueries.
+    Reusability:
+🔹 Steps to debug a slow SQL query.
+
+
+
