@@ -352,6 +352,14 @@ folder: df.write.partitionBy("date").mode("overwrite").parquet("/tmp/folder_part
 file: repartitioned_df.write.mode("overwrite").parquet("/tmp/file_partitioned_data")
 combine: repartitioned_df = df.repartition(3).write.partitionBy("date").mode("overwrite").parquet("/tmp/combined_partitioned_data")
 
+>>
+df = spark.read.option("recursiveFileLookup", "true").parquet("hdfs:///path/to/your/directory")
+df = spark.read.option("compression", "gzip").csv("/tmp/compressed_csv_data", sep="|", linesep="/r or /n")
+df.write.option("compression", "gzip").mode("overwrite").parquet("/tmp/compressed_data", sep="|", linesep="/r or /n")
+
+df = spark.read.option("mode", "PERMISSIVE").schema(cust_schema).option("columnNameOfCorruptRecord", "_corrupt_record").csv("/path/to/csv")
+df = spark.read.option("mode", DROPMALFORMED/FAILFAST").schema(cust_schema).csv("/path/to/csv")
+
 >> 
 config("spark.sql.files.maxPartitionBytes", "1000")
 
