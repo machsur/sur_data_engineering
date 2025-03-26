@@ -342,5 +342,14 @@ pyspark QA:
 14. Write a PySpark query to replace null values in a specific column with the previous non-null value.
 >> How does PySpark handle schema evolution in DataFrames?
 
+>> problems that partition solves?
+	fast/esay access, parallesium & resource utilization
 
+>> how to decide partion on which column --> based on column cordinality/unique (not high & low / rec low to med) & frequent filter criteria 
 
+>> # Initialize Spark session with maxPartitionBytes configuration
+	spark = SparkSession.builder.appName("MaxPartitionBytesExample").config("spark.sql.files.maxPartitionBytes", 64 * 1024 * 1024).getOrCreate()
+	or spark.conf.set("spark.sql.files.maxPartitionBytes", "64 * 1024 * 1024")
+	# Read data with the specified maxPartitionBytes setting
+	df = spark.read.parquet("path/to/parquet/files")
+	
