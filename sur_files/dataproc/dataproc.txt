@@ -77,7 +77,7 @@ PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy 
          join_df = df1.crossjoin(df2)
          broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
     ==>> filtered_df = df.filter(df['cn'] > 10 / .isNull() / .isNotNull())  or df.filter((df["Age"] > 30) &| (df["Department"] == "IT"))
-    ==>> grouped_df = df.groupBy('department').agg(max("sal"))   -->> count() / agg(max("sal")) or agg(sum('Age'), sum('sal')) or max('age', 'sal) -- min avg sum /
+    ==>> grouped_df = df.groupBy('department').agg(max("sal"))   -->> count() / agg(max("sal")) or agg(sum('Age'), sum('sal')) or max('age', 'sal) -- min avg sum 			collect_list, collect_set
     ==>> having_df = df.filter(grouped_df['count'] > 1)
     ==>> selected_df = df.select("customer_id", col("Name").alias('EmployeeName'), column("last_name"), df.email, df["city"] )
                     = df.selectExpr("Name as EmployeeName", "Salary as EmployeeSalary", "Department").show()
@@ -97,14 +97,16 @@ PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy 
 	==>> df.select(initcap(col("country")))  -->> initcap / lower / upper
 	==>> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
 			  --> df.select(concat_ws(' | ', col("Region"), col("Country")))
-	==>> splitng column -->> df = df.select(split(df.FullName, " ").alias('cn'))  -->> size, [0], explode, array_contains
+	==>> splitng column -->> df = df.select(split(df.FullName, " ").alias('cn'))  -->> multi char "[-, ]", -->> size, [0] or .getItem(0), explode, array_contains
 	==>> result_df = df.select( col("EmployeeID"), ltrim(col("Name")), lpad(col("Name"), 10, "X"))  -->> rtrim / trim / rpad
 	==>> create date, timestamp columns in df, add/subtract days, 
 	     df = spark.range(10).withColumn('today', current_date())
 	     df = spark.range(10).withColumn('now', current_timestamp())
 	     date_sub(col("today"), 5) / date_add(col("today"), 5) / datediff(col("week_ago"), col("today")/ 
 	     months_between(to_date(lit("2016-01-01")), to_date(lit("2017-01-01")) / to_date / to_timestamp / 
-	==>> df.dropna("All" subset=['cn1", "cn2"]) / df.fillna("N/A" subset=['cn1", "cn2"]) / df.na.fill({'cn1':'val1', 'cn2': 'val2'}) / is null('CN') 
+	==>>    df.dropna("All" subset=['cn1", "cn2"]) 
+		df.fillna("N/A" subset=['cn1", "cn2"]) / df.na.fill({'cn1':'val1', 'cn2': 'val2'}) / is null('CN') 
+		df_replaced_multiple = df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset="fruit")
 	==>> coalesce('cn1', 'cn2','cn3') - return first non-null value from list of columns
 	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0))
 	==>> agg functions --> df.select(sum('CN')).show() -----> max, min, avg, count, countDistanct, stddev, variance, sumDistinct  ------> note: ignore null values
@@ -119,12 +121,6 @@ PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy 
 				   df = df.withColumn("avg_value", F.avg("value").over(window_spec))   -->> sum / min /max /
 	==>> explode/explode_outer: exploded_df = df.select("Name", explode("Subjects").alias("Subject"))  -->> explode_outer
 		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
-	==>> print(set(df1.schema)-set(df2.schema))
-	==>> df2=df1.groupBy(df1.EmpName).agg(collect_list(df1.Skill).alias('Skill'))
-	     df3=df2.select(df2.EmpName,concat_ws(',',df2.Skill).alias('Skills'))
-	==>>
-	DataFrames are immutable in Spark—transformations result in new DataFrames, leaving the original unchanged.
-
 
 ==================================================================================================================================
 
