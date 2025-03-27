@@ -296,5 +296,15 @@ a
 
 >> Steps to debug a slow SQL query.
 
+>> Change Data Capture (CDC) -->> identify and capture changes made to data in a database --> It helps keep track of inserts, updates, and deletes in real-time.
+      Benefits:
+      Real-time updates: Ensures data consistency across systems.
+      Efficiency: Reduces the need for full data scans.
+      Accuracy: Minimizes errors by capturing changes as they happen.
+      how to implement:
+      log based --> very efficient, no impact on source system
+      query based on timestamp
+      triggers load changes into new tables
+
 
 
