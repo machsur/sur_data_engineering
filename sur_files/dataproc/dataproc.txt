@@ -363,11 +363,15 @@ df = spark.read.option("mode", DROPMALFORMED/FAILFAST").schema(cust_schema).csv(
 >> 
 config("spark.sql.files.maxPartitionBytes", "1000")
 
+.config("spark.executor.memory", "4g") \
+.config("spark.executor.cores", "2") \
+.config("spark.executor.instances", "5")  # Number of executors
+.config("spark.driver.memory", "2g") \
+.config("spark.driver.cores", "1") \
+
+.config("spark.sql.adaptive.enabled", "true")  # Enable AQE
+.config("spark.sql.adaptive.coalescePartitions.enabled", "true")  # Coalesce partitions
+.config("spark.sql.adaptive.skewJoin.enabled", "true")  # Handle skewed joins
+
 # Set the auto broadcast join threshold to 100MB
 spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 104857600)
-# Disable auto broadcast join
-spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-
-.config("spark.sql.adaptive.enabled", "true") \
-.config("spark.sql.adaptive.skewJoin.enabled", "true") \
-	
