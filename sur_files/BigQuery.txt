@@ -1,5 +1,5 @@
 ===================
-
+>> Gcs bucket: name, region, storgae class, access control (public, uniform, fine-grained), data protection (object versining, retantion) , data encryption
 BIGQUERY:
 
 >> Bigquery arch
@@ -141,6 +141,10 @@ end for;
    
    -- BQ data storage – 
    Billing model: logical- data in uncompressed format/ physical- data in compressed format) 
+         # For logical bytes billing
+         bq update --dataset --storage_billing_model=LOGICAL my_dataset
+         # For physical bytes billing
+         bq update --dataset --storage_billing_model=PHYSICAL my_dataset
    Use Table Expiration Settings 
    Optimize Data Storage Format (cloumner format - paqruet. ORC)
    Use Long-Term Storage Pricing (> 90 days)
