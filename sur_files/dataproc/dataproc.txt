@@ -360,6 +360,10 @@ df.write.option("compression", "gzip").mode("overwrite").parquet("/tmp/compresse
 df = spark.read.option("mode", "PERMISSIVE").schema(cust_schema).option("columnNameOfCorruptRecord", "_corrupt_record").csv("/path/to/csv")
 df = spark.read.option("mode", DROPMALFORMED/FAILFAST").schema(cust_schema).csv("/path/to/csv")
 
+>>
+Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query performance by pruning partitions dynamically based on runtime data. This is particularly useful for queries involving joins where one table is significantly smaller than the other. DPP helps reduce the amount of data scanned, thereby improving query efficiency.
+
+
 >> 
 config("spark.sql.files.maxPartitionBytes", "1000")
 
