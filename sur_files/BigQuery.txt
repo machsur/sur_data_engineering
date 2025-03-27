@@ -402,7 +402,25 @@ SELECT
 FROM orders
 GROUP BY customer_id;
 
->>
+>> Null doesnt include matching, empty string includes matching
+table1
+1
+2
+3
+null
+""
+
+table2
+2
+2
+3
+null
+null
+""
+
+inner join  - 2 2 / 2 2 / 3 3 / empty empty / 
+left join - 1 null / 2 2 / 2 2/ 3 3/ empty empty / null null /
+
 
 
 
