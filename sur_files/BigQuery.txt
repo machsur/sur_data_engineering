@@ -310,5 +310,99 @@ a
       query based on timestamp
       triggers load changes into new tables
 
+>>
+Src					
+id	name			
+1	a								
+2	b1							
+4	d								
+					
+beforeTgt					
+id	name
+1	a
+2	b
+3	c
+
+after source ingestion Tgt	
+id	name
+1	a
+2	b1
+3	c
+4	d
+
+
+MERGE INTO target_table AS T
+USING source_table AS S
+ON T.id = S.id
+WHEN MATCHED THEN
+    UPDATE SET T.name = S.name
+WHEN NOT MATCHED THEN
+    INSERT (id, name) VALUES (S.id, S.name);
+
+>> 
+ORDER_DAY         ORDER_ID            PRODUCT_ID   QUANTITY     PRICE
+------------------ -------------------- ---------- ---------- ----------
+01-JUL-11         O1                  P1                 5          5
+01-JUL-11         O2                  P2                 2         10
+01-JUL-11         O3                  P3                10         25
+01-JUL-11         O4                  P1                20          5
+02-JUL-11         O5                  P3                 5         25
+02-JUL-11         O6                  P4                 6         20
+02-JUL-11         O7                  P1                 2          5
+02-JUL-11         O8                  P5                 1         50
+02-JUL-11         O9                  P6                 2         50
+02-JUL-11         O10                 P2                 4         10
+02-JUL-11         O11                 P6                 2         50
+
+Get me all products that got sold both the days and the number of times the product is sold.  
+
+
+Desired output
+PRODUCT_ID  COUNT
+P1            3
+P2            2
+P3            2
+
+SELECT PRODUCT_ID, COUNT(*) AS COUNT
+FROM orders
+WHERE ORDER_DAY IN ('01-JUL-11', '02-JUL-11')
+GROUP BY PRODUCT_ID
+HAVING COUNT(DISTINCT ORDER_DAY) = 2;
+
+>> 
+INPUT
+order_id	customer_id	region	order_date	sales_amount
+1	101	North	1/1/2022	100
+4	101	North	1/15/2022	400
+8	101	EAST	2/5/2022	700
+2	102	South	1/5/2022	200
+6	102	South	1/25/2022	600
+10	102	WEST	2/15/2022	1000
+3	103	East	1/10/2022	300
+7	103	East	2/1/2022	200
+5	104	West	1/20/2022	500
+9	104	South	2/10/2022	200
+11	104	South	2/10/2022	100
+
+
+OUTPUT
+customer_id	north_sales	south_sales	East sales	West Sales
+101	500	0	700	0
+102	0	800	0	1000
+103	0	0	500	0
+104	0	300	0	500
+
+
+SELECT 
+  customer_id,
+  SUM(CASE WHEN region = 'North' THEN sales_amount ELSE 0 END) AS north_sales,
+  SUM(CASE WHEN region = 'South' THEN sales_amount ELSE 0 END) AS south_sales,
+  SUM(CASE WHEN region = 'East' THEN sales_amount ELSE 0 END) AS east_sales,
+  SUM(CASE WHEN region = 'West' THEN sales_amount ELSE 0 END) AS west_sales
+FROM orders
+GROUP BY customer_id;
+
+>>
+
 
 
