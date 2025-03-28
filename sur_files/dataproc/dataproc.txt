@@ -15,11 +15,6 @@
    -- copy material to the VM master node using git clone command.
 
 >> copy local files in master node of vm to hdfs in dataproc/ gcs blobs into hdfs on dataproc.
-   hdfs dfs -ls /  ----    hdfs dfs -ls -R /public/retail_db
-   hdfs dfs -mkdir /public
-   hdfs dfs -put data/retail_db /public (local to hdfs -put)
-   hdfs dfs -cp gs://surretail/retail_db /public/retail_db (hdfs to hdfs, gcs to hdfs, hdfs to gcs, gcs to gcs -cp)
-   hdfs dfs -rm -R -skipTrash /public/retail_db
 
 6. validate pyspark / spark-shell (spark scala) / spark-sql CLI in dataproc cluster.
 7. submit dataproc job using spark sql in UI
@@ -61,6 +56,24 @@
 
 ===========================================================================================================================
 PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit: 
+
+hdfs dfs -ls -R /public/retail_db
+hdfs dfs -mkdir /path/to/new_directory
+hdfs dfs -copyFromLocal /local/path/to/file /hdfs/path/to/destination 		or
+hdfs dfs -copyToLocal /hdfs/path/to/file /local/path/to/destination      or
+hdfs dfs -put data/retail_db /public (local to hdfs -put)	or
+hdfs dfs -cp gs://surretail/retail_db /public/retail_db (hdfs to hdfs, gcs to hdfs, hdfs to gcs, gcs to gcs -cp)
+hdfs dfs -cat /path/to/file
+hdfs dfs -rm -R -skipTrash /public/retail_db
+
+hdfs dfs -mv /path/to/source /path/to/destination
+hdfs dfsadmin -report
+hdfs dfs -df -h
+hdfs dfs -du -s -h /path/to/directory
+hdfs dfs -chmod 755 /path/to/file_or_directory
+   
+
+
     ==>>
     df = spark.createDataFrame(data, columns)
     df_from_pandas = spark.createDataFrame(pandas_df/data_dict)
