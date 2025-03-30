@@ -503,6 +503,21 @@ left join - 1 null / 2 2 / 2 2/ 3 3/ empty empty / null null /
 	WHERE months_count = 12;
 
 >> Find employees who have the same salary as another employee in the same department.
+	WITH EmployeeSalaries AS (
+	  SELECT   department_id, salary, COUNT(*) AS employee_count  FROM employees GROUP BY department_id, salary HAVING COUNT(*) > 1)
+	SELECT
+	  e.employee_id,
+	  e.department_id,
+	  e.salary
+	FROM
+	  employees e
+	JOIN
+	  EmployeeSalaries es
+	ON
+	  e.department_id = es.department_id
+	  AND e.salary = es.salary
+	ORDER BY
+	  e.department_id, e.salary;
 12/ Write an SQL query to retrieve the department with the highest total salary paid to employees.
 13/ Use a window function to rank orders based on order value for each customer, and return only the top 3 orders per customer.
 14/ Find the median salary of employees using SQL (without using built-in median functions).
