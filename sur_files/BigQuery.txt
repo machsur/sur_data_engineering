@@ -439,21 +439,91 @@ left join - 1 null / 2 2 / 2 2/ 3 3/ empty empty / null null /
 >> Find the top N customers who made the highest purchases, ensuring no duplicates if customers have the same purchase amount.
 	use rank here
 
-5/ Identify consecutive login streaks for users where they logged in for at least three consecutive days.
-6/ Write an efficient query to detect duplicate records in a table and delete only the extra duplicates, keeping one copy.
-7/ You have a table with millions of records. How would you optimize a slow-performing query that involves multiple joins and aggregations?
-8/ Retrieve the first order for each customer, ensuring that ties (customers with multiple first orders on the same date) are handled correctly.
-9/ Find products that were never purchased by any customer.
-10/ Given a table with customer transactions, find customers who made transactions in every month of the year.
-11/ Find employees who have the same salary as another employee in the same department.
+>> Identify consecutive login streaks for users where they logged in for at least three consecutive days.
+	WITH login_data AS (
+	  SELECT user_id, login_date,
+	         LAG(login_date, 1) OVER (PARTITION BY user_id ORDER BY login_date) AS prev_login_date,
+	         LAG(login_date, 2) OVER (PARTITION BY user_id ORDER BY login_date) AS prev_prev_login_date
+	  FROM `your_dataset.your_table`
+	),
+	streaks AS (
+	  SELECT user_id, login_date,
+	         CASE
+	           WHEN DATE_DIFF(login_date, prev_login_date, DAY) = 1 AND DATE_DIFF(prev_login_date, prev_prev_login_date, DAY) = 1 THEN 1
+	           ELSE 0
+	         END AS is_streak
+	  FROM login_data
+	)
+	SELECT user_id, login_date
+	FROM streaks
+	WHERE is_streak = 1
+	ORDER BY user_id, login_date;
+
+>> Write an efficient query to detect duplicate records in a table and delete only the extra duplicates, keeping one copy.
+	WITH ranked_records AS (
+	  SELECT *,
+	         ROW_NUMBER() OVER (PARTITION BY column1, column2, column3 ORDER BY column1) AS row_num
+	  FROM `your_dataset.your_table`
+	)
+	DELETE FROM `your_dataset.your_table`
+	WHERE row_num > 1;
+
+>> You have a table with millions of records. How would you optimize a slow-performing query that involves multiple joins and aggregations?
+
+>> Retrieve the first order for each customer, ensuring that ties (customers with multiple first orders on the same date) are handled correctly.
+	WITH ranked_orders AS (
+	  SELECT customer_id, order_id, order_date,
+	         ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date, order_id) AS row_num
+	  FROM `your_dataset.orders`
+	)
+	SELECT customer_id, order_id, order_date
+	FROM ranked_orders
+	WHERE row_num = 1;
+
+>> Find products that were never purchased by any customer.
+	SELECT p.product_id, p.product_name
+	FROM `your_dataset.products` p
+	LEFT JOIN `your_dataset.orders` o
+	ON p.product_id = o.product_id
+	WHERE o.product_id IS NULL;
+
+>> Given a table with customer transactions, find customers who made transactions in every month of the year.
+	WITH monthly_transactions AS (
+	  SELECT customer_id, EXTRACT(MONTH FROM transaction_date) AS month
+	  FROM `your_dataset.transactions`
+	  GROUP BY customer_id, month
+	),
+	customer_months AS (
+	  SELECT customer_id, COUNT(month) AS months_count
+	  FROM monthly_transactions
+	  GROUP BY customer_id
+	)
+	SELECT customer_id
+	FROM customer_months
+	WHERE months_count = 12;
+
+>> Find employees who have the same salary as another employee in the same department.
 12/ Write an SQL query to retrieve the department with the highest total salary paid to employees.
 13/ Use a window function to rank orders based on order value for each customer, and return only the top 3 orders per customer.
 14/ Find the median salary of employees using SQL (without using built-in median functions).
 15/ Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
 16/ Find the moving average of sales for the last 7 days for each product in a sales table.
 17/ Given an events table, find the first and last occurrence of each event per user.
-18/ Identify users who have placed an order in two consecutive months but not in the third month.
-19/ Find the most frequently purchased product category by each user over the past year.
-20/ Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year.
+>> Identify users who have placed an order in two consecutive months but not in the third month.
+
+>> Find the most frequently purchased product category by each user over the past year.
+	WITH user_category_sales AS (
+	  SELECT user_id,  product_category, COUNT(*) AS purchase_count FROM sales_table
+	  WHERE sale_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) GROUP BY user_id, product_category),
+	ranked_categories AS (
+	  SELECT  user_id, product_category, purchase_count, RANK() OVER (PARTITION BY user_id ORDER BY purchase_count DESC) AS rank FROM user_category_sales)
+	SELECT user_id, product_category, purchase_count FROM ranked_categories WHERE rank = 1;
+
+>> Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year.
+	SELECT year, product_id, total_sales, RANK() OVER (PARTITION BY year ORDER BY total_sales DESC) AS rank
+	FROM (
+	  SELECT EXTRACT(YEAR FROM sale_date) AS year, product_id, SUM(sales_amount) AS total_sales FROM sales_table
+	  GROUP BY year,  product_id) AS yearly_sales
+	ORDER BY  year, rank;
 
 
