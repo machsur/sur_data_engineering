@@ -61,12 +61,11 @@ hdfs dfs -ls -R /public/retail_db
 hdfs dfs -mkdir /path/to/new_directory
 hdfs dfs -copyFromLocal /local/path/to/file /hdfs/path/to/destination 		or
 hdfs dfs -copyToLocal /hdfs/path/to/file /local/path/to/destination      or
-hdfs dfs -put data/retail_db /public (local to hdfs -put)	or
+hdfs dfs -put data/retail_db /public (local to hdfs -put)
 hdfs dfs -cp gs://surretail/retail_db /public/retail_db (hdfs to hdfs, gcs to hdfs, hdfs to gcs, gcs to gcs -cp)
-hdfs dfs -cat /path/to/file
-hdfs dfs -rm -R -skipTrash /public/retail_db
-
 hdfs dfs -mv /path/to/source /path/to/destination
+hdfs dfs -rm -R -skipTrash /public/retail_db
+hdfs dfs -cat /path/to/file
 hdfs dfsadmin -report
 hdfs dfs -df -h
 hdfs dfs -du -s -h /path/to/directory
@@ -134,6 +133,55 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 				   df = df.withColumn("avg_value", F.avg("value").over(window_spec))   -->> sum / min /max /
 	==>> explode/explode_outer: exploded_df = df.select("Name", explode("Subjects").alias("Subject"))  -->> explode_outer
 		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
+	==>> 
+
+
+
+===========>
+pyspark
+or 
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("Load CSV to BigQuery").getOrCreate()
+
+>>> df = spark.read.parquet("gs://surdatabuk/data/userdata.parquet")
+
+>>> df=df.select("registration_dttm", "first_name", "last_name", "email", "gender")
+>>> df.show(3)
+-----------
+>>> df.createOrReplaceTempView("bigquery_table")
+>>> result = spark.sql("SELECT * FROM bigquery_table WHERE some_column > some_value")
+>>> result.show()
+
+>>> df.write.mode("overwrite").format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt3").save()
+>>> df=spark.read.format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt3").load()
+
+exit()
+
+===========>
+spark-sql
+spark-sql (default)> create or replace temporary view orders(name string, age int, city string)
+                   > using csv options(path='gs://surdatabuk/data/mark.csv');
+spark-sql (default)> select * from orders;
+spark-sql (default)> exit;
+
+============>
+spark-shell
+or
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._ / import org.apache.spark.sql.functions.{sum, round, col}
+val spark = SparkSession.builder
+  .appName("Load CSV to BigQuery with Transformation")
+  .getOrCreate()
+
+scala> val df = spark.read.option("header", "true").option("inferSchema", "true").csv("gs://surdatabuk/data/mark.csv")
+
+scala> val df1=df.filter(col("age")>=30)
+scala> df1.show / df1.show()
+
+scala> df1.write.mode("overwrite").format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt4").save()
+scala> df1.write.mode("append").format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt4").save()
+
+scala> :quit
 
 ==================================================================================================================================
 
