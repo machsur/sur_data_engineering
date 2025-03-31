@@ -1,48 +1,22 @@
 ===================
 >> Gcs bucket: name, region, storgae class, access control (public, uniform, fine-grained), data protection (object versining, retantion) , data encryption
-BIGQUERY:
 
->> Bigquery arch
-   storage and compute - decoupled/isolated (cost efficient)
-   layers:
-   colossus - is google distributed file system storage layer in column orientaed - fault tolerance by data replicas across different machines.
-   dremel - is compute engine - have root server (co-ordinate mixers & leaf nodes) / mixers (do aggreagtions) / leaf nodes (read data from storage)
-   jupiter- high speed n/w connector - to connect dremel with colossus
-   borg - scheduling jobs like run queries
-
->> Sql query execution order: From / where / group by / having / select / distinct / order by / limit
-select 5 /distict 6 / from table 1 / where 2 / group by 3 / having 4/ order by 7 / limit 8
-
->> conversion functions:
-   The CAST function performs a conversion between compatible data types. 
-   If the conversion fails due to data type incompatibility or data loss, the query will fail
-   The SAFE_CAST function also performs a conversion between compatible data types, 
-   but it handles conversion errors differently. Instead of failing the query, it returns NULL when the conversion cannot    be performed.
-
->> commenting: -- or # or /* LINES */
+>> conversion functions:   CAST, SAFE_CAST 
 
 >> Create table with metadata from existing table – use where 1 = 2 or false
 
->> .
-   SELECT * EXCEPT(column1, column2, ...) FROM table_name; 
-   SELECT DISTINCT department FROM employees limit 10;
-   SELECT ROUND(56.14159, -2/-1); / SELECT ROUND(56.14159, 2); /
-
->> String functions:
-concat, length, repeat, reverse, replace, upper, lower, ltrim, rtrim, trim, left, right, substr, starts_with, ends_with, contains_substr, strpos, instr
-CONCAT('#', LTRIM('   apple   '), '#') / LENGTH('suresh') / SPLIT('apple,banana,orange', ',') / REPEAT('abc', 3) / REVERSE('abc') / REPLACE ('desert pie', 'pie', 'cobbler') 
-LEFT('banana', 3) / RIGHT('apple', 3) / SUBSTR('apple', 2, 2) / SUBSTRING alias for SUBSTR /
-LOWER('FOO BAR BAZ') / UPPER('foo')
-LTRIM('   apple   ') / RTRIM('***apple***', '*') / TRIM( '   apple   ') /
-STARTS_WITH('bar', 'b') / ENDS_WITH('apple', 'e') / CONTAINS_SUBSTR('the blue house', CONCAT('Blue ', 'house')) / 
-INSTR('banana', 'an', 1, 1) or INSTR(string, substring, start_position, occurrence) / STRPOS('foo@example.com', '@') 
+>> select 49/50 col, unique columns, 23.456234 == 23.45, combine cols, no of chars, abc--> abcabc, abc--> cba, suresh--> seesh
+   caps, remove spaces, get portion of string, get boolean based on string matching, get postition of char
+	EXCEPT, ROUND, DISTINCT, CONCAT('#', LTRIM('   apple   '), '#') / LENGTH('suresh') / SPLIT('apple,banana,orange', ',') / 
+	REPEAT('abc', 3) / REVERSE('abc') / REPLACE ('desert pie', 'pie', 'cobbler') 
+	LEFT('banana', 3) / RIGHT('apple', 3) / SUBSTR('apple', 2, 2) / SUBSTRING alias for SUBSTR /
+	LOWER('FOO BAR BAZ') / UPPER('foo') / LTRIM('   apple   ') / RTRIM('***apple***', '*') / TRIM( '   apple   ') /
+	STARTS_WITH('bar', 'b') / ENDS_WITH('apple', 'e') / CONTAINS_SUBSTR('the blue house', CONCAT('Blue ', 'house')) / 
+	INSTR('banana', 'an', 1, 1) or INSTR(string, substring, start_position, occurrence) / STRPOS('foo@example.com', '@') 
 
 >> Union all / Union distinct / Table wildcards: test_*` where _Table_Suffix > 5 / Except distinct / Intersect distinct /
 
->>   Permanent table: save query results on BQ storage
-   Temporary table/cache – Query results saved on cache and valid for 24 hrs.
-   Internal/native table/managed tables: table in BQ storage
-   External table: BQ querying data from bigtable, gcs, google drive
+>>   Permanent table,  Temporary table/cache, Internal/native table/managed tables, External table
 
 >> Time travel concept: Query the state of the table as it was at a specific timestamp
       SELECT * FROM `your_dataset.your_table`
@@ -51,26 +25,12 @@ INSTR('banana', 'an', 1, 1) or INSTR(string, substring, start_position, occurren
 >> Creation of view/materialized view and auth view: efficiently manage and secure your data access in BigQuery
    Create view: virtual tables / view hits base table and display data / frequent updates on base table/ infrequent data       access / 
    Materialized view: data stored on disk / better performance/ frequent access on data / infrequent updates on base table /
-   Authorized views and authorized materialized views: let you share query results with particular users and groups without    giving them access to the underlying source data.
+   Authorized views and authorized materialized views: let you share query results with particular users and groups withoutgiving them access to the underlying source data.
          CREATE VIEW `your_dataset.your_view` AS
-         SELECT
-           customer_id,
-           order_date,
-           total_amount
-         FROM
-           `your_dataset.orders`
-         WHERE
-           order_date >= '2025-01-01'
+         SELECT customer_id, order_date, total_amount FROM `your_dataset.orders` WHERE order_date >= '2025-01-01'
 
-            CREATE MATERIALIZED VIEW `your_dataset.your_materialized_view` AS
-            SELECT
-              customer_id,
-              order_date,
-              SUM(total_amount) AS total_spent
-            FROM
-              `your_dataset.orders`
-            GROUP BY
-              customer_id, order_date
+        CREATE MATERIALIZED VIEW `your_dataset.your_materialized_view` AS
+        SELECT customer_id, order_date, SUM(total_amount) AS total_spent FROM `your_dataset.orders` GROUP BY customer_id, order_date
 
 >> Partitioning and clustering:
    Improved Query Performance: By scanning only relevant partitions and clustered blocks, queries run faster.
@@ -236,6 +196,14 @@ a
         FROM `your_dataset.your_table`
       )
       WHERE row_num = 777
+
+7. Bigquery arch
+   storage and compute - decoupled/isolated (cost efficient)
+   layers:
+   colossus - is google distributed file system storage layer in column orientaed - fault tolerance by data replicas across different machines.
+   dremel - is compute engine - have root server (co-ordinate mixers & leaf nodes) / mixers (do aggreagtions) / leaf nodes (read data from storage)
+   jupiter- high speed n/w connector - to connect dremel with colossus
+   borg - scheduling jobs like run queries
 
 7. Identify customers who placed orders in consecutive months.
          WITH orders AS (
