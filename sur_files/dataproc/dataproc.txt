@@ -143,13 +143,14 @@ or
 from pyspark.sql import SparkSession
 spark = SparkSession.builder.appName("Load CSV to BigQuery").getOrCreate()
 
->>> df = spark.read.parquet("gs://surdatabuk/data/userdata.parquet")
+>>> df = spark.read.option("header", "True").option("inferSchema", "True").csv("gs://surdatabuk/data/mark.csv")
 
->>> df=df.select("registration_dttm", "first_name", "last_name", "email", "gender")
->>> df.show(3)
+>>> df1=df.filter(col("age")>=30)
+or
+>>> df.createOrReplaceTempView("bigquery_table")
+>>> df1 = spark.sql("SELECT * FROM bigquery_table WHERE age > 30")
 
->>> df.write.mode("overwrite").format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt3").save()
->>> df=spark.read.format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt3").load()
+>>> df1.write.mode("overwrite").format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt3").save()
 
 exit()
 
@@ -164,21 +165,15 @@ scala> val df = spark.read.option("header", "true").option("inferSchema", "true"
 
 scala> val df1=df.filter(col("age")>=30)
 scala> df1.show / df1.show()
+or
+scala> df.createOrReplaceTempView("bigquery_table")
+scala> val df1=spark.sql("select * from bq_table where age>32")
 
-scala> df1.write.mode("overwrite").format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt4").save()
 scala> df1.write.mode("append").format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt4").save()
 
 scala> :quit
 
 ===========>
------------
-if u want to run sparl-sql in pyspark/scala script:
->>> df.createOrReplaceTempView("bigquery_table")
->>> spark.sql("CREATE OR REPLACE TEMP VIEW bigquery_table USING csv OPTIONS (path 'gs://your-bucket/your-file.csv', header 'true', inferSchema 'true')")
->>> result = spark.sql("SELECT * FROM bigquery_table WHERE some_column > some_value")
->>> result.show()
-
-------------
 spark-sql
 
 spark-sql (default)> create or replace temporary view orders(name string, age int, city string) using csv options(path='gs://surdatabuk/data/mark.csv');
@@ -186,6 +181,13 @@ spark-sql (default)> select * from orders where age > 30;
 spark-sql (default)> describe table orders;
 
 spark-sql (default)> exit;
+
+=============>
+use val for scala code
+>>> df=spark.read.format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt4").load()
+>>> df.write.partitionBy("age").mode("overwrite").csv("gs://surdatabuk/part_folder")  - create partition folders as per key 
+>>> df.repartition(2).write.mode("overwrite").csv("gs://surdatabuk/part_file")   - create two files as per partition no
+
 
 
 ==================================================================================================================================
