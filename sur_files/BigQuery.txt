@@ -177,12 +177,12 @@ end for;
 
 SQL QA:
 
->> To find the department names where no employees are found, you can use the following SQL query:
+1. To find the department names where no employees are found, you can use the following SQL query:
    emp -->> employee_id	employee_name	dept_id
    Department Table -->> dept_id	dept_name
    SELECT d.dept_name FROM dept d LEFT JOIN employee e ON d.dept_id = e.dept_id WHERE e.dept_id IS NULL;
 
->> Given two tables, find the count of records for Left Outer Join and Inner Join:
+2. Given two tables, find the count of records for Left Outer Join and Inner Join:
 Table A: Table B:
 1 1
 1 1
@@ -190,7 +190,7 @@ Table A: Table B:
 1 
 Ans. 12 & 12
 
->> Give the output for DENSE_RANK() and RANK() functions for the below dataset:
+3. Give the output for DENSE_RANK() and RANK() functions for the below dataset:
 Nums 
 85 
 85 
@@ -199,7 +199,7 @@ Nums
 75 
 70
 
->> Given a table with column 'Country', select data in the below sequence:
+4. Given a table with column 'Country', select data in the below sequence:
 Table: Matches
 Country 
 India 
@@ -217,7 +217,7 @@ Ans.
       `powerful-layout-445408-p5.sur_test_ds.countryt` b
     on a.countryc > b.countryc;  -----> or <
 
->> Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS.
+5. Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS.
 Table1:
 col1 
 ---- 
@@ -229,7 +229,7 @@ b
 a 
 1 
 
->> Find the 777th highest salary from a table.
+6. Find the 777th highest salary from a table.
       SELECT salary
       FROM (
         SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num
@@ -237,7 +237,7 @@ a
       )
       WHERE row_num = 777
 
->> Identify customers who placed orders in consecutive months.
+7. Identify customers who placed orders in consecutive months.
          WITH orders AS (
            SELECT
              customer_id,
