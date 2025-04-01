@@ -205,56 +205,26 @@ a
    jupiter- high speed n/w connector - to connect dremel with colossus
    borg - scheduling jobs like run queries
 
-7. Identify customers who placed orders in consecutive months.
+8. Identify customers who placed orders in consecutive months.
+	cust, order_date, order
          WITH orders AS (
-           SELECT
-             customer_id,
-             DATE_TRUNC(order_date, MONTH) AS order_month
-           FROM
-             `your_dataset.your_table`
-         ),
+           SELECT customer_id, DATE_TRUNC(order_date, MONTH) AS order_month FROM `your_dataset.your_table`),
          consecutive_orders AS (
-           SELECT
-             customer_id,
-             order_month,
-             LEAD(order_month) OVER (PARTITION BY customer_id ORDER BY order_month) AS next_order_month
-           FROM
-             orders
-         )
-         SELECT
-           customer_id,
-           order_month,
-           next_order_month
-         FROM
-           consecutive_orders
-         WHERE
-           DATE_DIFF(next_order_month, order_month, MONTH) = 1
+           SELECT customer_id, order_month, LEAD(order_month) OVER (PARTITION BY customer_id ORDER BY order_month) AS next_order_month FROM orders)
+         SELECT customer_id, order_month, next_order_month FROM consecutive_orders WHERE DATE_DIFF(next_order_month, order_month, MONTH) = 1
 
->> Query to get the total number of patients per doctor, including unassigned patients.
-         SELECT
-           d.doctor_id,
-           COUNT(p.patient_id) AS total_patients
-         FROM
-           `your_dataset.doctors` d
-         LEFT JOIN
-           `your_dataset.patients` p
-         ON
-           d.doctor_id = p.doctor_id
-         GROUP BY
-           d.doctor_id
+9. Query to get the total number of patients per doctor, including unassigned patients.
+	docter_id | pationt_id, doctor_id
 
->> Handling NULL values in employee salary using the average salary.
+         SELECT d.doctor_id, COUNT(p.patient_id) AS total_patients FROM `your_dataset.doctors` d  LEFT JOIN `your_dataset.patients` p
+         ON  d.doctor_id = p.doctor_id GROUP BY d.doctor_id
+
+10. Handling NULL values in employee salary using the average salary.
     IFNULL(expression, replacement_value) -->> It takes two arguments. If the first argument is NULL, it returns the second argument.
     COALESCE(expression1, expression2, ..., expressionN) -->> It can take multiple arguments. It returns the first non-NULL argument from the list.
          WITH avg_salary AS (
-           SELECT AVG(salary) AS average_salary
-           FROM `your_dataset.your_table`
-         )
-         SELECT
-           employee_id,
-           COALESCE(salary, (SELECT average_salary FROM avg_salary)) AS adjusted_salary
-         FROM
-           `your_dataset.your_table`
+           SELECT AVG(salary) AS average_salary  FROM `your_dataset.your_table`)
+         SELECT employee_id,  COALESCE(salary, (SELECT average_salary FROM avg_salary)) AS adjusted_salary  FROM `your_dataset.your_table`
 
 >> Difference between Subquery and Materialized Views.
     Performance: Materialized views can improve query performance by storing precomputed results, while subqueries are recalculated each time the main query runs.
