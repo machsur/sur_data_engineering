@@ -53,6 +53,27 @@
    Stop SparkSession → spark.stop()
 ------------------------------
 
+>> data cashing in spark
+	cache()
+	persist(storageLevel=StorageLevel.MEMORY_ONLY) --> DISK_ONLY, MEMORY_AND_DISK, MEMORY_ONLY_SER, MEMORY_AND_DISK_SER, OFF_HEAP, MEMORY_ONLY_2
+	persist(StorageLevel(useDisk, useMemory, useOffHeap, deserialized, replication)) --> 	persist(StorageLevel(True, True, False, False, 1)) 
+	for disk only ser, for memory ser (compact in size, less memory, more cpu for access) or deser (consumes more memory but fast access)
+	how to uncahe --> df.unpersist()
+	when cache req: access large df multiple times across spark actions
+	when not cache: not fit in memory, not reusing frequently, df is small
+
+>> repartition and coalesce
+	repartition(num - uniform size, *cols - not ensure in uniform size)  --> hash based partitioning,
+	repartitionByRange(num, *cols)  --> range of values based partitioning
+	wide trans, cause shuffle sort
+	config("spark.sql.shuffle.partitions", 100) --> can override with num partitions argument
+	when: df reuse and repeated col filter, df partition are not well distributed on nodes, large df or skewed partitions
+	coalesce - to reduced no of partitions - combine local partitions, no shuffeling, may cause skewed partitions,
+
+
+
+	
+
 
 ===========================================================================================================================
 PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit: 
