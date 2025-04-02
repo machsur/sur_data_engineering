@@ -266,23 +266,25 @@ https://spark.apache.org/
 
 Q&A
 
->> Given an array, find the minimum and maximum values.
+1. Given an array, find the minimum and maximum values.
     ans. builtin mtds, sorting, python code
->> Given a string, count the char occurrences of word in a dictionary:
+2. Given a string, count the char occurrences of word in a dictionary:
     Input: 'aaabbbccddeeeee'
     Output: { “a” : 3 , “b” : 3, “c” : 2, “d” : 2 , “e” : 5 }
->> Write a Python script to count the frequency of characters in a text file.
->> Write a Python program to count the frequency of an word in a text file.
->> Reversing a String using an Extended Slicing techniques. builtin / slicing / code
->> Count Vowels from Given words .
->> Find the highest occurrences of each word from string and sort them in order.
->> Remove Duplicates from List.
+3. Write a Python script to count the frequency of characters in a text file.
+4. Write a Python program to count the frequency of an word in a text file.
+5. Reversing a String using an Extended Slicing techniques. builtin / slicing / code
+6. Count Vowels from Given words .
+7. Find the highest occurrences of each word from string and sort them in order.
+8. Remove Duplicates from List.
+	set / for loop / list comprehension 
 >> Sort a List without using Sort keyword.
 >> Find the pair of numbers in this list whose sum is n no.
->> Find the max and min no in the list without using inbuilt functions.
->> Read and print values from an Excel file using Pandas.
+11. Find the max and min no in the list without using inbuilt functions.
+	in-built fun / code
+12. Read and print values from an Excel file using Pandas.
     df = pd.read_excel('your_file.xlsx')
->> Handle file exceptions (missing or corrupted Excel files) gracefully.
+13. Handle file exceptions (missing or corrupted Excel files) gracefully.
 >> Calculate the Intersection of Two Lists without using Built-in Functions
 
 >> What is a docstring in Python?
