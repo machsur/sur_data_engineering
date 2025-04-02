@@ -52,6 +52,25 @@
    Trigger an Action (e.g., show(), collect(), count())
    Stop SparkSession → spark.stop()
 ------------------------------
+>> Spark memory management
+	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
+	spark.driver.memory --> JVM memory 
+	spark.driver.memoryOverhead --> 10% 0r 384mb max one --> used for container processes, pyspark app
+	
+	spark.executor.memory --> JVM heap memory (8 gb)
+		reserved memory 300 mb --> fixed reserve for spark engine
+		spark memory --> spark.memory.fraction=0.6 (default, u can change)--> used for DF operation & caching
+			storage memory pool --> 0.5 default, u can change --> spark.memory.storageFraction=0.5 --
+			executor memory pool --> 
+		user memory -->0.4 --> used for spark internal metada, udf, rdd operations
+	spark.executor.memoryOverhead  --> 10% 0r 384mb max one --> overhead memory used for container processes, n/w transfer, read shuffle, python worker 
+	spark.memory.offHeap.enabled  --> spark.memory.offHeap.size --> off heap memory --> default = 0
+	spark.executor.pyspark.memory --> pyspark memory --> default zero (pyspark is non jvm. so it will take from overhead memory)
+	spark.executor.cores --> rec 2 to 5
+	
+	yarn.scheduler.maximum-allocation-mb --> pysical memory limit at the worker node
+	yarn.nodemanager.resource.memory-mb 
+
 
 >> data cashing in spark
 	cache()
