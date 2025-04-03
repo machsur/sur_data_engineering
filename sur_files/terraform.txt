@@ -1,0 +1,2 @@
+
+>> Scope (identify infra to create) - author (write conf) - init (install plugin) - plan (preview change) - apply (make changes)
