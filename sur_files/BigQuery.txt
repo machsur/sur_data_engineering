@@ -226,19 +226,17 @@ a
            SELECT AVG(salary) AS average_salary  FROM `your_dataset.your_table`)
          SELECT employee_id,  COALESCE(salary, (SELECT average_salary FROM avg_salary)) AS adjusted_salary  FROM `your_dataset.your_table`
 
->> Difference between Subquery and Materialized Views.
+11. Difference between Subquery and Materialized Views.
     Performance: Materialized views can improve query performance by storing precomputed results, while subqueries are recalculated each time the main query runs.
     Storage: Materialized views consume storage space to store the precomputed results, whereas subqueries do not.
     Maintenance: Materialized views need to be refreshed to stay up-to-date with the underlying data, while subqueries always reflect the current state of the data.
 
->> CTE vs Subquery in SQL and their performance impact.
+12. CTE vs Subquery in SQL and their performance impact.
     Readability and Maintainability:
     Optimization: Subquery Treated similarly to CTEs in terms of optimization. The query optimizer will attempt to optimize the entire query, including the subqueries.
     Reusability:
 
->> Steps to debug a slow SQL query.
-
->> Change Data Capture (CDC) -->> identify and capture changes made to data in a database --> It helps keep track of inserts, updates, and deletes in real-time.
+13. Change Data Capture (CDC) -->> identify and capture changes made to data in a database --> It helps keep track of inserts, updates, and deletes in real-time.
       Benefits:
       Real-time updates: Ensures data consistency across systems.
       Efficiency: Reduces the need for full data scans.
@@ -248,10 +246,9 @@ a
       query based on timestamp
       triggers load changes into new tables
 
->>
+14.
 Src					
-id	name			
-1	a								
+id	name											
 2	b1							
 4	d								
 					
@@ -268,14 +265,11 @@ id	name
 3	c
 4	d
 
-
 MERGE INTO target_table AS T
 USING source_table AS S
 ON T.id = S.id
-WHEN MATCHED THEN
-    UPDATE SET T.name = S.name
-WHEN NOT MATCHED THEN
-    INSERT (id, name) VALUES (S.id, S.name);
+WHEN MATCHED THEN UPDATE SET T.name = S.name
+WHEN NOT MATCHED THEN INSERT (id, name) VALUES (S.id, S.name);
 
 >> 
 ORDER_DAY         ORDER_ID            PRODUCT_ID   QUANTITY     PRICE
