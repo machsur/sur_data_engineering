@@ -167,8 +167,9 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 		df_replaced_multiple = df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset="fruit")
 	==>> coalesce('cn1', 'cn2','cn3') - return first non-null value from list of columns
 	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0))
-	==>> agg functions --> df.select(sum('CN')).show() -----> max, min, avg, count, countDistanct, stddev, variance, sumDistinct  ------> note: ignore null values
-	     grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show() -------> min, max, avg, count, concat_ws(', ', collect_list('cn')), first, last
+	==>> agg functions --> df.select(sum('CN')).show()  ------> note: ignore null values
+	     grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show()
+		sum , sumDistinct, min, max, avg, count, countDistanct, collect_list, collect_set first, last, stddev, variance 
 	==>> when&otherwise -->> df = ( df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult")).withColumn("income_bracket", when(df.salary < 4000, "Low") 					.when((df.salary >= 4000) & (df.salary <= 4500), "Medium") .otherwise("High")) )
 	==>>cast data types -->> df = df.withColumn("column_name", col("column_name").cast("target_data_type"))
 			    -->> cast_expr = [col("column1_name").cast("target_data_type1"), col("column2_name").cast("target_data_type2")] / df = df.select(*cast_expr)
@@ -395,21 +396,21 @@ pyspark QA:
    result = df.groupBy("name").agg(collect_list("value").alias("values_list")) - allows duplicates in list
    result = df.groupBy("name").agg(collect_set("value").alias("values_set")) - no duplicates in list
 
->> Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
+7. Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
      +-------------+----------+
      | City    | Population|
      +-------------+----------+
     top_5_cities = df.orderBy(col("Population").desc()).limit(5)
 
->> Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
+8. Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
     avg_salary_by_dept = df.groupBy("Department").agg(avg("Salary").alias("AverageSalary"))
 
->> Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
+9. Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
      +------------+----------------+-------------------+
      | customer_id| transaction_id | transaction_date |
      +------------+----------------+-------------------+
     df_no_duplicates = df.dropDuplicates(["customer_id", "transaction_date"])
->> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
+10. input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
     output 
    +---+---------------+----------+---------+
    | ID| Name|First_Name|Last_Name|
