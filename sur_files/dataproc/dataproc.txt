@@ -176,8 +176,8 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 	==>> window functions -->> window_spec = Window.partitionBy("category", "sub_category").orderBy(asc("timestamp"), col("score").desc()) \
                     				.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
 				   window_spec = Window.partitionBy("category", "sub_category").orderBy(col("timestamp"), col("score")).rowsBetween(-2, 3)
-				   df = df.withColumn("row_number", F.row_number().over(window_spec))  -->> rank(), dense_rank(), lead('cn'), lag('cn')
-				   df = df.withColumn("avg_value", F.avg("value").over(window_spec))   -->> sum / min /max /
+				   df = df.withColumn("row_number", row_number().over(window_spec))  -->> rank(), dense_rank(), lead('cn'), lag('cn')
+				   df = df.withColumn("avg_value", avg("value").over(window_spec))   -->> sum / min /max /
 	==>> explode/explode_outer: exploded_df = df.select("Name", explode("Subjects").alias("Subject"))  -->> explode_outer
 		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
 	==>> 
@@ -390,9 +390,26 @@ pyspark QA:
    Memory Overhead: Set spark.executor.memoryOverhead to account for additional memory required for JVM overhead3.
    Repartition Data: Repartition large datasets to reduce the size of data processed by each executor1.
 
->> What is difference between spark session and spark context?
+1. Find the top 3 highest-paid employees from each department.
+   data = [(1, "Amit", "IT", 90000),
 
->> what is collect list and collect set and when do we use it?
+2. Write a PySpark code to remove duplicate records based on a specific column.
+   data = [(101, "Mumbai", "Maharashtra"), ]
+
+3. Write a PySpark query to calculate the moving average of sales over the last 3 months.
+    window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
+    window_spec = Window.orderBy("Month").rowsBetween(Window.unboundedPreceding, Window.currentRow)
+    df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
+
+4. What is SparkSQL, and how do you perform SQL operations on DataFrames?
+   Registering the DataFrame as a Temporary View: df.createOrReplaceTempView("people")
+   Running SQL Queries: spark.sql("SELECT Name, Age FROM people WHERE Age > 30").show()
+
+5. What is difference between spark session and spark context?
+	SparkContext: Basic functionality for RDD operations. Requires separate contexts for SQL, streaming, etc. (used <2.0 spark version)
+	SparkSession: Provides a unified interface for DataFrame and Dataset APIs, SQL queries, and more. (used >2.0 spark version)
+
+6. what is collect list and collect set and when do we use it?
    result = df.groupBy("name").agg(collect_list("value").alias("values_list")) - allows duplicates in list
    result = df.groupBy("name").agg(collect_set("value").alias("values_set")) - no duplicates in list
 
@@ -421,21 +438,6 @@ pyspark QA:
    | 4| Kim Joe| Kim| Joe|
    +---+---------------+----------+---------+
 	df = df.withColumn("fn", split(df.Name, "[- ]").getItem(0)).withColumn("ln", split(df.Name, "[- ]")[1])
-
->> Find the top 3 highest-paid employees from each department.
-   data = [(1, "Amit", "IT", 90000),
-
->> Write a PySpark code to remove duplicate records based on a specific column.
-   data = [(101, "Mumbai", "Maharashtra"), ]
-
->> Write a PySpark query to calculate the moving average of sales over the last 3 months.
-    window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
-    window_spec = Window.orderBy("Month").rowsBetween(Window.unboundedPreceding, Window.currentRow)
-    df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
-
->> What is SparkSQL, and how do you perform SQL operations on DataFrames?
-   Registering the DataFrame as a Temporary View: df.createOrReplaceTempView("people")
-   Running SQL Queries: spark.sql("SELECT Name, Age FROM people WHERE Age > 30").show()
 
 >> Given a DataFrame, split the data into two columns (Even, Odd) where:
     Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
