@@ -497,3 +497,38 @@ config("spark.sql.files.maxPartitionBytes", "1000")
 
 # Set the auto broadcast join threshold to 100MB
 spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 104857600)
+
+=============
+Project: divide into project modules
+review data using colab, then create dev cluster to handle sample datasets, the create cluster in prod to handle live/big data
+
+1. Data Ingetion and exploration: setup env, import csv into hdfs, load data into spark dataframe, examine schema, data types, perform EDA
+	gcloud storage cp *.csv gs://surdatabuk/data/olist
+	hdfs dfs -cp gs://surdatabuk/data/olist/*.csv /data/olist/
+
+	spark = SparkSession.builder.appName("OlistData").getOrCreate()
+	
+	schema and datatypes:
+	hdfs_path = '/data/olist/'        gcs_path = 'gs://surdatabuk/data/olist/'
+	customer_df = spark.read.csv(gcs_path + 'olist_customers_dataset.csv', header=True, inferSchema=True)
+	customer_df.printSchema()
+	customer_df.show(5)
+	# data leakage or drop
+	print(f'customer_df has {customer_df.count()} rows')
+	# Null values
+	customer_df.select([count(when(col(c).isNull(), 1)).alias(c) for c in customer_df.columns]).show()
+	# duplicate values
+	customer_df.groupBy('customer_id').count().filter('count>1').show(10)
+	# data distribution as per state, avg time taken to deliver item
+	customer_df.groupBy('customer_state').count().orderBy('count', ascending=False).show(10)
+
+	
+2. data cleaning (remove duplicates, handle null, ..) and trans (agg, pivoting,..) :
+3. data integration (combine data from multiple tables) and aggregation (to compute metrics): 
+4. performance optimization: enhance data processing task - partitioning, cache/persist, spark config
+5. data serving: make processed data available in bq
+
+
+terms:
+anomalies
+
