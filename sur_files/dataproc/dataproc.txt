@@ -533,11 +533,27 @@ review data using colab, then create dev cluster to handle sample datasets, the 
 	=> handle missing values: drop (for non-critical columns) or fill null values (for numerical columns) or impute values (for contionus data)
 		df.na.drop(subset=['name', 'age']).show()
 		df.fillna({'name':'unknown', 'age':1000}).show()
-	=> standadize format: convert date time, standadize categoric fileds
-	=> data type corretion 
+	=> standadize format: extract date from timestamp, replace payment_type col using when/otherwise
+	=> data type corretion: change pincode from int to string
 	=> dedplication: reomve duplicte records
+		df.dropDuplicates(['id']).show()
 	=> data transformation: apply feature engineering
+		dfj = ordd_df.join(ordi_df, 'order_id', 'left').join(ordp_df, 'order_id', 'left')
+		groupBy & agg
  	=> store in cleaned data (HDFS in parquet - good for querying)
+		>> cust_df.write.mode('overwrite').format('parquet').save('/data/olist_output/cust_df.parquet') - data in tb this may take hours/days
+		>> other: use terminal, spark-sql - create external hive table, select data
+		CREATE EXTERNAL TABLE IF NOT EXISTS orders (
+		  customer_id string,
+		  customer_unique_id string,
+		  customer_zip_code_prefix integer,
+		  customer_city string,
+		  customer_state string,
+		)
+		STORED AS PARQUET
+		LOCATION '/data/olist_output/cust_df.parquet';
+		>> select * from orders limit 5;
+
 
 3. data integration (combine data from multiple tables) and aggregation (to compute metrics): 
 4. performance optimization: enhance data processing task - partitioning, cache/persist, spark config
