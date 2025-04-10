@@ -524,6 +524,21 @@ review data using colab, then create dev cluster to handle sample datasets, the 
 
 	
 2. data cleaning (remove duplicates, handle null, ..) and trans (agg, pivoting,..) :
+	=> identify issues: missing values, duplicate, invalid date
+		#finding missing values
+		from pyspark.sql.functions import when, count, col
+		def missing_values(df, df_name):
+		    print(f'missing values in {df_name}:')
+		    df.select([count(when(col(c).isNull(), 1)).alias(c) for c in df.columns]).show(5)
+	=> handle missing values: drop (for non-critical columns) or fill null values (for numerical columns) or impute values (for contionus data)
+		df.na.drop(subset=['name', 'age']).show()
+		df.fillna({'name':'unknown', 'age':1000}).show()
+	=> standadize format: convert date time, standadize categoric fileds
+	=> data type corretion 
+	=> dedplication: reomve duplicte records
+	=> data transformation: apply feature engineering
+ 	=> store in cleaned data (HDFS in parquet - good for querying)
+
 3. data integration (combine data from multiple tables) and aggregation (to compute metrics): 
 4. performance optimization: enhance data processing task - partitioning, cache/persist, spark config
 5. data serving: make processed data available in bq
