@@ -254,33 +254,32 @@ pyspark QA:
 
    -- Dynamic Partition pruning in spark3.0:
 
->> What is the difference between cache() and persist() in PySpark?
-   cache() and persist() are used to store DataFrame or RDD in memory to speed up subsequent actions.
-   cache(): cache() uses the default storage level, which is MEMORY_ONLY.
+1. What is the difference between cache() and persist() in PySpark?
+	when df is frequently used, we do caching df for better performance
+	cache(): cache() uses the default storage level, which is MEMORY_ONLY.
 	df.cache()
-   persist(): persist() allows you to specify different storage levels, such as MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY, etc.
+	persist(): persist() allows you to specify different storage levels, such as MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY, etc.
 	from pyspark import StorageLevel
 	df.persist(StorageLevel.MEMORY_AND_DISK)
 
->> How does Lazy Evaluation work in PySpark?
-   the execution of transformations on RDDs (Resilient Distributed Datasets) or DataFrames is deferred until an action is performed. 
-   This allows PySpark to optimize the execution plan and improve performance.
+2. How does Lazy Evaluation work in PySpark?
+	the execution of transformations on RDDs (Resilient Distributed Datasets) or DataFrames is deferred until an action is performed. 
+	This allows PySpark to optimize the execution plan and improve performance.
 
->> What are wide and narrow transformations in PySpark?
-   Narrow transformations are those where each input partition contributes to only one output partition. Examples include: map() / filter() / flatMap()
-   Wide transformations involve shuffling data across the network, as input partitions contribute to multiple output partitions. 
-   groupByKey(): Groups elements with the same key. / reduceByKey(): Combines values with the same key using a specified function. /join(): Joins two datasets 
+3. What are wide and narrow transformations in PySpark?
+	Narrow transformations are those where each input partition contributes to only one output partition. Examples filter, union
+	Wide transformations involve shuffling data across the network, as input partitions contribute to multiple output partitions. join, distinct, groupBY
 
->> Explain shuffle operations in PySpark and their impact on performance.
-	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupByKey, reduceByKey, join, and distinct.
+4. Explain shuffle operations in PySpark and their impact on performance.
+	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
 	suppose if have suffle partions lesser than cluster capacity --> slow completion time, underutilization of cluster
-	if data shuffle partion is too large --> tune by increasing num of partitions required
+	if data per shuffle partion is too large --> tune by increasing num of partitions required
 	if data per shuffle partition is very less --> tune by decewasing no of SP, find size of SP based on available cores.
 	default shuffile partitions is 200 / data size per shuffle partition b/w 1-200 mb
 	# Set the number of shuffle partitions --> spark.conf.set("spark.sql.shuffle.partitions", 100)
 	# Verify the setting --> print(spark.conf.get("spark.sql.shuffle.partitions"))
 
->> what is data skewness and salting technique? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
+5. what is data skewness and salting technique? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
    skewed partition : uneven data distribution
 	job is taking time, unutilization of resources, oom or data spill (write results to disk -- very costly)
 	fix --> repartition, salting, AQE, broadcasting
@@ -288,7 +287,7 @@ pyspark QA:
    df.rdd.getNumPartitions()
    df.select(spark_partition_id().alias("partid")).groupBy("partid").count()
 
->> What is broadcast join, and when should we use it?
+6. What is broadcast join, and when should we use it?
 	type of join operation where a small dataset is broadcasted to all worker nodes in the cluster. 
 	This allows the join to be performed locally on each node, significantly improving performance by reducing the amount of data shuffled across the network.
 
