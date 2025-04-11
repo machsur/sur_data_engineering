@@ -134,7 +134,7 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
     ==>> join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
          join_df = df1.crossjoin(df2)
          broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
-    ==>> filtered_df = df.filter(df['cn'] > 10 / .isNull() / .isNotNull())  or df.filter((df["Age"] > 30) &| (df["Department"] == "IT"))
+    ==>> filtered_df = df.filter(df['cn'] > 10 / .isNull() / .isNotNull())  or df.filter((df["Age"] > 30) &| (df["Department"] == "IT")) or df.where(df['cn'] == 'IT')
     ==>> grouped_df = df.groupBy('department').agg(max("sal"))   -->> count() / agg(max("sal")) or agg(sum('Age'), sum('sal')) or max('age', 'sal) -- min avg sum 			collect_list, collect_set
     ==>> having_df = df.filter(grouped_df['count'] > 1)
     ==>> selected_df = df.select("customer_id", col("Name").alias('EmployeeName'), column("last_name"), df.email, df["city"] )
@@ -503,30 +503,15 @@ Project: divide into project modules
 review data using colab, then create dev cluster to handle sample datasets, the create cluster in prod to handle live/big data
 
 1. Data Ingetion and exploration: setup env, import csv into hdfs, load data into spark dataframe, examine schema, data types, perform EDA
-	gcloud storage cp *.csv gs://surdatabuk/data/olist
-	hdfs dfs -cp gs://surdatabuk/data/olist/*.csv /data/olist/
-
-	spark = SparkSession.builder.appName("OlistData").getOrCreate()
-	
-	schema and datatypes:
-	hdfs_path = '/data/olist/'        gcs_path = 'gs://surdatabuk/data/olist/'
-	customer_df = spark.read.csv(gcs_path + 'olist_customers_dataset.csv', header=True, inferSchema=True)
-	customer_df.printSchema()
-	customer_df.show(5)
-	# data leakage or drop
-	print(f'customer_df has {customer_df.count()} rows')
-	# Null values
-	customer_df.select([count(when(col(c).isNull(), 1)).alias(c) for c in customer_df.columns]).show()
-	# duplicate values
-	customer_df.groupBy('customer_id').count().filter('count>1').show(10)
-	# data distribution as per state, avg time taken to deliver item
-	customer_df.groupBy('customer_state').count().orderBy('count', ascending=False).show(10)
-
+	==> schema and datatypes:
+	==> data leakage or drop:  print(f'customer_df has {customer_df.count()} rows')
+	==> Null values: customer_df.select([count(when(col(c).isNull(), 1)).alias(c) for c in customer_df.columns]).show()
+	==> duplicate values:	customer_df.groupBy('customer_id').count().filter('count>1').show(10)
+	==> data distribution as per state, avg time taken to deliver item: customer_df.groupBy('customer_state').count().orderBy('count', ascending=False).show(10)
 	
 2. data cleaning (remove duplicates, handle null, ..) and trans (agg, pivoting,..) :
 	=> identify issues: missing values, duplicate, invalid date
 		#finding missing values
-		from pyspark.sql.functions import when, count, col
 		def missing_values(df, df_name):
 		    print(f'missing values in {df_name}:')
 		    df.select([count(when(col(c).isNull(), 1)).alias(c) for c in df.columns]).show(5)
@@ -556,6 +541,11 @@ review data using colab, then create dev cluster to handle sample datasets, the 
 
 
 3. data integration (combine data from multiple tables) and aggregation (to compute metrics): 
+	==> join all datasets -	cache frequently used datasets for better performance -	when we use inner join / left join?
+	==> optimizing joins - broadcast small datasets
+	==> focus on aggregations & window function
+	==> caching & optimizing queries for performance
+
 4. performance optimization: enhance data processing task - partitioning, cache/persist, spark config
 5. data serving: make processed data available in bq
 
