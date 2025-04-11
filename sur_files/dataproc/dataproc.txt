@@ -447,11 +447,16 @@ pyspark QA:
     Column 1: Default String
     Column 2: Default Integer
 
-14. Word count program in pyspark
+13. Word count program in pyspark
     df1 = df.select(explode(split(df["name"], " ")).alias("word")).groupBy("word").agg(count("*").alias("count"))
 
-12. Write a PySpark query to count the number of null values in each column of a DataFrame.
-14. Write a PySpark query to replace null values in a specific column with the previous non-null value.
+14. Write a PySpark query to count the number of null values in each column of a DataFrame.
+	df1.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
+
+15. Write a PySpark query to replace null values in a specific column with the previous non-null value.
+	window_spec = Window.orderBy("id").rowsBetween(Window.unboundedPreceding, Window.currentRow)
+	df.withColumn("filled_col", last('value', ignorenulls=True).over(window_spec)).show()
+
 >> How does PySpark handle schema evolution in DataFrames?
 
 >> problems that partition solves?
