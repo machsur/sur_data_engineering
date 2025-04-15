@@ -1,6 +1,3 @@
-
-=================
-
 ==========================
 >> Why linux rather than winndows, macos:  open source & free to use, multi-users work on shared system , good security (no antivirus req), stable and reliable
 
@@ -20,7 +17,30 @@
 -- sudo su - , useradd - seshuu , passwd seshuu, su - seshuu , sudo apt install ncal
 -- nproc, cal 2023, cat /etc/shells, echo $SHELL
 -- touch FN, vi/vim/nano FN
--- execute script: bash script_name, script_name (once user has X permission) 
+-- ls -a -R -ltr -h (a hidden, R recurssive, l detail list, t time latest file first, r reverse, h human readble)
+-- cd ~    	>> cd ../..     	>> pwd      	>> clear 
+
+-- File Operations
+	cp -p source.csv destination.csv (preservation of metadata)
+	cp -p -R /source_dir /target_dir
+	mv oldname.csv newname.csv
+	mv file1.csv file2.csv target_dir/
+	rm if filename.csv (f - force delete)
+	rm -r directory_name
+
+# Force remove (use with caution!)
+rm -f locked_file.csv
+-- file viewing: cat data.csv / head data.csv (10 lines) / head -n 5 data.csv / tail data.csv (10 lines) / tail -n 20 data.csv
+   file editing: vi data.csv (i, esc, :w, :q, :wq, :q! - quit without saving )
+-- file permissions:  owner group other (rwx - 421)    	 >> chmod 744 sur.txt
+-- Search and Pattern Matching
+	grep -i -r -c "error" pipeline.log (# Case insensitive search / # Recursive search in directory /# Count occurrences)
+	# Find files by name  		>> find /data -name "*.csv"
+	# Find files modified in last 24 hours 		>> find /data -mtime -1	
+	# Find and execute command 		>> find /data -name "*.tmp" -exec rm {} \;
+
+# Follow log file in real-time (crucial for monitoring data pipelines)
+tail -f pipeline.log
 -- convert shell script onto bash script (shebang) -- #!/bin/bash (in first line of script)
 -- editing path variable (./hello.py - hello.py works now) --- echo $PATH, export PATH=$PATH:/home/surmacha/scripts
 -- adding comments #
@@ -29,3 +49,9 @@
 	datatype is blind/untyped, 
 	constant variable (cant reassign later ex-PI) - readonly PI=3.1452
 	command substution -- today=$(command) or `command` -- echo $today
+
+
+
+>> https://allthingdata.substack.com/p/essential-linux-commands-for-data
+
+
