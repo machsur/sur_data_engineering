@@ -1,23 +1,16 @@
 ===================
 
 1. "write a query to how will you get a list of the top ten most expensive queries that have been executed in your project over the past 30 days:"
-	SELECT project_id, job_id, user_email, creation_time, start_time, end_time, total_slot_ms, total_bytes_billed, total_bytes_processed, --billing_tier, cache_hit, 	query FROM `region-us`.INFORMATION_SCHEMA.JOBS
-	WHERE creation_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
+	SELECT project_id, job_id, user_email, creation_time, total_slot_ms, total_bytes_billed, total_bytes_processed, query FROM `region-eu`.INFORMATION_SCHEMA.JOBS
+	WHERE creation_time between TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY) AND CURRENT_TIMESTAMP()
+	      AND job_type = "QUERY"
+	      AND total_bytes_processed > 0
 	ORDER BY total_bytes_billed DESC LIMIT 10;
 
 2. difference b/w CAST, SAFE_CAST 
 	If the conversion fails, SAFE_CAST returns NULL instead of throwing an error, allowing the query to continue.
 
 3. Create table with metadata from existing table – use where 1 = 2 or false
-
->> select 49/50 col, unique columns, 23.456234 == 23.45, combine cols, no of chars, abc--> abcabc, abc--> cba, suresh--> seesh
-   caps, remove spaces, get portion of string, get boolean based on string matching, get postition of char
-	EXCEPT, ROUND, DISTINCT, CONCAT('#', LTRIM('   apple   '), '#') / LENGTH('suresh') / SPLIT('apple,banana,orange', ',') / 
-	REPEAT('abc', 3) / REVERSE('abc') / REPLACE ('desert pie', 'pie', 'cobbler') 
-	LEFT('banana', 3) / RIGHT('apple', 3) / SUBSTR('apple', 2, 2) / SUBSTRING alias for SUBSTR /
-	LOWER('FOO BAR BAZ') / UPPER('foo') / LTRIM('   apple   ') / RTRIM('***apple***', '*') / TRIM( '   apple   ') /
-	STARTS_WITH('bar', 'b') / ENDS_WITH('apple', 'e') / CONTAINS_SUBSTR('the blue house', CONCAT('Blue ', 'house')) / 
-	INSTR('banana', 'an', 1, 1) or INSTR(string, substring, start_position, occurrence) / STRPOS('foo@example.com', '@') 
 
 4. Union all / Union distinct / Table wildcards: test_*` where _Table_Suffix > 5 / Except distinct / Intersect distinct /
 
@@ -48,21 +41,19 @@
       AS
       SELECT * FROM `source_dataset.source_table`
 
->> Joins: -  combine rows from two or more tables based on a related column between them.
+9. Joins: -  combine rows from two or more tables based on a related column between them.
    INNER JOIN / left join / right join / full join / cross join / self join /
    Best Practices for Joins in BigQuery: Use Appropriate Join Types: / Filter Early / Avoid Cross Joins When Possible / 
    Use Partitioned and Clustered Tables: If joining large tables / Monitor Query Performance /
 
->> With statement: also known as Common Table Expressions (CTEs), allows you to define temporary result sets.
+10. With statement: also known as Common Table Expressions (CTEs), allows you to define temporary result sets.
    Adv: code more readable, resusebility - referenced in several places within the main SQL query. 
 
-
-
->> Pivoting and unpivoting: help in reshaping your data for analysis or reporting
+11. Pivoting and unpivoting: help in reshaping your data for analysis or reporting
    Pivot: row into columns
    unpivot: columns into rows
 
->> Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
+12. Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
    De Normalization – redundant data (high storage cost) – better Query performance 
    Why array & structs? – for better query per and lesser storage costs
    
@@ -72,7 +63,7 @@
    Struct – record with nested fields having different data types
    SELECT person.id, person.name FROM mydataset.mytable;
  
->> Window functions: performing advanced calculations over a set of rows, go beyond simple aggregates or filters
+13. Window functions: performing advanced calculations over a set of rows, go beyond simple aggregates or filters
    max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() 
    SUM(column2) OVER (PARTITION BY column1 ORDER BY column2 ROWS BETWEEN UNBOUNDED/2 PRECEDING AND CURRENT ROW) AS rt
    lag(cn) / lead(cn): Accesses data from a previous or subsequent row in the same result set without use of a self-join.
@@ -86,61 +77,63 @@
 ​   PERCENT_RANK= Rank of current row−1 / Total rows−1
 ​   Rows consider current row even if duplicates / range considers bottom row of duplicates.
 
->> Regular expressions: used for pattern matching and string manipulation
-   REGEXP_CONTAINS(column_name, r'pattern')
-   REGEXP_EXTRACT_ALL(column_name, r'pattern')
-   REGEXP_REPLACE(column_name, r'pattern', 'replacement')
-   SPLIT(column_name, r'pattern') --> select  SPLIT("mach suresh", ' ')[OFFSET(0)] AS first_name,
+14. Regular expressions: used for pattern matching and string manipulation
+	   REGEXP_CONTAINS(column_name, r'pattern')
+	   REGEXP_EXTRACT_ALL(column_name, r'pattern')
+	   REGEXP_REPLACE(column_name, r'pattern', 'replacement')
+	   SPLIT(column_name, r'pattern') --> select  SPLIT("mach suresh", ' ')[OFFSET(0)] AS first_name,
 
->> Big Query cost optimization
-   -- bq compute optimization: on-demaned analysis, bq editions - decide based on your workloads.
-   
-   -- BQ data storage – 
-   Billing model: logical- data in uncompressed format/ physical- data in compressed format) 
-         # For logical bytes billing
-         bq update --dataset --storage_billing_model=LOGICAL my_dataset
-         # For physical bytes billing
-         bq update --dataset --storage_billing_model=PHYSICAL my_dataset
-   Use Table Expiration Settings 
-   Optimize Data Storage Format (cloumner format - paqruet. ORC)
-   Use Long-Term Storage Pricing (> 90 days)
+15. Big Query cost optimization
+	   -- bq compute optimization: on-demaned analysis, bq editions - decide based on your workloads.
+	   -- BQ data storage – 
+		Billing model: logical- data in uncompressed format/ physical- data in compressed format) 
+	         # For logical bytes billing
+	         bq update --dataset --storage_billing_model=LOGICAL my_dataset
+	         # For physical bytes billing
+	         bq update --dataset --storage_billing_model=PHYSICAL my_dataset
+	   	Use Table Expiration Settings 
+	   	Optimize Data Storage Format (cloumner format - paqruet. ORC)
+	   	Use Long-Term Storage Pricing (> 90 days)
+	   -- bq query optimization
 
-   -- Query optimization 
-   create dataset in region wehere customer operates
-   Use Partitioned Tables and Clustered Tables
-   use avro format to bigquery data load - google rec compressed avro for quick data load
-   use preview option for bq native table
-   select columns instead of *
-   use truncate instead of delete
-   nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
-   Join pattern larger table join smaller tables, Optimize JOIN Operations, avoid cross join
-   where class first condition in such way that eliminates most data
-   late aggregation
-   Use WITH Clauses for Subquery Caching (Avoid Repeated Scalar Subqueries)
-   Take Advantage of Query Caching
-   Aggregate Data at the Source: Use Approximate Aggregations: 
-   Create a materialized view based on frequently run queries.
-   Optimize Window Functions
-   Monitor and Tune Query Performance
+16. Optimization of query performance in BigQuery?
+	   create dataset in region wehere customer operates
+	   Use Partitioned Tables and Clustered Tables
+	   use avro format to bigquery data load - google rec compressed avro for quick data load
+	   use preview option for bq native table
+	   select columns instead of *
+	   use truncate instead of delete
+	   nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
+	   Join pattern larger table join smaller tables, Optimize JOIN Operations, avoid cross join
+	   where class first condition in such way that eliminates most data
+	   late aggregation
+	   Use WITH Clauses for Subquery Caching (Avoid Repeated Scalar Subqueries)
+	   Take Advantage of Query Caching
+	   Aggregate Data at the Source: Use Approximate Aggregations: 
+	   Create a materialized view based on frequently run queries.
+	   Optimize Window Functions
+	   Monitor and Tune Query Performance
   
-   -- Cost Controls: 
-   Set quotas and budget alerts
-   set query limits
-   Analyze Cost Breakdown Using Cloud Billing Reports
-   Schedule queries during off-peak hours to take advantage of low on-demand pricing typically at mid-night/early morning
+   17. Cost Controls: 
+	   Set quotas and budget alerts
+	   set query limits
+	   Analyze Cost Breakdown Using Cloud Billing Reports
+	   Schedule queries during off-peak hours to take advantage of low on-demand pricing typically at mid-night/early morning
 
-====================================================================================================================================================
-
-SQL QA:
-
-4. Explain about data modelling concepts( Star and snowflake schema)? 
+18. Explain about data modelling concepts( Star and snowflake schema)? 
 	Star Schema: Faster query performance due to fewer joins.
 	Snowflake Schema: More normalized and reduces data redundancy. May require more joins, potentially impacting query performance.
-5. Explain about SCD types? 
-7. BigQuery slots vs reservations? 
-8. Time travel n table snapshots in BigQuery? 
-9.How to get metadata of datasets and tables in BigQuery? 
-10. Optimization of query performance in BigQuery?
+
+19. Explain about SCD types? 
+
+20. BigQuery slots vs reservations? 
+
+21.How to get metadata of datasets and tables in BigQuery? 	
+	to get metadata about datasets:  SELECT * FROM `project_id`.`region-europe-west2`.INFORMATION_SCHEMA.SCHEMATA;
+	to get metadata about tables: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.TABLES;
+	to get metadata about columns: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.COLUMNS;
+
+
 1. To find the department names where no employees are found, you can use the following SQL query:
    emp -->> employee_id	employee_name	dept_id
    Department Table -->> dept_id	dept_name
