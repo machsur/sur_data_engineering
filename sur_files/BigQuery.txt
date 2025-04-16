@@ -83,28 +83,28 @@
 	   REGEXP_REPLACE(column_name, r'pattern', 'replacement')
 	   SPLIT(column_name, r'pattern') --> select  SPLIT("mach suresh", ' ')[OFFSET(0)] AS first_name,
 
-15. Big Query cost optimization
-	   -- bq compute optimization: on-demaned analysis, bq editions - decide based on your workloads.
+15. BigQuery slots vs reservations? 
+	Slots are units of computational capacity in BigQuery. (CPU and memory)
+	Reservations allow you to purchase dedicated slots (called commitments) and allocate them to specific workloads or projects.
+
+15.1. Big Query cost optimization
+	   -- bq compute optimization: 
+		on-demaned pricing - cost per tb, good for unpredectable workloads
+		Capacity Pricing - purchase dedicated slots, charged per slot-hour (different editions like Enterprise and Enterprise Plus, which offer options for one- or 		three-year commitments at discounted rates)- decide based on your workloads.
 	   -- BQ data storage – 
 		Billing model: logical- data in uncompressed format/ physical- data in compressed format) 
-	         # For logical bytes billing
-	         bq update --dataset --storage_billing_model=LOGICAL my_dataset
-	         # For physical bytes billing
-	         bq update --dataset --storage_billing_model=PHYSICAL my_dataset
-	   	Use Table Expiration Settings 
-	   	Optimize Data Storage Format (cloumner format - paqruet. ORC)
-	   	Use Long-Term Storage Pricing (> 90 days)
+	         # For logical bytes billing:   bq update --dataset --storage_billing_model=LOGICAL my_dataset
+	         # For physical bytes billing:  bq update --dataset --storage_billing_model=PHYSICAL my_dataset
+	   	Use Table Expiration Settings, Optimize Data Storage Format (cloumner format - paqruet. ORC), Use Long-Term Storage Pricing (> 90 days)
 	   -- bq query optimization
 
 16. Optimization of query performance in BigQuery?
 	   create dataset in region wehere customer operates
 	   Use Partitioned Tables and Clustered Tables
 	   use avro format to bigquery data load - google rec compressed avro for quick data load
-	   use preview option for bq native table
-	   select columns instead of *
-	   use truncate instead of delete
-	   nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
-	   Join pattern larger table join smaller tables, Optimize JOIN Operations, avoid cross join
+	   preview option, 
+	   select columns instead of *, use truncate instead of delete
+	   Join pattern larger table join smaller tables, avoid cross join
 	   where class first condition in such way that eliminates most data
 	   late aggregation
 	   Use WITH Clauses for Subquery Caching (Avoid Repeated Scalar Subqueries)
@@ -113,12 +113,11 @@
 	   Create a materialized view based on frequently run queries.
 	   Optimize Window Functions
 	   Monitor and Tune Query Performance
+	   nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
+
   
-   17. Cost Controls: 
-	   Set quotas and budget alerts
-	   set query limits
-	   Analyze Cost Breakdown Using Cloud Billing Reports
-	   Schedule queries during off-peak hours to take advantage of low on-demand pricing typically at mid-night/early morning
+17. Cost Controls: 
+	   budget alerts, Set query usage limits in IAM quotas, Billing reports, Schedule queries during off-peak hours
 
 18. Explain about data modelling concepts( Star and snowflake schema)? 
 	Star Schema: Faster query performance due to fewer joins.
@@ -126,7 +125,6 @@
 
 19. Explain about SCD types? 
 
-20. BigQuery slots vs reservations? 
 
 21.How to get metadata of datasets and tables in BigQuery? 	
 	to get metadata about datasets:  SELECT * FROM `project_id`.`region-europe-west2`.INFORMATION_SCHEMA.SCHEMATA;
