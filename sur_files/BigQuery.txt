@@ -372,14 +372,14 @@ null
 	  FROM `your_dataset.orders`)
 	SELECT customer_id, order_id, order_date FROM ranked_orders WHERE row_num = 1;
 
->> Find products that were never purchased by any customer.
+27. Find products that were never purchased by any customer.
 	SELECT p.product_id, p.product_name
 	FROM `your_dataset.products` p
 	LEFT JOIN `your_dataset.orders` o
 	ON p.product_id = o.product_id
 	WHERE o.product_id IS NULL;
 
->> Given a table with customer transactions, find customers who made transactions in every month of the year.
+28. Given a table with customer transactions, find customers who made transactions in every month of the year.
 	WITH monthly_transactions AS (
 	  SELECT customer_id, EXTRACT(MONTH FROM transaction_date) AS month
 	  FROM `your_dataset.transactions`
@@ -394,7 +394,7 @@ null
 	FROM customer_months
 	WHERE months_count = 12;
 
->> Find employees who have the same salary as another employee in the same department.
+29. Find employees who have the same salary as another employee in the same department.
 	WITH EmployeeSalaries AS (
 	  SELECT   department_id, salary, COUNT(*) AS employee_count  FROM employees GROUP BY department_id, salary HAVING COUNT(*) > 1)
 	SELECT
@@ -410,15 +410,16 @@ null
 	  AND e.salary = es.salary
 	ORDER BY
 	  e.department_id, e.salary;
-12/ Write an SQL query to retrieve the department with the highest total salary paid to employees.
-13/ Use a window function to rank orders based on order value for each customer, and return only the top 3 orders per customer.
-14/ Find the median salary of employees using SQL (without using built-in median functions).
-15/ Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
-16/ Find the moving average of sales for the last 7 days for each product in a sales table.
-17/ Given an events table, find the first and last occurrence of each event per user.
->> Identify users who have placed an order in two consecutive months but not in the third month.
 
->> Find the most frequently purchased product category by each user over the past year.
+30. Write an SQL query to retrieve the department with the highest total salary paid to employees.
+31. Use a window function to rank orders based on order value for each customer, and return only the top 3 orders per customer.
+32. Find the median salary of employees using SQL (without using built-in median functions).
+33. Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
+34. Find the moving average of sales for the last 7 days for each product in a sales table.
+35. Given an events table, find the first and last occurrence of each event per user.
+36. Identify users who have placed an order in two consecutive months but not in the third month.
+
+37. Find the most frequently purchased product category by each user over the past year.
 	WITH user_category_sales AS (
 	  SELECT user_id,  product_category, COUNT(*) AS purchase_count FROM sales_table
 	  WHERE sale_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) GROUP BY user_id, product_category),
@@ -426,7 +427,7 @@ null
 	  SELECT  user_id, product_category, purchase_count, RANK() OVER (PARTITION BY user_id ORDER BY purchase_count DESC) AS rank FROM user_category_sales)
 	SELECT user_id, product_category, purchase_count FROM ranked_categories WHERE rank = 1;
 
->> Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year.
+38. Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year.
 	SELECT year, product_id, total_sales, RANK() OVER (PARTITION BY year ORDER BY total_sales DESC) AS rank
 	FROM (
 	  SELECT EXTRACT(YEAR FROM sale_date) AS year, product_id, SUM(sales_amount) AS total_sales FROM sales_table
