@@ -434,4 +434,13 @@ null
 	  GROUP BY year,  product_id) AS yearly_sales
 	ORDER BY  year, rank;
 
+39. SCD: dimensions that change over time
+	SCD0 - NO CHANGE - change in source, no update on DWH table - change column is not relavant to the DWH table anymore (ex: fax number)	
+	SCD1 - maintain latest snapshot, no histroy and its overwritten by latest snap (ex: emp name designation has wrongly entered)
+	SCD2 - every change in source, add new record in DWH table and flag status is Y indicating active record
+	SCD3 - not rec
+	SCD4 - scd1+scd2 - 
+	scd6 - 1+2+3 - 
+	
 
+	
