@@ -176,8 +176,9 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 	==>> window functions -->> window_spec = Window.partitionBy("category", "sub_category").orderBy(asc("timestamp"), col("score").desc()) \
                     				.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
 				   window_spec = Window.partitionBy("category", "sub_category").orderBy(col("timestamp"), col("score")).rowsBetween(-2, 3)
-				   df = df.withColumn("row_number", row_number().over(window_spec))  -->> rank(), dense_rank(), lead('cn'), lag('cn')
-				   df = df.withColumn("avg_value", avg("value").over(window_spec))   -->> sum / min /max /
+				   df = df.withColumn("row_number", row_number().over(window_spec)) 
+   		max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() / lag(cn) / lead(cn) / 
+		first_value(cn) / last_value(cn) / nth_value(cn, n) /
 	==>> explode/explode_outer: exploded_df = df.select("Name", explode("Subjects").alias("Subject"))  -->> explode_outer
 		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
 	==>> 
