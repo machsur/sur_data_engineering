@@ -398,7 +398,6 @@ pyspark QA:
 
 3. Write a PySpark query to calculate the moving average of sales over the last 3 months.
     window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
-    window_spec = Window.orderBy("Month").rowsBetween(Window.unboundedPreceding, Window.currentRow)
     df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
 
 4. What is SparkSQL, and how do you perform SQL operations on DataFrames?
