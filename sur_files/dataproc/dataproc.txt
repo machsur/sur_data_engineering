@@ -460,6 +460,10 @@ Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query per
 
 .config("spark.sql.adaptive.skewJoin.enabled", "true")  # Handle skewed joins
 
+>> sPARK query plan:
+	code syntax is correct or not --> unresolved logical plan --> catalog --> logical plan --> optimized logical plan (filter pushdown & selct req col)--> 
+	converted several pysical plans --> cost model --> best pysical --> run on cluster.
+	df1.explain(True)
 
 =============
 
