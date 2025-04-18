@@ -43,11 +43,15 @@
 
 9. Joins: -  combine rows from two or more tables based on a related column between them.
    INNER JOIN / left join / right join / full join / cross join / self join /
-   Best Practices for Joins in BigQuery: Use Appropriate Join Types: / Filter Early / Avoid Cross Joins When Possible / 
-   Use Partitioned and Clustered Tables: If joining large tables / Monitor Query Performance /
+ 	SELECT c.CustomerID, c.CustomerName, o.OrderID, o.OrderDate, oi.OrderItemID,
+	FROM `your_dataset.customers` AS c 
+	JOIN `your_dataset.orders` AS o ON c.CustomerID = o.CustomerID
+	JOIN `your_dataset.order_items` AS oi ON o.OrderID = oi.OrderID;
 
 10. With statement: also known as Common Table Expressions (CTEs), allows you to define temporary result sets.
    Adv: code more readable, resusebility - referenced in several places within the main SQL query. 
+	WITH orders as (select statement)
+	select * from orders
 
 11. Pivoting and unpivoting: help in reshaping your data for analysis or reporting
    Pivot: row into columns
@@ -114,7 +118,6 @@
 	   Optimize Window Functions
 	   Monitor and Tune Query Performance
 	   nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
-
   
 17. Cost Controls: 
 	   budget alerts, Set query usage limits in IAM quotas, Billing reports, Schedule queries during off-peak hours
@@ -123,14 +126,12 @@
 	Star Schema: Faster query performance due to fewer joins.
 	Snowflake Schema: More normalized and reduces data redundancy. May require more joins, potentially impacting query performance.
 
-19. Explain about SCD types? 
-
-
-21.How to get metadata of datasets and tables in BigQuery? 	
+19.How to get metadata of datasets and tables in BigQuery? 	
 	to get metadata about datasets:  SELECT * FROM `project_id`.`region-europe-west2`.INFORMATION_SCHEMA.SCHEMATA;
 	to get metadata about tables: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.TABLES;
 	to get metadata about columns: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.COLUMNS;
 
+=============================================================================================================================================
 
 1. To find the department names where no employees are found, you can use the following SQL query:
    emp -->> employee_id	employee_name	dept_id
