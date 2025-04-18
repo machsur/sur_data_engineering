@@ -185,12 +185,8 @@ a
 1 
 
 6. Find the 777th highest salary from a table.
-      SELECT salary
-      FROM (
-        SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num
-        FROM `your_dataset.your_table`
-      )
-      WHERE row_num = 777
+      SELECT salary FROM 
+		(SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num FROM `your_dataset.your_table`) WHERE row_num = 777
 
 7. Bigquery arch
    storage and compute - decoupled/isolated (cost efficient)
@@ -242,29 +238,28 @@ a
       triggers load changes into new tables
 
 14.
-Src					
-id	name											
-2	b1							
-4	d								
-					
-beforeTgt					
-id	name
-1	a
-2	b
-3	c
+	Src					
+	id	name											
+	2	b1							
+	4	d								
+						
+	beforeTgt					
+	id	name
+	1	a
+	2	b
+	3	c
+	
+	after source ingestion Tgt	
+	id	name
+	1	a
+	2	b1
+	3	c
+	4	d
 
-after source ingestion Tgt	
-id	name
-1	a
-2	b1
-3	c
-4	d
-
-MERGE INTO target_table AS T
-USING source_table AS S
-ON T.id = S.id
-WHEN MATCHED THEN UPDATE SET T.name = S.name
-WHEN NOT MATCHED THEN INSERT (id, name) VALUES (S.id, S.name);
+	MERGE INTO target_table AS T   USING source_table AS S
+	ON T.id = S.id
+	WHEN MATCHED THEN UPDATE SET T.name = S.name
+	WHEN NOT MATCHED THEN INSERT (id, name) VALUES (S.id, S.name);
 
 15.
 ORDER_DAY         ORDER_ID            PRODUCT_ID   QUANTITY     PRICE
@@ -282,18 +277,8 @@ Get me all products that got sold both the days and the number of times the prod
 
 16. 
 INPUT
-order_id	customer_id	region	order_date	sales_amount
-1	101	North	1/1/2022	100
-4	101	North	1/15/2022	400
-8	101	EAST	2/5/2022	700
-2	102	South	1/5/2022	200
-6	102	South	1/25/2022	600
-10	102	WEST	2/15/2022	1000
-3	103	East	1/10/2022	300
-7	103	East	2/1/2022	200
-5	104	West	1/20/2022	500
-9	104	South	2/10/2022	200
-11	104	South	2/10/2022	100
+order_id	customer_id	region	   order_date	  sales_amount
+1	        101	        North	   1/1/2022	  100
 
 OUTPUT
 customer_id	north_sales	south_sales	East sales	West Sales
@@ -329,12 +314,16 @@ null
 	left join - 1 null / 2 2 / 2 2/ 3 3/ empty empty / null null /
 
 19. Find the second highest salary without using LIMIT, OFFSET, or TOP.
-	WITH RankedSalaries AS (SELECT salary, dense_rank() OVER (ORDER BY salary DESC) AS rank FROM employees)
+    emp_id, salary
+
+	WITH RankedSalaries AS (SELECT salary, dense_rank() OVER(ORDER BY salary DESC) AS rank FROM employees)
 	SELECT salary FROM RankedSalaries WHERE rank = 2;
 	
 	SELECT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 1;
 
 20. Given a table of orders, write a query to find the running total (cumulative sum) of revenue for each day.
+    order_date, revenue
+
 	SELECT  order_date, revenue, SUM(revenue) OVER (ORDER BY order_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total FROM  orders
 
 21. Write an SQL query to identify employees who earn more than their managers.
@@ -412,12 +401,104 @@ null
 	SELECT CustomerID, OrderID, OrderValue FROM RankedOrders WHERE Rank <= 3;
 
 32. Find the median salary of employees using SQL (without using built-in median functions).
+WITH OrderedSalaries AS (
+    SELECT 
+        Salary, ROW_NUMBER() OVER (ORDER BY Salary ASC) AS RowAsc, ROW_NUMBER() OVER (ORDER BY Salary DESC) AS RowDesc
+    FROM 
+        `your_dataset.employees`
+),
+MedianSalary AS (
+    SELECT 
+        Salary
+    FROM 
+        OrderedSalaries
+    WHERE 
+        RowAsc = RowDesc OR RowAsc + 1 = RowDesc
+)
+SELECT 
+    AVG(Salary) AS MedianSalary
+FROM 
+    MedianSalary;
+
 33. Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
+
 34. Find the moving average of sales for the last 7 days for each product in a sales table.
+	product_id, sale_amount, sale_date
+
+	WITH SalesWithMovingAverage AS (
+	    SELECT ProductID, SaleDate, SlesAmount, AVG(SalesAmount) OVER (PARTITION BY ProductID ORDER BY SaleDate ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS 		    MovingAverage FROM `your_dataset.sales`)
+	SELECT ProductID, SaleDate, SalesAmount, MovingAverage FROM SalesWithMovingAverage ORDER BY ProductID, SaleDate;
+
 35. Given an events table, find the first and last occurrence of each event per user.
+WITH EventOccurrences AS (
+    SELECT 
+        UserID,
+        EventID,
+        EventDate,
+        ROW_NUMBER() OVER (PARTITION BY UserID, EventID ORDER BY EventDate ASC) AS FirstOccurrence,
+        ROW_NUMBER() OVER (PARTITION BY UserID, EventID ORDER BY EventDate DESC) AS LastOccurrence
+    FROM 
+        `your_dataset.events`
+),
+FirstLastEvents AS (
+    SELECT 
+        UserID,
+        EventID,
+        MIN(EventDate) AS FirstEventDate,
+        MAX(EventDate) AS LastEventDate
+    FROM 
+        EventOccurrences
+    WHERE 
+        FirstOccurrence = 1 OR LastOccurrence = 1
+    GROUP BY 
+        UserID, EventID
+)
+SELECT 
+    UserID,
+    EventID,
+    FirstEventDate,
+    LastEventDate
+FROM 
+    FirstLastEvents
+ORDER BY 
+    UserID, EventID;
+
+
 36. Identify users who have placed an order in two consecutive months but not in the third month.
+WITH MonthlyOrders AS (
+    SELECT 
+        UserID, FORMAT_TIMESTAMP('%Y-%m', OrderDate) AS OrderMonth FROM `your_dataset.orders` GROUP BY UserID, OrderMonth),
+ConsecutiveMonths AS (
+    SELECT UserID, OrderMonth,
+        LAG(OrderMonth, 1) OVER (PARTITION BY UserID ORDER BY OrderMonth) AS PreviousMonth,
+        LEAD(OrderMonth, 1) OVER (PARTITION BY UserID ORDER BY OrderMonth) AS NextMonth
+    FROM 
+        MonthlyOrders
+),
+FilteredUsers AS (
+    SELECT 
+        UserID,
+        OrderMonth
+    FROM 
+        ConsecutiveMonths
+    WHERE 
+        PreviousMonth IS NOT NULL AND NextMonth IS NOT NULL
+        AND DATE_SUB(PARSE_TIMESTAMP('%Y-%m', OrderMonth), INTERVAL 1 MONTH) = PARSE_TIMESTAMP('%Y-%m', PreviousMonth)
+        AND DATE_ADD(PARSE_TIMESTAMP('%Y-%m', OrderMonth), INTERVAL 1 MONTH) = PARSE_TIMESTAMP('%Y-%m', NextMonth)
+)
+SELECT 
+    UserID
+FROM 
+    FilteredUsers
+GROUP BY 
+    UserID
+HAVING 
+    COUNT(OrderMonth) = 2;
+
 
 37. Find the most frequently purchased product category by each user over the past year.
+	user, product_category, order_id, sale_date
+
 	WITH user_category_sales AS (
 	  SELECT user_id,  product_category, COUNT(*) AS purchase_count FROM sales_table
 	  WHERE sale_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) GROUP BY user_id, product_category),
@@ -426,7 +507,9 @@ null
 	SELECT user_id, product_category, purchase_count FROM ranked_categories WHERE rank = 1;
 
 38. Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year.
-	SELECT year, product_id, total_sales, RANK() OVER (PARTITION BY year ORDER BY total_sales DESC) AS rank
+	prodct_id, sale_amount, sale_date
+
+	SELECT year, product_id, total_sales, RANK() OVER(PARTITION BY year ORDER BY total_sales DESC) AS rank
 	FROM (
 	  SELECT EXTRACT(YEAR FROM sale_date) AS year, product_id, SUM(sales_amount) AS total_sales FROM sales_table
 	  GROUP BY year,  product_id) AS yearly_sales
