@@ -131,6 +131,14 @@
 	to get metadata about tables: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.TABLES;
 	to get metadata about columns: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.COLUMNS;
 
+20. Database, DWH, DataLake
+	Database: OLTP system (day to day operational data) - - structured data with defined schema. mysql
+	DWH: Stores current and historical data from multiple sources for BI, analysis and reporting. terradata, bq
+	DataLake: Stores large volumes of raw data in its native format (Structured, semi-structured, and unstructured data), Big data analytics, machine learning. gcs, hdfs
+
+21. ETL VS ELT
+
+
 =============================================================================================================================================
 
 1. To find the department names where no employees are found, you can use the following SQL query:
