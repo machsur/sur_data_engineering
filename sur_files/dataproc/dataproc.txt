@@ -184,7 +184,6 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 	==>> 
 
 
-
 ===========>
 pyspark
 or 
