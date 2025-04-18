@@ -419,20 +419,12 @@ pyspark QA:
 	window_spec = Window.orderBy("id").rowsBetween(Window.unboundedPreceding, Window.currentRow)
 	df.withColumn("filled_col", last('value', ignorenulls=True).over(window_spec)).show()
 
->> How does PySpark handle schema evolution in DataFrames?
-
->> problems that partition solves?
+16. problems that partition solves?
 	fast/esay access, parallesium & resource utilization
 
->> how to decide partion on which column --> based on column cordinality/unique (not high & low / rec low to med) & frequent filter criteria 
+17. how to decide partiTIon on which column --> based on column cordinality/unique (not high & low / rec low to med) & frequent filter criteria 
 
->> # Initialize Spark session with maxPartitionBytes configuration
-	spark = SparkSession.builder.appName("MaxPartitionBytesExample").config("spark.sql.files.maxPartitionBytes", 64 * 1024 * 1024).getOrCreate()
-	or spark.conf.set("spark.sql.files.maxPartitionBytes", "64 * 1024 * 1024")
-	# Read data with the specified maxPartitionBytes setting
-	df = spark.read.parquet("path/to/parquet/files")
-
->> partitioning
+18. partitioning
 folder: df.write.partitionBy("date").mode("overwrite").parquet("/tmp/folder_partitioned_data")
 file: repartitioned_df.write.mode("overwrite").parquet("/tmp/file_partitioned_data")
 combine: repartitioned_df = df.repartition(3).write.partitionBy("date").mode("overwrite").parquet("/tmp/combined_partitioned_data")
