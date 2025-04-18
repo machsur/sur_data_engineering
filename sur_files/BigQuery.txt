@@ -338,13 +338,18 @@ null
 	SELECT  order_date, revenue, SUM(revenue) OVER (ORDER BY order_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total FROM  orders
 
 21. Write an SQL query to identify employees who earn more than their managers.
+	EMPID, EMPNAME, MANAGERID, SLARY
 	SELECT  e.employee_id,  e.name AS employee_name,  e.salary AS employee_salary,  m.name AS manager_name,  m.salary AS manager_salary 
 	FROM  employees e JOIN  employees m ON e.manager_id = m.employee_id WHERE  e.salary > m.salary	ORDER BY  e.salary DESC;
 
 22. Find the top N customers who made the highest purchases, ensuring no duplicates if customers have the same purchase amount.
-	use dense_rank here
+    CustomerID | PurchaseAmount
+	WITH RankedPurchases AS (
+    		SELECT CustomerID, PurchaseAmount, DENSE_RANK() OVER (ORDER BY PurchaseAmount DESC) AS Rank FROM `your_dataset.your_table`)
+	SELECT CustomerID, PurchaseAmount FROM RankedPurchases WHERE Rank <= N;
 
 23. Identify consecutive login streaks for users where they logged in for at least three consecutive days.
+    user_id | login_date
 	WITH login_data AS (
 	  SELECT user_id, login_date,
 	         LAG(login_date, 1) OVER (PARTITION BY user_id ORDER BY login_date) AS prev_login_date,
@@ -360,59 +365,52 @@ null
 24. Write an efficient query to detect duplicate records in a table and delete only the extra duplicates, keeping one copy.
 	WITH ranked_records AS (
 	  SELECT *, ROW_NUMBER() OVER (PARTITION BY column1, column2, column3 ORDER BY column1) AS row_num FROM `your_dataset.your_table`)
-	DELETE FROM `your_dataset.your_table` WHERE row_num > 1;
+	DELETE FROM ranked_records WHERE row_num > 1;
 
 	-- Create a temp table to store unique records, Delete all records from the original table, Insert unique records back into the original table, Drop the temp table
 
->> You have a table with millions of records. How would you optimize a slow-performing query that involves multiple joins and aggregations?
-
-26. Retrieve the first order for each customer, ensuring that ties (customers with multiple first orders on the same date) are handled correctly.
+25. Retrieve the first order for each customer, ensuring that ties (customers with multiple first orders on the same date) are handled correctly.
+    customer_id | order_id | order_date
+	
 	WITH ranked_orders AS (
 	  SELECT customer_id, order_id, order_date, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date, order_id) AS row_num
 	  FROM `your_dataset.orders`)
 	SELECT customer_id, order_id, order_date FROM ranked_orders WHERE row_num = 1;
 
-27. Find products that were never purchased by any customer.
-	SELECT p.product_id, p.product_name
-	FROM `your_dataset.products` p
-	LEFT JOIN `your_dataset.orders` o
-	ON p.product_id = o.product_id
-	WHERE o.product_id IS NULL;
+26. Find products that were never purchased by any customer.
+    t1: product_id, product_name;  t2: product_id, order_id
 
-28. Given a table with customer transactions, find customers who made transactions in every month of the year.
+	SELECT p.product_id, p.product_name FROM `your_dataset.products` p LEFT JOIN `your_dataset.orders` o
+	ON p.product_id = o.product_id	WHERE o.product_id IS NULL;
+
+27. Given a table with customer transactions, find customers who made transactions in every month of the year.
+    cust_id, date, purchage_amount
+
 	WITH monthly_transactions AS (
-	  SELECT customer_id, EXTRACT(MONTH FROM transaction_date) AS month
-	  FROM `your_dataset.transactions`
-	  GROUP BY customer_id, month
-	),
+	  SELECT customer_id, EXTRACT(MONTH FROM transaction_date) AS month FROM `your_dataset.transactions`  GROUP BY customer_id, month),
 	customer_months AS (
-	  SELECT customer_id, COUNT(month) AS months_count
-	  FROM monthly_transactions
-	  GROUP BY customer_id
-	)
-	SELECT customer_id
-	FROM customer_months
-	WHERE months_count = 12;
+	  SELECT customer_id, COUNT(month) AS months_count FROM monthly_transactions GROUP BY customer_id	)
+	SELECT customer_id FROM customer_months WHERE months_count = 12;
 
-29. Find employees who have the same salary as another employee in the same department.
+28. Find employees who have the same salary as another employee in the same department.
+    dept_id, emp_name, salary
+
 	WITH EmployeeSalaries AS (
 	  SELECT   department_id, salary, COUNT(*) AS employee_count  FROM employees GROUP BY department_id, salary HAVING COUNT(*) > 1)
-	SELECT
-	  e.employee_id,
-	  e.department_id,
-	  e.salary
-	FROM
-	  employees e
-	JOIN
-	  EmployeeSalaries es
-	ON
-	  e.department_id = es.department_id
-	  AND e.salary = es.salary
-	ORDER BY
-	  e.department_id, e.salary;
+	SELECT e.employee_id, e.department_id, e.salary	FROM employees e JOIN EmployeeSalaries es
+	ON  e.department_id = es.department_id AND e.salary = es.salary
+	ORDER BY e.department_id, e.salary;
 
-30. Write an SQL query to retrieve the department with the highest total salary paid to employees.
-31. Use a window function to rank orders based on order value for each customer, and return only the top 3 orders per customer.
+29. Write an SQL query to retrieve the department with the highest total salary paid to employees.
+    dept_od, salary 
+	SELECT DepartmentID, SUM(Salary) AS TotalSalary FROM `your_dataset.your_table` GROUP BY DepartmentID ORDER BY TotalSalary DESC LIMIT 1;
+
+30. Use a window function to rank orders based on order value for each customer, and return only the top 3 orders per customer.
+    CustomerID, OrderID, OrderValue
+	WITH RankedOrders AS (
+	    SELECT CustomerID, OrderID, OrderValue, RANK() OVER (PARTITION BY CustomerID ORDER BY OrderValue DESC) AS Rank FROM `your_dataset.your_table`)
+	SELECT CustomerID, OrderID, OrderValue FROM RankedOrders WHERE Rank <= 3;
+
 32. Find the median salary of employees using SQL (without using built-in median functions).
 33. Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
 34. Find the moving average of sales for the last 7 days for each product in a sales table.
