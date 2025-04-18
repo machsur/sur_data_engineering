@@ -58,46 +58,7 @@
    Trigger an Action (e.g., show(), collect(), count())
    Stop SparkSession → spark.stop()
 ------------------------------
->> Spark memory management
-	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
-	spark.driver.memory --> JVM memory 
-	spark.driver.memoryOverhead --> 10% 0r 384mb max one --> used for container processes, pyspark app
-	
-	spark.executor.memory --> JVM heap memory (8 gb)
-		reserved memory 300 mb --> fixed reserve for spark engine
-		spark memory --> spark.memory.fraction=0.6 (default, u can change)--> used for DF operation & caching
-			storage memory pool --> 0.5 default, u can change --> spark.memory.storageFraction=0.5 --
-			executor memory pool --> 
-		user memory -->0.4 --> used for spark internal metada, udf, rdd operations
-	spark.executor.memoryOverhead  --> 10% 0r 384mb max one --> overhead memory used for container processes, n/w transfer, read shuffle, python worker 
-	spark.memory.offHeap.enabled  --> spark.memory.offHeap.size --> off heap memory --> default = 0
-	spark.executor.pyspark.memory --> pyspark memory --> default zero (pyspark is non jvm. so it will take from overhead memory)
-	spark.executor.cores --> rec 2 to 5
-	
-	yarn.scheduler.maximum-allocation-mb --> pysical memory limit at the worker node
-	yarn.nodemanager.resource.memory-mb 
 
-
->> data cashing in spark
-	cache()
-	persist(storageLevel=StorageLevel.MEMORY_ONLY) --> DISK_ONLY, MEMORY_AND_DISK, MEMORY_ONLY_SER, MEMORY_AND_DISK_SER, OFF_HEAP, MEMORY_ONLY_2
-	persist(StorageLevel(useDisk, useMemory, useOffHeap, deserialized, replication)) --> 	persist(StorageLevel(True, True, False, False, 1)) 
-	for disk only ser, for memory ser (compact in size, less memory, more cpu for access) or deser (consumes more memory but fast access)
-	how to uncahe --> df.unpersist()
-	when cache req: access large df multiple times across spark actions
-	when not cache: not fit in memory, not reusing frequently, df is small
-
->> repartition and coalesce
-	repartition(num - uniform size, *cols - not ensure in uniform size)  --> hash based partitioning,
-	repartitionByRange(num, *cols)  --> range of values based partitioning
-	wide trans, cause shuffle sort
-	config("spark.sql.shuffle.partitions", 100) --> can override with num partitions argument
-	when: df reuse and repeated col filter, df partition are not well distributed on nodes, large df or skewed partitions
-	coalesce - to reduced no of partitions - combine local partitions, no shuffeling, may cause skewed partitions,
-
-
-
-	
 
 
 ===========================================================================================================================
@@ -488,23 +449,74 @@ df = spark.read.option("mode", DROPMALFORMED/FAILFAST").schema(cust_schema).csv(
 Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query performance by pruning partitions dynamically based on runtime data. This is particularly useful for queries involving joins where one table is significantly smaller than the other. DPP helps reduce the amount of data scanned, thereby improving query efficiency.
 
 
->> 
-config("spark.sql.files.maxPartitionBytes", "1000")
+>> data cashing in spark
+	cache()
+	persist(storageLevel=StorageLevel.MEMORY_ONLY) --> DISK_ONLY, MEMORY_AND_DISK, MEMORY_ONLY_SER, MEMORY_AND_DISK_SER, OFF_HEAP, MEMORY_ONLY_2
+	persist(StorageLevel(useDisk, useMemory, useOffHeap, deserialized, replication)) --> 	persist(StorageLevel(True, True, False, False, 1)) 
+	for disk only ser, for memory ser (compact in size, less memory, more cpu for access) or deser (consumes more memory but fast access)
+	how to uncahe --> df.unpersist()
+	when cache req: access large df multiple times across spark actions
+	when not cache: not fit in memory, not reusing frequently, df is small
 
-.config("spark.executor.memory", "4g") \
-.config("spark.executor.cores", "2") \
-.config("spark.executor.instances", "5")  # Number of executors
-.config("spark.driver.memory", "2g") \
-.config("spark.driver.cores", "1") \
+>> repartition and coalesce
+	repartition(num - uniform size, *cols - not ensure in uniform size)  --> hash based partitioning,
+	repartitionByRange(num, *cols)  --> range of values based partitioning
+	wide trans, cause shuffle sort
+	config("spark.sql.shuffle.partitions", 100) --> can override with num partitions argument
+	when: df reuse and repeated col filter, df partition are not well distributed on nodes, large df or skewed partitions
+	coalesce - to reduced no of partitions - combine local partitions, no shuffeling, may cause skewed partitions,
 
-.config("spark.sql.adaptive.enabled", "true")  # Enable AQE
-.config("spark.sql.adaptive.coalescePartitions.enabled", "true")  # Coalesce partitions
 .config("spark.sql.adaptive.skewJoin.enabled", "true")  # Handle skewed joins
 
-# Set the auto broadcast join threshold to 100MB
-spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 104857600)
 
 =============
+
+1. create spark session with config optimization
+spark = SparkSession.builder \
+.appName("olist config optimization") \
+.config('spark.executor.memory', '6g') \
+.config('spark.executor.cores', '4') \
+.config('spark.executor.instances', '2') \
+.config('spark.driver.memory', '4g') \
+.config('spark.driver.maxResultSize', '2g') \
+.config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
+.config('spark.default.parallelism', '64') \		# It usually defaults to the number of cores on all executor nodes.
+.config('spark.sql.adaptive.enabled', 'true') \
+.config('spark.sql.adaptive.coalescePartitions.enabled', 'true') \
+.config('spark.sql.autoBroadcastJoinThreshold', 24*1024*1024) \
+.config('spark.sql.files.maxPartitionBytes', '64MB') \
+.config('spark.sql.files.openCostInBytes', '2MB') \
+.config('spark.memory.fraction', 0.8) \
+.config('spark.memory.storageFraction', 0.2) \
+.getOrCreate()
+
+-- config('spark.sql.shuffle.partitions', '64') - 
+-- cluster capacity required to process 25 gb file
+	how many cpu cores are required 25GB,  (1-200mb rec, in hdfs-128mb block size), 25*1024*1024/128 = 200 cores
+	how many executors requires (2-5 cores rec per executor) - 200/4 = 50 executor instances
+	how much each executor memory req  - 1.5 * reserved memory(300mb) or min 4*(partition size) = 512 mb/core = 2 gb/executor
+	total memory required to process file = 50*2 = 100 gb
+-- Spark memory management
+	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
+	spark.driver.memory --> JVM memory 
+	spark.driver.memoryOverhead --> 10% 0r 384mb max one --> used for container processes, pyspark app
+	spark.executor.memory --> JVM heap memory (8 gb)
+		reserved memory 300 mb --> fixed reserve for spark engine
+		spark memory --> spark.memory.fraction=0.6 (default, u can change)--> used for DF operation & caching
+			storage memory pool --> 0.5 default, u can change --> spark.memory.storageFraction=0.5 --
+			executor memory pool --> 
+		user memory -->0.4 --> used for spark internal metada, udf, rdd operations
+	spark.executor.memoryOverhead  --> 10% 0r 384mb max one --> overhead memory used for container processes, n/w transfer, read shuffle, python worker 
+	spark.memory.offHeap.enabled  --> spark.memory.offHeap.size --> off heap memory --> default = 0
+	spark.executor.pyspark.memory --> pyspark memory --> default zero (pyspark is non jvm. so it will take from overhead memory)
+	spark.executor.cores --> rec 2 to 5
+	
+	yarn.scheduler.maximum-allocation-mb --> pysical memory limit at the worker node
+	yarn.nodemanager.resource.memory-mb 
+
+
+	
+
 Project: divide into project modules
 review data using colab, then create dev cluster to handle sample datasets, the create cluster in prod to handle live/big data
 
