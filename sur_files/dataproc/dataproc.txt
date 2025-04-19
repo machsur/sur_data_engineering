@@ -1,5 +1,9 @@
 
+https://github.com/afaqueahmad7117/spark-experiments/tree/main/spark
+
 >> 
+
+
 ==> HDFS terminaligy: filesystem (types: standalone, distributed), Block, cluster and node, process & demon process, metadata, replication
 ==> why hdfs, HDFS architexture, block in hdfs (QA change block size?), 
 ==> 
@@ -465,6 +469,47 @@ Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query per
 	converted several pysical plans --> cost model --> best pysical --> run on cluster.
 	df1.explain(True)
 
+>> reading spark dags:
+
+>> Spark memory management
+	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
+	spark.driver.memory --> JVM memory 
+	spark.driver.memoryOverhead --> 10% 0r 384mb max one --> used for container processes, pyspark app
+	>> Spark executor container: sum of below 3 are the total memory of executor container
+	1. on-heap memory managed by JVM (8 gb) [spark.executor.memory ] - when on-heap memory is full, operations paused and do gcc then resume operation - perfor reduce
+		reserved memory 300 mb --> fixed reserve for spark engine
+		spark memory (unified memory) [spark.memory.fraction] (0.6 default, u can change)--> used DF operation & caching
+			storage memory pool [spark.memory.storageFraction], (0.5 default, u can change)
+			executor memory pool --> 
+		user memory --> used for spark internal metada, udf, rdd operations, variables, objects
+	2. overhead [spark.executor.memoryOverhead  --> 10% of spark executor memory 0r 384mb max one], for container processes, n/w transfer, read shuffle, python worker 
+	   spark.executor.pyspark.memory --> pyspark memory --> default zero (pyspark is non jvm. so it will take from overhead memory)
+	3. off-heap mwmory: managed by OS [spark.memory.offHeap.enabled, spark.memory.offHeap.size - default 0, 10to20% of on-heap memory].
+	   Off-heap memory can reduce garbage collection overhead, leading to better performance and lower latency
+
+	yarn.scheduler.maximum-allocation-mb --> pysical memory limit at the worker node
+	yarn.nodemanager.resource.memory-mb 
+
+>> apache spark executor tuning: 
+	-- thin executors (1 node 12-1 cpu, 48-1 gb memory --> 1 executor has 1 cpu & ~4gb memory) 55 executors
+	-- fat executors (1 node 12-1 cpu, 48-1 gb memory --> 1 executor has 11 cpu & ~47gb memory) 5 executors
+	-- optimal sized executors: 
+		per node leave out 1 core 1 gb ram for hadoop/yarn/os
+		app master container at cluster level - (1 executor or 1cpu1gbram)
+	============================================================================================
+	3node 16 core 48gb ram
+	total cores = 16 -1 (os) * 3 = 45
+	total memory = 48 - 1 (os) * 3 = 141
+	executors = 45/4 ~ 11 		/ memory per executor = 141/11 ~ 12gb 		/cores per executor = 4
+	overhead memory = max(384 or 1.2gb)
+	actuval memory = 12 -1 = 11 gb 
+	for app driver 1 executor / num of executors = 10, cores = 4, memory = 11gb
+	===================================================================================================
+	how many cpu cores are required 25GB,  (1-200mb rec, in hdfs-128mb block size), 25*1024*1024/128 = 200 cores
+	how many executors requires (2-5 cores rec per executor) - 200/4 = 50 executor instances
+	how much each executor memory req  - 1.5 * reserved memory(300mb) or min 4*(partition size) = 512 mb/core = 2 gb/executor
+	total memory required to process file = 50*2 = 100 gb
+
 =============
 
 1. create spark session with config optimization
@@ -486,29 +531,7 @@ spark = SparkSession.builder \
 .config('spark.memory.storageFraction', 0.2) \
 .getOrCreate()
 
--- config('spark.sql.shuffle.partitions', '64') - 
--- cluster capacity required to process 25 gb file
-	how many cpu cores are required 25GB,  (1-200mb rec, in hdfs-128mb block size), 25*1024*1024/128 = 200 cores
-	how many executors requires (2-5 cores rec per executor) - 200/4 = 50 executor instances
-	how much each executor memory req  - 1.5 * reserved memory(300mb) or min 4*(partition size) = 512 mb/core = 2 gb/executor
-	total memory required to process file = 50*2 = 100 gb
--- Spark memory management
-	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
-	spark.driver.memory --> JVM memory 
-	spark.driver.memoryOverhead --> 10% 0r 384mb max one --> used for container processes, pyspark app
-	spark.executor.memory --> JVM heap memory (8 gb)
-		reserved memory 300 mb --> fixed reserve for spark engine
-		spark memory --> spark.memory.fraction=0.6 (default, u can change)--> used for DF operation & caching
-			storage memory pool --> 0.5 default, u can change --> spark.memory.storageFraction=0.5 --
-			executor memory pool --> 
-		user memory -->0.4 --> used for spark internal metada, udf, rdd operations
-	spark.executor.memoryOverhead  --> 10% 0r 384mb max one --> overhead memory used for container processes, n/w transfer, read shuffle, python worker 
-	spark.memory.offHeap.enabled  --> spark.memory.offHeap.size --> off heap memory --> default = 0
-	spark.executor.pyspark.memory --> pyspark memory --> default zero (pyspark is non jvm. so it will take from overhead memory)
-	spark.executor.cores --> rec 2 to 5
-	
-	yarn.scheduler.maximum-allocation-mb --> pysical memory limit at the worker node
-	yarn.nodemanager.resource.memory-mb 
+
 
 
 	
