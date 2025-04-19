@@ -433,13 +433,18 @@ folder: df.write.partitionBy("date").mode("overwrite").parquet("/tmp/folder_part
 file: repartitioned_df.write.mode("overwrite").parquet("/tmp/file_partitioned_data")
 combine: repartitioned_df = df.repartition(3).write.partitionBy("date").mode("overwrite").parquet("/tmp/combined_partitioned_data")
 
->>
-df = spark.read.option("recursiveFileLookup", "true").parquet("hdfs:///path/to/your/directory")
-df = spark.read.option("compression", "gzip").csv("/tmp/compressed_csv_data", sep="|", linesep="/r or /n")
-df.write.option("compression", "gzip").mode("overwrite").parquet("/tmp/compressed_data", sep="|", linesep="/r or /n")
+19. reading file into df / write df into target
+option("recursiveFileLookup", "true")
+option("compression", "gzip")
+option("modifiedBefore", "2025-04-19T20:58:57") / option("modifiedAfter", "2025-04-19T20:58:57")
+option('header', True)
+schema(cust_schema)
+option("mode", "PERMISSIVE").schema(cust_schema).option("columnNameOfCorruptRecord", "_corrupt_record")  - return null / 
+option("mode", DROPMALFORMED/FAILFAST").schema(cust_schema) - remove wrong records / throw error if any incorrect records are there
 
-df = spark.read.option("mode", "PERMISSIVE").schema(cust_schema).option("columnNameOfCorruptRecord", "_corrupt_record").csv("/path/to/csv")
-df = spark.read.option("mode", DROPMALFORMED/FAILFAST").schema(cust_schema).csv("/path/to/csv")
+df = spark.read.csv("/tmp/compressed_csv_data", sep="|", linesep="/r or /n")
+df.write.mode("overwrite").parquet("/tmp/compressed_data", sep="|", linesep="/r or /n")
+df.write.mode("overwrite").format("bigquery").option("table", f"{project_id}:{dataset}.{table}").save()
 
 >>
 Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query performance by pruning partitions dynamically based on runtime data. This is particularly useful for queries involving joins where one table is significantly smaller than the other. DPP helps reduce the amount of data scanned, thereby improving query efficiency.
@@ -462,8 +467,8 @@ Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query per
 	when: df reuse and repeated col filter, df partition are not well distributed on nodes, large df or skewed partitions
 	coalesce - to reduced no of partitions - combine local partitions, no shuffeling, may cause skewed partitions,
 
-.config("spark.sql.adaptive.skewJoin.enabled", "true")  # Handle skewed joins
 
+================================================================================================================
 >> sPARK query plan:
 	code syntax is correct or not --> unresolved logical plan --> catalog --> logical plan --> optimized logical plan (filter pushdown & selct req col)--> 
 	converted several pysical plans --> cost model --> best pysical --> run on cluster.
@@ -510,7 +515,7 @@ Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query per
 	how much each executor memory req  - 1.5 * reserved memory(300mb) or min 4*(partition size) = 512 mb/core = 2 gb/executor
 	total memory required to process file = 50*2 = 100 gb
 
-=============
+=================================================================================================================================
 
 1. create spark session with config optimization
 spark = SparkSession.builder \
@@ -531,13 +536,6 @@ spark = SparkSession.builder \
 .config('spark.memory.storageFraction', 0.2) \
 .getOrCreate()
 
-
-
-
-	
-
-Project: divide into project modules
-review data using colab, then create dev cluster to handle sample datasets, the create cluster in prod to handle live/big data
 
 1. Data Ingetion and exploration: setup env, import csv into hdfs, load data into spark dataframe, examine schema, data types, perform EDA
 	==> schema and datatypes:
@@ -587,6 +585,5 @@ review data using colab, then create dev cluster to handle sample datasets, the 
 5. data serving: make processed data available in bq
 
 
-terms:
-anomalies
+==========================================================================================================================================
 
