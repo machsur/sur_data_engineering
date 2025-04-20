@@ -123,15 +123,17 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 	==>> splitng column -->> df = df.select(split(df.FullName, " ").alias('cn'))  -->> multi char "[-, ]", -->> size, [0] or .getItem(0), explode, array_contains
 	==>> result_df = df.select( col("EmployeeID"), ltrim(col("Name")), lpad(col("Name"), 10, "X"))  -->> rtrim / trim / rpad
 	==>> create date, timestamp columns in df, add/subtract days, 
-	     df = spark.range(10).withColumn('today', current_date())
-	     df = spark.range(10).withColumn('now', current_timestamp())
-	     date_sub(col("today"), 5) / date_add(col("today"), 5) / datediff(col("week_ago"), col("today")/ 
-	     months_between(to_date(lit("2016-01-01")), to_date(lit("2017-01-01")) / to_date / to_timestamp / 
+		withColumn("date", to_date(df["date_string"], "yyyy-MM-dd"))
+		withColumn("month", month(df["date"]))
+		withColumn("truncated_timestamp", date_trunc("hour", df["timestamp"]))
+		datediff(df["end_date"], df["start_date"])
+		withColumn("months_diff", months_between(df["end_date"], df["start_date"]))  
+		withColumn("timestamp_diff", unix_timestamp(df["end_timestamp"]) - unix_timestamp(df["start_timestamp"]))      
 	==>>    df.dropna("All" subset=['cn1", "cn2"]) 
 		df.fillna("N/A" subset=['cn1", "cn2"]) / df.na.fill({'cn1':'val1', 'cn2': 'val2'}) / is null('CN') 
 		df_replaced_multiple = df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset="fruit")
 	==>> coalesce('cn1', 'cn2','cn3') - return first non-null value from list of columns
-	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0))
+	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0)))
 	==>> agg functions --> df.select(sum('CN')).show()  ------> note: ignore null values
 	     grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show()
 		sum , sumDistinct, min, max, avg, count, countDistanct, collect_list, collect_set first, last, stddev, variance 
