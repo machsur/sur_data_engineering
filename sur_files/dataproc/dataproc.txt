@@ -225,6 +225,12 @@ pyspark QA:
 
 22. what is data skewness 
    Sol: salting technique, AQE, broadcastjoin
+	salt: add random column to divide skewed data among partitions
+	AQE: based on runtime statastics - aqe gives: 
+		tuning shuffle partitions- 200 parti, 15 didtinct keys, aqe coalsese to 15 partitions
+		optimizing joins - converts SMJ to BJ, 
+		optimizing skew joins: split skewed joins into smaller partitions
+	bradcast join:
  
 23. Explain about out of memory issue in spark?
    Causes of Out of Memory Issues: 
@@ -465,6 +471,25 @@ Maharashtra, Amit, 90, Rank 1
 	how much each executor memory req  - 1.5 * reserved memory(300mb) or min 4*(partition size) = 512 mb/core = 2 gb/executor
 	total memory required to process file = 50*2 = 100 gb
 
+>> 
+static partition pruning: partition on listen date data on disk - this scans only listen date that user eants
+dynamic partition pruning: send partition that is supossed to be scanned
+	release date table --> filter to get requ data which comes to know during run time --> spark uses results to scan on other dataset based on listen date
+	Adv: reduce time to scan/process)
+	limits: one of dataset must be partitioned and based on column that is filered from other datase	
+	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
+
+
+>> 
+partitioning & bucketing:
+	name, age, country --> partition by contry --> filter india (400mb) --> secound level partition based on age --> 100 files in 4mb --> small size problem -->
+	reduce performance --> instead of SLP i use bucketing --> hash function (age, 3) --> 3 files ~ 133mb
+	
+	df.write.partitionBy("date").mode("overwrite").parquet("/tmp/folder_partitioned_data")
+	df.write.bucketBy(4, "Age").sortBy("Name").format("parquet").save("path/to/bucketed_parquet")
+
+	
+
 =================================================================================================================================
 
 1. create spark session with config optimization
@@ -480,6 +505,7 @@ spark = SparkSession.builder \
 .config('spark.sql.adaptive.enabled', 'true') \
 .config('spark.sql.adaptive.coalescePartitions.enabled', 'true') \
 .config('spark.sql.autoBroadcastJoinThreshold', 24*1024*1024) \
+.config('spark.sql.adaptive.skewJon.enabled', 'true') \
 .config('spark.sql.files.maxPartitionBytes', '64MB') \
 .config('spark.sql.files.openCostInBytes', '2MB') \
 .config('spark.memory.fraction', 0.8) \
