@@ -541,4 +541,34 @@ PARSE_TIMESTAMP('%Y-%m-%d %H:%M:%S', event_time_string)  -- PARSE_DATE
 extract(month from parse_timestamp('%Y-%m-%d %H:%M:%S', '2025-04-19 07:46:57'))   -- year/month/day/hour/minute/second
 date_trunc(parse_date('%Y-%m-%d', '2025-04-18'), month);
 
+41.
+input table:
+emp_name emp_dep
+abc   it
+def   hr
+ghi  sales
+uio  dev
+pqr   sales
+jkl   it
+output table:
+emp_name emp_dep
+abc   it
+jkl   it
+def   hr
+ghi  sales
+pqr  sales
+uio  dev
+the output order same as above. give bigquery sql query with custom logic
+
+	WITH CustomOrder AS (
+	  SELECT emp_name, emp_dep, ROW_NUMBER() OVER (PARTITION BY emp_dep ORDER BY emp_name) AS row_num  FROM your_table_name)
+	SELECT emp_name, emp_dep FROM CustomOrder ORDER BY
+	  CASE emp_dep
+	    WHEN 'it' THEN 1
+	    WHEN 'hr' THEN 2
+	    WHEN 'sales' THEN 3
+	    WHEN 'dev' THEN 4
+	  END, row_num;
+
+
 	
