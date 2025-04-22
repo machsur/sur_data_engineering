@@ -560,15 +560,11 @@ pqr  sales
 uio  dev
 the output order same as above. give bigquery sql query with custom logic
 
-	WITH CustomOrder AS (
-	  SELECT emp_name, emp_dep, ROW_NUMBER() OVER (PARTITION BY emp_dep ORDER BY emp_name) AS row_num  FROM your_table_name)
-	SELECT emp_name, emp_dep FROM CustomOrder ORDER BY
-	  CASE emp_dep
-	    WHEN 'it' THEN 1
-	    WHEN 'hr' THEN 2
-	    WHEN 'sales' THEN 3
-	    WHEN 'dev' THEN 4
-	  END, row_num;
+	WITH CustomOrder AS 
+	  (SELECT emp_name, emp_dep, 
+		CASE WHEN emp_dep = 'it' THEN 1 WHEN emp_dep = 'hr' THEN 2 WHEN emp_dep = 'sales' THEN 3 WHEN emp_dep = 'dev'  THEN 4 end as emp_dept_sort,
+		ROW_NUMBER() OVER(PARTITION BY emp_dep ORDER BY emp_name) AS row_num  FROM your_table_name)
+	SELECT emp_name, emp_dep FROM CustomOrder ORDER BY emp_dept_sort, row_num;
 
 
 	
