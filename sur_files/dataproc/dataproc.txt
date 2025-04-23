@@ -98,7 +98,7 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 		first_value(cn) / last_value(cn) / nth_value(cn, n) /
 	==>> explode/explode_outer: exploded_df = df.select("Name", explode("Subjects").alias("Subject"))  -->> explode_outer
 		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
-	==>> 
+	==>> Pivot: df.groupBy('Category').pivot('Date').sum('Value').show()
 
 
 ==================================================================================================================================
@@ -223,15 +223,6 @@ pyspark QA:
 21. what is the default block size (128 MB) in hdfs and how to change it?
    Edit the hdfs-site.xml File:
 
-22. what is data skewness 
-   Sol: salting technique, AQE, broadcastjoin
-	salt: add random column to divide skewed data among partitions
-	AQE: based on runtime statastics - aqe gives: 
-		tuning shuffle partitions- 200 parti, 15 didtinct keys, aqe coalsese to 15 partitions
-		optimizing joins - converts SMJ to BJ, 
-		optimizing skew joins: split skewed joins into smaller partitions
-	bradcast join:
- 
 23. Explain about out of memory issue in spark?
    Causes of Out of Memory Issues: 
    Driver Memory:
@@ -484,9 +475,23 @@ dynamic partition pruning: send partition that is supossed to be scanned
 partitioning & bucketing:
 	name, age, country --> partition by contry --> filter india (400mb) --> secound level partition based on age --> 100 files in 4mb --> small size problem -->
 	reduce performance --> instead of SLP i use bucketing --> hash function (age, 3) --> 3 files ~ 133mb
+
+	df.write.mode('overwrite').partitionBy('order_status').parquet('/content/ecommerce11/') --> folders based on order_status and inside num of partitions files	
+ 	df.write.mode('overwrite').bucketBy(2, 'order_status').saveAsTable('bucketed_table')   --->  6 partitions * 2 buckets = 12 files
+
+
+>> what is data skewness 
+   Sol: salting technique, AQE, broadcastjoin
 	
-	df.write.partitionBy("date").mode("overwrite").parquet("/tmp/folder_partitioned_data")
-	df.write.bucketBy(4, "Age").sortBy("Name").format("parquet").save("path/to/bucketed_parquet")
+>> salt: add random column to divide skewed data among partitions
+
+>> AQE (>spark 3.0): based on runtime statastics select best query plan - aqe gives: 
+	tuning shuffle partitions- 200 shuffle parti default, when join it has 15 didtinct keys, aqe coalsese to 15 partitions
+	optimizing joins - converts SMJ to BJ,   --> .config('spark.sql.autoBroadcastJoinThreshold', 24*1024*1024)
+	optimizing skew joins: split skewed joins into smaller partitions --> .config('spark.sql.adaptive.skewJoin.enabled', 'true') 
+
+	sort merge join --> shuffle, sort, merge --> hash(key1, key2..) - return int value % num of shuffle partitions
+	BJ --> when one dataset is smaller
 
 	
 
@@ -505,7 +510,7 @@ spark = SparkSession.builder \
 .config('spark.sql.adaptive.enabled', 'true') \
 .config('spark.sql.adaptive.coalescePartitions.enabled', 'true') \
 .config('spark.sql.autoBroadcastJoinThreshold', 24*1024*1024) \
-.config('spark.sql.adaptive.skewJon.enabled', 'true') \
+.config('spark.sql.adaptive.skewJoin.enabled', 'true') \
 .config('spark.sql.files.maxPartitionBytes', '64MB') \
 .config('spark.sql.files.openCostInBytes', '2MB') \
 .config('spark.memory.fraction', 0.8) \
