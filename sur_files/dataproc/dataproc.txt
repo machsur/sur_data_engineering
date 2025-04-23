@@ -581,6 +581,64 @@ HiveQL:
 	-- hive tables work like noraml database tables?
 	hive is metastore and not storing any tables
 
+>> commands
+hive --version
+vi etc/hive/conf/hive-site.xml (for hive properties, we got username: hive and password: Pw1+86Xg4CCq from her as well)
+
+hive 
+	direct connection / no auth / single sessions/ read-heavy for query performance / production not rec /
+or
+beeline (recomended in prod):  another way of running HQL: !connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default
+	uses jdbc for remote connection / support auth / multiple concurrant sessions/ opti for query performance / production rec /
+
+(inside terminal)
+set spark.execution.engine;
+set spark.execution.engine=tez/spark/mr;
+ctrl + l  --> to clear
+show databases;
+use sur_db;
+show tables;
+create table customers (
+customer_id INT,
+customer_unique_id INT,
+customer_zip_code_prefix STRING,
+customer_city STRING,
+customer_state STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+insert into customers values (1, 101, '523225', 'banagalore', 'india');
+
+set hive.metastore.warehouse.dir;    specify the directory location where Hive stores its data files.
+
+load data inpath '/data/olist/olist_customers_hive.csv' into table customers;
+
+select count(*) from customers;
+
+
+hdfs dfs -ls /user/hive/warehouse/  (hive data stroed in hdfs)
+hdfs dfs -cat /user/hive/warehouse/sur_db.db/customers/*
+
+>> hive metastore:
+	mysql db (see conf xml file), default derby db, might be diff db configured in your companey
+
+1. mysql -u hive -p
+Pw1+86Xg4CCq
+2. sudo systemctl stop mysql
+sudo mysqld_safe --skip-grant-tables &
+2. sudo systemctl start mysql
+mysql -u root 
+(press enter if password asks)
+
+show databases;
+use metastore;
+show tables;
+select * from TBLS;
+exit
+
+
 
 
 
