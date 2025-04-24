@@ -414,6 +414,38 @@ Maharashtra, Amit, 90, Rank 1
 29. Explain `groupBy()`, `agg()`, and `pivot()` functions with an example.
 	pivot_df = df.groupBy("name").pivot("department").sum("salary")
 
+30.
+𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧
+You need to remove the duplicate rows based on the composite key (customer_id, order_id) and retain only the row with the latest order_date for each combination of customer_id and order_id.
+𝐬𝐜𝐡𝐞𝐦𝐚 
+data = [ (101, 1001, "2025-01-15", 500.00), (102, 1002, "2025-01-14", 300.00), (101, 1001, "2025-01-17", 550.00), (103, 1003, "2025-01-16", 450.00), 
+(102, 1002, "2025-01-18", 320.00), (103, 1003, "2025-01-19", 460.00) ] 
+schema = ["customer_id", "order_id", "order_date", "total_amount"] 
+
+	window_spec = Window.partitionBy("customer_id", "order_id").orderBy(desc("order_date"))
+	df = df.withColumn("row_number", row_number().over(window_spec))
+	df.filter(col("row_number") == 1).drop("row_number").orderBy("customer_id").show()
+
+31.
+Hide Credit card number: Accept 16 digit credit card number from user and display only last 4 characters of card number.
+data = [(1,'Rahul',1234567891234567),(2,'Raj',1234567892345678),(3,'Priya',1234567893456789),(3,'Murti',1234567890123456)]
+schema = "id int, name string, card_no long"
+
+	from pyspark.sql.functions import udf, StringType
+	
+	def maskfun(num):
+	  return '************' + str(num)[-4:]
+	
+	maskfun_udf = udf(maskfun, StringType())
+	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
+
+32. Fill the mean salary value where salary is Null.
+data = [("Alice", 50000), ("Bob", None), ("Charlie", 60000), ("David", None)]
+df = spark.createDataFrame(data, ["name", "salary"])
+
+	avg_salary = df.select(mean(col('salary'))).collect()[0][0]
+	df.fillna({'salary': avg_salary}).show()
+
 
 ================================================================================================================
 >> sPARK query plan:
