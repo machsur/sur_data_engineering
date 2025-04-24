@@ -567,4 +567,56 @@ the output order same as above. give bigquery sql query with custom logic
 	SELECT emp_name, emp_dep FROM CustomOrder ORDER BY emp_dept_sort, row_num;
 
 
-	
+48. Identify users who increased their average order value consistently over the last 3 months.
+
+49. Write a query to detect a sudden drop (>30%) in daily revenue for any restaurant.
+	WITH revenue_changes AS (
+	  SELECT
+	    restaurant_id,
+	    revenue_date,
+	    daily_revenue,
+	    LAG(daily_revenue, 1) OVER (PARTITION BY restaurant_id ORDER BY revenue_date) AS previous_revenue
+	  FROM
+	    `your_project.your_dataset.restaurant_revenue`
+	),
+	sudden_drop AS (
+	  SELECT
+	    restaurant_id,
+	    revenue_date,
+	    daily_revenue,
+	    previous_revenue,
+	    (previous_revenue - daily_revenue) / previous_revenue * 100 AS drop_percentage
+	  FROM
+	    revenue_changes
+	  WHERE
+	    previous_revenue IS NOT NULL AND
+	    (previous_revenue - daily_revenue) / previous_revenue * 100 > 30
+	)
+	SELECT
+	  restaurant_id,
+	  revenue_date,
+	  daily_revenue,
+	  previous_revenue,
+	  drop_percentage
+	FROM
+	  sudden_drop;
+
+3/ For each user, calculate their order streak — consecutive days with at least one order.
+4/ Find the moving average of daily revenue for each restaurant over a 7-day window.
+5/ Detect anomalies in delivery times using the IQR method (Interquartile Range) in SQL.
+6/ Calculate month-over-month growth in active users for each city.
+7/ Find restaurants whose best-selling dish makes up over 60% of their revenue.
+8/ Identify users who place high-value orders only on weekends.
+9/ Compare the conversion rate of users who visited the app vs. those who ordered.
+10/ Determine the average time between sign-up and first order, grouped by acquisition channel.
+11/ Use a recursive CTE to analyze multi-level referral networks.
+12/ Rank users based on their total number of orders and total spend, giving more weight to spend.
+13/ Identify restaurants with high churn rates: drop in unique monthly customers for 3+ months.
+14/ Calculate the percentage of abandoned carts (added to cart but not ordered).
+15Find cities where lunch orders (12–3 PM) have higher revenue than dinner orders (7–10 PM).
+16/ Detect duplicated orders — same items, user, and restaurant within 5 minutes.
+17/ For each cuisine, identify the most loyal customer (most repeat orders).
+18/ Write a query to return the top 5% of users by revenue contribution (Pareto Principle).
+19/ Determine which users are likely bots based on their ordering patterns (e.g., 50+ orders/day).
+20/ Build a time-series summary table that aggregates revenue per day, per restaurant, for dashboarding.
+
