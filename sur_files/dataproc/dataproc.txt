@@ -446,6 +446,15 @@ df = spark.createDataFrame(data, ["name", "salary"])
 	avg_salary = df.select(mean(col('salary'))).collect()[0][0]
 	df.fillna({'salary': avg_salary}).show()
 
+32. unpivot data
+cricket_data = [("Virat Kohli", 85, 100, 75),
+ ("Steve Smith", 90, 105, 80),
+ ("Kane Williamson", 88, 95, 70)]
+df = spark.createDataFrame(cricket_data, ["Player", "Match1", "Match2", "Match3"])
+
+	unpivot_expr = "stack(3, 'Match1', Match1, 'Match2', Match2, 'Match3', Match3) as (Match, Score)"
+	unpivot_df = df.select("Player", expr(unpivot_expr))
+
 
 ================================================================================================================
 >> sPARK query plan:
