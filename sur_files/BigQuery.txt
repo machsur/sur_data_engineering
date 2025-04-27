@@ -601,10 +601,68 @@ the output order same as above. give bigquery sql query with custom logic
 	FROM
 	  sudden_drop;
 
-3/ For each user, calculate their order streak — consecutive days with at least one order.
-4/ Find the moving average of daily revenue for each restaurant over a 7-day window.
-5/ Detect anomalies in delivery times using the IQR method (Interquartile Range) in SQL.
-6/ Calculate month-over-month growth in active users for each city.
+50. For each user, calculate their order streak — consecutive days with at least one order.
+
+
+51. Find the moving average of daily revenue for each restaurant over a 7-day window.
+	restarant | date | revenue
+		SELECT
+		  restaurant_id,
+		  date,
+		  revenue,
+		  AVG(revenue) OVER (
+		    PARTITION BY restaurant_id
+		    ORDER BY date
+		    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+		  ) AS moving_avg_revenue
+		FROM
+		  your_table_name
+		ORDER BY
+		  restaurant_id, date;
+
+52. Detect anomalies in delivery times using the IQR method (Interquartile Range) in SQL.
+
+53. Calculate month-over-month growth in active users for each city.
+	user_id	| city	| activity_date
+		WITH monthly_active_users AS (
+		  SELECT
+		    city,
+		    EXTRACT(YEAR FROM activity_date) AS year,
+		    EXTRACT(MONTH FROM activity_date) AS month,
+		    COUNT(DISTINCT user_id) AS active_users
+		  FROM
+		    user_activity
+		  GROUP BY
+		    city, year, month
+		),
+		growth_calculation AS (
+		  SELECT
+		    city,
+		    year,
+		    month,
+		    active_users,
+		    LAG(active_users) OVER (
+		      PARTITION BY city
+		      ORDER BY year, month
+		    ) AS prev_month_active_users
+		  FROM
+		    monthly_active_users
+		)
+		SELECT
+		  city,
+		  year,
+		  month,
+		  active_users,
+		  prev_month_active_users,
+		  (active_users - prev_month_active_users) / prev_month_active_users * 100 AS month_over_month_growth
+		FROM
+		  growth_calculation
+		WHERE
+		  prev_month_active_users IS NOT NULL
+		ORDER BY
+		  city, year, month;
+
+
 7/ Find restaurants whose best-selling dish makes up over 60% of their revenue.
 8/ Identify users who place high-value orders only on weekends.
 9/ Compare the conversion rate of users who visited the app vs. those who ordered.
