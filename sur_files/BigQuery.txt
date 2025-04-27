@@ -14,7 +14,14 @@
 
 4. Union all / Union distinct / Table wildcards: test_*` where _Table_Suffix > 5 / Except distinct / Intersect distinct /
 
-5. Permanent table, Temporary table/cache, Internal/native table/managed tables, External table
+5. 
+>> Temporary table/cache: exist only for the specified period. - useful for intermediate data processing and caching query results.
+	CREATE TEMP TABLE my_temp_table AS
+	SELECT id, name, age FROM my_dataset.my_source_table WHERE age > 30;
+>> Internal tables: stored in bq - take adv of opti like partitioning & clustering - Ideal for frequently accessed and processed data.
+>> External table: Data remains in its original location (e.g., Cloud Storage) - avoid storage costs - Suitable for occasional queries on large datasets.
+	CREATE EXTERNAL TABLE my_dataset.my_external_table
+	OPTIONS (format = 'CSV',  uris = ['gs://my_bucket/my_file.csv']);
 
 6. Time travel concept: Query the state of the table as it was at a specific timestamp
 	create table `your_dataset.your_table11` as
