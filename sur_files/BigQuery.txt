@@ -59,6 +59,14 @@
 	JOIN `your_dataset.orders` AS o ON c.CustomerID = o.CustomerID
 	JOIN `your_dataset.order_items` AS oi ON o.OrderID = oi.OrderID;
 
+	SELECT * FROM  `project.dataset.table1` AS a CROSS JOIN `project.dataset.table2` AS b;
+
+9.1 table1 --> 1, 2, 2, 3 table2 --> 1, 1, 2, 3, 3, 3
+	SELECT * FROM  `project.dataset.table1` a JOIN `project.dataset.table2` AS b 
+	on a.id = b.id;  1 1 / 1 1 / 2 2 / 2 2 / 3 3 / 3 3 /3 3 /
+	on a.id > b.id;  2 1 / 2 1 / 2 1 / 2 1 / 3 1 / 3 1 / 3 2/
+	on a.id < b.id;  1 2 / 1 3 / 1 3 / 1 3 / 2 3 / 2 3 / 2 3/ 2 3 / 2 3 / 2 3 /
+
 10. With statement: also known as Common Table Expressions (CTEs), allows you to define temporary result sets.
    Adv: code more readable, resusebility - referenced in several places within the main SQL query. 
 	WITH orders as (select statement)
