@@ -641,9 +641,11 @@ beeline (recomended in prod):  another way of running HQL: !connect jdbc:hive2:/
 set spark.execution.engine;
 set spark.execution.engine=tez/spark/mr;
 ctrl + l  --> to clear
+
 show databases;
 use sur_db;
 show tables;
+>> 
 create table customers (
 customer_id INT,
 customer_unique_id INT,
@@ -655,15 +657,33 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE;
 
-insert into customers values (1, 101, '523225', 'banagalore', 'india');
-
-set hive.metastore.warehouse.dir;    specify the directory location where Hive stores its data files.
+create table orders11 (
+order_id string,
+customer_id string,
+order_status string, 
+order_purchase_timestamp timestamp,  
+order_approved_at timestamp, 
+order_delivered_carrier_date timestamp,
+order_delivered_customer_date timestamp,
+order_estimated_delivery_date timestamp)
+STORED AS TEXTFILE;
 
 load data inpath '/data/olist/olist_customers_hive.csv' into table customers;
-
 select count(*) from customers;
 
+CREATE TABLE my_table11 (
+customer_id INT,
+customer_unique_id INT,
+customer_zip_code_prefix STRING,
+customer_city STRING,
+customer_state STRING
+)
+STORED AS PARQUET;
 
+ALTER TABLE my_table11 SET LOCATION 'gs://surdatabuk/data/olist_op/*.parquet';
+
+
+set hive.metastore.warehouse.dir;    specify the directory location where Hive stores its data files.
 hdfs dfs -ls /user/hive/warehouse/  (hive data stroed in hdfs)
 hdfs dfs -cat /user/hive/warehouse/sur_db.db/customers/*
 
