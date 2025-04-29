@@ -627,82 +627,59 @@ HiveQL:
 	-- hive tables work like noraml database tables?
 	hive is metastore and not storing any tables
 
->> commands
-hive --version
-vi etc/hive/conf/hive-site.xml (for hive properties, we got username: hive and password: Pw1+86Xg4CCq from her as well)
-
-hive 
-	direct connection / no auth / single sessions/ read-heavy for query performance / production not rec /
+>> connect with hive clients
+1. hive: direct connection / no auth / single sessions/ read-heavy for query performance / production not rec /
 or
-beeline (recomended in prod):  another way of running HQL: !connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default
-	uses jdbc for remote connection / support auth / multiple concurrant sessions/ opti for query performance / production rec /
+beeline : uses jdbc for remote connection / support auth / multiple concurrant sessions/ opti for query performance / production rec /
+	!connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default
+	vi etc/hive/conf/hive-site.xml (for hive properties, we got username: hive and password: Pw1+86Xg4CCq from her as well)
+	
 
-(inside terminal)
-set spark.execution.engine;
-set spark.execution.engine=tez/spark/mr;
-ctrl + l  --> to clear
+>> (inside terminal)
+	set hive.execution.engine; / set hive.execution.engine=tez/spark/mr;
+	ctrl + l  --> to clear
+	set hive.metastore.warehouse.dir;  (hive data files stroed in hdfs) / hdfs dfs -ls /user/hive/warehouse/  
 
-show databases;
-use sur_db;
-show tables;
->> 
-create table customers (
-customer_id INT,
-customer_unique_id INT,
-customer_zip_code_prefix STRING,
-customer_city STRING,
-customer_state STRING
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-STORED AS TEXTFILE;
+>> show databases; / use sur_db; / show tables;
 
-create table orders11 (
-order_id string,
-customer_id string,
-order_status string, 
-order_purchase_timestamp timestamp,  
-order_approved_at timestamp, 
-order_delivered_carrier_date timestamp,
-order_delivered_customer_date timestamp,
-order_estimated_delivery_date timestamp)
-STORED AS TEXTFILE;
+>>  Hive external table (data file in GCS)
+	create external table customers_exe11 (
+	customer_id INT,
+	customer_unique_id INT,
+	customer_zip_code_prefix STRING,
+	customer_city STRING,
+	customer_state STRING
+	)
+	ROW FORMAT DELIMITED
+	FIELDS TERMINATED BY ','
+	STORED AS TEXTFILE
+	location 'gs://surdatabuk/data/cust_exe/'
+	TBLPROPERTIES ("skip.header.line.count"="1");
 
-load data inpath '/data/olist/olist_customers_hive.csv' into table customers;
-select count(*) from customers;
+	INSERT INTO TABLE `elegant-circle-454709-h5.surtest11.bq_cust_exe`
+	SELECT * FROM customers_exe11;
 
-CREATE TABLE my_table11 (
-customer_id INT,
-customer_unique_id INT,
-customer_zip_code_prefix STRING,
-customer_city STRING,
-customer_state STRING
-)
-STORED AS PARQUET;
+>> Hive managed table (data in hdfs)
+	create table orders22 (
+	order_id string,
+	customer_id string,
+	order_status string, 
+	order_purchase_timestamp timestamp,  
+	order_approved_at timestamp, 
+	order_delivered_carrier_date timestamp,
+	order_delivered_customer_date timestamp,
+	order_estimated_delivery_date timestamp)
+	STORED AS TEXTFILE;
 
-ALTER TABLE my_table11 SET LOCATION 'gs://surdatabuk/data/olist_op/*.parquet';
+	load data inpath '/data/olist/olist_customers_hive.csv' into table orders22;
 
+>> hive metastore (connect on vm node): mysql db (see conf xml file), default derby db, might be diff db configured in your companey
 
-set hive.metastore.warehouse.dir;    specify the directory location where Hive stores its data files.
-hdfs dfs -ls /user/hive/warehouse/  (hive data stroed in hdfs)
-hdfs dfs -cat /user/hive/warehouse/sur_db.db/customers/*
+-- connect to mysql db 
+	mysql -u hive -p 
+	Pw1+86Xg4CCq
 
->> hive metastore:
-	mysql db (see conf xml file), default derby db, might be diff db configured in your companey
-
-1. mysql -u hive -p
-Pw1+86Xg4CCq
-2. sudo systemctl stop mysql
-sudo mysqld_safe --skip-grant-tables &
-2. sudo systemctl start mysql
-mysql -u root 
-(press enter if password asks)
-
-show databases;
-use metastore;
-show tables;
-select * from TBLS;
-exit
+-- show databases; / use metastore; / show tables; / select * from TBLS; / exit
 
 
 
