@@ -74,7 +74,20 @@
 
 11. Pivoting and unpivoting: help in reshaping your data for analysis or reporting
    Pivot: row into columns
+	product	| month	| sales
+	select product, IFNULL(Jan, 0) as Jan, IFNULL(Feb, 0) as Feb, IFNULL(Mar, 0) as Mar from table 
+	pivot(sum(sales) for month in ('Jan', 'Feb', 'Mar'));	
+	or use case statement
+	select product, 
+	sum(case when month = 'Jan' then sales else 0 end) as Jan,
+	sum(case when month = 'Feb' then sales else 0 end) as Feb,
+	sum(case when month = 'Mar' then sales else 0 end) as Mar,
+	from table group by product;
+
    unpivot: columns into rows
+	product | Jan | Feb | Mar
+	select product, month, sales from table 
+	unpivot(sales for month in (Jan, Feb, Mar));
 
 12. Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
    De Normalization – redundant data (high storage cost) – better Query performance 
