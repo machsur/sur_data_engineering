@@ -98,7 +98,9 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 		first_value(cn) / last_value(cn) / nth_value(cn, n) /
 	==>> explode/explode_outer: exploded_df = df.select("Name", explode("Subjects").alias("Subject"))  -->> explode_outer
 		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
-	==>> Pivot: df.groupBy('Category').pivot('Date').sum('Value').show()
+	==>> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
+	     unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"
+ 		      df1.selectExpr("Month", unpivot_exp).show()
 
 
 ==================================================================================================================================
