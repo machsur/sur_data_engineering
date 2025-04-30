@@ -114,10 +114,11 @@
 ​   Rows consider current row even if duplicates / range considers bottom row of duplicates.
 
 14. Regular expressions: used for pattern matching and string manipulation
-	   REGEXP_CONTAINS(column_name, r'pattern')
-	   REGEXP_EXTRACT_ALL(column_name, r'pattern')
-	   REGEXP_REPLACE(column_name, r'pattern', 'replacement')
-	   SPLIT(column_name, r'pattern') --> select  SPLIT("mach suresh", ' ')[OFFSET(0)] AS first_name,
+	   REGEXP_EXTRACT(column_name, r'pattern') / select regexp_extract('file_name_20250430123056.csv', r'^(.*)_\d{14}\.csv$')
+	   REGEXP_EXTRACT_ALL(column_name, r'pattern') / select regexp_extract_all('abc123def456ghi789', r'\d+')
+	   REGEXP_REPLACE(column_name, r'pattern', 'replacement') / REGEXP_REPLACE(file_path, r'_\d{14}\.csv$', '_TIMESTAMP.csv') 
+	   REGEXP_CONTAINS('abc123def456ghi', r'\d') AS contains_digits
+	   REGEXP_SUBSTR('abc123def456ghi', r'\d+', 5, 2) AS first_digits
 
 15. BigQuery slots vs reservations? 
 	Slots are units of computational capacity in BigQuery. (CPU and memory)
