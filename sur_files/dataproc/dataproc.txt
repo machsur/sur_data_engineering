@@ -612,6 +612,14 @@ spark = SparkSession.builder \
 4. performance optimization: enhance data processing task - partitioning, cache/persist, spark config
 5. data serving: make processed data available in bq
 
+>> 
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName('myapp').getOrCreate()
+-- dfj = dfc.join(dfo, dfc['customer_id']==dfo['customer_id'], 'inner').drop(dfo['customer_id'])
+-- dfjf = dfj.select('customer_id', 'customer_unique_id', col('customer_zip_code_prefix').cast('string'), 'customer_city', 'customer_state', 'order_id', 				'order_status', 'order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date', 'order_delivered_customer_date', 					'order_estimated_delivery_date')
+-- dfj.write.mode('overwrite').format('parquet').save('gs://surdatabuk/data/olist_op/')
+-- dfjf.write.mode('append').format('bigquery').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-				h5.surtest11.customers_orders').save()
+
 ==========================================================================================================================================
 HiveQL: 
 	-- SQL like query lang to query large datasets stored in HDFS
