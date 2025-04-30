@@ -462,6 +462,65 @@ df = spark.createDataFrame(cricket_data, ["Player", "Match1", "Match2", "Match3"
 	unpivot_df = df.select("Player", expr(unpivot_expr))
 
 
+1. Explain the key differences between Apache Spark's DataFrame and RDD APIs. In which scenarios would you prefer one over the other?
+
+2. Describe the concept of lazy evaluation in PySpark. How does it impact the execution of Spark jobs?
+
+3. What are broadcast variables in PySpark, and how do they optimize join operations? Provide an example scenario where a broadcast join would be beneficial.
+
+4. Discuss the various persistence levels available in PySpark's caching mechanism. When would you use `MEMORY_ONLY` versus `MEMORY_AND_DISK_SER`?
+
+5. How does PySpark handle data skew, and what strategies can be employed to mitigate its effects in a large dataset?
+
+6. Explain the role of the Catalyst optimizer in PySpark. How does it improve the performance of Spark SQL queries?
+
+7. What is the significance of partitioning in PySpark, and how does it affect the performance of data processing tasks?
+
+8. Describe the process of handling real-time streaming data using PySpark's Structured Streaming. What are the key components involved?
+
+9. How would you implement window functions in PySpark to calculate a moving average over a specific time window?
+
+10. Explain the concept of checkpointing in PySpark. Why is it important in streaming applications?
+
+11. Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
+ +-------------+----------+
+ | City    | Population|
+ +-------------+----------+
+ | Mumbai   | 20411000 |
+ | Delhi    | 16787941 |
+ | Bangalore  | 8443675 |
+ | Hyderabad  | 6809970 |
+ | Ahmedabad  | 5570585 |
+ | Chennai   | 4681087 |
+ | Kolkata   | 4486679 |
+ | Surat    | 4467797 |
+ | Pune    | 3124458 |
+ | Jaipur   | 3046163 |
+ +-------------+----------+
+ 
+12. Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
+ +-----------+----------+--------+
+ | EmployeeID| Department| Salary |
+ +-----------+----------+--------+
+ | 1     | HR    | 50000 |
+ | 2     | IT    | 75000 |
+ | 3     | Finance | 62000 |
+ | 4     | IT    | 82000 |
+ | 5     | HR    | 52000 |
+ | 6     | Finance | 60000 |
+ +-----------+----------+--------+
+13. Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
+
+ +------------+----------------+-------------------+
+ | customer_id| transaction_id | transaction_date |
+ +------------+----------------+-------------------+
+ | 1     | 1001      | 2025-02-01    |
+ | 2     | 1002      | 2025-02-03    |
+ | 1     | 1003      | 2025-02-01    |
+ | 3     | 1004      | 2025-02-10    |
+ | 2     | 1005      | 2025-02-15    |
+ | 1     | 1006      | 2025-02-07    |
+ +------------+-----------------+
 ================================================================================================================
 >> sPARK query plan:
 	code syntax is correct or not --> unresolved logical plan --> catalog --> logical plan --> optimized logical plan (filter pushdown & selct req col)--> 
