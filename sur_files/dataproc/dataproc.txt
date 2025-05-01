@@ -70,7 +70,6 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 	==>> df.select(initcap(col("country")))  -->> initcap / lower / upper
 	==>> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
 			  --> df.select(concat_ws(' | ', col("Region"), col("Country")))
-	==>> splitng column -->> df = df.select(split(df.FullName, " ").alias('cn'))  -->> multi char "[-, ]", -->> size, [0] or .getItem(0), explode, array_contains
 	==>> result_df = df.select( col("EmployeeID"), ltrim(col("Name")), lpad(col("Name"), 10, "X"))  -->> rtrim / trim / rpad
 	==>> create date, timestamp columns in df, add/subtract days, 
 		withColumn("date", to_date(df["date_string"], "yyyy-MM-dd"))
@@ -96,8 +95,12 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 				   df = df.withColumn("row_number", row_number().over(window_spec)) 
    		max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() / lag(cn) / lead(cn) / 
 		first_value(cn) / last_value(cn) / nth_value(cn, n) /
-	==>> explode/explode_outer: exploded_df = df.select("Name", explode("Subjects").alias("Subject"))  -->> explode_outer
-		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
+	==>> splitng column -->> df.withColumn('nc', split(col('name'), '[ ,]'))   -->> [0] or .getItem(0), explode, 
+	     Array length: df.withColumn('nc', size(split(col('name'), '[ ,]')))
+	     word in array or not: df.withColumn('nc', array_contains(split(col('name'), '[ ,]'), 'macha'))
+	     indesxing: df.withColumn('nc', split(col('name'), '[ ,]')[0])  /  df.withColumn('nc', split(col('name'), '[ ,]').getItem(0)).show()
+	     explode/explode_outer: df.withColumn('nc', explode(split(col('name'), '[ ,]')))  /  df.withColumn('nc', explode_outer(split(col('name'), '[ ,]')))
+	     Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
 	==>> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
 	     unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"
  		      df1.selectExpr("Month", unpivot_exp).show()
@@ -246,6 +249,9 @@ pyspark QA:
 
 1. Find the top 3 highest-paid employees from each department.
    data = [(1, "Amit", "IT", 90000),
+from pyspark.sql.window import Window
+window_spec = Window.partitionBy('dept').orderBy(desc('sal'))
+df.withColumn('ncn', row_number().over(window_spec)) / rank()/dense_rank()/sum('sales')/sumDistinct/countDistinct/collect_list/collect_set/first/last
 
 2. Write a PySpark code to remove duplicate records based on a specific column.
    data = [(101, "Mumbai", "Maharashtra"), ]
