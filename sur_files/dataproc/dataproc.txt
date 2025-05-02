@@ -1,6 +1,18 @@
-
 https://github.com/afaqueahmad7117/spark-experiments/tree/main/spark
 
+===================================================================================================================================================
+>> Why Big Data: Traditional RDBMS are failed to handle to large datasets
+>> Why did big data emerge: Internet growth, Social media, IOT devices
+>> 5 v of Big Data: Volume, velacity, varity, veracity, value
+>> Distributed system: 
+>> Designing good bigdata system: scalability, relaibility & fault-tolarance, cost effectiveness, security & data privacy
+>> on-prim infra vs cloud
+>> database vs data warehouse vs data lake
+>> ETL vs ELT
+>> Data engineer do (ETL + DWH) vs big data engineer fit in (ELT + big data)
+>> 
+
+===================================================================================================================================================
 >> Google Cloud Dataproc is a managed service that runs Apache Spark (and other frameworks),
 >> enable API, create dataproc cluster on vm/gke.
 >> validate ssh connectivity to master node vm of dataproc cluster: 
