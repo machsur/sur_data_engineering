@@ -7,29 +7,30 @@ local repository: store committed changes locally
 remote repository: server like github for sharing and backing up code
 
 git clone
-`git clone`: Copy a remote repo to your local machine. 
-`git pull`: Grab and merge the latest remote changes. 
-`git merge`: Combine branches seamlessly. 
+git clone: Copy a remote repo to your local machine. 
+git pull: Grab and merge the latest remote changes. (git fetch - RR to LR + git merge - LR to WR)
+
+git status`: Get a snapshot of your working directory. 
+git log --stat / --oneline /: Dive into commit logs with stats. 
+git branch / git branch / git checkout -b branch_name / git merge branch_name / git branch -d branch_name / 
+
+git add file_path / . : Stage specific files for commit. 
+git commit -m "commit message
+git commit -a -m "commit message"`: Commit all tracked changes with a snappy message. 
+git commit --amend -m "Initial commit with additional file": Polish or edit your last commit. 
+git push origin branch_name`: Push a branch to the remote repo. 
 
 1. `git diff`: Peek into file changes not staged yet. 
-2. `git commit -a -m "commit message"`: Commit all tracked changes with a snappy message. 
-3. `git status`: Get a snapshot of your working directory. 
-4. `git add file_path`: Stage specific files for commit. 
 5. `git checkout -b branch_name`: Create and hop onto a new branch. 
 6. `git checkout branch_name`: Switch to an existing branch. 
-7. `git commit --amend`: Polish or edit your last commit. 
-8. `git push origin branch_name`: Push a branch to the remote repo. 
 10. `git rebase -i`: Rewrite commit history with interactive rebase. 
-13. `git log --stat`: Dive into commit logs with stats. 
 14. `git stash`: Temporarily save your changes for later. 
 15. `git stash pop`: Reapply stashed changes like a pro. 
 16. `git show commit_id`: Uncover details about a specific commit. 
 17. `git reset HEAD~1`: Undo the last commit, but keep your local changes. 
 18. `git format-patch -1 commit_id`: Create a patch for a particular commit. 
 19. `git apply patch_file_name`: Apply changes from a patch file. 
-20. `git branch -D branch_name`: Ruthlessly delete a branch. 
 21. `git reset`: Roll back commits by moving the branch pointer. 
 22. `git revert`: Undo commits by creating a "rollback" commit. 
 23. `git cherry-pick commit_id`: Apply a specific commit's changes onto your branch. 
-24. `git branch`: Display all branches in the repo. 
 25. `git reset --hard`: Reset everything to a previous commit, nuking uncommitted changes. 
