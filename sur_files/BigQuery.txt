@@ -16,8 +16,14 @@
 
 5. 
 >> Temporary table/cache: exist only for the specified period. - useful for intermediate data processing and caching query results.
-	CREATE TEMP TABLE my_temp_table AS
-	SELECT id, name, age FROM my_dataset.my_source_table WHERE age > 30;
+	BEGIN
+	  CREATE TEMPORARY TABLE temp_table AS
+	  SELECT * FROM `elegant-circle-454709-h5.surtest11.surtt1`;
+	END;
+
+	CREATE TEMPORARY TABLE temp_table
+	OPTIONS (format = 'AVRO',  uris = ['gs://your-bucket/your-file.avro']);
+
 >> Internal tables: stored in bq - take adv of opti like partitioning & clustering - Ideal for frequently accessed and processed data.
 >> External table: Data remains in its original location (e.g., Cloud Storage) - avoid storage costs - Suitable for occasional queries on large datasets.
 	CREATE EXTERNAL TABLE my_dataset.my_external_table
@@ -42,8 +48,8 @@
         SELECT customer_id, order_date, SUM(total_amount) AS total_spent FROM `your_dataset.orders` GROUP BY customer_id, order_date
 
 8. Partitioning and clustering:
-   Partitioning: single column (time-based & inter range), 4000 max
-   clustering: four columns, 
+   Partitioning: dividing a table into smaller segments. - single column (time-based & inter range), 4000 max
+   clustering: sorts the partition data in storage blocks. - four columns, 
    Improved Query Performance: By scanning only relevant partitions and clustered blocks, queries run faster.
    Cost Efficiency: Reduced data scanned means lower costs, as BigQuery charges based on the amount of data processed.
       CREATE TABLE `your_dataset.your_table`
