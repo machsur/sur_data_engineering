@@ -65,7 +65,7 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
     ==>> grouped_df = df.groupBy('department').agg(max("sal"))   		
     ==>> having_df = df.filter(grouped_df['count'] > 1)
     ==>> selected_df = df.select("customer_id", col("Name").alias('EmployeeName'), column("last_name"), df.email, df["city"] )
-                    = df.selectExpr("Name as EmployeeName", "Salary as EmployeeSalary", "Department").show()
+                    = df.selectExpr("id*2 as nid", "name as nname").show()
     ==>> sorted_df = df.orderBy(asc('department'), col("country).desc())  / df11.orderBy(asc_nulls_last('value')).show() /
     ==>> df_limit = df.limit(10)
     ==>> df.show(n=3, truncate=25, vertical=True) / print(df.collect()) / print(df.count()) / df.printSchema() / display(df) / print(df1.columns) 
