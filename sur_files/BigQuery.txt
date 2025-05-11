@@ -431,7 +431,6 @@ null
 
 28. Find employees who have the same salary as another employee in the same department.
     dept_id, emp_name, salary
-
 	WITH EmployeeSalaries AS (
 	  SELECT   department_id, salary, COUNT(*) AS employee_count  FROM employees GROUP BY department_id, salary HAVING COUNT(*) > 1)
 	SELECT e.employee_id, e.department_id, e.salary	FROM employees e JOIN EmployeeSalaries es
