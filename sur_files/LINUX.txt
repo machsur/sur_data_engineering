@@ -21,12 +21,13 @@
 -- cd ~    	>> cd ../..     	>> pwd      	>> clear 
 
 -- File Operations
-	cp -p source.csv destination.csv (preservation of metadata)
-	cp -p -R /source_dir /target_dir
-	mv oldname.csv newname.csv
-	mv file1.csv file2.csv target_dir/
-	rm if filename.csv (f - force delete)
-	rm -r directory_name
+navigation
+listing
+copying
+removing
+moving
+file viewing
+File editing (vi editor)
 
 # Force remove (use with caution!)
 rm -f locked_file.csv
