@@ -1,4 +1,9 @@
-===================
+================================================================================================================================================
+DATE(string in iso) / PARSE_DAT(format, string) / SAFE.PARSE_DATE(format, invalid date)
+DATE_DIFF()
+extract(month from date)
+
+=============================================================================================================================================
 
 1. "write a query to how will you get a list of the top ten most expensive queries that have been executed in your project over the past 30 days:"
 	SELECT project_id, job_id, user_email, creation_time, total_slot_ms, total_bytes_billed, total_bytes_processed, query FROM `region-eu`.INFORMATION_SCHEMA.JOBS
