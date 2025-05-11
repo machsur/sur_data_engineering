@@ -1,5 +1,5 @@
 https://github.com/afaqueahmad7117/spark-experiments/tree/main/spark
-
+https://allthingdata.substack.com/p/essential-linux-commands-for-data         
 ===================================================================================================================================================
 >> Why Big Data: Traditional RDBMS are failed to handle to large datasets
 >> Why did big data emerge: Internet growth, Social media, IOT devices
@@ -10,6 +10,12 @@ https://github.com/afaqueahmad7117/spark-experiments/tree/main/spark
 >> database vs data warehouse vs data lake
 >> ETL vs ELT
 >> Data engineer do (ETL + DWH) vs big data engineer fit in (ELT + big data)
+
+>> What is hadoop
+>> Properties of hadoop
+>> Hadoop ecosystem/components
+>> Hadoop technologies - file system / block / file system types / cluster&node / metadata /replication / 
+>> Hadoop architexture - data node failure / name node failure /
 >> 
 
 ===================================================================================================================================================
