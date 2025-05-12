@@ -2,6 +2,7 @@
 DATE(string in iso) / PARSE_DAT(format, string) / SAFE.PARSE_DATE(format, invalid date)
 DATE_DIFF()
 extract(month from date)
+DATE_TRUNC(order_date, MONTH)
 
 =============================================================================================================================================
 
@@ -251,6 +252,7 @@ a
 
 8. Identify customers who placed orders in consecutive months.
 	cust, order_date, order
+
          WITH orders AS (
            SELECT customer_id, DATE_TRUNC(order_date, MONTH) AS order_month FROM `your_dataset.your_table`),
          consecutive_orders AS (
@@ -264,8 +266,10 @@ a
          ON  d.doctor_id = p.doctor_id GROUP BY d.doctor_id
 
 10. Handling NULL values in employee salary using the average salary.
-    IFNULL(expression, replacement_value) -->> It takes two arguments. If the first argument is NULL, it returns the second argument.
-    COALESCE(expression1, expression2, ..., expressionN) -->> It can take multiple arguments. It returns the first non-NULL argument from the list.
+	emp_id, salary
+
+         IFNULL(expression, replacement_value) -->> It takes two arguments. If the first argument is NULL, it returns the second argument.
+         COALESCE(expression1, expression2, ..., expressionN) -->> It can take multiple arguments. It returns the first non-NULL argument from the list.
          WITH avg_salary AS (
            SELECT AVG(salary) AS average_salary  FROM `your_dataset.your_table`)
          SELECT employee_id,  COALESCE(salary, (SELECT average_salary FROM avg_salary)) AS adjusted_salary  FROM `your_dataset.your_table`
@@ -276,9 +280,7 @@ a
     Maintenance: Materialized views need to be refreshed to stay up-to-date with the underlying data, while subqueries always reflect the current state of the data.
 
 12. CTE vs Subquery in SQL and their performance impact.
-    Readability and Maintainability:
-    Optimization: Subquery Treated similarly to CTEs in terms of optimization. The query optimizer will attempt to optimize the entire query, including the subqueries.
-    Reusability:
+    CTe: same code used at multiple places, more readability, used recursively
 
 13. Change Data Capture (CDC) -->> identify and capture changes made to data in a database --> It helps keep track of inserts, updates, and deletes in real-time.
       Benefits:
@@ -702,10 +704,185 @@ the output order same as above. give bigquery sql query with custom logic
 		  city, year, month;
 
 
-7/ Find restaurants whose best-selling dish makes up over 60% of their revenue.
-8/ Identify users who place high-value orders only on weekends.
-9/ Compare the conversion rate of users who visited the app vs. those who ordered.
-10/ Determine the average time between sign-up and first order, grouped by acquisition channel.
+54. Find restaurants whose best-selling dish makes up over 60% of their revenue.
+	restaurant_id, dish_id,    dish_name,  quantity, price
+
+	WITH dish_revenue AS (
+	  SELECT
+	    restaurant_id,
+	    dish_id,
+	    dish_name,
+	    SUM(quantity * price) AS total_revenue
+	  FROM
+	    `your_dataset.orders`
+	  GROUP BY
+	    restaurant_id, dish_id, dish_name
+	),
+	
+	restaurant_total_revenue AS (
+	  SELECT
+	    restaurant_id,
+	    SUM(total_revenue) AS restaurant_revenue
+	  FROM
+	    dish_revenue
+	  GROUP BY
+	    restaurant_id
+	),
+	
+	best_selling_dish AS (
+	  SELECT
+	    restaurant_id,
+	    dish_name,
+	    MAX(total_revenue) AS best_dish_revenue
+	  FROM
+	    dish_revenue
+	  GROUP BY
+	    restaurant_id, dish_name
+	),
+	
+	combined AS (
+	  SELECT
+	    b.restaurant_id,
+	    b.dish_name AS best_selling_dish,
+	    b.best_dish_revenue,
+	    r.restaurant_revenue,
+	    b.best_dish_revenue / r.restaurant_revenue AS revenue_share
+	  FROM
+	    best_selling_dish b
+	  JOIN
+	    restaurant_total_revenue r
+	  ON
+	    b.restaurant_id = r.restaurant_id
+	)
+	
+	SELECT
+	  restaurant_id,
+	  best_selling_dish,
+	  best_dish_revenue,
+	  restaurant_revenue,
+	  revenue_share
+	FROM
+	  combined
+	WHERE
+	  revenue_share > 0.6;
+
+55. Identify users who place high-value orders only on weekends.
+     user_id,     order_id,	    order_amount,    order_date
+
+	WITH orders AS (
+	  SELECT 
+	    user_id,
+	    order_id,
+	    order_amount,
+	    EXTRACT(DAYOFWEEK FROM order_date) AS day_of_week
+	  FROM 
+	    `your_dataset.orders_table`
+	),
+	
+	-- Identify users who placed high-value orders on weekends
+	weekend_high_value_orders AS (
+	  SELECT DISTINCT user_id
+	  FROM orders
+	  WHERE 
+	    order_amount > 1000 AND
+	    day_of_week IN (1, 7)  -- 1 = Sunday, 7 = Saturday
+	),
+	
+	-- Identify users who placed any orders on weekdays
+	weekday_orders AS (
+	  SELECT DISTINCT user_id
+	  FROM orders
+	  WHERE 
+	    day_of_week BETWEEN 2 AND 6  -- Monday to Friday
+	)
+	
+	-- Final result: users who placed high-value orders only on weekends
+	SELECT user_id
+	FROM weekend_high_value_orders
+	WHERE user_id NOT IN (SELECT user_id FROM weekday_orders);
+
+56. Compare the conversion rate of users who visited the app vs. those who ordered.
+	user_id, event_type(visit)
+
+	WITH app_visits AS (
+	  SELECT DISTINCT user_id
+	  FROM `your_dataset.app_events`
+	  WHERE event_type = 'visit'
+	),
+	
+	orders AS (
+	  SELECT DISTINCT user_id
+	  FROM `your_dataset.orders`
+	),
+	
+	conversion_analysis AS (
+	  SELECT
+	    COUNT(DISTINCT v.user_id) AS total_visitors,
+	    COUNT(DISTINCT o.user_id) AS total_converted
+	  FROM
+	    app_visits v
+	  LEFT JOIN
+	    orders o
+	  ON
+	    v.user_id = o.user_id
+	)
+	
+	SELECT
+	  total_visitors,
+	  total_converted,
+	  ROUND(total_converted / total_visitors * 100, 2) AS conversion_rate_percentage
+	FROM
+	  conversion_analysis;
+
+57. Determine the average time between sign-up and first order, grouped by acquisition channel.
+	user_id,     acquisition_channel,    signup_date
+	user_id,    order_date
+
+	WITH user_signups AS (
+	  SELECT
+	    user_id,
+	    acquisition_channel,
+	    signup_date
+	  FROM
+	    `your_dataset.users`
+	),
+	
+	first_orders AS (
+	  SELECT
+	    user_id,
+	    MIN(order_date) AS first_order_date
+	  FROM
+	    `your_dataset.orders`
+	  GROUP BY
+	    user_id
+	),
+	
+	signup_to_order AS (
+	  SELECT
+	    u.acquisition_channel,
+	    u.signup_date,
+	    f.first_order_date,
+	    DATE_DIFF(f.first_order_date, u.signup_date, DAY) AS days_to_first_order
+	  FROM
+	    user_signups u
+	  JOIN
+	    first_orders f
+	  ON
+	    u.user_id = f.user_id
+	  WHERE
+	    f.first_order_date IS NOT NULL
+	)
+	
+	SELECT
+	  acquisition_channel,
+	  AVG(days_to_first_order) AS avg_days_to_first_order
+	FROM
+	  signup_to_order
+	GROUP BY
+	  acquisition_channel
+	ORDER BY
+	  avg_days_to_first_order;
+
 11/ Use a recursive CTE to analyze multi-level referral networks.
 12/ Rank users based on their total number of orders and total spend, giving more weight to spend.
 13/ Identify restaurants with high churn rates: drop in unique monthly customers for 3+ months.
