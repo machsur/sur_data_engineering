@@ -843,3 +843,44 @@ the output order same as above. give bigquery sql query with custom logic
 19/ Determine which users are likely bots based on their ordering patterns (e.g., 50+ orders/day).
 20/ Build a time-series summary table that aggregates revenue per day, per restaurant, for dashboarding.
 
+
+>> Identify duplicate records in a table based on a specific column.
+
+>> Find the department with the highest average salary.
+	dept, salary
+
+	SELECT
+	  department,
+	  AVG(salary) AS average_salary
+	FROM
+	  `your_project.your_dataset.employee_data`
+	GROUP BY
+	  department
+	ORDER BY
+	  average_salary DESC
+	LIMIT 1;
+
+
+>> List the top 3 most frequently sold products.
+product_name , quantity_sold
+
+	SELECT
+	  product_name,
+	  SUM(quantity_sold) AS total_quantity_sold
+	FROM
+	  `your_project.your_dataset.sales_data`
+	GROUP BY
+	  product_name
+	ORDER BY
+	  total_quantity_sold DESC
+	LIMIT 3;
+
+>> Fetch employees who were hired in the last 90 days.
+	SELECT
+	  *
+	FROM
+	  `your_project.your_dataset.employee_data`
+	WHERE
+	  hire_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY);
+
+
