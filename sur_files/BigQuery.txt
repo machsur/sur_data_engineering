@@ -3,6 +3,7 @@ DATE(string in iso) / PARSE_DAT(format, string) / SAFE.PARSE_DATE(format, invali
 DATE_DIFF()
 extract(month from date)
 DATE_TRUNC(order_date, MONTH)
+FORMAT_DATE('%B %d, %Y', sale_date) 
 
 =============================================================================================================================================
 
@@ -474,79 +475,33 @@ null
 	  SELECT EXTRACT(YEAR FROM sale_date) AS year, FORMAT_DATE('%b', sale_date) AS month, amount  FROM `project.dataset.sales`)
 	SELECT * FROM sales_data	PIVOT (SUM(amount) FOR month IN ('Jan', 'Feb', 'Mar'))	ORDER BY year;
 
-34. Find the moving average of sales for the last 7 days for each product in a sales table.
+33. Find the moving average of sales for the last 7 days for each product in a sales table.
 	product_id, sale_amount, sale_date
 
 	WITH SalesWithMovingAverage AS (
 	    SELECT ProductID, SaleDate, SlesAmount, AVG(SalesAmount) OVER (PARTITION BY ProductID ORDER BY SaleDate ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS 		    MovingAverage FROM `your_dataset.sales`)
 	SELECT ProductID, SaleDate, SalesAmount, MovingAverage FROM SalesWithMovingAverage ORDER BY ProductID, SaleDate;
 
-35. Given an events table, find the first and last occurrence of each event per user.
-WITH EventOccurrences AS (
-    SELECT 
-        UserID,
-        EventID,
-        EventDate,
-        ROW_NUMBER() OVER (PARTITION BY UserID, EventID ORDER BY EventDate ASC) AS FirstOccurrence,
-        ROW_NUMBER() OVER (PARTITION BY UserID, EventID ORDER BY EventDate DESC) AS LastOccurrence
-    FROM 
-        `your_dataset.events`
-),
-FirstLastEvents AS (
-    SELECT 
-        UserID,
-        EventID,
-        MIN(EventDate) AS FirstEventDate,
-        MAX(EventDate) AS LastEventDate
-    FROM 
-        EventOccurrences
-    WHERE 
-        FirstOccurrence = 1 OR LastOccurrence = 1
-    GROUP BY 
-        UserID, EventID
-)
-SELECT 
-    UserID,
-    EventID,
-    FirstEventDate,
-    LastEventDate
-FROM 
-    FirstLastEvents
-ORDER BY 
-    UserID, EventID;
+34. Given an events table, find the first and last occurrence of each event per user.
+        UserID,   EventID,  EventDate,
+        
+35. Identify users who have placed an order in two consecutive months but not in the third month.
+	user_id, order_date
 
-
-36. Identify users who have placed an order in two consecutive months but not in the third month.
-WITH MonthlyOrders AS (
-    SELECT 
-        UserID, FORMAT_TIMESTAMP('%Y-%m', OrderDate) AS OrderMonth FROM `your_dataset.orders` GROUP BY UserID, OrderMonth),
-ConsecutiveMonths AS (
-    SELECT UserID, OrderMonth,
-        LAG(OrderMonth, 1) OVER (PARTITION BY UserID ORDER BY OrderMonth) AS PreviousMonth,
-        LEAD(OrderMonth, 1) OVER (PARTITION BY UserID ORDER BY OrderMonth) AS NextMonth
-    FROM 
-        MonthlyOrders
-),
-FilteredUsers AS (
-    SELECT 
-        UserID,
-        OrderMonth
-    FROM 
-        ConsecutiveMonths
-    WHERE 
-        PreviousMonth IS NOT NULL AND NextMonth IS NOT NULL
-        AND DATE_SUB(PARSE_TIMESTAMP('%Y-%m', OrderMonth), INTERVAL 1 MONTH) = PARSE_TIMESTAMP('%Y-%m', PreviousMonth)
-        AND DATE_ADD(PARSE_TIMESTAMP('%Y-%m', OrderMonth), INTERVAL 1 MONTH) = PARSE_TIMESTAMP('%Y-%m', NextMonth)
-)
-SELECT 
-    UserID
-FROM 
-    FilteredUsers
-GROUP BY 
-    UserID
-HAVING 
-    COUNT(OrderMonth) = 2;
-
+	WITH MonthlyOrders AS (
+	    SELECT UserID, FORMAT_TIMESTAMP('%Y-%m', OrderDate) AS OrderMonth FROM `your_dataset.orders` GROUP BY UserID, OrderMonth),
+	ConsecutiveMonths AS (
+	    SELECT UserID, OrderMonth,
+	        LAG(OrderMonth, 1) OVER (PARTITION BY UserID ORDER BY OrderMonth) AS PreviousMonth,
+	        LEAD(OrderMonth, 1) OVER (PARTITION BY UserID ORDER BY OrderMonth) AS NextMonth
+	    FROM MonthlyOrders),
+	FilteredUsers AS (
+	    SELECT UserID, OrderMonth FROM ConsecutiveMonths WHERE 
+	        PreviousMonth IS NOT NULL AND NextMonth IS NOT NULL
+	        AND DATE_SUB(PARSE_TIMESTAMP('%Y-%m', OrderMonth), INTERVAL 1 MONTH) = PARSE_TIMESTAMP('%Y-%m', PreviousMonth)
+	        AND DATE_ADD(PARSE_TIMESTAMP('%Y-%m', OrderMonth), INTERVAL 1 MONTH) = PARSE_TIMESTAMP('%Y-%m', NextMonth)
+	)
+	SELECT UserID	FROM FilteredUsers GROUP BY UserID HAVING COUNT(OrderMonth) = 2;
 
 37. Find the most frequently purchased product category by each user over the past year.
 	user, product_category, order_id, sale_date
