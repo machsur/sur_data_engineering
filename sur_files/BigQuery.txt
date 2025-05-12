@@ -454,27 +454,25 @@ null
 	    SELECT CustomerID, OrderID, OrderValue, RANK() OVER (PARTITION BY CustomerID ORDER BY OrderValue DESC) AS Rank FROM `your_dataset.your_table`)
 	SELECT CustomerID, OrderID, OrderValue FROM RankedOrders WHERE Rank <= 3;
 
-32. Find the median salary of employees using SQL (without using built-in median functions).
-WITH OrderedSalaries AS (
-    SELECT 
-        Salary, ROW_NUMBER() OVER (ORDER BY Salary ASC) AS RowAsc, ROW_NUMBER() OVER (ORDER BY Salary DESC) AS RowDesc
-    FROM 
-        `your_dataset.employees`
-),
-MedianSalary AS (
-    SELECT 
-        Salary
-    FROM 
-        OrderedSalaries
-    WHERE 
-        RowAsc = RowDesc OR RowAsc + 1 = RowDesc
-)
-SELECT 
-    AVG(Salary) AS MedianSalary
-FROM 
-    MedianSalary;
+31. Find the median salary of employees using SQL (without using built-in median functions).
 
-33. Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
+	SELECT PERCENTILE_CONT(salary, 0.5) OVER() AS median_salary FROM `project.dataset.employees` LIMIT 1;
+	or
+	WITH OrderedSalaries AS (
+	    SELECT Salary, ROW_NUMBER() OVER (ORDER BY Salary ASC) AS RowAsc, ROW_NUMBER() OVER (ORDER BY Salary DESC) AS RowDesc FROM `your_dataset.employees`),
+	MedianSalary AS (
+	    SELECT Salary FROM OrderedSalaries WHERE RowAsc = RowDesc OR RowAsc + 1 = RowDesc)
+	SELECT AVG(Salary) AS MedianSalary FROM MedianSalary;
+
+32. Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
+	transaction_id	sale_date	amount
+	1	        2025-01-15	100
+	year	Jan	Feb	Mar
+	2025	250	450	300
+
+	WITH sales_data AS (
+	  SELECT EXTRACT(YEAR FROM sale_date) AS year, FORMAT_DATE('%b', sale_date) AS month, amount  FROM `project.dataset.sales`)
+	SELECT * FROM sales_data	PIVOT (SUM(amount) FOR month IN ('Jan', 'Feb', 'Mar'))	ORDER BY year;
 
 34. Find the moving average of sales for the last 7 days for each product in a sales table.
 	product_id, sale_amount, sale_date
@@ -577,10 +575,6 @@ HAVING
 	SCD4 - scd1+scd2 - 
 	scd6 - 1+2+3 - 
 	
-40. 
-PARSE_TIMESTAMP('%Y-%m-%d %H:%M:%S', event_time_string)  -- PARSE_DATE
-extract(month from parse_timestamp('%Y-%m-%d %H:%M:%S', '2025-04-19 07:46:57'))   -- year/month/day/hour/minute/second
-date_trunc(parse_date('%Y-%m-%d', '2025-04-18'), month);
 
 41.
 input table:
