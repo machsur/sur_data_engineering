@@ -1,4 +1,6 @@
 ==========================
+https://allthingdata.substack.com/p/essential-linux-commands-for-data         
+
 >> Why linux rather than winndows, macos:  open source & free to use, multi-users work on shared system , good security (no antivirus req), stable and reliable
 
 >> user --> give commands on terminal --> shell(program/CLI) interprets and executes/passes them on --> OS
