@@ -499,6 +499,24 @@ schema = "id int, name string, card_no long"
 
 10. Explain the concept of checkpointing in PySpark. Why is it important in streaming applications?
 
+>> 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧
+You are working as a Data Engineer for a company. The sales team has provided you with a dataset containing sales information. However, the data has some missing values that need to be addressed before processing. You are required to perform the following tasks:
+1. Load the following sample dataset into a PySpark DataFrame:
+2. Perform the following operations:
+a. Replace all NULL values in the Quantity column with 0.
+b. Replace all NULL values in the Price column with the average price of the existing data.
+c. Drop rows where the Product column is NULL.
+d. Fill missing Sales_Date with a default value of '2025-01-01'.
+e. Drop rows where all columns are NULL.
+𝐬𝐜𝐡𝐞𝐦𝐚 
+data = [ (1, "Laptop", 10, 50000, "North", "2025-01-01"), (2, "Mobile", None, 15000, "South", None), (3, "Tablet", 20, None, "West", "2025-01-03"), (4, "Desktop", 15, 30000, None, "2025-01-04"), (5, None, None, None, "East", "2025-01-05") ] columns = ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
+
+	from pyspark.sql.functions import *
+	avg_value = df.select(avg('Price')).collect()[0][0]
+	df = df.na.fill({'Quantity':0, 'Price':avg_value, 'Sales_Date':'2025-01-01'})
+	df = df.na.drop(subset=['Product'])
+	df = df.na.drop(how='all')
+	df.show()
 
 
 
