@@ -29,11 +29,52 @@ https://allthingdata.substack.com/p/essential-linux-commands-for-data
     HostName 35.238.68.160
     IdentityFile C:\Users\surmacha\.ssh\google_compute_engine
     User surmacha
->> validate pyspark / spark-shell (spark scala) / spark-sql CLI in dataproc cluster.
+>> validate pyspark exit() / spark-shell (spark scala) :quit / spark-sql exit; / CLI in dataproc cluster.
 >> execute gcs script 
-   ---> run pyspark script on master node of VM (ex: spark-submit -f gs://surretail/scripts/daily_product_revenue/gcsToBq.py)
+   ---> run pyspark script on master node of VM 
+	gcloud compute ssh --zone "us-central1-c" "cluster-1c1f-m" --project "elegant-circle-454709-h5"
+	spark-submit gs://surdatabuk/scripts/pysp1.py
    ---> submit pyspark job using UI 
-   ---> gcloud dataproc jobs submit spark-sql --cluster=cluster-a695 -f gs://surretail/compute_daily_product_revenue.sql --params=bucket_name=surretail
+   ---> gcloud dataproc jobs submit pyspark gs://surdatabuk/scripts/pysp1.py --cluster=cluster-1c1f --region=us-central1 
+
+>> 
+pyspark script:
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+spark = SparkSession.builder.appName('surapp').getOrCreate()
+dfo=spark.read.csv('gs://surdatabuk/data/olist/olist_orders_dataset.csv', header=True, inferSchema=True)
+dfc = spark.read.csv('gs://surdatabuk/data/olist/olist_customers_dataset.csv', header=True, inferSchema=True)
+dfj = dfc.join(dfo, dfc['customer_id']==dfo['customer_id'], 'inner').drop(dfo['customer_id'])
+dfjf = dfj.select('customer_id', 'customer_unique_id', col('customer_zip_code_prefix').cast('string'), 'customer_city', 'customer_state', 'order_id', 'order_status', 'order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date', 'order_delivered_customer_date', 'order_estimated_delivery_date')
+dfjf.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
+dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-h5.surtest11.customers_orders').save()
+
+scala script:
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
+val spark = SparkSession.builder().appName("surapp").getOrCreate()
+val dfo = spark.read.option("header", "true").option("inferSchema", "true").csv("gs://surdatabuk/data/olist/olist_orders_dataset.csv")
+val dfc = spark.read.option("header", "true").option("inferSchema", "true").csv("gs://surdatabuk/data/olist/olist_customers_dataset.csv")
+val dfj = dfc.join(dfo, dfc("customer_id") === dfo("customer_id"), "inner").drop(dfo("customer_id"))
+val dfjf = dfj.select(
+  col("customer_id"),
+  col("customer_unique_id"),
+  col("customer_zip_code_prefix").cast("string"),
+  col("customer_city"),
+  col("customer_state"),
+  col("order_id"),
+  col("order_status"),
+  col("order_purchase_timestamp"),
+  col("order_approved_at"),
+  col("order_delivered_carrier_date"),
+  col("order_delivered_customer_date"),
+  col("order_estimated_delivery_date")
+)
+dfjf.write.format("parquet").mode("overwrite").save("gs://surdatabuk/data/olist_op/")
+dfjf.write.format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.customers_orders").mode("overwrite").save()
+
+spark-sql script:
+
 
 ===========================================================================================================================
 PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit: 
