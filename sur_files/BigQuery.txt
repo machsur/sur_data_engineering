@@ -884,3 +884,6 @@ product_name , quantity_sold
 	  hire_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY);
 
 
+>> Question:- Extract the Domain from the Email column in Employee Table.
+	substring(email, strpos(email, '@'), length-opt) 
+
