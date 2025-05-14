@@ -1,6 +1,10 @@
+================================================================================================================================================
+links:
 https://github.com/afaqueahmad7117/spark-experiments/tree/main/spark
 https://allthingdata.substack.com/p/essential-linux-commands-for-data         
+
 ===================================================================================================================================================
+Concepts:
 >> Why Big Data: Traditional RDBMS are failed to handle to large datasets
 >> Why did big data emerge: Internet growth, Social media, IOT devices
 >> 5 v of Big Data: Volume, velacity, varity, veracity, value
@@ -11,171 +15,15 @@ https://allthingdata.substack.com/p/essential-linux-commands-for-data
 >> ETL vs ELT
 >> Data engineer do (ETL + DWH) vs big data engineer fit in (ELT + big data)
 
->> What is hadoop
->> Properties of hadoop
 >> Hadoop ecosystem/components
 >> Hadoop technologies - file system / block / file system types / cluster&node / metadata /replication / 
->> Hadoop architexture - data node failure / name node failure /
->> 
 
-===================================================================================================================================================
->> Google Cloud Dataproc is a managed service that runs Apache Spark (and other frameworks),
->> enable API, create dataproc cluster on vm/gke.
->> validate ssh connectivity to master node vm of dataproc cluster: 
-   -- gcloud compute ssh --zone "us-central1-a"    "dataprocclu1-m" --project "possible-dream-433814-b4"
-   -- ssh -i C:\Users\surmacha\.ssh\google_compute_engine surmacha@35.184.234.232
-   -- setup vs code remote window for dataproc vm of master node - create below config file in .ssh - select remote window button on vs code - host in search 
-   Host Sur-DP-Cluster-VSC
-    HostName 35.238.68.160
-    IdentityFile C:\Users\surmacha\.ssh\google_compute_engine
-    User surmacha
->> validate pyspark exit() / spark-shell (spark scala) :quit / spark-sql exit; / CLI in dataproc cluster.
->> execute gcs script 
-   ---> run pyspark script on master node of VM 
-	gcloud compute ssh --zone "us-central1-c" "cluster-1c1f-m" --project "elegant-circle-454709-h5"
-	spark-submit gs://surdatabuk/scripts/pysp1.py
-   ---> submit pyspark job using UI 
-   ---> gcloud dataproc jobs submit pyspark gs://surdatabuk/scripts/pysp1.py --cluster=cluster-1c1f --region=us-central1 
-
->> 
-pyspark script:
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import *
-spark = SparkSession.builder.appName('surapp').getOrCreate()
-dfo=spark.read.csv('gs://surdatabuk/data/olist/olist_orders_dataset.csv', header=True, inferSchema=True)
-dfc = spark.read.csv('gs://surdatabuk/data/olist/olist_customers_dataset.csv', header=True, inferSchema=True)
-dfj = dfc.join(dfo, dfc['customer_id']==dfo['customer_id'], 'inner').drop(dfo['customer_id'])
-dfjf = dfj.select('customer_id', 'customer_unique_id', col('customer_zip_code_prefix').cast('string'), 'customer_city', 'customer_state', 'order_id', 'order_status', 'order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date', 'order_delivered_customer_date', 'order_estimated_delivery_date')
-dfjf.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
-dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-h5.surtest11.customers_orders').save()
-
-scala script:
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions._
-val spark = SparkSession.builder().appName("surapp").getOrCreate()
-val dfo = spark.read.option("header", "true").option("inferSchema", "true").csv("gs://surdatabuk/data/olist/olist_orders_dataset.csv")
-val dfc = spark.read.option("header", "true").option("inferSchema", "true").csv("gs://surdatabuk/data/olist/olist_customers_dataset.csv")
-val dfj = dfc.join(dfo, dfc("customer_id") === dfo("customer_id"), "inner").drop(dfo("customer_id"))
-val dfjf = dfj.select(
-  col("customer_id"),
-  col("customer_unique_id"),
-  col("customer_zip_code_prefix").cast("string"),
-  col("customer_city"),
-  col("customer_state"),
-  col("order_id"),
-  col("order_status"),
-  col("order_purchase_timestamp"),
-  col("order_approved_at"),
-  col("order_delivered_carrier_date"),
-  col("order_delivered_customer_date"),
-  col("order_estimated_delivery_date")
-)
-dfjf.write.format("parquet").mode("overwrite").save("gs://surdatabuk/data/olist_op/")
-dfjf.write.format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.customers_orders").mode("overwrite").save()
-
-spark-sql script:
+>> why spark instead of MR:
+>> Spark ecosystem: read data - processing using spark framework in the form of API (RDD-low level api, DF, DS - high level api) with the help of resource manage to run on 	cluster - using programming we can work on that
+>> spark session is for high level api, sparkcontext is for low level api
+>> word count programme
 
 
-===========================================================================================================================
-PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit: 
-
-hdfs dfs -ls -R /public/retail_db
-hdfs dfs -mkdir /path/to/new_directory
-hdfs dfs -copyFromLocal /local/path/to/file /hdfs/path/to/destination 		or
-hdfs dfs -copyToLocal /hdfs/path/to/file /local/path/to/destination      or
-hdfs dfs -put data/retail_db /public (local to hdfs -put)
-hdfs dfs -cp gs://surretail/retail_db /public/retail_db (hdfs to hdfs, gcs to hdfs, hdfs to gcs, gcs to gcs -cp)
-hdfs dfs -mv /path/to/source /path/to/destination
-hdfs dfs -rm -R -skipTrash /public/retail_db
-hdfs dfs -cat /path/to/file
-hdfs dfsadmin -report
-hdfs dfs -df -h
-hdfs dfs -du -s -h /path/to/directory
-hdfs dfs -chmod 755 /path/to/file_or_directory
-   
-    ==>>
-    df = spark.createDataFrame(data, columns)
-    df_from_pandas = spark.createDataFrame(pandas_df/data_dict)
-    df_empty = spark.createDataFrame([], columns)
-    df_csv = spark.read.csv("/path/to/file.csv", header=True, inferSchema=True)
-    from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DoubleType
-    custom_schema = StructType([StructField("id", IntegerType(), True), StructField("name", StringType(), True), StructField("age", IntegerType(), True)])
-    custom_schema = ''' ID Integer, Name String, Age Integer, Salary Double '''
-    df = spark.read.csv("your_file.csv", schema=custom_schema, header=True)
-    file_paths = ["file1.csv", "file2.csv", "file3.csv"] 
-    df = spark.read.csv(file_paths, header=True, inferSchema=True, sep=',')
-    df = spark.read.option("modifiedBefore", "2022-02-27T05:30:00").json("file:///path_to_file/data_files/")
-    ==>> join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
-         join_df = df1.crossjoin(df2)
-         broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
-    ==>> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  &|   /
-    ==>> grouped_df = df.groupBy('department').agg(max("sal"))   		
-    ==>> having_df = df.filter(grouped_df['count'] > 1)
-    ==>> selected_df = df.select("customer_id", col("Name").alias('EmployeeName'), column("last_name"), df.email, df["city"] )
-                    = df.selectExpr("id*2 as nid", "name as nname").show()
-    ==>> sorted_df = df.orderBy(asc('department'), col("country).desc())  / df11.orderBy(asc_nulls_last('value')).show() /
-    ==>> df_limit = df.limit(10)
-    ==>> df.show(n=3, truncate=25, vertical=True) / print(df.collect()) / print(df.count()) / df.printSchema() / display(df) / print(df1.columns) 
-
-
-	==>> union tables: union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/   -->> positional col match / schema must be identical
-	     union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col match by name / schema can differ / missing col handle with null values
-	     distanct values/drop duplicates ----> df.select('cn1', 'cn2').distinct() ----> df.dropDuplicates(['cn1', 'cn2'])
-	==>> 
-	add new column ---> newdf = df.withColumn("NewColumn", lit(1))
-	drop columns -->> df2 = df.drop("Country", "Region")
-	column name change -->> new_df = df.withColumnRenamed("oldColumnName", "newColumnName")
-	column type change --> df = df.withColumn("Phone", col("Phone").cast("string"))
-	==>> case sensitive - df.select(initcap(col("country")))  -->> initcap / lower / upper
-	==>> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
-			  --> df.select(concat_ws(' | ', col("Region"), col("Country")))
-	==>> result_df = df.select( col("EmployeeID"), ltrim(col("Name")), lpad(col("Name"), 10, "X"))  -->> rtrim / trim / rpad
-	==>> create date, timestamp columns in df, add/subtract days, 
-		withColumn("date", to_date(df["date_string"], "yyyy-MM-dd"))
-		withColumn("month", month(df["date"]))
-		withColumn("truncated_timestamp", date_trunc("hour", df["timestamp"]))
-		datediff(df["end_date"], df["start_date"])
-		withColumn("months_diff", months_between(df["end_date"], df["start_date"]))  
-		withColumn("timestamp_diff", unix_timestamp(df["end_timestamp"]) - unix_timestamp(df["start_timestamp"]))      
-	==>>    df.dropna("All" subset=['cn1", "cn2"]) 
-		df.fillna("N/A" subset=['cn1", "cn2"]) / df.na.fill({'cn1':'val1', 'cn2': 'val2'}) / is null('CN') 
-		df_replaced_multiple = df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset="fruit")
-	==>> coalesce('cn1', 'cn2','cn3') - return first non-null value from list of columns
-	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0)))
-	==>> agg functions --> df.select(sum('CN')).show()  ------> note: ignore null values
-	     grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show()
-		sum , sumDistinct, min, max, avg, count, countDistanct, collect_list, collect_set first, last, stddev, variance 
-	==>> when&otherwise -->> df = ( df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult")).withColumn("income_bracket", when(df.salary < 4000, "Low") 					.when((df.salary >= 4000) & (df.salary <= 4500), "Medium") .otherwise("High")) )
-	==>>cast data types -->> df = df.withColumn("column_name", col("column_name").cast("target_data_type"))
-			    -->> cast_expr = [col("column1_name").cast("target_data_type1"), col("column2_name").cast("target_data_type2")] / df = df.select(*cast_expr)
-	==>> window functions -->> window_spec = Window.partitionBy("category", "sub_category").orderBy(asc("timestamp"), col("score").desc()) \
-                    				.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
-				   window_spec = Window.partitionBy("category", "sub_category").orderBy(col("timestamp"), col("score")).rowsBetween(-2, 3)
-				   df = df.withColumn("row_number", row_number().over(window_spec)) 
-   		max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() / lag(cn) / lead(cn) / 
-		first_value(cn) / last_value(cn) / nth_value(cn, n) /
-	==>> splitng column -->> df.withColumn('nc', split(col('name'), '[ ,]'))   -->> [0] or .getItem(0), explode, 
-	     Array length: df.withColumn('nc', size(split(col('name'), '[ ,]')))
-	     word in array or not: df.withColumn('nc', array_contains(split(col('name'), '[ ,]'), 'macha'))
-	     indesxing: df.withColumn('nc', split(col('name'), '[ ,]')[0])  /  df.withColumn('nc', split(col('name'), '[ ,]').getItem(0)).show()
-	     explode/explode_outer: df.withColumn('nc', explode(split(col('name'), '[ ,]')))  /  df.withColumn('nc', explode_outer(split(col('name'), '[ ,]')))
-	     Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
-	==>> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
-	     unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"
- 		      df1.selectExpr("Month", unpivot_exp).show()
-	==> 
-		regexp_extract: df.withColumn("file_name", regexp_extract("file_path", r'^(.*)_\d{14}\.csv$', 1))
-		regexp_replace: df.withColumn("new_file_path", regexp_replace("file_path", r'_\d{14}\.csv$', '_TIMESTAMP.csv'))
-		regexp_contain: df.withColumn("contains_digits", when(regexp_extract(col("text"), r'\d', 0) != "", True).otherwise(False))
-		regexp_substr: df = df.withColumn("first_digits", regexp_extract("text", r'\d+', 0))
-
-==================================================================================================================================
-
-Pyspark Interview QA:
-
-pyspark QA:
-
-1. what is spark, features, architecture
 
 >> Haddop Yarn Cluster 
 	-- master node (Yarn RM)
@@ -183,380 +31,6 @@ pyspark QA:
    	-- Script or spark app submit --> spark launches driver app --> driver app create spark session/conset --> spark context  request executor resources from YARN rm -->
 	   in parallel, driver app divide spark app into small tasks (app -> jobs based on action --> stages based on wide trans --> shuffle/sort --> 
 	   tasks (these tasks run on executor slots)
-
-1. What is the difference between cache() and persist() in PySpark?
-	when df is frequently used, we do caching df for better performance
-	cache(): cache() uses the default storage level, which is MEMORY_ONLY. 		--> df.cache()
-	persist(): persist() allows you to specify different storage levels, such as MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY, etc.
-	from pyspark import StorageLevel /  df.persist(StorageLevel.MEMORY_AND_DISK)
-
-2. How does Lazy Evaluation work in PySpark?
-	the execution of transformations on RDDs (Resilient Distributed Datasets) or DataFrames is deferred until an action is performed. 
-	This allows PySpark to optimize the execution plan and improve performance.
-
-3. What are wide and narrow transformations in PySpark?
-	Narrow transformations doesnt involeve shuffeling (one input partition contributes to only one output partition). Examples filter, union, select, add column
-	Wide transformations involve shuffling data across the network, (input partitions contribute to multiple output partitions). join, distinct, groupBY
-
-4. Explain shuffle operations in PySpark and their impact on performance.
-	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
-	suppose if have suffle partions lesser than cluster capacity --> slow completion time, underutilization of cluster
-	if data per shuffle partion is too large --> tune by increasing num of partitions required
-	if data per shuffle partition is very less --> tune by decewasing no of SP, find size of SP based on available cores.
-	default shuffile partitions is 200 / data size per shuffle partition b/w 1-200 mb
-	# Set the number of shuffle partitions --> spark.conf.set("spark.sql.shuffle.partitions", 100)
-	# Verify the setting --> print(spark.conf.get("spark.sql.shuffle.partitions"))
-
-5. what is data skewness and salting technique? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
-   skewed partition : uneven data distribution
-	job is taking time, unutilization of resources, oom or data spill (write results to disk -- very costly)
-	fix --> repartition, salting, AQE, broadcasting
-   df.repartition(10)
-   df.rdd.getNumPartitions()
-   df.select(spark_partition_id().alias("partid")).groupBy("partid").count()
-
-6. What is broadcast join, and when should we use it?
-	type of join operation where a small dataset is broadcasted to all worker nodes in the cluster. 
-	This allows the join to be performed locally on each node, significantly improving performance by reducing the amount of data shuffled across the network.
-
-7.      select: Ideal for column selection.
-	selectExpr: Best for applying SQL expressions and transformations.
-
-8. What is PySpark (python api let u use spark with python), and how is it different from Apache Spark (big data engine).
-
-9. How do you initialize a SparkSession in PySpark?
-
-10. What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
-    similarities in 3 apis : foult tolerant, distributed, in-memory computation, immutable, lazy evaluation, internally processing as rdd for all 3 codes
-    RDD: low-level api / no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
-    DF: high-level api / catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
-    DS: high-level api / optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
-
-11. What is the difference between map() and flatMap() inPySpark?
-    map() when you want to apply a function that returns a single value for each input element
-    flatMap() when the function can return multiple values for each input element
-
-12. How do you handle missing values in PySpark?
-	df_replaced = df.replace(to_replace=4, value=0)
-	fillna / dropna --> see above
-	    
-13. What are transformations (create new df from existing df) and actions (return results of df) in PySpark? Giveexamples.
-
-14. What is the significance of partitioning and bucketing in PySpark, and how does it affect the performance of data processing tasks?
-	Partitioning: Divides data based on column values, creating separate directories for each partition. Best for filtering queries.
-	df.write.partitionBy("country", "year").parquet("output/partitioned_sales")
-	Bucketing: Divides data into a fixed number of buckets based on the hash of a column. Best for join queries.
-	df.write.bucketBy(4, "user_id").saveAsTable("bucketed_sales")
-
-15. How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided (memory constraints, performance issues) ?
-	When you call .collect(), PySpark gathers all the partitions of the DataFrame or RDD and brings them to the driver node. This means that the data is no longer 		distributed across the cluster but is instead stored in the memory of the driver program
-
-16. What is the difference between createOrReplaceTempView and createGlobalTempView in DataFrames?
-   Scope:
-   createOrReplaceTempView creates a view local to the SparkSession.
-   createGlobalTempView creates a view accessible across all SparkSessions within the same application.
-   Lifetime:
-   createOrReplaceTempView views are dropped when the SparkSession ends.
-   createGlobalTempView views persist until the Spark application terminates.
-
-17. How to set the partitions in pyspark?
-   Reading Data: The option("numPartitions", 10) sets the number of partitions when loading the data.
-   repartition Method: This method increases or decreases the number of partitions and shuffles the data.
-   df1 = df.repartition(3)
-   print(f"Number of partitions  repartitioning: {df1.rdd.getNumPartitions()}")
-   coalesce Method: This method reduces the number of partitions without a full shuffle, which is more efficient for reducing partitions.
-   df_coalesced = df.coalesce(2)
-   print(f"Number of partitions after coalescing: {df_coalesced.rdd.getNumPartitions()}")
-
-18. Default file format in Spark (is Parquet), Why Parquet?
-      Efficient Storage: Columnar format allows for better compression and encoding.
-      Performance: Optimized for query performance, especially for read-heavy operations.
-      Compatibility: Widely supported across various big data tools and frameworks.
-
-19. what are the optimization techniques in pyspark?
-	Use DataFrame/Dataset over RDD
-	use col format files 
-	filter data erly
-	Cache Data or persist data
-	use broadcast to Optimize Joins
-	Optimize shuffle Partitions: Repartition / Coalesce
-	enable AQE, salting
-	partitioning & bucketing for frequently accessed based on specific column
-	Avoid User Defined Functions (UDFs)
-
-20. Difference between sortby and orderby?
-   sortBy is used with RDDs.
-   orderBy is used with DataFrames.
-
-21. what is the default block size (128 MB) in hdfs and how to change it?
-   Edit the hdfs-site.xml File:
-
-23. Explain about out of memory issue in spark?
-   Causes of Out of Memory Issues: 
-   Driver Memory:
-   Collect Operations: Using collect() to gather large datasets to the driver can cause memory overflow. The driver tries to merge all results into a single object, which      might be too large to fit into the driver's memory1.
-   Large Broadcast Variables: Broadcasting large variables can consume significant memory on the driver.
-   Executor Memory:
-   Task Execution: Executors run tasks and store intermediate data. If the tasks require more memory than allocated, it can lead to out of memory errors1.
-   Shuffling Data: During operations like groupBy or join, data shuffling can cause memory issues if the data size exceeds the executor's memory capacity2.
-   Solutions to Out of Memory Issues
-   Increase Driver Memory: Adjust the driver memory settings using spark.driver.memory to allocate more memory to the driver2.
-   Limit Result Size: Use spark.driver.maxResultSize to limit the size of results collected to the driver1.
-   Increase Executor Memory: Configure executor memory using spark.executor.memory to allocate sufficient memory for task execution2.
-   Memory Overhead: Set spark.executor.memoryOverhead to account for additional memory required for JVM overhead3.
-   Repartition Data: Repartition large datasets to reduce the size of data processed by each executor1.
-
-5. What is difference between spark session and spark context?
-	SparkContext: Basic functionality for RDD operations. Requires separate contexts for SQL, streaming, etc. (used <2.0 spark version)
-	SparkSession: Provides a unified interface for DataFrame and Dataset APIs, SQL queries, and more. (used >2.0 spark version)
-
-20.
-Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query performance by pruning partitions dynamically based on runtime data. This is particularly useful for queries involving joins where one table is significantly smaller than the other. DPP helps reduce the amount of data scanned, thereby improving query efficiency.
-16. problems that partition solves?
-	fast/esay access, parallesium & resource utilization
-
-17. how to decide partiTIon on which column --> based on column cordinality/unique (not high & low / rec low to med) & frequent filter criteria 
-
-18. partitioning
-folder: df.write.partitionBy("date").mode("overwrite").parquet("/tmp/folder_partitioned_data")
-file: repartitioned_df.write.mode("overwrite").parquet("/tmp/file_partitioned_data")
-combine: repartitioned_df = df.repartition(3).write.partitionBy("date").mode("overwrite").parquet("/tmp/combined_partitioned_data")
-
-21. data cashing in spark
-	cache()
-	persist(storageLevel=StorageLevel.MEMORY_ONLY) --> DISK_ONLY, MEMORY_AND_DISK, MEMORY_ONLY_SER, MEMORY_AND_DISK_SER, OFF_HEAP, MEMORY_ONLY_2
-	persist(StorageLevel(useDisk, useMemory, useOffHeap, deserialized, replication)) --> 	persist(StorageLevel(True, True, False, False, 1)) 
-	for disk only ser, for memory ser (compact in size, less memory, more cpu for access) or deser (consumes more memory but fast access)
-	how to uncahe --> df.unpersist()
-	when cache req: access large df multiple times across spark actions
-	when not cache: not fit in memory, not reusing frequently, df is small
-27. What are the advantages of using PySpark over Pandas for big data processing?
-	distibuted, foult-tolerant, performance, api&libraries, intergate with big data tools.
-
-22. 
-You are given a nested JSON file named sample_data.json stored in an S3 bucket at s3://your-bucket/sample_data.json. The JSON file contains details about employees, including their names, departments, and address details (nested fields).
-Write a PySpark program to:
-Load the JSON file into a DataFrame.
-Flatten the nested structure to create a tabular format.
-Write the resulting DataFrame as a Parquet file to the output path s3://your-bucket/output/.
-
-Explanation:
-Step 1: The JSON file is loaded into a DataFrame using spark.read.json().
-Step 2: The select() method is used to extract and rename nested fields (address.city and address.state) to create a flattened structure.
-Step 3: The resulting DataFrame is written as a Parquet file using write.parquet().
-
-
-===================================================================================================================================================
-1. Find the top 3 highest-paid employees from each department.
-   data = [(1, "Amit", "IT", 90000),
-from pyspark.sql.window import Window
-
-2. Write a PySpark code to remove duplicate records based on a specific column.
-   data = [(101, "Mumbai", "Maharashtra"), ]
-
-3. Write a PySpark query to calculate the moving average of sales over the last 3 months.
-    window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
-    df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
-
-4. What is SparkSQL, and how do you perform SQL operations on DataFrames?
-	SparkSQL is a module in Apache Spark that allows you to run SQL queries on large datasets.
-   	Registering the DataFrame as a Temporary View: df.createOrReplaceTempView("people")
-   	Running SQL Queries: spark.sql("SELECT Name, Age FROM people WHERE Age > 30").show()
-
-5. unpivot data
-cricket_data = [("Virat Kohli", 85, 100, 75),
- ("Steve Smith", 90, 105, 80),
- ("Kane Williamson", 88, 95, 70)]
-df = spark.createDataFrame(cricket_data, ["Player", "Match1", "Match2", "Match3"])
-
-	unpivot_expr = "stack(3, 'Match1', Match1, 'Match2', Match2, 'Match3', Match3) as (Match, Score)"
-	unpivot_df = df.select("Player", expr(unpivot_expr))
-
-6. what is collect list and collect set and when do we use it?
-   result = df.groupBy("name").agg(collect_list("value").alias("values_list")) - allows duplicates in list
-   result = df.groupBy("name").agg(collect_set("value").alias("values_set")) - no duplicates in list
-
-7. Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
-     +-------------+----------+
-     | City    | Population|
-     +-------------+----------+
-    top_5_cities = df.orderBy(col("Population").desc()).limit(5)
-
-8. Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
-    avg_salary_by_dept = df.groupBy("Department").agg(avg("Salary").alias("AverageSalary"))
-
-9. Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
-     +------------+----------------+-------------------+
-     | customer_id| transaction_id | transaction_date |
-     +------------+----------------+-------------------+
-    df_no_duplicates = df.dropDuplicates(["customer_id", "transaction_date"])
-
-10. input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
-    output 
-   +---+---------------+----------+---------+
-   | ID| Name|First_Name|Last_Name|
-   +---+---------------+----------+---------+
-   | 1|Sagar-Prajapati| Sagar|Prajapati|
-   | 2| Alex-John| Alex| John|
-   | 3| John Cena| John| Cena|
-   | 4| Kim Joe| Kim| Joe|
-   +---+---------------+----------+---------+
-	df = df.withColumn("fn", split(df.Name, "[- ]").getItem(0)).withColumn("ln", split(df.Name, "[- ]")[1])
-
-11. Given a DataFrame, split the data into two columns (Even, Odd) where:
-    Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
-
-12. Create a DataFrame with two columns:
-    Column 1: Default String
-    Column 2: Default Integer
-
-13. Word count program in pyspark
-    df1 = df.select(explode(split(df["name"], " ")).alias("word")).groupBy("word").agg(count("*").alias("count"))
-
-14. Write a PySpark query to count the number of null values in each column of a DataFrame.
-	df1.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
-
-15. Write a PySpark query to replace null values in a specific column with the previous non-null value.
-	window_spec = Window.orderBy("id").rowsBetween(Window.unboundedPreceding, Window.currentRow)
-	df.withColumn("filled_col", last('value', ignorenulls=True).over(window_spec)).show()
-
-
-
-22. reading file into df / write df into target
-option("recursiveFileLookup", "true")
-option("compression", "gzip")
-option("modifiedBefore", "2025-04-19T20:58:57") / option("modifiedAfter", "2025-04-19T20:58:57")
-option('header', True)
-schema(cust_schema)
-option("mode", "PERMISSIVE").schema(cust_schema).option("columnNameOfCorruptRecord", "_corrupt_record")  - return null / 
-option("mode", DROPMALFORMED/FAILFAST").schema(cust_schema) - remove wrong records / throw error if any incorrect records are there
-
-df = spark.read.csv("/tmp/compressed_csv_data", sep="|", linesep="/r or /n")
-df.write.mode("overwrite").parquet("/tmp/compressed_data", sep="|", linesep="/r or /n")
-df1.write.mode("overwrite").format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt3").save()
-
-
-23.
-Given two datasets, products and sales, write a PySpark program to identify products that have never been sold. Assume the schema of products is (product_id, product_name) and the schema of sales is (sale_id, product_id, sale_date).
-products = spark.createDataFrame([ (1, "Laptop"), (2, "Tablet"), (3, "Smartphone"), (4, "Monitor"), (5, "Keyboard") ], ["product_id", "product_name"]) 
-sales = spark.createDataFrame([ (101, 1, "2025-01-01"), (102, 3, "2025-01-02"), (103, 5, "2025-01-03") ], ["sale_id", "product_id", "sale_date"]) 
-
-	products.join(sales, products.product_id == sales.product_id, "left_anti").show()
-
-24.
-You are given a dataset of employees in an Indian company with columns: `emp_id`, `name`, `department`, `salary`, and `city`. Write a PySpark program to find the total salary paid in each department.
-Sample Data:
-emp_id, name, department, salary, city
-101, Rajesh, IT, 75000, Bangalore
-102, Priya, HR, 60000, Mumbai
-103, Anil, IT, 80000, Hyderabad
-104, Sneha, HR, 62000, Pune
-105, Manish, Finance, 90000, Chennai
-106, Suresh, IT, 78000, Bangalore
-Expected Output:
-IT, 233000
-HR, 122000
-Finance, 90000
-
->> Write a pyspark program to count number of products in each category 
-# based on its price into three categories below. 
-# Display the output in descending order of no of products.
-# 1- "Low Price" for products with a price less than 100
-# 2- "Medium Price" for products with a price between 100 and 500 (inclusive)
-# 3- "High Price" for products with a price greater than 500.
-
-products_data = [
- (1, 'Laptop', 800),
- (2, 'Smartphone', 600)]
-
-
->> Handling Null Values
-You are given a dataset containing customer transactions in an Indian e-commerce platform with columns: `cust_id`, `cust_name`, `city`, `purchase_amount`, and `product_category`. Some records have missing `purchase_amount`. Write a PySpark program to fill missing `purchase_amount` values with the average purchase amount of that product category.
-
-Sample Data:
-cust_id, cust_name, city, purchase_amount, product_category
-201, Aman, Delhi, 1500, Electronics
-202, Kiran, Mumbai, , Fashion
-
-	df_avg_pa = df.groupBy('product_category').agg(avg('purchase_amount').alias('avg_purchase_amount'))
-	df_join = df.join(df_avg_pa, on='product_category', how='left')
-	df_join.withColumn('purchase_amount', when(col('purchase_amount').isNull(), col('avg_purchase_amount')).otherwise(col('purchase_amount')))
-	df_final = df_join.drop('purchase_amount').show()
-
->> 
-You have a dataset of students from different Indian states with columns: `student_id`, `student_name`, `state`, `score`. 
-Write a PySpark program to rank students within each state based on their scores in descending order.
-student_id, student_name, state, score
-301, Rohit, Maharashtra, 85
-Expected Output:
-Maharashtra, Amit, 90, Rank 1
-	window_spec = Window.partitionBy("state").orderBy(desc("score"))
-	ranked_df = df.withColumn("rank", rank().over(window_spec))
-
->> Fill the mean salary value where salary is Null.
-data = [("Alice", 50000), ("Bob", None), ("Charlie", 60000), ("David", None)]
-df = spark.createDataFrame(data, ["name", "salary"])
-
-	avg_salary = df.select(mean(col('salary'))).collect()[0][0]
-	df.fillna({'salary': avg_salary}).show()
-
->> What are the different ways to remove duplicate records in PySpark?
-	1. distinct_df = df.distinct()
-	2. drop_duplicates_df = df.dropDuplicates(["name", 'id'])
-	3. window_spec = Window.partitionBy("name").orderBy("id")
-	   df_with_row_num = df.withColumn("row_num", row_number().over(window_spec))
-	   filtered_df = df_with_row_num.filter(col("row_num") == 1).drop("row_num")
-	4. grouped_df = df.groupBy("name").agg(max("id").alias("max_id"))
-
->> Explain `groupBy()`, `agg()`, and `pivot()` functions with an example.
-	pivot_df = df.groupBy("name").pivot("department").sum("salary")
-
->>
-𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧
-You need to remove the duplicate rows based on the composite key (customer_id, order_id) and retain only the row with the latest order_date for each combination of customer_id and order_id.
-𝐬𝐜𝐡𝐞𝐦𝐚 
-data = [ (101, 1001, "2025-01-15", 500.00), (102, 1002, "2025-01-14", 300.00), (101, 1001, "2025-01-17", 550.00), (103, 1003, "2025-01-16", 450.00), 
-(102, 1002, "2025-01-18", 320.00), (103, 1003, "2025-01-19", 460.00) ] 
-schema = ["customer_id", "order_id", "order_date", "total_amount"] 
-
-	window_spec = Window.partitionBy("customer_id", "order_id").orderBy(desc("order_date"))
-	df = df.withColumn("row_number", row_number().over(window_spec))
-	df.filter(col("row_number") == 1).drop("row_number").orderBy("customer_id").show()
-
->>
-Hide Credit card number: Accept 16 digit credit card number from user and display only last 4 characters of card number.
-data = [(1,'Rahul',1234567891234567),(2,'Raj',1234567892345678),(3,'Priya',1234567893456789),(3,'Murti',1234567890123456)]
-schema = "id int, name string, card_no long"
-
-	from pyspark.sql.functions import udf, StringType
-	
-	def maskfun(num):
-	  return '************' + str(num)[-4:]
-	
-	maskfun_udf = udf(maskfun, StringType())
-	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
-
->> 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧
-You are working as a Data Engineer for a company. The sales team has provided you with a dataset containing sales information. However, the data has some missing values that need to be addressed before processing. You are required to perform the following tasks:
-1. Load the following sample dataset into a PySpark DataFrame:
-2. Perform the following operations:
-a. Replace all NULL values in the Quantity column with 0.
-b. Replace all NULL values in the Price column with the average price of the existing data.
-c. Drop rows where the Product column is NULL.
-d. Fill missing Sales_Date with a default value of '2025-01-01'.
-e. Drop rows where all columns are NULL.
-𝐬𝐜𝐡𝐞𝐦𝐚 
-data = [ (1, "Laptop", 10, 50000, "North", "2025-01-01"), (2, "Mobile", None, 15000, "South", None), (3, "Tablet", 20, None, "West", "2025-01-03"), (4, "Desktop", 15, 30000, None, "2025-01-04"), (5, None, None, None, "East", "2025-01-05") ] columns = ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
-
-	from pyspark.sql.functions import *
-	avg_value = df.select(avg('Price')).collect()[0][0]
-	df = df.na.fill({'Quantity':0, 'Price':avg_value, 'Sales_Date':'2025-01-01'})
-	df = df.na.drop(subset=['Product'])
-	df = df.na.drop(how='all')
-	df.show()
-
-
-
 ======================================================================================================================================================
 >> sPARK query plan:
 	code syntax is correct or not --> unresolved logical plan --> catalog --> logical plan --> optimized logical plan (filter pushdown & selct req col)--> 
@@ -727,6 +201,523 @@ spark = SparkSession.builder.appName('myapp').getOrCreate()
 -- dfjf = dfj.select('customer_id', 'customer_unique_id', col('customer_zip_code_prefix').cast('string'), 'customer_city', 'customer_state', 'order_id', 				'order_status', 'order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date', 'order_delivered_customer_date', 					'order_estimated_delivery_date')
 -- dfj.write.mode('overwrite').format('parquet').save('gs://surdatabuk/data/olist_op/')
 -- dfjf.write.mode('append').format('bigquery').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-				h5.surtest11.customers_orders').save()
+===================================================================================================================================================
+>> Google Cloud Dataproc is a managed service that runs Apache Spark (and other frameworks),
+>> enable API, create dataproc cluster on vm/gke.
+>> validate ssh connectivity to master node vm of dataproc cluster: 
+   -- gcloud compute ssh --zone "us-central1-a"    "dataprocclu1-m" --project "possible-dream-433814-b4"
+   -- ssh -i C:\Users\surmacha\.ssh\google_compute_engine surmacha@35.184.234.232
+   -- setup vs code remote window for dataproc vm of master node - create below config file in .ssh - select remote window button on vs code - host in search 
+   Host Sur-DP-Cluster-VSC
+    HostName 35.238.68.160
+    IdentityFile C:\Users\surmacha\.ssh\google_compute_engine
+    User surmacha
+>> validate pyspark exit() / spark-shell (spark scala) :quit / spark-sql exit; / CLI in dataproc cluster.
+>> execute gcs script 
+   ---> run pyspark script on master node of VM 
+	gcloud compute ssh --zone "us-central1-c" "cluster-1c1f-m" --project "elegant-circle-454709-h5"
+	spark-submit gs://surdatabuk/scripts/pysp1.py
+   ---> submit pyspark job using UI 
+   ---> gcloud dataproc jobs submit pyspark gs://surdatabuk/scripts/pysp1.py --cluster=cluster-1c1f --region=us-central1 
+
+>> 
+pyspark script:
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+spark = SparkSession.builder.appName('surapp').getOrCreate()
+dfo=spark.read.csv('gs://surdatabuk/data/olist/olist_orders_dataset.csv', header=True, inferSchema=True)
+dfc = spark.read.csv('gs://surdatabuk/data/olist/olist_customers_dataset.csv', header=True, inferSchema=True)
+dfj = dfc.join(dfo, dfc['customer_id']==dfo['customer_id'], 'inner').drop(dfo['customer_id'])
+dfjf = dfj.select('customer_id', 'customer_unique_id', col('customer_zip_code_prefix').cast('string'), 'customer_city', 'customer_state', 'order_id', 'order_status', 'order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date', 'order_delivered_customer_date', 'order_estimated_delivery_date')
+dfjf.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
+dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-h5.surtest11.customers_orders').save()
+
+scala script:
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
+val spark = SparkSession.builder().appName("surapp").getOrCreate()
+val dfo = spark.read.option("header", "true").option("inferSchema", "true").csv("gs://surdatabuk/data/olist/olist_orders_dataset.csv")
+val dfc = spark.read.option("header", "true").option("inferSchema", "true").csv("gs://surdatabuk/data/olist/olist_customers_dataset.csv")
+val dfj = dfc.join(dfo, dfc("customer_id") === dfo("customer_id"), "inner").drop(dfo("customer_id"))
+val dfjf = dfj.select(
+  col("customer_id"),
+  col("customer_unique_id"),
+  col("customer_zip_code_prefix").cast("string"),
+  col("customer_city"),
+  col("customer_state"),
+  col("order_id"),
+  col("order_status"),
+  col("order_purchase_timestamp"),
+  col("order_approved_at"),
+  col("order_delivered_carrier_date"),
+  col("order_delivered_customer_date"),
+  col("order_estimated_delivery_date")
+)
+dfjf.write.format("parquet").mode("overwrite").save("gs://surdatabuk/data/olist_op/")
+dfjf.write.format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.customers_orders").mode("overwrite").save()
+
+spark-sql script:
+
+
+==================================================================================================================================================================
+commands:
+
+PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit: 
+
+hdfs dfs -ls -R /public/retail_db
+hdfs dfs -mkdir /path/to/new_directory
+hdfs dfs -copyFromLocal /local/path/to/file /hdfs/path/to/destination 		or
+hdfs dfs -copyToLocal /hdfs/path/to/file /local/path/to/destination      or
+hdfs dfs -put data/retail_db /public (local to hdfs -put)
+hdfs dfs -cp gs://surretail/retail_db /public/retail_db (hdfs to hdfs, gcs to hdfs, hdfs to gcs, gcs to gcs -cp)
+hdfs dfs -mv /path/to/source /path/to/destination
+hdfs dfs -rm -R -skipTrash /public/retail_db
+hdfs dfs -cat /path/to/file
+hdfs dfsadmin -report
+hdfs dfs -df -h
+hdfs dfs -du -s -h /path/to/directory
+hdfs dfs -chmod 755 /path/to/file_or_directory
+   
+    ==>>
+    df = spark.createDataFrame(data, columns)
+    df_from_pandas = spark.createDataFrame(pandas_df/data_dict)
+    df_empty = spark.createDataFrame([], columns)
+    df_csv = spark.read.csv("/path/to/file.csv", header=True, inferSchema=True)
+    from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DoubleType
+    custom_schema = StructType([StructField("id", IntegerType(), True), StructField("name", StringType(), True), StructField("age", IntegerType(), True)])
+    custom_schema = ''' ID Integer, Name String, Age Integer, Salary Double '''
+    df = spark.read.csv("your_file.csv", schema=custom_schema, header=True)
+    file_paths = ["file1.csv", "file2.csv", "file3.csv"] 
+    df = spark.read.csv(file_paths, header=True, inferSchema=True, sep=',')
+    df = spark.read.option("modifiedBefore", "2022-02-27T05:30:00").json("file:///path_to_file/data_files/")
+    ==>> join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
+         join_df = df1.crossjoin(df2)
+         broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
+    ==>> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  &|   /
+    ==>> grouped_df = df.groupBy('department').agg(max("sal"))   		
+    ==>> having_df = df.filter(grouped_df['count'] > 1)
+    ==>> selected_df = df.select("customer_id", col("Name").alias('EmployeeName'), column("last_name"), df.email, df["city"] )
+                    = df.selectExpr("id*2 as nid", "name as nname").show()
+    ==>> sorted_df = df.orderBy(asc('department'), col("country).desc())  / df11.orderBy(asc_nulls_last('value')).show() /
+    ==>> df_limit = df.limit(10)
+    ==>> df.show(n=3, truncate=25, vertical=True) / print(df.collect()) / print(df.count()) / df.printSchema() / display(df) / print(df1.columns) 
+
+
+	==>> union tables: union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/   -->> positional col match / schema must be identical
+	     union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col match by name / schema can differ / missing col handle with null values
+	     distanct values/drop duplicates ----> df.select('cn1', 'cn2').distinct() ----> df.dropDuplicates(['cn1', 'cn2'])
+	==>> 
+	add new column ---> newdf = df.withColumn("NewColumn", lit(1))
+	drop columns -->> df2 = df.drop("Country", "Region")
+	column name change -->> new_df = df.withColumnRenamed("oldColumnName", "newColumnName")
+	column type change --> df = df.withColumn("Phone", col("Phone").cast("string"))
+	==>> case sensitive - df.select(initcap(col("country")))  -->> initcap / lower / upper
+	==>> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
+			  --> df.select(concat_ws(' | ', col("Region"), col("Country")))
+	==>> result_df = df.select( col("EmployeeID"), ltrim(col("Name")), lpad(col("Name"), 10, "X"))  -->> rtrim / trim / rpad
+	==>> create date, timestamp columns in df, add/subtract days, 
+		withColumn("date", to_date(df["date_string"], "yyyy-MM-dd"))
+		withColumn("month", month(df["date"]))
+		withColumn("truncated_timestamp", date_trunc("hour", df["timestamp"]))
+		datediff(df["end_date"], df["start_date"])
+		withColumn("months_diff", months_between(df["end_date"], df["start_date"]))  
+		withColumn("timestamp_diff", unix_timestamp(df["end_timestamp"]) - unix_timestamp(df["start_timestamp"]))      
+	==>>    df.dropna("All" subset=['cn1", "cn2"]) 
+		df.fillna("N/A" subset=['cn1", "cn2"]) / df.na.fill({'cn1':'val1', 'cn2': 'val2'}) / is null('CN') 
+		df_replaced_multiple = df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset="fruit")
+	==>> coalesce('cn1', 'cn2','cn3') - return first non-null value from list of columns
+	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0)))
+	==>> agg functions --> df.select(sum('CN')).show()  ------> note: ignore null values
+	     grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show()
+		sum , sumDistinct, min, max, avg, count, countDistanct, collect_list, collect_set first, last, stddev, variance 
+	==>> when&otherwise -->> df = ( df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult")).withColumn("income_bracket", when(df.salary < 4000, "Low") 					.when((df.salary >= 4000) & (df.salary <= 4500), "Medium") .otherwise("High")) )
+	==>>cast data types -->> df = df.withColumn("column_name", col("column_name").cast("target_data_type"))
+			    -->> cast_expr = [col("column1_name").cast("target_data_type1"), col("column2_name").cast("target_data_type2")] / df = df.select(*cast_expr)
+	==>> window functions -->> window_spec = Window.partitionBy("category", "sub_category").orderBy(asc("timestamp"), col("score").desc()) \
+                    				.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
+				   window_spec = Window.partitionBy("category", "sub_category").orderBy(col("timestamp"), col("score")).rowsBetween(-2, 3)
+				   df = df.withColumn("row_number", row_number().over(window_spec)) 
+   		max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() / lag(cn) / lead(cn) / 
+		first_value(cn) / last_value(cn) / nth_value(cn, n) /
+	==>> splitng column -->> df.withColumn('nc', split(col('name'), '[ ,]'))   -->> [0] or .getItem(0), explode, 
+	     Array length: df.withColumn('nc', size(split(col('name'), '[ ,]')))
+	     word in array or not: df.withColumn('nc', array_contains(split(col('name'), '[ ,]'), 'macha'))
+	     indesxing: df.withColumn('nc', split(col('name'), '[ ,]')[0])  /  df.withColumn('nc', split(col('name'), '[ ,]').getItem(0)).show()
+	     explode/explode_outer: df.withColumn('nc', explode(split(col('name'), '[ ,]')))  /  df.withColumn('nc', explode_outer(split(col('name'), '[ ,]')))
+	     Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
+	==>> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
+	     unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"
+ 		      df1.selectExpr("Month", unpivot_exp).show()
+	==> 
+		regexp_extract: df.withColumn("file_name", regexp_extract("file_path", r'^(.*)_\d{14}\.csv$', 1))
+		regexp_replace: df.withColumn("new_file_path", regexp_replace("file_path", r'_\d{14}\.csv$', '_TIMESTAMP.csv'))
+		regexp_contain: df.withColumn("contains_digits", when(regexp_extract(col("text"), r'\d', 0) != "", True).otherwise(False))
+		regexp_substr: df = df.withColumn("first_digits", regexp_extract("text", r'\d+', 0))
+
+============================================================================================================================================================
+
+Pyspark Interview QA:
+
+1. What is the difference between cache() and persist() in PySpark?
+	when df is frequently used, we do caching df for better performance
+	cache(): cache() uses the default storage level, which is MEMORY_ONLY. 		--> df.cache()
+	persist(): persist() allows you to specify different storage levels, such as MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY, etc.
+	from pyspark import StorageLevel /  df.persist(StorageLevel.MEMORY_AND_DISK)
+
+2. How does Lazy Evaluation work in PySpark?
+	the execution of transformations on RDDs (Resilient Distributed Datasets) or DataFrames is deferred until an action is performed. 
+	This allows PySpark to optimize the execution plan and improve performance.
+
+3. What are wide and narrow transformations in PySpark?
+	Narrow transformations doesnt involeve shuffeling (one input partition contributes to only one output partition). Examples filter, union, select, add column
+	Wide transformations involve shuffling data across the network, (input partitions contribute to multiple output partitions). join, distinct, groupBY
+
+4. Explain shuffle operations in PySpark and their impact on performance.
+	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
+	suppose if have suffle partions lesser than cluster capacity --> slow completion time, underutilization of cluster
+	if data per shuffle partion is too large --> tune by increasing num of partitions required
+	if data per shuffle partition is very less --> tune by decewasing no of SP, find size of SP based on available cores.
+	default shuffile partitions is 200 / data size per shuffle partition b/w 1-200 mb
+	# Set the number of shuffle partitions --> spark.conf.set("spark.sql.shuffle.partitions", 100)
+	# Verify the setting --> print(spark.conf.get("spark.sql.shuffle.partitions"))
+
+5. what is data skewness and salting technique? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
+   skewed partition : uneven data distribution
+	job is taking time, unutilization of resources, oom or data spill (write results to disk -- very costly)
+	fix --> repartition, salting, AQE, broadcasting
+   df.repartition(10)
+   df.rdd.getNumPartitions()
+   df.select(spark_partition_id().alias("partid")).groupBy("partid").count()
+
+6. What is broadcast join, and when should we use it?
+	type of join operation where a small dataset is broadcasted to all worker nodes in the cluster. 
+	This allows the join to be performed locally on each node, significantly improving performance by reducing the amount of data shuffled across the network.
+
+7.      select: Ideal for column selection.
+	selectExpr: Best for applying SQL expressions and transformations.
+
+8. What is PySpark (python api let u use spark with python), and how is it different from Apache Spark (big data engine).
+
+9. How do you initialize a SparkSession in PySpark?
+
+10. What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
+    similarities in 3 apis : foult tolerant, distributed, in-memory computation, immutable, lazy evaluation, internally processing as rdd for all 3 codes
+    RDD: low-level api / no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
+    DF: high-level api / catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
+    DS: high-level api / optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
+
+11. What is the difference between map() and flatMap() inPySpark?
+    map() when you want to apply a function that returns a single value for each input element
+    flatMap() when the function can return multiple values for each input element
+
+12. How do you handle missing values in PySpark?
+	df_replaced = df.replace(to_replace=4, value=0)
+	fillna / dropna --> see above
+	    
+13. What are transformations (create new df from existing df) and actions (return results of df) in PySpark? Giveexamples.
+
+14. What is the significance of partitioning and bucketing in PySpark, and how does it affect the performance of data processing tasks?
+	Partitioning: Divides data based on column values, creating separate directories for each partition. Best for filtering queries.
+	df.write.partitionBy("country", "year").parquet("output/partitioned_sales")
+	Bucketing: Divides data into a fixed number of buckets based on the hash of a column. Best for join queries.
+	df.write.bucketBy(4, "user_id").saveAsTable("bucketed_sales")
+
+15. How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided (memory constraints, performance issues) ?
+	When you call .collect(), PySpark gathers all the partitions of the DataFrame or RDD and brings them to the driver node. This means that the data is no longer 		distributed across the cluster but is instead stored in the memory of the driver program
+
+16. What is the difference between createOrReplaceTempView and createGlobalTempView in DataFrames?
+   Scope:
+   createOrReplaceTempView creates a view local to the SparkSession.
+   createGlobalTempView creates a view accessible across all SparkSessions within the same application.
+   Lifetime:
+   createOrReplaceTempView views are dropped when the SparkSession ends.
+   createGlobalTempView views persist until the Spark application terminates.
+
+17. How to set the partitions in pyspark?
+   Reading Data: The option("numPartitions", 10) sets the number of partitions when loading the data.
+   repartition Method: This method increases or decreases the number of partitions and shuffles the data.
+   df1 = df.repartition(3)
+   print(f"Number of partitions  repartitioning: {df1.rdd.getNumPartitions()}")
+   coalesce Method: This method reduces the number of partitions without a full shuffle, which is more efficient for reducing partitions.
+   df_coalesced = df.coalesce(2)
+   print(f"Number of partitions after coalescing: {df_coalesced.rdd.getNumPartitions()}")
+
+18. Default file format in Spark (is Parquet), Why Parquet?
+      Efficient Storage: Columnar format allows for better compression and encoding.
+      Performance: Optimized for query performance, especially for read-heavy operations.
+      Compatibility: Widely supported across various big data tools and frameworks.
+
+19. what are the optimization techniques in pyspark?
+	Use DataFrame/Dataset over RDD
+	use col format files 
+	filter data erly
+	Cache Data or persist data
+	use broadcast to Optimize Joins
+	Optimize shuffle Partitions: Repartition / Coalesce
+	enable AQE, salting
+	partitioning & bucketing for frequently accessed based on specific column
+	Avoid User Defined Functions (UDFs)
+
+20. Difference between sortby and orderby?
+   sortBy is used with RDDs.
+   orderBy is used with DataFrames.
+
+21. what is the default block size (128 MB) in hdfs and how to change it?
+   Edit the hdfs-site.xml File:
+
+23. Explain about out of memory issue in spark?
+   Causes of Out of Memory Issues: 
+   Driver Memory:
+   Collect Operations: Using collect() to gather large datasets to the driver can cause memory overflow. The driver tries to merge all results into a single object, which      might be too large to fit into the driver's memory1.
+   Large Broadcast Variables: Broadcasting large variables can consume significant memory on the driver.
+   Executor Memory:
+   Task Execution: Executors run tasks and store intermediate data. If the tasks require more memory than allocated, it can lead to out of memory errors1.
+   Shuffling Data: During operations like groupBy or join, data shuffling can cause memory issues if the data size exceeds the executor's memory capacity2.
+   Solutions to Out of Memory Issues
+   Increase Driver Memory: Adjust the driver memory settings using spark.driver.memory to allocate more memory to the driver2.
+   Limit Result Size: Use spark.driver.maxResultSize to limit the size of results collected to the driver1.
+   Increase Executor Memory: Configure executor memory using spark.executor.memory to allocate sufficient memory for task execution2.
+   Memory Overhead: Set spark.executor.memoryOverhead to account for additional memory required for JVM overhead3.
+   Repartition Data: Repartition large datasets to reduce the size of data processed by each executor1.
+
+5. What is difference between spark session and spark context?
+	SparkContext: Basic functionality for RDD operations. Requires separate contexts for SQL, streaming, etc. (used <2.0 spark version)
+	SparkSession: Provides a unified interface for DataFrame and Dataset APIs, SQL queries, and more. (used >2.0 spark version)
+
+20.
+Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query performance by pruning partitions dynamically based on runtime data. This is particularly useful for queries involving joins where one table is significantly smaller than the other. DPP helps reduce the amount of data scanned, thereby improving query efficiency.
+16. problems that partition solves?
+	fast/esay access, parallesium & resource utilization
+
+17. how to decide partiTIon on which column --> based on column cordinality/unique (not high & low / rec low to med) & frequent filter criteria 
+
+18. partitioning
+folder: df.write.partitionBy("date").mode("overwrite").parquet("/tmp/folder_partitioned_data")
+file: repartitioned_df.write.mode("overwrite").parquet("/tmp/file_partitioned_data")
+combine: repartitioned_df = df.repartition(3).write.partitionBy("date").mode("overwrite").parquet("/tmp/combined_partitioned_data")
+
+21. data cashing in spark
+	cache()
+	persist(storageLevel=StorageLevel.MEMORY_ONLY) --> DISK_ONLY, MEMORY_AND_DISK, MEMORY_ONLY_SER, MEMORY_AND_DISK_SER, OFF_HEAP, MEMORY_ONLY_2
+	persist(StorageLevel(useDisk, useMemory, useOffHeap, deserialized, replication)) --> 	persist(StorageLevel(True, True, False, False, 1)) 
+	for disk only ser, for memory ser (compact in size, less memory, more cpu for access) or deser (consumes more memory but fast access)
+	how to uncahe --> df.unpersist()
+	when cache req: access large df multiple times across spark actions
+	when not cache: not fit in memory, not reusing frequently, df is small
+27. What are the advantages of using PySpark over Pandas for big data processing?
+	distibuted, foult-tolerant, performance, api&libraries, intergate with big data tools.
+
+22. 
+You are given a nested JSON file named sample_data.json stored in an S3 bucket at s3://your-bucket/sample_data.json. The JSON file contains details about employees, including their names, departments, and address details (nested fields).
+Write a PySpark program to:
+Load the JSON file into a DataFrame.
+Flatten the nested structure to create a tabular format.
+Write the resulting DataFrame as a Parquet file to the output path s3://your-bucket/output/.
+
+Explanation:
+Step 1: The JSON file is loaded into a DataFrame using spark.read.json().
+Step 2: The select() method is used to extract and rename nested fields (address.city and address.state) to create a flattened structure.
+Step 3: The resulting DataFrame is written as a Parquet file using write.parquet().
+
+
+===================================================================================================================================================
+>> Find the top 3 highest-paid employees from each department.
+   data = [(1, "Amit", "IT", 90000),
+
+>> Write a PySpark code to remove duplicate records based on a specific column.
+   data = [(101, "Mumbai", "Maharashtra"), ]
+
+>> Write a PySpark query to calculate the moving average of sales over the last 3 months.
+    window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
+    df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
+
+>> What is SparkSQL, and how do you perform SQL operations on DataFrames?
+	SparkSQL is a module in Apache Spark that allows you to run SQL queries on large datasets.
+   	Registering the DataFrame as a Temporary View: df.createOrReplaceTempView("people")
+   	Running SQL Queries: spark.sql("SELECT Name, Age FROM people WHERE Age > 30").show()
+
+>> unpivot data
+cricket_data = [("Virat Kohli", 85, 100, 75),
+ ("Steve Smith", 90, 105, 80),
+ ("Kane Williamson", 88, 95, 70)]
+df = spark.createDataFrame(cricket_data, ["Player", "Match1", "Match2", "Match3"])
+
+	unpivot_expr = "stack(3, 'Match1', Match1, 'Match2', Match2, 'Match3', Match3) as (Match, Score)"
+	unpivot_df = df.select("Player", expr(unpivot_expr))
+
+>> what is collect list and collect set and when do we use it?
+   result = df.groupBy("name").agg(collect_list("value").alias("values_list")) - allows duplicates in list
+   result = df.groupBy("name").agg(collect_set("value").alias("values_set")) - no duplicates in list
+
+>> Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
+     +-------------+----------+
+     | City    | Population|
+     +-------------+----------+
+    top_5_cities = df.orderBy(col("Population").desc()).limit(5)
+
+>> Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
+    avg_salary_by_dept = df.groupBy("Department").agg(avg("Salary").alias("AverageSalary"))
+
+>> Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
+     +------------+----------------+-------------------+
+     | customer_id| transaction_id | transaction_date |
+     +------------+----------------+-------------------+
+    df_no_duplicates = df.dropDuplicates(["customer_id", "transaction_date"])
+
+>> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
+    output 
+   +---+---------------+----------+---------+
+   | ID| Name|First_Name|Last_Name|
+   +---+---------------+----------+---------+
+   | 1|Sagar-Prajapati| Sagar|Prajapati|
+   | 3| John Cena| John| Cena|
+   +---+---------------+----------+---------+
+	df = df.withColumn("fn", split(df.Name, "[- ]").getItem(0)).withColumn("ln", split(df.Name, "[- ]")[1])
+
+>> Given a DataFrame, split the data into two columns (Even, Odd) where:
+    Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
+
+>> Create a DataFrame with two columns:
+    Column 1: Default String
+    Column 2: Default Integer
+
+>> Word count program in pyspark
+    df1 = df.select(explode(split(df["name"], " ")).alias("word")).groupBy("word").agg(count("*").alias("count"))
+
+>> Write a PySpark query to count the number of null values in each column of a DataFrame.
+	df1.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
+
+>> Write a PySpark query to replace null values in a specific column with the previous non-null value.
+	window_spec = Window.orderBy("id").rowsBetween(Window.unboundedPreceding, Window.currentRow)
+	df.withColumn("filled_col", last('value', ignorenulls=True).over(window_spec)).show()
+
+>> reading file into df / write df into target
+option("recursiveFileLookup", "true")
+option("compression", "gzip")
+option("modifiedBefore", "2025-04-19T20:58:57") / option("modifiedAfter", "2025-04-19T20:58:57")
+option('header', True)
+option("mode", "PERMISSIVE").schema(cust_schema).option("columnNameOfCorruptRecord", "_corrupt_record")  - return null / 
+option("mode", DROPMALFORMED/FAILFAST").schema(cust_schema) - remove wrong records / throw error if any incorrect records are there
+
+df = spark.read.csv("/tmp/compressed_csv_data", sep="|", linesep="/r or /n")
+df.write.mode("overwrite").parquet("/tmp/compressed_data", sep="|", linesep="/r or /n")
+df1.write.mode("overwrite").format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt3").save()
+
+>>
+Given two datasets, products and sales, write a PySpark program to identify products that have never been sold. Assume the schema of products is (product_id, product_name) and the schema of sales is (sale_id, product_id, sale_date).
+products = spark.createDataFrame([ (1, "Laptop"), (2, "Tablet"), (3, "Smartphone"), (4, "Monitor"), (5, "Keyboard") ], ["product_id", "product_name"]) 
+sales = spark.createDataFrame([ (101, 1, "2025-01-01"), (102, 3, "2025-01-02"), (103, 5, "2025-01-03") ], ["sale_id", "product_id", "sale_date"]) 
+
+	dfj = products.join(sales, on='product_id', how='left')
+	dfj.filter(dfj.sale_id.isNull()).select('product_id', 'product_name').show()
+
+>>
+You are given a dataset of employees in an Indian company with columns: `emp_id`, `name`, `department`, `salary`, and `city`. Write a PySpark program to find the total salary paid in each department.
+Sample Data:
+emp_id, name, department, salary, city
+101, Rajesh, IT, 75000, Bangalore
+Expected Output:
+IT, 233000
+
+>> Write a pyspark program to count number of products in each category 
+# based on its price into three categories below. 
+# Display the output in descending order of no of products.
+# 1- "Low Price" for products with a price less than 100
+# 2- "Medium Price" for products with a price between 100 and 500 (inclusive)
+# 3- "High Price" for products with a price greater than 500.
+
+products_data = [
+ (1, 'Laptop', 800),
+ (2, 'Smartphone', 600)]
+
+
+>> Handling Null Values
+You are given a dataset containing customer transactions in an Indian e-commerce platform with columns: `cust_id`, `cust_name`, `city`, `purchase_amount`, and `product_category`. Some records have missing `purchase_amount`. Write a PySpark program to fill missing `purchase_amount` values with the average purchase amount of that product category.
+
+Sample Data:
+cust_id, cust_name, city, purchase_amount, product_category
+201, Aman, Delhi, 1500, Electronics
+202, Kiran, Mumbai, , Fashion
+
+	df_avg_pa = df.groupBy('product_category').agg(avg('purchase_amount').alias('avg_purchase_amount'))
+	df_join = df.join(df_avg_pa, on='product_category', how='left')
+	df_join.withColumn('purchase_amount', when(col('purchase_amount').isNull(), col('avg_purchase_amount')).otherwise(col('purchase_amount')))
+	df_final = df_join.drop('purchase_amount').show()
+
+>> 
+You have a dataset of students from different Indian states with columns: `student_id`, `student_name`, `state`, `score`. 
+Write a PySpark program to rank students within each state based on their scores in descending order.
+student_id, student_name, state, score
+301, Rohit, Maharashtra, 85
+Expected Output:
+Maharashtra, Amit, 90, Rank 1
+	window_spec = Window.partitionBy("state").orderBy(desc("score"))
+	ranked_df = df.withColumn("rank", rank().over(window_spec))
+
+>> Fill the mean salary value where salary is Null.
+data = [("Alice", 50000), ("Bob", None), ("Charlie", 60000), ("David", None)]
+df = spark.createDataFrame(data, ["name", "salary"])
+
+	avg_salary = df.select(mean(col('salary'))).collect()[0][0]
+	df.fillna({'salary': avg_salary}).show()
+
+>> What are the different ways to remove duplicate records in PySpark?
+	1. distinct_df = df.distinct()
+	2. drop_duplicates_df = df.dropDuplicates(["name", 'id'])
+	3. window_spec = Window.partitionBy("name").orderBy("id")
+	   df_with_row_num = df.withColumn("row_num", row_number().over(window_spec))
+	   filtered_df = df_with_row_num.filter(col("row_num") == 1).drop("row_num")
+	4. grouped_df = df.groupBy("name").agg(max("id").alias("max_id"))
+
+>> Explain `groupBy()`, `agg()`, and `pivot()` functions with an example.
+	pivot_df = df.groupBy("name").pivot("department").sum("salary")
+
+>>
+𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧
+You need to remove the duplicate rows based on the composite key (customer_id, order_id) and retain only the row with the latest order_date for each combination of customer_id and order_id.
+𝐬𝐜𝐡𝐞𝐦𝐚 
+data = [ (101, 1001, "2025-01-15", 500.00), (102, 1002, "2025-01-14", 300.00), (101, 1001, "2025-01-17", 550.00), (103, 1003, "2025-01-16", 450.00), 
+(102, 1002, "2025-01-18", 320.00), (103, 1003, "2025-01-19", 460.00) ] 
+schema = ["customer_id", "order_id", "order_date", "total_amount"] 
+
+	window_spec = Window.partitionBy("customer_id", "order_id").orderBy(desc("order_date"))
+	df = df.withColumn("row_number", row_number().over(window_spec))
+	df.filter(col("row_number") == 1).drop("row_number").orderBy("customer_id").show()
+
+>>
+Hide Credit card number: Accept 16 digit credit card number from user and display only last 4 characters of card number.
+data = [(1,'Rahul',1234567891234567),(2,'Raj',1234567892345678),(3,'Priya',1234567893456789),(3,'Murti',1234567890123456)]
+schema = "id int, name string, card_no long"
+
+	from pyspark.sql.functions import udf, StringType
+	
+	def maskfun(num):
+	  return '************' + str(num)[-4:]
+	
+	maskfun_udf = udf(maskfun, StringType())
+	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
+
+>> 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧
+You are working as a Data Engineer for a company. The sales team has provided you with a dataset containing sales information. However, the data has some missing values that need to be addressed before processing. You are required to perform the following tasks:
+1. Load the following sample dataset into a PySpark DataFrame:
+2. Perform the following operations:
+a. Replace all NULL values in the Quantity column with 0.
+b. Replace all NULL values in the Price column with the average price of the existing data.
+c. Drop rows where the Product column is NULL.
+d. Fill missing Sales_Date with a default value of '2025-01-01'.
+e. Drop rows where all columns are NULL.
+𝐬𝐜𝐡𝐞𝐦𝐚 
+data = [ (1, "Laptop", 10, 50000, "North", "2025-01-01"), (2, "Mobile", None, 15000, "South", None), (3, "Tablet", 20, None, "West", "2025-01-03"), (4, "Desktop", 15, 30000, None, "2025-01-04"), (5, None, None, None, "East", "2025-01-05") ] columns = ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
+
+	from pyspark.sql.functions import *
+	avg_value = df.select(avg('Price')).collect()[0][0]
+	df = df.na.fill({'Quantity':0, 'Price':avg_value, 'Sales_Date':'2025-01-01'})
+	df = df.na.drop(subset=['Product'])
+	df = df.na.drop(how='all')
+	df.show()
+
+
+
 
 ==========================================================================================================================================
 HiveQL: 
