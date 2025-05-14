@@ -187,12 +187,12 @@ FORMAT_DATE('%B %d, %Y', sale_date)
 
 =============================================================================================================================================
 
-1. To find the department names where no employees are found, you can use the following SQL query:
+>> To find the department names where no employees are found, you can use the following SQL query:
    emp -->> employee_id	employee_name	dept_id
    Department Table -->> dept_id	dept_name
    SELECT d.dept_name FROM dept d LEFT JOIN employee e ON d.dept_id = e.dept_id WHERE e.dept_id IS NULL;
 
-2. Given two tables, find the count of records for Left Outer Join and Inner Join:
+>> Given two tables, find the count of records for Left Outer Join and Inner Join:
 Table A: Table B:
 1 1
 1 1
@@ -200,7 +200,7 @@ Table A: Table B:
 1 
 Ans. 12 & 12
 
-3. Give the output for DENSE_RANK() and RANK() functions for the below dataset:
+>> Give the output for DENSE_RANK() and RANK() functions for the below dataset:
 Nums 
 85 
 85 
@@ -209,7 +209,7 @@ Nums
 75 
 70
 
-4. Given a table with column 'Country', select data in the below sequence:
+>> Given a table with column 'Country', select data in the below sequence:
 Table: Matches
 Country 
 India 
