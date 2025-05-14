@@ -756,7 +756,6 @@ beeline : uses jdbc for remote connection / support auth / multiple concurrant s
 	!connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default
 	vi etc/hive/conf/hive-site.xml (for hive properties, we got username: hive and password: Pw1+86Xg4CCq from her as well)
 	
-
 >> (inside terminal)
 	set hive.execution.engine; / set hive.execution.engine=tez/spark/mr;
 	ctrl + l  --> to clear
