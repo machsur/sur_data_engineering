@@ -22,6 +22,13 @@ Concepts:
 >> Spark ecosystem: read data - processing using spark framework in the form of API (RDD-low level api, DF, DS - high level api) with the help of resource manage to run on 	cluster - using programming we can work on that
 >> spark session is for high level api, sparkcontext is for low level api
 >> word count programme
+>> ways to run spark - dataproc, dtabricks, colab
+>> transformation vs action | why transformation is lazy
+>> spark- read data and partitioning 
+	rdd.getNumPartitions()
+	spark.sparkContext.defaultMinPartitions (2) 
+	spark.sparkContext.defaultParallelism (4) 
+	spark.sql.files.maxPartitionBytes (128mb)
 
 
 
