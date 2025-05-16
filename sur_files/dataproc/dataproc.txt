@@ -25,11 +25,6 @@ Concepts:
 >> ways to run spark - dataproc, dtabricks, colab
 >> transformation vs action | why transformation is lazy
 >> spark- read data and partitioning 
-	rdd.getNumPartitions()
-	spark.sparkContext.defaultMinPartitions (2) 
-	spark.sparkContext.defaultParallelism (4) 
-	spark.sql.files.maxPartitionBytes (128mb)
-
 
 
 >> Haddop Yarn Cluster 
@@ -365,21 +360,15 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 
 Pyspark Interview QA:
 
-1. What is the difference between cache() and persist() in PySpark?
-	when df is frequently used, we do caching df for better performance
-	cache(): cache() uses the default storage level, which is MEMORY_ONLY. 		--> df.cache()
-	persist(): persist() allows you to specify different storage levels, such as MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY, etc.
-	from pyspark import StorageLevel /  df.persist(StorageLevel.MEMORY_AND_DISK)
-
-2. How does Lazy Evaluation work in PySpark?
+>> How does Lazy Evaluation work in PySpark?
 	the execution of transformations on RDDs (Resilient Distributed Datasets) or DataFrames is deferred until an action is performed. 
 	This allows PySpark to optimize the execution plan and improve performance.
 
-3. What are wide and narrow transformations in PySpark?
+>> What are wide and narrow transformations in PySpark?
 	Narrow transformations doesnt involeve shuffeling (one input partition contributes to only one output partition). Examples filter, union, select, add column
 	Wide transformations involve shuffling data across the network, (input partitions contribute to multiple output partitions). join, distinct, groupBY
 
-4. Explain shuffle operations in PySpark and their impact on performance.
+>> Explain shuffle operations in PySpark and their impact on performance.
 	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
 	suppose if have suffle partions lesser than cluster capacity --> slow completion time, underutilization of cluster
 	if data per shuffle partion is too large --> tune by increasing num of partitions required
@@ -388,71 +377,64 @@ Pyspark Interview QA:
 	# Set the number of shuffle partitions --> spark.conf.set("spark.sql.shuffle.partitions", 100)
 	# Verify the setting --> print(spark.conf.get("spark.sql.shuffle.partitions"))
 
+>> What is broadcast join, and when should we use it?
+	type of join operation where a small dataset is broadcasted to all worker nodes in the cluster. 
+	This allows the join to be performed locally on each node, significantly improving performance by reducing the amount of data shuffled across the network.
+
+>> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
+    similarities in 3 apis : foult tolerant, distributed, in-memory computation, immutable, lazy evaluation, internally processing as rdd for all 3 codes
+    RDD: low-level api / no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
+    DF: high-level api / catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
+    DS: high-level api / optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
+
+>> What is the difference between map() and flatMap() inPySpark?
+    map() when you want to apply a function that returns a single value for each input element
+    flatMap() when the function can return multiple values for each input element
+
+>> How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided (memory constraints, performance issues) ?
+	When you call .collect(), PySpark gathers all the partitions of the DataFrame or RDD and brings them to the driver node. This means that the data is no longer 		distributed across the cluster but is instead stored in the memory of the driver program
+
+>> Difference between sortby and orderby?
+   sortBy is used with RDDs.
+   orderBy is used with DataFrames.
+
+>> what is the default block size (128 MB) in hdfs and how to change it?
+   Edit the hdfs-site.xml File:
+
+>> What is difference between spark session and spark context?
+	SparkContext: Basic functionality for RDD operations. (used <2.0 spark version)
+	SparkSession: Provides a unified interface for DataFrame and Dataset APIs, SQL queries, and more. (used >2.0 spark version)
+
+>> partitioning
+DataFrame or RDD dividing it into smaller chunks (partitions) that can be processed in parallel.
+
+>> data cashing in spark
+data caching is a technique used to store intermediate results in memory (RAM) so that they can be reused in subsequent actions without recomputing them. 
+	cache()
+	persist(storageLevel=StorageLevel.MEMORY_ONLY) --> DISK_ONLY, MEMORY_AND_DISK, MEMORY_ONLY_SER, MEMORY_AND_DISK_SER, OFF_HEAP, MEMORY_ONLY_2
+	df.unpersist()
+
+>> What are the advantages of using PySpark over Pandas for big data processing?
+	distibuted, foult-tolerant, performance, api&libraries, intergate with big data tools.
+
+20.
+Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query performance by pruning partitions dynamically based on runtime data. This is particularly useful for queries involving joins where one table is significantly smaller than the other. DPP helps reduce the amount of data scanned, thereby improving query efficiency.
+16. problems that partition solves?
+	fast/esay access, parallesium & resource utilization
+
 5. what is data skewness and salting technique? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
    skewed partition : uneven data distribution
 	job is taking time, unutilization of resources, oom or data spill (write results to disk -- very costly)
 	fix --> repartition, salting, AQE, broadcasting
    df.repartition(10)
    df.rdd.getNumPartitions()
-   df.select(spark_partition_id().alias("partid")).groupBy("partid").count()
-
-6. What is broadcast join, and when should we use it?
-	type of join operation where a small dataset is broadcasted to all worker nodes in the cluster. 
-	This allows the join to be performed locally on each node, significantly improving performance by reducing the amount of data shuffled across the network.
-
-7.      select: Ideal for column selection.
-	selectExpr: Best for applying SQL expressions and transformations.
-
-8. What is PySpark (python api let u use spark with python), and how is it different from Apache Spark (big data engine).
-
-9. How do you initialize a SparkSession in PySpark?
-
-10. What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
-    similarities in 3 apis : foult tolerant, distributed, in-memory computation, immutable, lazy evaluation, internally processing as rdd for all 3 codes
-    RDD: low-level api / no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
-    DF: high-level api / catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
-    DS: high-level api / optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
-
-11. What is the difference between map() and flatMap() inPySpark?
-    map() when you want to apply a function that returns a single value for each input element
-    flatMap() when the function can return multiple values for each input element
-
-12. How do you handle missing values in PySpark?
-	df_replaced = df.replace(to_replace=4, value=0)
-	fillna / dropna --> see above
-	    
-13. What are transformations (create new df from existing df) and actions (return results of df) in PySpark? Giveexamples.
+   df.select(spark_partition_id().alias("partid")).groupBy("partid").count()	    
 
 14. What is the significance of partitioning and bucketing in PySpark, and how does it affect the performance of data processing tasks?
 	Partitioning: Divides data based on column values, creating separate directories for each partition. Best for filtering queries.
 	df.write.partitionBy("country", "year").parquet("output/partitioned_sales")
 	Bucketing: Divides data into a fixed number of buckets based on the hash of a column. Best for join queries.
 	df.write.bucketBy(4, "user_id").saveAsTable("bucketed_sales")
-
-15. How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided (memory constraints, performance issues) ?
-	When you call .collect(), PySpark gathers all the partitions of the DataFrame or RDD and brings them to the driver node. This means that the data is no longer 		distributed across the cluster but is instead stored in the memory of the driver program
-
-16. What is the difference between createOrReplaceTempView and createGlobalTempView in DataFrames?
-   Scope:
-   createOrReplaceTempView creates a view local to the SparkSession.
-   createGlobalTempView creates a view accessible across all SparkSessions within the same application.
-   Lifetime:
-   createOrReplaceTempView views are dropped when the SparkSession ends.
-   createGlobalTempView views persist until the Spark application terminates.
-
-17. How to set the partitions in pyspark?
-   Reading Data: The option("numPartitions", 10) sets the number of partitions when loading the data.
-   repartition Method: This method increases or decreases the number of partitions and shuffles the data.
-   df1 = df.repartition(3)
-   print(f"Number of partitions  repartitioning: {df1.rdd.getNumPartitions()}")
-   coalesce Method: This method reduces the number of partitions without a full shuffle, which is more efficient for reducing partitions.
-   df_coalesced = df.coalesce(2)
-   print(f"Number of partitions after coalescing: {df_coalesced.rdd.getNumPartitions()}")
-
-18. Default file format in Spark (is Parquet), Why Parquet?
-      Efficient Storage: Columnar format allows for better compression and encoding.
-      Performance: Optimized for query performance, especially for read-heavy operations.
-      Compatibility: Widely supported across various big data tools and frameworks.
 
 19. what are the optimization techniques in pyspark?
 	Use DataFrame/Dataset over RDD
@@ -464,69 +446,6 @@ Pyspark Interview QA:
 	enable AQE, salting
 	partitioning & bucketing for frequently accessed based on specific column
 	Avoid User Defined Functions (UDFs)
-
-20. Difference between sortby and orderby?
-   sortBy is used with RDDs.
-   orderBy is used with DataFrames.
-
-21. what is the default block size (128 MB) in hdfs and how to change it?
-   Edit the hdfs-site.xml File:
-
-23. Explain about out of memory issue in spark?
-   Causes of Out of Memory Issues: 
-   Driver Memory:
-   Collect Operations: Using collect() to gather large datasets to the driver can cause memory overflow. The driver tries to merge all results into a single object, which      might be too large to fit into the driver's memory1.
-   Large Broadcast Variables: Broadcasting large variables can consume significant memory on the driver.
-   Executor Memory:
-   Task Execution: Executors run tasks and store intermediate data. If the tasks require more memory than allocated, it can lead to out of memory errors1.
-   Shuffling Data: During operations like groupBy or join, data shuffling can cause memory issues if the data size exceeds the executor's memory capacity2.
-   Solutions to Out of Memory Issues
-   Increase Driver Memory: Adjust the driver memory settings using spark.driver.memory to allocate more memory to the driver2.
-   Limit Result Size: Use spark.driver.maxResultSize to limit the size of results collected to the driver1.
-   Increase Executor Memory: Configure executor memory using spark.executor.memory to allocate sufficient memory for task execution2.
-   Memory Overhead: Set spark.executor.memoryOverhead to account for additional memory required for JVM overhead3.
-   Repartition Data: Repartition large datasets to reduce the size of data processed by each executor1.
-
-5. What is difference between spark session and spark context?
-	SparkContext: Basic functionality for RDD operations. Requires separate contexts for SQL, streaming, etc. (used <2.0 spark version)
-	SparkSession: Provides a unified interface for DataFrame and Dataset APIs, SQL queries, and more. (used >2.0 spark version)
-
-20.
-Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query performance by pruning partitions dynamically based on runtime data. This is particularly useful for queries involving joins where one table is significantly smaller than the other. DPP helps reduce the amount of data scanned, thereby improving query efficiency.
-16. problems that partition solves?
-	fast/esay access, parallesium & resource utilization
-
-17. how to decide partiTIon on which column --> based on column cordinality/unique (not high & low / rec low to med) & frequent filter criteria 
-
-18. partitioning
-folder: df.write.partitionBy("date").mode("overwrite").parquet("/tmp/folder_partitioned_data")
-file: repartitioned_df.write.mode("overwrite").parquet("/tmp/file_partitioned_data")
-combine: repartitioned_df = df.repartition(3).write.partitionBy("date").mode("overwrite").parquet("/tmp/combined_partitioned_data")
-
-21. data cashing in spark
-	cache()
-	persist(storageLevel=StorageLevel.MEMORY_ONLY) --> DISK_ONLY, MEMORY_AND_DISK, MEMORY_ONLY_SER, MEMORY_AND_DISK_SER, OFF_HEAP, MEMORY_ONLY_2
-	persist(StorageLevel(useDisk, useMemory, useOffHeap, deserialized, replication)) --> 	persist(StorageLevel(True, True, False, False, 1)) 
-	for disk only ser, for memory ser (compact in size, less memory, more cpu for access) or deser (consumes more memory but fast access)
-	how to uncahe --> df.unpersist()
-	when cache req: access large df multiple times across spark actions
-	when not cache: not fit in memory, not reusing frequently, df is small
-27. What are the advantages of using PySpark over Pandas for big data processing?
-	distibuted, foult-tolerant, performance, api&libraries, intergate with big data tools.
-
-22. 
-You are given a nested JSON file named sample_data.json stored in an S3 bucket at s3://your-bucket/sample_data.json. The JSON file contains details about employees, including their names, departments, and address details (nested fields).
-Write a PySpark program to:
-Load the JSON file into a DataFrame.
-Flatten the nested structure to create a tabular format.
-Write the resulting DataFrame as a Parquet file to the output path s3://your-bucket/output/.
-
-Explanation:
-Step 1: The JSON file is loaded into a DataFrame using spark.read.json().
-Step 2: The select() method is used to extract and rename nested fields (address.city and address.state) to create a flattened structure.
-Step 3: The resulting DataFrame is written as a Parquet file using write.parquet().
-
-
 ===================================================================================================================================================
 >> Find the top 3 highest-paid employees from each department.
    data = [(1, "Amit", "IT", 90000),
