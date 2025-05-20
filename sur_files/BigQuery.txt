@@ -844,8 +844,10 @@ the output order same as above. give bigquery sql query with custom logic
 20/ Build a time-series summary table that aggregates revenue per day, per restaurant, for dashboarding.
 
 
->> Identify duplicate records in a table based on a specific column.
-
+>> Identify duplicate records in a table based on a specific column. 
+	select * from `elegant-circle-454709-h5.surtest11.dupli` where email in
+	(SELECT email FROM `elegant-circle-454709-h5.surtest11.dupli` group by email having count(*)>1);
+	
 >> Find the department with the highest average salary.
 	dept, salary
 
@@ -861,8 +863,7 @@ the output order same as above. give bigquery sql query with custom logic
 	LIMIT 1;
 
 
->> List the top 3 most frequently sold products.
-product_name , quantity_sold
+>> List the top 3 most frequently sold products.    (product_name , quantity_sold)
 
 	SELECT
 	  product_name,
@@ -875,7 +876,7 @@ product_name , quantity_sold
 	  total_quantity_sold DESC
 	LIMIT 3;
 
->> Fetch employees who were hired in the last 90 days.
+>> Fetch employees who were hired in the last 90 days.  (emp_name, hire_date)
 	SELECT
 	  *
 	FROM
