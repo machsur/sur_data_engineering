@@ -315,7 +315,7 @@ a
 	WHEN MATCHED THEN UPDATE SET T.name = S.name
 	WHEN NOT MATCHED THEN INSERT (id, name) VALUES (S.id, S.name);
 
-15.
+>>
 ORDER_DAY         ORDER_ID            PRODUCT_ID   QUANTITY     PRICE
 ------------------ -------------------- ---------- ---------- ----------
 01-JUL-11         O1                  P1                 5          5
@@ -329,7 +329,7 @@ Get me all products that got sold both the days and the number of times the prod
 
 	SELECT PRODUCT_ID, COUNT(*) AS COUNT FROM orders WHERE ORDER_DAY IN ('01-JUL-11', '02-JUL-11') GROUP BY PRODUCT_ID HAVING COUNT(DISTINCT ORDER_DAY) = 2;
 
-16. 
+>>
 INPUT
 order_id	customer_id	region	   order_date	  sales_amount
 1	        101	        North	   1/1/2022	  100
@@ -348,7 +348,9 @@ customer_id	north_sales	south_sales	East sales	West Sales
 	  SUM(CASE WHEN region = 'West' THEN sales_amount ELSE 0 END) AS west_sales
 	FROM orders GROUP BY customer_id;
 
-18. Null doesnt include matching, empty string includes matching
+	select * from (select customer_id, region, sales_amount from orders) pivot(sum(sales_amount) for region in ('north', 'south', 'east', 'west'));
+
+>> Null doesnt include matching, empty string includes matching
 table1
 1
 2
@@ -367,7 +369,7 @@ null
 	inner join  - 2 2 / 2 2 / 3 3 / empty empty / 
 	left join - 1 null / 2 2 / 2 2/ 3 3/ empty empty / null null /
 
-19. Find the second highest salary without using LIMIT, OFFSET, or TOP.
+>> Find the second highest salary without using LIMIT, OFFSET, or TOP.
     emp_id, salary
 
 	WITH RankedSalaries AS (SELECT salary, dense_rank() OVER(ORDER BY salary DESC) AS rank FROM employees)
@@ -375,7 +377,7 @@ null
 	
 	SELECT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 1;
 
-20. Given a table of orders, write a query to find the running total (cumulative sum) of revenue for each day.
+>> Given a table of orders, write a query to find the running total (cumulative sum) of revenue for each day.
     order_date, revenue
 
 	SELECT  order_date, revenue, SUM(revenue) OVER (ORDER BY order_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total FROM  orders
