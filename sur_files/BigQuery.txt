@@ -837,12 +837,94 @@ the output order same as above. give bigquery sql query with custom logic
 13/ Identify restaurants with high churn rates: drop in unique monthly customers for 3+ months.
 14/ Calculate the percentage of abandoned carts (added to cart but not ordered).
 15Find cities where lunch orders (12–3 PM) have higher revenue than dinner orders (7–10 PM).
-16/ Detect duplicated orders — same items, user, and restaurant within 5 minutes.
-17/ For each cuisine, identify the most loyal customer (most repeat orders).
-18/ Write a query to return the top 5% of users by revenue contribution (Pareto Principle).
-19/ Determine which users are likely bots based on their ordering patterns (e.g., 50+ orders/day).
-20/ Build a time-series summary table that aggregates revenue per day, per restaurant, for dashboarding.
 
+>> Detect duplicated orders — same items, user, and restaurant within 5 minutes.
+order_id	user_id		restaurant_id	item_id		order_time
+1		U001		R001		I001		2024-01-01 10:00:00
+2		U001		R001		I001		2024-01-01 10:03:00
+3		U002		R002		I002		2024-01-01 11:00:00
+	WITH ordered_data AS (
+	  SELECT
+	    order_id,
+	    user_id,
+	    restaurant_id,
+	    item_id,
+	    order_time,
+	    LAG(order_time) OVER (
+	      PARTITION BY user_id, restaurant_id, item_id
+	      ORDER BY order_time
+	    ) AS previous_order_time
+	  FROM
+	    `your_dataset.orders`
+	),
+	
+	duplicates AS (
+	  SELECT
+	    order_id,
+	    user_id,
+	    restaurant_id,
+	    item_id,
+	    order_time,
+	    previous_order_time,
+	    TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) AS minutes_diff
+	  FROM
+	    ordered_data
+	  WHERE
+	    previous_order_time IS NOT NULL
+	    AND TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) <= 5
+	)
+	
+	SELECT * FROM duplicates;
+
+
+>> For each cuisine, identify the most loyal customer (most repeat orders).
+order_id	user_id		cuisine		order_date
+1		U001		Italian		2024-01-01
+	WITH order_counts AS (
+	  SELECT   cuisine,    user_id,  COUNT(*) AS order_count FROM `your_dataset.orders` GROUP BY  cuisine, user_id),
+	ranked_customers AS (
+	  SELECT   cuisine,  user_id, order_count, ROW_NUMBER() OVER (PARTITION BY cuisine ORDER BY order_count DESC) AS rank FROM  order_counts)
+	SELECT  cuisine,  user_id AS most_loyal_customer,  order_count	FROM  ranked_customers	WHERE rank = 1;
+
+>> Write a query to return the top 5% of users by revenue contribution (Pareto Principle).
+	WITH ranked_users AS (
+	  SELECT
+	    user_id,
+	    revenue,
+	    PERCENT_RANK() OVER (ORDER BY revenue DESC) AS revenue_percentile
+	  FROM
+	    `your_dataset.user_revenue`
+	)
+	
+	SELECT
+	  user_id,
+	  revenue
+	FROM
+	  ranked_users
+	WHERE
+	  revenue_percentile <= 0.05
+	ORDER BY
+	  revenue DESC;
+	
+>> Determine which users are likely bots based on their ordering patterns (e.g., 50+ orders/day).
+	SELECT
+	  user_id,
+	  DATE(order_timestamp) AS order_day,
+	  COUNT(order_id) AS orders_per_day
+	FROM
+	  `your_project.your_dataset.orders`
+	GROUP BY
+	  user_id,
+	  order_day
+	HAVING
+	  orders_per_day >= 50
+	ORDER BY
+	  order_day,
+	  orders_per_day DESC;
+
+>> Build a time-series summary table that aggregates revenue per day, per restaurant, for dashboarding.     (restaurant_id, order_day, revenue)
+	SELECT  restaurant_id, order_day, SUM(revenue) AS daily_revenue FROM  `your_project.your_dataset.orders`
+	GROUP BY  restaurant_id,  order_day ORDER BY  order_day,  restaurant_id;
 
 >> Identify duplicate records in a table based on a specific column. 
 	select * from `elegant-circle-454709-h5.surtest11.dupli` where email in
