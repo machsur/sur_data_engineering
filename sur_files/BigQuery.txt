@@ -832,11 +832,196 @@ the output order same as above. give bigquery sql query with custom logic
 	ORDER BY
 	  avg_days_to_first_order;
 
-11/ Use a recursive CTE to analyze multi-level referral networks.
-12/ Rank users based on their total number of orders and total spend, giving more weight to spend.
-13/ Identify restaurants with high churn rates: drop in unique monthly customers for 3+ months.
-14/ Calculate the percentage of abandoned carts (added to cart but not ordered).
-15Find cities where lunch orders (12–3 PM) have higher revenue than dinner orders (7–10 PM).
+
+
+
+
+
+
+
+>> Rank users based on their total number of orders and total spend, giving more weight to spend. -- Weighted score: 70% weight to spend, 30% to order count
+order_id	user_id		order_amount
+1		U001		100
+2		U001		150
+
+	WITH user_stats AS (
+	  SELECT
+	    user_id,
+	    COUNT(order_id) AS total_orders,
+	    SUM(order_amount) AS total_spend
+	  FROM
+	    `your_dataset.orders`
+	  GROUP BY
+	    user_id
+	),
+	scored_users AS (
+	  SELECT
+	    user_id,
+	    total_orders,
+	    total_spend,
+	    (0.7 * total_spend + 0.3 * total_orders) AS weighted_score
+	  FROM
+	    user_stats
+	),	
+	ranked_users AS (
+	  SELECT
+	    user_id,
+	    total_orders,
+	    total_spend,
+	    weighted_score,
+	    RANK() OVER (ORDER BY weighted_score DESC) AS rank
+	  FROM
+	    scored_users
+	)
+	SELECT * FROM ranked_users;
+
+>> Identify restaurants with high churn rates: drop in unique monthly customers for 3+ months.
+order_id	user_id		restaurant_id	order_date
+1		U001		R001		2024-01-15
+2		U002		R001		2024-01-20
+
+	WITH monthly_customers AS (
+	  SELECT
+	    restaurant_id,
+	    FORMAT_DATE('%Y-%m', DATE(order_date)) AS month,
+	    COUNT(DISTINCT user_id) AS unique_customers
+	  FROM
+	    `your_dataset.orders`
+	  GROUP BY
+	    restaurant_id, month
+	),
+	
+	monthly_with_lag AS (
+	  SELECT
+	    restaurant_id,
+	    month,
+	    unique_customers,
+	    LAG(unique_customers, 1) OVER (PARTITION BY restaurant_id ORDER BY month) AS prev_month_1,
+	    LAG(unique_customers, 2) OVER (PARTITION BY restaurant_id ORDER BY month) AS prev_month_2,
+	    LAG(unique_customers, 3) OVER (PARTITION BY restaurant_id ORDER BY month) AS prev_month_3
+	  FROM
+	    monthly_customers
+	),
+	
+	churn_flags AS (
+	  SELECT
+	    restaurant_id,
+	    month,
+	    unique_customers,
+	    prev_month_1,
+	    prev_month_2,
+	    prev_month_3,
+	    -- Check if customer count dropped for 3 consecutive months
+	    CASE
+	      WHEN prev_month_1 IS NOT NULL AND prev_month_2 IS NOT NULL AND prev_month_3 IS NOT NULL
+	           AND unique_customers < prev_month_1
+	           AND prev_month_1 < prev_month_2
+	           AND prev_month_2 < prev_month_3
+	      THEN 1 ELSE 0
+	    END AS churn_flag
+	  FROM
+	    monthly_with_lag
+	)
+	
+	SELECT DISTINCT restaurant_id
+	FROM churn_flags
+	WHERE churn_flag = 1;
+
+>> Calculate the percentage of abandoned carts (added to cart but not ordered). user & order tables
+user_id		item_id		event_type	event_time
+U001		I001		add_to_cart	2024-01-01 10:00:00
+user_id		item_id		order_id	order_time
+U001		I001		O001		2024-01-01 10:10:00
+
+	WITH added_to_cart AS (
+	  SELECT DISTINCT user_id, item_id
+	  FROM `your_dataset.cart_events`
+	  WHERE event_type = 'add_to_cart'
+	),
+	ordered_items AS (
+	  SELECT DISTINCT user_id, item_id
+	  FROM `your_dataset.orders`
+	),
+	abandoned_carts AS (
+	  SELECT
+	    a.user_id,
+	    a.item_id
+	  FROM
+	    added_to_cart a
+	  LEFT JOIN
+	    ordered_items o
+	  ON
+	    a.user_id = o.user_id AND a.item_id = o.item_id
+	  WHERE
+	    o.user_id IS NULL
+	),
+	cart_stats AS (
+	  SELECT
+	    (SELECT COUNT(*) FROM abandoned_carts) AS abandoned_count,
+	    (SELECT COUNT(*) FROM added_to_cart) AS total_added
+	)
+	
+	SELECT
+	  abandoned_count,
+	  total_added,
+	  ROUND(100 * abandoned_count / total_added, 2) AS abandoned_percentage
+	FROM
+	  cart_stats;
+
+>> Find cities where lunch orders (12–3 PM) have higher revenue than dinner orders (7–10 PM).
+order_id	user_id		city	order_time		order_amount
+1		U001		Delhi	2024-01-01 12:30:00	200
+2		U002		Delhi	2024-01-01 19:30:00	150
+	WITH time_filtered_orders AS (
+	  SELECT
+	    city,
+	    order_amount,
+	    EXTRACT(HOUR FROM order_time) AS order_hour
+	  FROM
+	    `your_dataset.orders`
+	),
+	categorized_orders AS (
+	  SELECT
+	    city,
+	    CASE
+	      WHEN order_hour BETWEEN 12 AND 14 THEN 'lunch'
+	      WHEN order_hour BETWEEN 19 AND 21 THEN 'dinner'
+	      ELSE NULL
+	    END AS meal_period,
+	    order_amount
+	  FROM
+	    time_filtered_orders
+	  WHERE
+	    order_hour BETWEEN 12 AND 14 OR order_hour BETWEEN 19 AND 21
+	),
+	revenue_by_city_meal AS (
+	  SELECT
+	    city,
+	    meal_period,
+	    SUM(order_amount) AS total_revenue
+	  FROM
+	    categorized_orders
+	  GROUP BY
+	    city, meal_period
+	),
+	pivoted_revenue AS (
+	  SELECT
+	    city,
+	    MAX(CASE WHEN meal_period = 'lunch' THEN total_revenue ELSE 0 END) AS lunch_revenue,
+	    MAX(CASE WHEN meal_period = 'dinner' THEN total_revenue ELSE 0 END) AS dinner_revenue
+	  FROM
+	    revenue_by_city_meal
+	  GROUP BY
+	    city
+	)
+	SELECT
+	  city,
+	  lunch_revenue,
+	  dinner_revenue
+	FROM
+	  pivoted_revenue
+	WHERE
+	  lunch_revenue > dinner_revenue;
 
 >> Detect duplicated orders — same items, user, and restaurant within 5 minutes.
 order_id	user_id		restaurant_id	item_id		order_time
