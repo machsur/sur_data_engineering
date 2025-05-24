@@ -167,24 +167,30 @@ FORMAT_DATE('%B %d, %Y', sale_date)
 	   Monitor and Tune Query Performance
 	   nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
   
-17. Cost Controls: 
-	   budget alerts, Set query usage limits in IAM quotas, Billing reports, Schedule queries during off-peak hours
+>> Cost Controls: budget alerts, Set query usage limits in IAM quotas, Billing reports, Schedule queries during off-peak hours
 
-18. Explain about data modelling concepts( Star and snowflake schema)? 
+>> Explain about data modelling concepts( Star and snowflake schema)? 
 	Star Schema: Faster query performance due to fewer joins.
 	Snowflake Schema: More normalized and reduces data redundancy. May require more joins, potentially impacting query performance.
 
-19.How to get metadata of datasets and tables in BigQuery? 	
+>> How to get metadata of datasets and tables in BigQuery? 	
 	to get metadata about datasets:  SELECT * FROM `project_id`.`region-europe-west2`.INFORMATION_SCHEMA.SCHEMATA;
 	to get metadata about tables: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.TABLES;
 	to get metadata about columns: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.COLUMNS;
 
-20. Database, DWH, DataLake
-	Database: OLTP system (day to day operational data) - - structured data with defined schema. mysql
-	DWH: Stores current and historical data from multiple sources for BI, analysis and reporting. terradata, bq
-	DataLake: Stores large volumes of raw data in its native format (Structured, semi-structured, and unstructured data), Big data analytics, machine learning. gcs, hdfs
+>> Database, DWH, DataLake
+	Database: OLTP system - day to day operational data - mysql
+	DWH: Stores current and historical data from multiple sources - BI, analysis and reporting. -  bq
+	DataLake: Stores large volumes of raw data in its native format (Structured, semi-structured, and unstructured data)-  machine learning - gcs, hdfs
 
-21. ETL VS ELT
+>> ETL VS ELT
+
+>> Subquery, cte
+   
+>> Change Data Capture (CDC) -->> identify and capture changes made to data in a database 
+      log based --> very efficient, no impact on source system
+      query based on timestamp
+      triggers load changes into new tables
 
 
 =============================================================================================================================================
@@ -276,20 +282,6 @@ a
          WITH avg_salary AS (
            SELECT AVG(salary) AS average_salary  FROM `your_dataset.your_table`)
          SELECT employee_id,  COALESCE(salary, (SELECT average_salary FROM avg_salary)) AS adjusted_salary  FROM `your_dataset.your_table`
-
->> Difference between Subquery and Materialized Views.
-    Performance: Materialized views can improve query performance by storing precomputed results, while subqueries are recalculated each time the main query runs.
-    Storage: Materialized views consume storage space to store the precomputed results, whereas subqueries do not.
-    Maintenance: Materialized views need to be refreshed to stay up-to-date with the underlying data, while subqueries always reflect the current state of the data.
-
->> CTE vs Subquery in SQL and their performance impact.
-    CTE: same code used at multiple places, more readability, used recursively
-
->> Change Data Capture (CDC) -->> identify and capture changes made to data in a database --> It helps keep track of inserts, updates, and deletes in real-time.
-      how to implement:
-      log based --> very efficient, no impact on source system
-      query based on timestamp
-      triggers load changes into new tables
 
 >>
 	Src					
