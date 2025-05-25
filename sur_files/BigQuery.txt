@@ -7,6 +7,14 @@ FORMAT_DATE('%B %d, %Y', sale_date)
 
 =============================================================================================================================================
 
+>> SCD: dimensions that change over time
+	SCD0 - NO CHANGE - change in source, no update on DWH table - change column is not relavant to the DWH table anymore (ex: fax number)	
+	SCD1 - maintain latest snapshot, no histroy and its overwritten by latest snap (ex: emp name designation has wrongly entered)
+	SCD2 - every change in source, add new record in DWH table and flag status is Y indicating active record
+	SCD3 - not rec
+	SCD4 - scd1+scd2 - 
+	scd6 - 1+2+3 - 
+
 >> "write a query to how will you get a list of the top ten most expensive queries that have been executed in your project over the past 30 days:"
 	SELECT project_id, job_id, user_email, creation_time, total_slot_ms, total_bytes_billed, total_bytes_processed, query FROM `region-eu`.INFORMATION_SCHEMA.JOBS
 	WHERE creation_time between TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY) AND CURRENT_TIMESTAMP()
@@ -457,7 +465,7 @@ null
 	    SELECT Salary FROM OrderedSalaries WHERE RowAsc = RowDesc OR RowAsc + 1 = RowDesc)
 	SELECT AVG(Salary) AS MedianSalary FROM MedianSalary;
 
-32. Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
+>> Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
 	transaction_id	sale_date	amount
 	1	        2025-01-15	100
 	year	Jan	Feb	Mar
@@ -467,15 +475,39 @@ null
 	  SELECT EXTRACT(YEAR FROM sale_date) AS year, FORMAT_DATE('%b', sale_date) AS month, amount  FROM `project.dataset.sales`)
 	SELECT * FROM sales_data	PIVOT (SUM(amount) FOR month IN ('Jan', 'Feb', 'Mar'))	ORDER BY year;
 
-33. Find the moving average of sales for the last 7 days for each product in a sales table.
+>> Find the moving average of sales for the last 7 days for each product in a sales table.
 	product_id, sale_amount, sale_date
 
 	WITH SalesWithMovingAverage AS (
 	    SELECT ProductID, SaleDate, SlesAmount, AVG(SalesAmount) OVER (PARTITION BY ProductID ORDER BY SaleDate ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS 		    MovingAverage FROM `your_dataset.sales`)
 	SELECT ProductID, SaleDate, SalesAmount, MovingAverage FROM SalesWithMovingAverage ORDER BY ProductID, SaleDate;
 
-34. Given an events table, find the first and last occurrence of each event per user.
+>> Given an events table, find the first and last occurrence of each event per user.
         UserID,   EventID,  EventDate,
+
+	WITH ranked_events AS (
+	  SELECT
+	    user_id,
+	    event_type,
+	    event_time,
+	    ROW_NUMBER() OVER (PARTITION BY user_id, event_type ORDER BY event_time ASC) AS rn_first,
+	    ROW_NUMBER() OVER (PARTITION BY user_id, event_type ORDER BY event_time DESC) AS rn_last
+	  FROM
+	    events
+	)
+	
+	SELECT
+	  user_id,
+	  event_type,
+	  MIN(CASE WHEN rn_first = 1 THEN event_time END) AS first_occurrence,
+	  MIN(CASE WHEN rn_last = 1 THEN event_time END) AS last_occurrence
+	FROM
+	  ranked_events
+	GROUP BY
+	  user_id, event_type
+	ORDER BY
+	  user_id, event_type;
+
         
 35. Identify users who have placed an order in two consecutive months but not in the third month.
 	user_id, order_date
@@ -495,7 +527,7 @@ null
 	)
 	SELECT UserID	FROM FilteredUsers GROUP BY UserID HAVING COUNT(OrderMonth) = 2;
 
-37. Find the most frequently purchased product category by each user over the past year.
+>> Find the most frequently purchased product category by each user over the past year.
 	user, product_category, order_id, sale_date
 
 	WITH user_category_sales AS (
@@ -514,16 +546,7 @@ null
 	  GROUP BY year,  product_id) AS yearly_sales
 	ORDER BY  year, rank;
 
-39. SCD: dimensions that change over time
-	SCD0 - NO CHANGE - change in source, no update on DWH table - change column is not relavant to the DWH table anymore (ex: fax number)	
-	SCD1 - maintain latest snapshot, no histroy and its overwritten by latest snap (ex: emp name designation has wrongly entered)
-	SCD2 - every change in source, add new record in DWH table and flag status is Y indicating active record
-	SCD3 - not rec
-	SCD4 - scd1+scd2 - 
-	scd6 - 1+2+3 - 
-	
-
-41.
+>>
 input table:
 emp_name emp_dep
 abc   it
