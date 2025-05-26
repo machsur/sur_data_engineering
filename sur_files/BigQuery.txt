@@ -7,7 +7,6 @@ DATE_TRUNC(order_date, MONTH)
 FORMAT_DATE('%B %d, %Y', sale_date) 
 FORMAT_DATE('%Y-%m', DATE(order_date)) AS month,
 
-
 =============================================================================================================================================
 
 >> SCD: dimensions that change over time
@@ -458,16 +457,6 @@ null
 	    SELECT CustomerID, OrderID, OrderValue, RANK() OVER (PARTITION BY CustomerID ORDER BY OrderValue DESC) AS Rank FROM `your_dataset.your_table`)
 	SELECT CustomerID, OrderID, OrderValue FROM RankedOrders WHERE Rank <= 3;
 
-31. Find the median salary of employees using SQL (without using built-in median functions).
-
-	SELECT PERCENTILE_CONT(salary, 0.5) OVER() AS median_salary FROM `project.dataset.employees` LIMIT 1;
-	or
-	WITH OrderedSalaries AS (
-	    SELECT Salary, ROW_NUMBER() OVER (ORDER BY Salary ASC) AS RowAsc, ROW_NUMBER() OVER (ORDER BY Salary DESC) AS RowDesc FROM `your_dataset.employees`),
-	MedianSalary AS (
-	    SELECT Salary FROM OrderedSalaries WHERE RowAsc = RowDesc OR RowAsc + 1 = RowDesc)
-	SELECT AVG(Salary) AS MedianSalary FROM MedianSalary;
-
 >> Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
 	transaction_id	sale_date	amount
 	1	        2025-01-15	100
@@ -512,7 +501,7 @@ null
 	  user_id, event_type;
 
         
-35. Identify users who have placed an order in two consecutive months but not in the third month.
+>> Identify users who have placed an order in two consecutive months but not in the third month.
 	user_id, order_date
 
 	WITH MonthlyOrders AS (
@@ -540,7 +529,7 @@ null
 	  SELECT  user_id, product_category, purchase_count, RANK() OVER (PARTITION BY user_id ORDER BY purchase_count DESC) AS rank FROM user_category_sales)
 	SELECT user_id, product_category, purchase_count FROM ranked_categories WHERE rank = 1;
 
-38. Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year.
+>> Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year.
 	prodct_id, sale_amount, sale_date
 
 	SELECT year, product_id, total_sales, RANK() OVER(PARTITION BY year ORDER BY total_sales DESC) AS rank
@@ -574,8 +563,7 @@ the output order same as above. give bigquery sql query with custom logic
 		ROW_NUMBER() OVER(PARTITION BY emp_dep ORDER BY emp_name) AS row_num  FROM your_table_name)
 	SELECT emp_name, emp_dep FROM CustomOrder ORDER BY emp_dept_sort, row_num;
 
-
-48. Identify users who increased their average order value consistently over the last 3 months.
+>> Identify users who increased their average order value consistently over the last 3 months.
 
 >> Write a query to detect a sudden drop (>30%) in daily revenue for any restaurant. (restaurant_id, revenue_date, daily_revenue)
 	WITH revenue_changes AS (
@@ -609,9 +597,6 @@ the output order same as above. give bigquery sql query with custom logic
 	FROM
 	  sudden_drop;
 
-50. For each user, calculate their order streak — consecutive days with at least one order.
-
-
 >> Find the moving average of daily revenue for each restaurant over a 7-day window.
 	restarant | date | revenue
 		SELECT
@@ -628,7 +613,7 @@ the output order same as above. give bigquery sql query with custom logic
 		ORDER BY
 		  restaurant_id, date;
 
-53. Calculate month-over-month growth in active users for each city.
+>> Calculate month-over-month growth in active users for each city.
 	user_id	| city	| activity_date
 		WITH monthly_active_users AS (
 		  SELECT
@@ -668,8 +653,7 @@ the output order same as above. give bigquery sql query with custom logic
 		ORDER BY
 		  city, year, month;
 
-
-54. Find restaurants whose best-selling dish makes up over 60% of their revenue.
+>> Find restaurants whose best-selling dish makes up over 60% of their revenue.
 	restaurant_id, dish_id,    dish_name,  quantity, price
 
 	WITH dish_revenue AS (
@@ -730,129 +714,6 @@ the output order same as above. give bigquery sql query with custom logic
 	  combined
 	WHERE
 	  revenue_share > 0.6;
-
-55. Identify users who place high-value orders only on weekends.
-     user_id,     order_id,	    order_amount,    order_date
-
-	WITH orders AS (
-	  SELECT 
-	    user_id,
-	    order_id,
-	    order_amount,
-	    EXTRACT(DAYOFWEEK FROM order_date) AS day_of_week
-	  FROM 
-	    `your_dataset.orders_table`
-	),
-	
-	-- Identify users who placed high-value orders on weekends
-	weekend_high_value_orders AS (
-	  SELECT DISTINCT user_id
-	  FROM orders
-	  WHERE 
-	    order_amount > 1000 AND
-	    day_of_week IN (1, 7)  -- 1 = Sunday, 7 = Saturday
-	),
-	
-	-- Identify users who placed any orders on weekdays
-	weekday_orders AS (
-	  SELECT DISTINCT user_id
-	  FROM orders
-	  WHERE 
-	    day_of_week BETWEEN 2 AND 6  -- Monday to Friday
-	)
-	
-	-- Final result: users who placed high-value orders only on weekends
-	SELECT user_id
-	FROM weekend_high_value_orders
-	WHERE user_id NOT IN (SELECT user_id FROM weekday_orders);
-
-56. Compare the conversion rate of users who visited the app vs. those who ordered.
-	user_id, event_type(visit)
-
-	WITH app_visits AS (
-	  SELECT DISTINCT user_id
-	  FROM `your_dataset.app_events`
-	  WHERE event_type = 'visit'
-	),
-	
-	orders AS (
-	  SELECT DISTINCT user_id
-	  FROM `your_dataset.orders`
-	),
-	
-	conversion_analysis AS (
-	  SELECT
-	    COUNT(DISTINCT v.user_id) AS total_visitors,
-	    COUNT(DISTINCT o.user_id) AS total_converted
-	  FROM
-	    app_visits v
-	  LEFT JOIN
-	    orders o
-	  ON
-	    v.user_id = o.user_id
-	)
-	
-	SELECT
-	  total_visitors,
-	  total_converted,
-	  ROUND(total_converted / total_visitors * 100, 2) AS conversion_rate_percentage
-	FROM
-	  conversion_analysis;
-
-57. Determine the average time between sign-up and first order, grouped by acquisition channel.
-	user_id,     acquisition_channel,    signup_date
-	user_id,    order_date
-
-	WITH user_signups AS (
-	  SELECT
-	    user_id,
-	    acquisition_channel,
-	    signup_date
-	  FROM
-	    `your_dataset.users`
-	),
-	
-	first_orders AS (
-	  SELECT
-	    user_id,
-	    MIN(order_date) AS first_order_date
-	  FROM
-	    `your_dataset.orders`
-	  GROUP BY
-	    user_id
-	),
-	
-	signup_to_order AS (
-	  SELECT
-	    u.acquisition_channel,
-	    u.signup_date,
-	    f.first_order_date,
-	    DATE_DIFF(f.first_order_date, u.signup_date, DAY) AS days_to_first_order
-	  FROM
-	    user_signups u
-	  JOIN
-	    first_orders f
-	  ON
-	    u.user_id = f.user_id
-	  WHERE
-	    f.first_order_date IS NOT NULL
-	)
-	
-	SELECT
-	  acquisition_channel,
-	  AVG(days_to_first_order) AS avg_days_to_first_order
-	FROM
-	  signup_to_order
-	GROUP BY
-	  acquisition_channel
-	ORDER BY
-	  avg_days_to_first_order;
-
-
-
-
-
-
 
 
 >> Rank users based on their total number of orders and total spend, giving more weight to spend. -- Weighted score: 70% weight to spend, 30% to order count
