@@ -1,9 +1,12 @@
 ================================================================================================================================================
 DATE(string in iso) / PARSE_DAT(format, string) / SAFE.PARSE_DATE(format, invalid date)
-DATE_DIFF()
+DATE_DIFF() / TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) AS minutes_diff
+
 extract(month from date)
 DATE_TRUNC(order_date, MONTH)
 FORMAT_DATE('%B %d, %Y', sale_date) 
+FORMAT_DATE('%Y-%m', DATE(order_date)) AS month,
+
 
 =============================================================================================================================================
 
@@ -574,7 +577,7 @@ the output order same as above. give bigquery sql query with custom logic
 
 48. Identify users who increased their average order value consistently over the last 3 months.
 
-49. Write a query to detect a sudden drop (>30%) in daily revenue for any restaurant.
+>> Write a query to detect a sudden drop (>30%) in daily revenue for any restaurant. (restaurant_id, revenue_date, daily_revenue)
 	WITH revenue_changes AS (
 	  SELECT
 	    restaurant_id,
@@ -609,7 +612,7 @@ the output order same as above. give bigquery sql query with custom logic
 50. For each user, calculate their order streak — consecutive days with at least one order.
 
 
-51. Find the moving average of daily revenue for each restaurant over a 7-day window.
+>> Find the moving average of daily revenue for each restaurant over a 7-day window.
 	restarant | date | revenue
 		SELECT
 		  restaurant_id,
@@ -624,8 +627,6 @@ the output order same as above. give bigquery sql query with custom logic
 		  your_table_name
 		ORDER BY
 		  restaurant_id, date;
-
-52. Detect anomalies in delivery times using the IQR method (Interquartile Range) in SQL.
 
 53. Calculate month-over-month growth in active users for each city.
 	user_id	| city	| activity_date
@@ -1086,7 +1087,8 @@ order_id	user_id		cuisine		order_date
 	  SELECT   cuisine,  user_id, order_count, ROW_NUMBER() OVER (PARTITION BY cuisine ORDER BY order_count DESC) AS rank FROM  order_counts)
 	SELECT  cuisine,  user_id AS most_loyal_customer,  order_count	FROM  ranked_customers	WHERE rank = 1;
 
->> Write a query to return the top 5% of users by revenue contribution (Pareto Principle).
+>> Write a query to return the top 5% of users by revenue contribution (Pareto Principle). (user_id,  revenue)
+	
 	WITH ranked_users AS (
 	  SELECT
 	    user_id,
@@ -1106,7 +1108,7 @@ order_id	user_id		cuisine		order_date
 	ORDER BY
 	  revenue DESC;
 	
->> Determine which users are likely bots based on their ordering patterns (e.g., 50+ orders/day).
+>> Determine which users are likely bots based on their ordering patterns (e.g., 50+ orders/day). (user, order_timestamp, order_id)
 	SELECT
 	  user_id,
 	  DATE(order_timestamp) AS order_day,
@@ -1126,7 +1128,7 @@ order_id	user_id		cuisine		order_date
 	SELECT  restaurant_id, order_day, SUM(revenue) AS daily_revenue FROM  `your_project.your_dataset.orders`
 	GROUP BY  restaurant_id,  order_day ORDER BY  order_day,  restaurant_id;
 
->> Identify duplicate records in a table based on a specific column. 
+>> Identify duplicate records in a table based on a specific column. (like email)
 	select * from `elegant-circle-454709-h5.surtest11.dupli` where email in
 	(SELECT email FROM `elegant-circle-454709-h5.surtest11.dupli` group by email having count(*)>1);
 	
@@ -1145,7 +1147,7 @@ order_id	user_id		cuisine		order_date
 	LIMIT 1;
 
 
->> List the top 3 most frequently sold products.    (product_name , quantity_sold)
+>> List the top 3 most frequently sold products. (product_name , quantity_sold)
 
 	SELECT
 	  product_name,
@@ -1168,5 +1170,5 @@ order_id	user_id		cuisine		order_date
 
 
 >> Question:- Extract the Domain from the Email column in Employee Table.
-	substring(email, strpos(email, '@'), length-opt) 
+	substring(email, strpos(email, '@')+1, length-opt) 
 
