@@ -16,14 +16,20 @@ Python:
 >> Modules (py file) vs package (collection of modules)
 >> Handlling errors: compile time error: Syntatical - missing /Logical error: wrong output 2+3 = 7 /run time error:  5/0.
 >>  break / continue / pass
->> functions: reuse block of code / 
-    positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data)
-    Global variable (outside fun) / local variable (inside fun)
+
+>> 
+    functions: reuse block of code / 
+    	positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data)
+    	Global variable (outside fun) / local variable (inside fun)
     recursion: function calling it self ex: factorial
-    anonymous function: x = lambda a: a * a / print(x(5))
-    filter: list(filter(lambda a: a%2 == 0, lt))
-    map: list(map(lambda a: a * 2, lt))
-    reduce: from functools import reduce / sum = reduce(lambda a, b: a + b, lt) /
+    anonymous function, short, one-line function: x = lambda a: a * a / print(x(5))
+    	filter: list(filter(lambda a: a%2 == 0, lt))
+    	map: list(map(lambda a: a * 2, lt))
+    	reduce: from functools import reduce / sum = reduce(lambda a, b: a + b, lt)
+
+>> List comprehensation: create new list from existiong list or other iterals
+	filtered_ls = [i for i in ls if i%2 == 0 & i > 2]
+
 >> create python packages
     -- package python code as .whl file
     -- setuptools (build and package projects), whell (create & install .whl files), twine (upload packages to pypi)
