@@ -30,16 +30,6 @@ Python:
 >> List comprehensation: create new list from existiong list or other iterals
 	filtered_ls = [i for i in ls if i%2 == 0 & i > 2]
 
->> create python packages
-    -- package python code as .whl file
-    -- setuptools (build and package projects), whell (create & install .whl files), twine (upload packages to pypi)
-    -- create code, __init__.py, setup.py 
-        python setup.py bdist_wheel - created wheel file
-        install whl package
-
-============================================================================================================================================
-NumPY and Pandas:
-
 >>  Array: same data type (1-D) - Simple, basic collections (like lists) for small collections.
     NumPy: N-D - leniar algebra library - numerical calculations for large datasets.
     Pandas: Data analysis library for handling and manipulating structured data, great for dataframes (tables), series.
@@ -48,6 +38,34 @@ NumPY and Pandas:
     Excel - Can not handle large sets of data
     Python - Need to write code to find answers
     Pandas dataframe: its python modules - makes data scientist life easier and effective
+
+>> Package (folder - collection of modules) and module (file1.py, file2.py, __init__.py ) :
+	help organize and reuse of code
+
+1. create folder structure
+folder
+|
+my_package/
+├── __init__.py       # Marks this as a package
+├── utils.py          # Contains a sample function
+setup.py              # Metadata and build instructions
+README.md             # Basic documentation
+
+# setup.py file
+from setuptools import setup, find_packages
+setup(
+    name='my_package',
+    version='0.1',
+    packages=find_packages(),
+    install_requires=[],  # Add dependencies here
+    author='Your Name',
+    description='A custom Python package',
+)
+2. python setup.py bdist_wheel  --> This will generate a .whl file inside the dist/ directory.
+3. activate venv
+4. Navigate to the directory: pip install dist/my_package-0.1-py3-none-any.whl     /     pip install . (step 2 not required)
+
+
 
 =================================================================================================================================
 
