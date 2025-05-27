@@ -1,11 +1,10 @@
 ================================================================================================================================================
 DATE(string in iso) / PARSE_DAT(format, string) / SAFE.PARSE_DATE(format, invalid date)
-DATE_DIFF() / TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) AS minutes_diff
 
+DATE_DIFF() / TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) AS minutes_diff
 extract(month from date)
 DATE_TRUNC(order_date, MONTH)
-FORMAT_DATE('%B %d, %Y', sale_date) 
-FORMAT_DATE('%Y-%m', DATE(order_date)) AS month,
+FORMAT_DATE('%B %d, %Y', sale_date)  - Y, y / m, B, b / d, A, a /
 
 =============================================================================================================================================
 
