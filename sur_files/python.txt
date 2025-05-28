@@ -84,64 +84,19 @@ Q&A
 >> Find the highest occurrences of each word from string and sort them in order.
 >> Remove Duplicates from List. set / for loop / list comprehension 
 >> Sort a List without using Sort keyword. built-in / bubble sort /
-
-
-
 >> Find the pair of numbers in this list whose sum is n no.
-
 >> Read and print values from an Excel file using Pandas.
-    df = pd.read_excel('your_file.xlsx')
-
 >> Handle file exceptions (missing or corrupted Excel files) gracefully. no error in try block --> try - else - finally /// error ---> except - finally
-try:
-    number = int(input("Enter a number: "))
-    result = 10 / number
-except ValueError:
-    print("You must enter a valid integer.")
-except ZeroDivisionError:
-    print("You cannot divide by zero.")
-else:
-    print(f"Result is: {result}")
-finally:
-    print("Execution completed.")
-
->> Calculate the Intersection of Two Lists without using Built-in Functions
-print(set(ls1) & set(ls2))
-
-lss =[item for item in ls1 if item in ls2]
-
->> What is a docstring in Python?
-    special kind of comment used to document what a function, class, or module does. 
-    appears right after the definition of a function, method, class, or module. 
-    Docstrings are enclosed in triple quotes (""" or ''') and can span multiple lines.
-
->> What is pass in Python? When is it used?
-    Placeholder for future class/function/loop definition
-    It does nothing when executed 
-
+>> Calculate the Intersection of Two Lists without using Built-in Functions:      print(set(ls1) & set(ls2)) or lss =[item for item in ls1 if item in ls2]
+>> What is a docstring in Python?  Docstrings are enclosed in triple quotes (""" or ''') and can span multiple lines.
+>> What is pass in Python? When is it used? --> Placeholder for future class/function / It does nothing when executed 
 >> Which data structure occupies more memory: list or tuple? Why?
-    In Python, lists generally occupy more memory than tuples. 
-    This is because lists are mutable, meaning their size and contents can change, while tuples are immutable, meaning their size and contents are fixed once created.
-
-import sys
-list_obj = [1, 2, 3, 4, 5]
-tuple_obj = (1, 2, 3, 4, 5)
-print(sys.getsizeof(list_obj))   # e.g., 120 bytes
-print(sys.getsizeof(tuple_obj))  # e.g., 80 bytes
-
+	lists generally occupy more memory than tuples. --> their size and contents can change, more methods
+	print(sys.getsizeof(list_obj))   # e.g., 120 bytes
 >>  Given a list [2, 3, 4, 5, 6], how can you sum all elements? (Discuss available functions)
-
 >>  What is a constructor in Python and its purpose?
-It is special method and automatically called to initilize variables when a new instance of a class is created.
+	It is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
 
-class Car:
-    def __init__(self, brand, model):
-        self.brand = brand
-        self.model = model
-# Creating an object
-my_car = Car("Toyota", "Camry")
-print(my_car.brand)  # Output: Toyota
-print(my_car.model)  # Output: Camry
 
 
 
