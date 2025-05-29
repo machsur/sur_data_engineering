@@ -187,7 +187,19 @@ partitioning & bucketing:
 
 	df.write.mode('overwrite').partitionBy('order_status').parquet('/content/ecommerce11/') --> folders based on order_status and inside num of partitions files	
  	df.write.mode('overwrite').bucketBy(2, 'order_status').saveAsTable('bucketed_table')   --->  6 partitions * 2 buckets = 12 files
+5. what is data skewness and salting technique? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
+   skewed partition : uneven data distribution
+	job is taking time, unutilization of resources, oom or data spill (write results to disk -- very costly)
+	fix --> repartition, salting, AQE, broadcasting
+   df.repartition(10)
+   df.rdd.getNumPartitions()
+   df.select(spark_partition_id().alias("partid")).groupBy("partid").count()	    
 
+14. What is the significance of partitioning and bucketing in PySpark, and how does it affect the performance of data processing tasks?
+	Partitioning: Divides data based on column values, creating separate directories for each partition. Best for filtering queries.
+	df.write.partitionBy("country", "year").parquet("output/partitioned_sales")
+	Bucketing: Divides data into a fixed number of buckets based on the hash of a column. Best for join queries.
+	df.write.bucketBy(4, "user_id").saveAsTable("bucketed_sales")
 >> create spark session with config optimization
 spark = SparkSession.builder \
 .appName("olist config optimization") \
@@ -239,79 +251,38 @@ dfjf = dfj.select('customer_id', 'customer_unique_id', col('customer_zip_code_pr
 dfjf.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
 dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-h5.surtest11.customers_orders').save()
 
->> How does Lazy Evaluation work in PySpark?
 
+
+
+
+
+
+
+>> How does Lazy Evaluation work in PySpark?
 >> What are wide and narrow transformations in PySpark?
-	
 >> Explain shuffle operations in PySpark and their impact on performance.
 	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
-	suppose if have suffle partions lesser than cluster capacity --> slow completion time, underutilization of cluster
-	if data per shuffle partion is too large --> tune by increasing num of partitions required
-	if data per shuffle partition is very less --> tune by decewasing no of SP, find size of SP based on available cores.
-	default shuffile partitions is 200 / data size per shuffle partition b/w 1-200 mb
-	# Set the number of shuffle partitions --> spark.conf.set("spark.sql.shuffle.partitions", 100)
-	# Verify the setting --> print(spark.conf.get("spark.sql.shuffle.partitions"))
-
 >> What is broadcast join, and when should we use it?
 	type of join operation where a small dataset is broadcasted to all worker nodes in the cluster. 
 	This allows the join to be performed locally on each node, significantly improving performance by reducing the amount of data shuffled across the network.
-
 >> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
     similarities in 3 apis : foult tolerant, distributed, in-memory computation, immutable, lazy evaluation, internally processing as rdd for all 3 codes
     RDD: low-level api / no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
     DF: high-level api / catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
     DS: high-level api / optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
-
 >> What is the difference between map() and flatMap() inPySpark?
     map() when you want to apply a function that returns a single value for each input element
     flatMap() when the function can return multiple values for each input element
-
 >> How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided (memory constraints, performance issues) ?
 	When you call .collect(), PySpark gathers all the partitions of the DataFrame or RDD and brings them to the driver node. This means that the data is no longer 		distributed across the cluster but is instead stored in the memory of the driver program
-
 >> Difference between sortby and orderby?
-   sortBy is used with RDDs.
-   orderBy is used with DataFrames.
-
+   sortBy is used with RDDs.    orderBy is used with DataFrames.
 >> what is the default block size (128 MB) in hdfs and how to change it?
    Edit the hdfs-site.xml File:
-
 >> What is difference between spark session and spark context?
 	SparkContext: Basic functionality for RDD operations. (used <2.0 spark version)
 	SparkSession: Provides a unified interface for DataFrame and Dataset APIs, SQL queries, and more. (used >2.0 spark version)
-
->> partitioning
-DataFrame or RDD dividing it into smaller chunks (partitions) that can be processed in parallel.
-
->> data cashing in spark
-data caching is a technique used to store intermediate results in memory (RAM) so that they can be reused in subsequent actions without recomputing them. 
-	cache()
-	persist(storageLevel=StorageLevel.MEMORY_ONLY) --> DISK_ONLY, MEMORY_AND_DISK, MEMORY_ONLY_SER, MEMORY_AND_DISK_SER, OFF_HEAP, MEMORY_ONLY_2
-	df.unpersist()
-
->> What are the advantages of using PySpark over Pandas for big data processing?
-	distibuted, foult-tolerant, performance, api&libraries, intergate with big data tools.
-
-20.
-Dynamic partition pruning (DPP) in PySpark is a feature that optimizes query performance by pruning partitions dynamically based on runtime data. This is particularly useful for queries involving joins where one table is significantly smaller than the other. DPP helps reduce the amount of data scanned, thereby improving query efficiency.
-16. problems that partition solves?
-	fast/esay access, parallesium & resource utilization
-
-5. what is data skewness and salting technique? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
-   skewed partition : uneven data distribution
-	job is taking time, unutilization of resources, oom or data spill (write results to disk -- very costly)
-	fix --> repartition, salting, AQE, broadcasting
-   df.repartition(10)
-   df.rdd.getNumPartitions()
-   df.select(spark_partition_id().alias("partid")).groupBy("partid").count()	    
-
-14. What is the significance of partitioning and bucketing in PySpark, and how does it affect the performance of data processing tasks?
-	Partitioning: Divides data based on column values, creating separate directories for each partition. Best for filtering queries.
-	df.write.partitionBy("country", "year").parquet("output/partitioned_sales")
-	Bucketing: Divides data into a fixed number of buckets based on the hash of a column. Best for join queries.
-	df.write.bucketBy(4, "user_id").saveAsTable("bucketed_sales")
-
-19. what are the optimization techniques in pyspark?
+>> what are the optimization techniques in pyspark?
 	Use DataFrame/Dataset over RDD
 	use col format files 
 	filter data erly
