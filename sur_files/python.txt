@@ -80,7 +80,31 @@ setup(
 3. activate venv
 4. Navigate to the directory: pip install dist/my_package-0.1-py3-none-any.whl     /     pip install . (step 2 not required)
 
->> logging
+>> Why Use Logging Instead of Print?
+Levels: You can categorize messages (DEBUG, INFO, WARNING, ERROR, CRITICAL).
+Output Options: Log to files, streams, or external systems.
+Configurability: Control format, level, and destination of logs.
+Production-Ready: Logging is more suitable for real-world applications than print().
+
+import logging
+# Configure the logger
+logging.basicConfig(
+    level=logging.DEBUG,  # Set the minimum level of log messages: info, warning, error, critical
+    format='%(asctime)s - %(levelname)s - %(message)s',  # Log message format
+    filename='app.log',  # Log file name
+    filemode='w'  # Overwrite the log file each time the script runs
+)
+logging.debug("This is a debug message")
+2025-05-30 12:10:31,123 - DEBUG - This is a debug message
+
+def bq_logger(path, name):
+	logger = logging.getLogger(name)
+	logger.setLevel(logging.INFO)
+	fomatter = logging.Formater(' ')
+	handler = logging.FileHandler(os.path.join(path, name), 'w')
+	handler.setFormatter(formatter)
+	looger.addHandler(handler)
+	return logger
 
 >> 
 	OOPS
