@@ -10,10 +10,10 @@ FORMAT_DATE('%B %d, %Y', sale_date)  - Y, y / m, B, b / d, A, a /
 
 >> SCD: dimensions that change over time
 	SCD0 - NO CHANGE - change in source, no update on DWH table - change column is not relavant to the DWH table anymore (ex: fax number)	
-	SCD1 - maintain latest snapshot, no histroy and its overwritten by latest snap (ex: emp name designation has wrongly entered)
-	SCD2 - every change in source, add new record in DWH table and flag status is Y indicating active record
-	SCD3 - not rec
-	SCD4 - scd1+scd2 - 
+	SCD1 - Overwrite -Updates the existing record with new data - No history is preserved.
+	SCD2 - Add New Row  -- Keeps full history by adding a new row with versioning or effective dates.
+	SCD3 - Add New Column -- Keeps limited history by adding a new column for the previous value.
+	SCD4 - scd1+scd2 - Current Table: Stores only the latest data. & History Table: Stores all historical changes with timestamps or versioning.
 	scd6 - 1+2+3 - 
 
 >> "write a query to how will you get a list of the top ten most expensive queries that have been executed in your project over the past 30 days:"
