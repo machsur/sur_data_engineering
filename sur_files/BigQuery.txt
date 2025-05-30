@@ -1,10 +1,11 @@
 ================================================================================================================================================
-DATE(string in iso) / PARSE_DAT(format, string) / SAFE.PARSE_DATE(format, invalid date)
+DATE(string in iso) / PARSE_DATE(format, string) / SAFE.PARSE_DATE(format, invalid date)
+to_date("date_str in iso") / to_date("date_str", "dd/MM/yyyy") / same for safe
 
-DATE_DIFF() / TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) AS minutes_diff
-extract(month from date)
-DATE_TRUNC(order_date, MONTH)
-FORMAT_DATE('%B %d, %Y', sale_date)  - Y, y / m, B, b / d, A, a /
+DATE_DIFF() / TIMESTAMP_DIFF(order_time, previous_time, MINUTE)  //  datediff("end_date", "start_date")   (unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600
+extract(month from date)          //			month("order_date")
+DATE_TRUNC(order_date, MONTH) 		//          	trunc("order_date", "MM")
+FORMAT_DATE('%B %d, %Y', sale_date)  - Y, y / m, B, b / d, A, a /   //        date_format("sale_date", "MMMM dd, yyyy") 	yy, yyyy, M, MM, MMM, MMMM, d, dd, E, EEEE
 
 =============================================================================================================================================
 
