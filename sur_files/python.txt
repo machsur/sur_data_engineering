@@ -22,6 +22,8 @@ Python:
 	config.read('config.ini')  # Read the config file
 	db_host = config['database']['host']   |   db_port = config.getint('database', 'port')  # Access values
 >> Handlling errors: using the try-except block --> catch and respond to errors gracefully, instead of crashing.
+	any error in the try block, exception will be raised and it caught by except block
+
 	compile time error: Syntatical --- print("Hello World"  # Missing closing parenthesis 
 	Logical error: wrong output --- print("Sum is:", a * b)  # Wrong logic: used * instead of +
 	run time error:  occur while the program is running --- print(5 / 0)  # Division by zero
@@ -79,6 +81,11 @@ setup(
 4. Navigate to the directory: pip install dist/my_package-0.1-py3-none-any.whl     /     pip install . (step 2 not required)
 
 >> logging
+
+>> 
+	OOPS
+	inheritance:
+	
 
 
 =================================================================================================================================
