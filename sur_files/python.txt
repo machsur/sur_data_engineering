@@ -107,8 +107,14 @@ def bq_logger(path, name):
 	return logger
 
 >> 
-	OOPS
-	inheritance:
+OOPS: Class, object, constructer, 
+inheritance: parent class, child class
+
+--polymorphisum: 
+	typically achived using method overriding and interfaces(AbstractBaseClass)
+	provides way to perform a single action in different forms.
+method overriding: allows child class to implement specific method that is already defined in parent class.
+
 	
 
 
