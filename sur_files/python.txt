@@ -150,6 +150,15 @@ Q&A
 >>  Given a list [2, 3, 4, 5, 6], how can you sum all elements? (Discuss available functions)
 >>  What is a constructor in Python and its purpose?
 	It is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
+>> Find out common letters between two strings Using Python
+   use set mtd  ////  & 
+>> 
+convert two list into dict: result = dict(zip(keys, values))
+convert dict into tuple:     result = tuple(my_dict.items())
+>> FIND MISSING NUMBER IN AN ARRAY IN PYTHON
+	1. n(n+1)/2 - sum(array_elements)
+>> Find Out Pairs with given sum in an array in python of time complexity O(n log n)- FACEBOOK,AMAZON
+
 
 
 
