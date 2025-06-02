@@ -9,6 +9,24 @@ FORMAT_DATE('%B %d, %Y', sale_date)  - Y, y / m, B, b / d, A, a /   //        da
 
 =============================================================================================================================================
 
+>>  
+Fact Table
+Contains numeric values (quantitative data ) (facts) like sales, revenue, profit, etc.
+Has foreign keys referencing dimension tables.
+Grows rapidly as new transactions are added.
+Date_ID	Product_ID	Store_ID	Sales_Amount	Quantity_Sold
+20250601		101		1		5000
+
+Dimension Table
+A Dimension Table contains descriptive attributes or textual or categorical data.
+Typically smaller and changes less frequently.
+Product_ID	Product_Name	Category	Brand
+101		Laptop		Electronics	Dell
+
+>>
+Star Schema: Multiple Dimension Tables directly connected to the fact table
+Snowflake Schema: is a more normalized form of the star schema. Dimension tables are split into sub-dimensions, reducing redundancy.
+
 >> SCD: dimensions that change over time
 	SCD0 - NO CHANGE - change in source, no update on DWH table - change column is not relavant to the DWH table anymore (ex: fax number)	
 	SCD1 - Overwrite -Updates the existing record with new data - No history is preserved.
