@@ -115,6 +115,12 @@ inheritance: parent class, child class
 	provides way to perform a single action in different forms.
 method overriding: allows child class to implement specific method that is already defined in parent class.
 
+-- Encaptulation: 
+	public variable: can access outside class
+	private variable: cannt acces from outside of class
+	protected variable: can access from derived class, other not
+
+
 	
 
 
