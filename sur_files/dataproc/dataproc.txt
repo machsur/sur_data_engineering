@@ -68,18 +68,21 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 		df.fillna("N/A" subset=['cn1", "cn2"]) / df.na.fill({'cn1':'val1', 'cn2': 'val2'}) / is null('CN') 
 		df_replaced_multiple = df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset="fruit")
 	==>> coalesce('cn1', 'cn2','cn3') - return first non-null value from list of columns
-	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0)))
-	==>> agg functions --> df.select(sum('CN')).show()  ------> note: ignore null values
-	     grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show()
-		sum , sumDistinct, min, max, avg, count, countDistanct, collect_list, collect_set first, last, stddev, variance 
+	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0))) 
 	==>> when&otherwise -->> df = ( df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult")).withColumn("income_bracket", when(df.salary < 4000, "Low") 					.when((df.salary >= 4000) & (df.salary <= 4500), "Medium") .otherwise("High")) )
 	==>>cast data types -->> df = df.withColumn("column_name", col("column_name").cast("target_data_type"))
 			    -->> cast_expr = [col("column1_name").cast("target_data_type1"), col("column2_name").cast("target_data_type2")] / df = df.select(*cast_expr)
+	==>> agg functions 
+		agg ------->  df.select(sum('CN')).show()  ------> note: ignore null values
+		grouping and agg -----> df.groupBy('CN').agg(sum('CN')).show()
+		sum , sumDistinct, min, max, avg, count, countDistanct, collect_list, collect_set first, last, stddev, variance
 	==>> window functions -->> window_spec = Window.partitionBy("category", "sub_category").orderBy(asc("timestamp"), col("score").desc()) \
                     				.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
 				   window_spec = Window.partitionBy("category", "sub_category").orderBy(col("timestamp"), col("score")).rowsBetween(-2, 3)
 				   df = df.withColumn("row_number", row_number().over(window_spec)) 
-   		max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() / lag(cn) / lead(cn) / 
+   		max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) / collect_list / collect_set / first / last /
+		row_number() / rank() / dense_rank() / 
+		lag(cn) / lead(cn, 2) / 
 		first_value(cn) / last_value(cn) / nth_value(cn, n) /
 	==>> splitng column -->> df.withColumn('nc', split(col('name'), '[ ,]'))   -->> [0] or .getItem(0), explode, 
 	     Array length: df.withColumn('nc', size(split(col('name'), '[ ,]')))
