@@ -1,12 +1,10 @@
-================================================================================================================================================
+========================================================================================================================================================================
 links:
 https://github.com/afaqueahmad7117/spark-experiments/tree/main/spark
 https://allthingdata.substack.com/p/essential-linux-commands-for-data         
 
-==================================================================================================================================================================
+==========================================================================================================================================================================
 commands:
-
-PySpark Syntax: read : Join : filter : groupBy: agg : filter : select : orderBy : Limit: 
 
 hdfs dfs -ls -R /public/retail_db
 hdfs dfs -mkdir /path/to/new_directory
@@ -98,7 +96,7 @@ hdfs dfs -chmod 755 /path/to/file_or_directory
 		regexp_contain: df.withColumn("contains_digits", when(regexp_extract(col("text"), r'\d', 0) != "", True).otherwise(False))
 		regexp_substr: df = df.withColumn("first_digits", regexp_extract("text", r'\d+', 0))
 
-============================================================================================================================================================
+==========================================================================================================================================================================
 
 Pyspark Interview QA:
 
@@ -252,90 +250,140 @@ dfjf.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_
 dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-h5.surtest11.customers_orders').save()
 
 
+==========================================================================================================================================================================
+HiveQL: 
+	-- SQL like query lang to query large datasets stored in HDFS
+	-- sql like interface (HQL) --> translator ---> MR/spark/tej code (is abstraction for java or MR programe)
+	-- table --> data (hdfs, s3, gcs) + metadata (hive stores metastore in it). 
+	-- hive is database like mysql?
+	its not a database. but, its DWH tool built on top of Hadoop to query large datasets from HDFS storage
+		storage			query processing		schema 			transaction type	speed
+	mysql   stru data in tables	execute in-memory		schema-on-write		oltp			fast for small queries, real-time updates
+	Hive -   HDFS, s3		MR or Spark or Tej 		schema-on-read		olap			opti for large scale batch processing
+	-- hive is replacement for Hadoop?
+	No, buit on top of hadoop core components (hdfs, yarn, mr/spark/tej)
+	-- hive queries like normal sql queries in db?
+	HQL queries --> translatior --> mr/spark/tej code which runs on distributed system
+	-- hive can perform row-level transaction like mysql?
+	yes, it can. but, hive is not designed for row-level operations (if u change one row- it will recreate entire partition file)
+	-- hive can works with only HDFS?
+	no. HDFS/s3/gcs/data lake
+	-- hive tables work like noraml database tables?
+	hive is metastore and not storing any tables
+
+>> connect with hive clients
+1. hive: direct connection / no auth / single sessions/ read-heavy for query performance / production not rec /
+or
+beeline : uses jdbc for remote connection / support auth / multiple concurrant sessions/ opti for query performance / production rec /
+	!connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default
+	vi etc/hive/conf/hive-site.xml (for hive properties, we got username: hive and password: Pw1+86Xg4CCq from her as well)
+	
+>> (inside terminal)
+	set hive.execution.engine; / set hive.execution.engine=tez/spark/mr;
+	ctrl + l  --> to clear
+	set hive.metastore.warehouse.dir;  (hive data files stroed in hdfs) / hdfs dfs -ls /user/hive/warehouse/  
+
+>> show databases; / use sur_db; / show tables;
+
+>>  Hive external table (data file in GCS)
+	create external table customers_exe11 (
+	customer_id INT,
+	customer_unique_id INT,
+	customer_zip_code_prefix STRING,
+	customer_city STRING,
+	customer_state STRING
+	)
+	ROW FORMAT DELIMITED
+	FIELDS TERMINATED BY ','
+	STORED AS TEXTFILE
+	location 'gs://surdatabuk/data/cust_exe/'
+	TBLPROPERTIES ("skip.header.line.count"="1");
+
+	INSERT INTO TABLE `elegant-circle-454709-h5.surtest11.bq_cust_exe`
+	SELECT * FROM customers_exe11;
+
+>> Hive managed table (data in hdfs)
+	create table orders22 (
+	order_id string,
+	customer_id string,
+	order_status string, 
+	order_purchase_timestamp timestamp,  
+	order_approved_at timestamp, 
+	order_delivered_carrier_date timestamp,
+	order_delivered_customer_date timestamp,
+	order_estimated_delivery_date timestamp)
+	STORED AS TEXTFILE;
+
+	load data inpath '/data/olist/olist_customers_hive.csv' into table orders22;
+
+>> hive metastore (connect on vm node): mysql db (see conf xml file), default derby db, might be diff db configured in your companey
+
+-- connect to mysql db 
+	mysql -u hive -p 
+	Pw1+86Xg4CCq
+
+-- show databases; / use metastore; / show tables; / select * from TBLS; / exit
 
 
-
-
-
+===========================================================================================================================================================================
 
 >> How does Lazy Evaluation work in PySpark?
 >> What are wide and narrow transformations in PySpark?
 >> Explain shuffle operations in PySpark and their impact on performance.
 	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
 >> What is broadcast join, and when should we use it?
-	type of join operation where a small dataset is broadcasted to all worker nodes in the cluster. 
-	This allows the join to be performed locally on each node, significantly improving performance by reducing the amount of data shuffled across the network.
+	small dataset is broadcasted to all worker nodes in the cluster - allows to perform join locally on each node - reducing the amount of data shuffled across the 	network - improved performance
 >> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
-    similarities in 3 apis : foult tolerant, distributed, in-memory computation, immutable, lazy evaluation, internally processing as rdd for all 3 codes
-    RDD: low-level api / no optimizer / oops style api / complie time error (strong type safety) / 4 lang / no schema /
-    DF: high-level api / catalyst optimizer / sql style api (user friendly) / run time error (less type safety) / 4 lang / schema structured /
-    DS: high-level api / optimizer (best plan execution)/ oops / complie time error (strong type safety) / 2 lang / schema structured / 
 >> What is the difference between map() and flatMap() inPySpark?
-    map() when you want to apply a function that returns a single value for each input element
-    flatMap() when the function can return multiple values for each input element
+    returns a single value for each input element / return multiple values for each input element
 >> How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided (memory constraints, performance issues) ?
-	When you call .collect(), PySpark gathers all the partitions of the DataFrame or RDD and brings them to the driver node. This means that the data is no longer 		distributed across the cluster but is instead stored in the memory of the driver program
->> Difference between sortby and orderby?
-   sortBy is used with RDDs.    orderBy is used with DataFrames.
->> what is the default block size (128 MB) in hdfs and how to change it?
-   Edit the hdfs-site.xml File:
+	gathers all the partitions of the df or RDD and brings them to the driver node. - data is no longer distributed, instead stored in the memory of the driver program
+>> Difference between sortby and orderby? -    sortBy is used with RDDs and orderBy is used with DataFrames.
+>> what is the default block size (128 MB) in hdfs and how to change it?:   Edit the hdfs-site.xml File:
 >> What is difference between spark session and spark context?
-	SparkContext: Basic functionality for RDD operations. (used <2.0 spark version)
-	SparkSession: Provides a unified interface for DataFrame and Dataset APIs, SQL queries, and more. (used >2.0 spark version)
+	SparkContext: entry point for RDD operations/functionality. (used <2.0 spark version)
+	SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. (used >2.0 spark version)
 >> what are the optimization techniques in pyspark?
-	Use DataFrame/Dataset over RDD
-	use col format files 
-	filter data erly
-	Cache Data or persist data
-	use broadcast to Optimize Joins
-	Optimize shuffle Partitions: Repartition / Coalesce
-	enable AQE, salting
-	partitioning & bucketing for frequently accessed based on specific column
-	Avoid User Defined Functions (UDFs)
+	use col format files, Use DataFrame/Dataset over RDD, filter data erly, Cache/persist data, use broadcast Joins
+	Optimize shuffle Partitions (Repartition / Coalesce enable AQE, salting)
+	partitioning & bucketing for frequently accessed based on specific column, Avoid User Defined Functions (UDFs)
 
-===================================================================================================================================================
+======================================================================================================================================================================
 >> Find the top 3 highest-paid employees from each department.
    data = [(1, "Amit", "IT", 90000),
 
 >> Write a PySpark code to remove duplicate records based on a specific column.
    data = [(101, "Mumbai", "Maharashtra"), ]
 
->> Write a PySpark query to calculate the moving average of sales over the last 3 months.
+>> Write a PySpark query to calculate the moving average of sales over the last 3 months:   order_id, date, sale_amount
     window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
     df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
 
 >> What is SparkSQL, and how do you perform SQL operations on DataFrames?
 	SparkSQL is a module in Apache Spark that allows you to run SQL queries on large datasets.
-   	Registering the DataFrame as a Temporary View: df.createOrReplaceTempView("people")
-   	Running SQL Queries: spark.sql("SELECT Name, Age FROM people WHERE Age > 30").show()
 
->> unpivot data
-cricket_data = [("Virat Kohli", 85, 100, 75),
- ("Steve Smith", 90, 105, 80),
- ("Kane Williamson", 88, 95, 70)]
-df = spark.createDataFrame(cricket_data, ["Player", "Match1", "Match2", "Match3"])
-
-	unpivot_expr = "stack(3, 'Match1', Match1, 'Match2', Match2, 'Match3', Match3) as (Match, Score)"
-	unpivot_df = df.select("Player", expr(unpivot_expr))
+>> pivot & unpivot data: cricket_data = [("Virat Kohli", 'Match1', 75), ..........], col = ["Player", "Match", "score"]
+	pivot_df = df.groupBy('Player').pivot('Match').agg(sum('score'))
+	unpivoted_df = df.selectExpr("Name", "stack(3, 'Match1', Match1, 'Match2', Match2, 'Match3', Match3) as (Product, Sales)")
 
 >> what is collect list and collect set and when do we use it?
    result = df.groupBy("name").agg(collect_list("value").alias("values_list")) - allows duplicates in list
    result = df.groupBy("name").agg(collect_set("value").alias("values_set")) - no duplicates in list
 
 >> Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
-     +-------------+----------+
      | City    | Population|
-     +-------------+----------+
     top_5_cities = df.orderBy(col("Population").desc()).limit(5)
 
->> Given a DataFrame containing employee details, write a PySpark code snippet to group employees by their department and calculate the average salary for each department.
+>> write a PySpark code snippet to group employees by their department and calculate the average salary for each department.  emp_name, dept, salary
     avg_salary_by_dept = df.groupBy("Department").agg(avg("Salary").alias("AverageSalary"))
 
 >> Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
-     +------------+----------------+-------------------+
      | customer_id| transaction_id | transaction_date |
-     +------------+----------------+-------------------+
-    df_no_duplicates = df.dropDuplicates(["customer_id", "transaction_date"])
+
+
+
+
+
 
 >> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
     output 
@@ -526,83 +574,5 @@ columns = ["order_id", "state", "city", "product_id", "category", "units", "unit
 |Tamil Nadu |Clothing |8800.0 |8.0 |
 +-----------+-----------+-------------+-------------------+
 
-==========================================================================================================================================
-HiveQL: 
-	-- SQL like query lang to query large datasets stored in HDFS
-	-- sql like interface (HQL) --> translator ---> MR/spark/tej code (is abstraction for java or MR programe)
-	-- table --> data (hdfs, s3, gcs) + metadata (hive stores metastore in it). 
-	-- hive is database like mysql?
-	its not a database. but, its DWH tool built on top of Hadoop to query large datasets from HDFS storage
-		storage			query processing		schema 			transaction type	speed
-	mysql   stru data in tables	execute in-memory		schema-on-write		oltp			fast for small queries, real-time updates
-	Hive -   HDFS, s3		MR or Spark or Tej 		schema-on-read		olap			opti for large scale batch processing
-	-- hive is replacement for Hadoop?
-	No, buit on top of hadoop core components (hdfs, yarn, mr/spark/tej)
-	-- hive queries like normal sql queries in db?
-	HQL queries --> translatior --> mr/spark/tej code which runs on distributed system
-	-- hive can perform row-level transaction like mysql?
-	yes, it can. but, hive is not designed for row-level operations (if u change one row- it will recreate entire partition file)
-	-- hive can works with only HDFS?
-	no. HDFS/s3/gcs/data lake
-	-- hive tables work like noraml database tables?
-	hive is metastore and not storing any tables
 
->> connect with hive clients
-1. hive: direct connection / no auth / single sessions/ read-heavy for query performance / production not rec /
-or
-beeline : uses jdbc for remote connection / support auth / multiple concurrant sessions/ opti for query performance / production rec /
-	!connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default
-	vi etc/hive/conf/hive-site.xml (for hive properties, we got username: hive and password: Pw1+86Xg4CCq from her as well)
-	
->> (inside terminal)
-	set hive.execution.engine; / set hive.execution.engine=tez/spark/mr;
-	ctrl + l  --> to clear
-	set hive.metastore.warehouse.dir;  (hive data files stroed in hdfs) / hdfs dfs -ls /user/hive/warehouse/  
-
->> show databases; / use sur_db; / show tables;
-
->>  Hive external table (data file in GCS)
-	create external table customers_exe11 (
-	customer_id INT,
-	customer_unique_id INT,
-	customer_zip_code_prefix STRING,
-	customer_city STRING,
-	customer_state STRING
-	)
-	ROW FORMAT DELIMITED
-	FIELDS TERMINATED BY ','
-	STORED AS TEXTFILE
-	location 'gs://surdatabuk/data/cust_exe/'
-	TBLPROPERTIES ("skip.header.line.count"="1");
-
-	INSERT INTO TABLE `elegant-circle-454709-h5.surtest11.bq_cust_exe`
-	SELECT * FROM customers_exe11;
-
->> Hive managed table (data in hdfs)
-	create table orders22 (
-	order_id string,
-	customer_id string,
-	order_status string, 
-	order_purchase_timestamp timestamp,  
-	order_approved_at timestamp, 
-	order_delivered_carrier_date timestamp,
-	order_delivered_customer_date timestamp,
-	order_estimated_delivery_date timestamp)
-	STORED AS TEXTFILE;
-
-	load data inpath '/data/olist/olist_customers_hive.csv' into table orders22;
-
->> hive metastore (connect on vm node): mysql db (see conf xml file), default derby db, might be diff db configured in your companey
-
--- connect to mysql db 
-	mysql -u hive -p 
-	Pw1+86Xg4CCq
-
--- show databases; / use metastore; / show tables; / select * from TBLS; / exit
-
-
-
-
-
-==========================================================================================================================================
 
