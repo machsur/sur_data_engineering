@@ -1,4 +1,18 @@
 ============================================================================================================================================================
+>> BigO
+	time complexity: code1 - 15 sec < code2-60sec, means code1 is better than code2 / different machine time varies / so, we measure in terms of no of operations
+	Space complexity: code1 15sec but larger space and code2 60sec lesser space, here code2 is better if we concern about space.
+
+>> omega (best case), theta (avg case), omecron (bigO-worst case)	
+	O(1) - const oper even n varies
+	O(logn) - 2^3 = 8 / log8=3 / divide two parts
+	O(n) - for loop
+	O(nlogn) - some sorting algortiums
+	O(n2) - nested for loop
+	for different inputs - O(a+b) - O(a*b)
+
+>> 
+============================================================================================================================================================================
 Python:
 >> Interpreter: The programme that runs your code.
    Virtual Environment: A separate "workspace" that uses a Python interpreter but has its own packages and dependencies.
@@ -119,6 +133,10 @@ method overriding: allows child class to implement specific method that is alrea
 	public variable: can access outside class
 	private variable: cannt acces from outside of class
 	protected variable: can access from derived class, other not
+-- Abstraction
+
+-- Magic/Tunder/double underscore methods: enable you to define the behavour of objects for built-in operations such as arth ope, comp oper, more
+
 
 
 	
