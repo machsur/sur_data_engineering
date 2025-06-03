@@ -490,7 +490,41 @@ data = [ (1, "Laptop", 10, 50000, "North", "2025-01-01"), (2, "Mobile", None, 15
 	df.show()
 
 
+>>
+𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧:
+You have a PySpark DataFrame df containing detailed sales data from various states in India for an e-commerce company. The DataFrame schema is:
 
+You need to perform the following complex analysis using PySpark:
+1. Calculate the total revenue per state and category.
+ (Revenue = units × unit_price)
+2. For each state, identify the category that has the highest total revenue.
+3. For each state-category pair, calculate the average units sold per order.
+4. From the results, list the states along with the category that generated the highest revenue, and the average units sold per order for that category.
+5. Sort the final output by total revenue in descending order.
+ 
+𝐒𝐚𝐦𝐩𝐥𝐞 𝐃𝐚𝐭𝐚 :
+data = [
+ ("O1001", "Maharashtra", "Mumbai", "P100", "Electronics", 3, 15000.0, "2025-05-10"),
+ ("O1002", "Maharashtra", "Pune", "P101", "Clothing", 5, 1200.0, "2025-05-11"),
+ ("O1003", "Karnataka", "Bengaluru", "P102", "Electronics", 2, 18000.0, "2025-05-10"),
+ ("O1004", "Karnataka", "Mysore", "P103", "Grocery", 10, 200.0, "2025-05-12"),
+ ("O1005", "Tamil Nadu", "Chennai", "P104", "Electronics", 1, 16000.0, "2025-05-11"),
+ ("O1006", "Tamil Nadu", "Coimbatore", "P105", "Clothing", 8, 1100.0, "2025-05-13"),
+ ("O1007", "Maharashtra", "Nagpur", "P106", "Grocery", 20, 150.0, "2025-05-12"),
+ ("O1008", "Karnataka", "Bengaluru", "P107", "Clothing", 6, 1300.0, "2025-05-14"),
+ ("O1009", "Tamil Nadu", "Chennai", "P108", "Grocery", 15, 180.0, "2025-05-14"),
+]
+
+columns = ["order_id", "state", "city", "product_id", "category", "units", "unit_price", "order_date"]
+
+𝐄𝐱𝐩𝐞𝐜𝐭𝐞𝐝 𝐎𝐮𝐭𝐩𝐮𝐭:
++-----------+-----------+-------------+-------------------+
+|state |category |total_revenue|avg_units_per_order |
++-----------+-----------+-------------+-------------------+
+|Maharashtra|Electronics|45000.0 |3.0 |
+|Karnataka |Electronics|36000.0 |2.0 |
+|Tamil Nadu |Clothing |8800.0 |8.0 |
++-----------+-----------+-------------+-------------------+
 
 ==========================================================================================================================================
 HiveQL: 
