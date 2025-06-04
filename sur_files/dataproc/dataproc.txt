@@ -383,11 +383,6 @@ beeline : uses jdbc for remote connection / support auth / multiple concurrant s
 >> Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
      | customer_id| transaction_id | transaction_date |
 
-
-
-
-
-
 >> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
     output 
    +---+---------------+----------+---------+
@@ -404,6 +399,19 @@ beeline : uses jdbc for remote connection / support auth / multiple concurrant s
 >> Create a DataFrame with two columns:
     Column 1: Default String
     Column 2: Default Integer
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 >> Word count program in pyspark
     df1 = df.select(explode(split(df["name"], " ")).alias("word")).groupBy("word").agg(count("*").alias("count"))
