@@ -160,6 +160,18 @@ Shuffle Partition: partitions after shufflling of data across the nodes based on
 	ex: cores= 12, sp=200, data size=50mb, size of sp = 50/200=0.25mb 
 	rec: 1 to 200mb | sol is tune no of shuffle partitions | no of sp = 50/choose 10mb=5sp or 50mb/12 cores ~ 4mb
 
+>> 
+partitioning & bucketing:
+	Partitioning: Divides data based on column values, creating separate directories for each partition. Adv: esay/fast access, parallesium/resource utilization
+	df.write.mode('overwrite').partitionBy('listen_date').parquet('/content/ecommer/') --> folder based on order_status & inside num of parti files	
+	df.reparttion(3).write.mode('overwrite').partitionBy('listen_date').parquet('/content/ecommer/') 
+	column should be medium cardinality & filter column
+
+	Bucketing: Divides data into a fixed number of buckets based on the hash of a column. Best for join queries.
+	name, age, country --> partition by contry --> filter india (400mb) --> secound level partition based on age --> 100 files in 4mb --> small size problem -->
+	reduce performance --> instead of SLP i use bucketing --> hash function (age, 3) --> 3 files ~ 133mb
+
+ 	df.write.mode('overwrite').bucketBy(2, 'order_status').saveAsTable('bucketed_table')   --->  6 partitions * 2 buckets = 12 files
 >> even after adjusting sp you job is running very slow due to data skewness 
    Sol: salting technique, AQE
 	
@@ -181,13 +193,6 @@ dynamic partition pruning: send partition that is supossed to be scanned
 	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
 
 
->> 
-partitioning & bucketing:
-	name, age, country --> partition by contry --> filter india (400mb) --> secound level partition based on age --> 100 files in 4mb --> small size problem -->
-	reduce performance --> instead of SLP i use bucketing --> hash function (age, 3) --> 3 files ~ 133mb
-
-	df.write.mode('overwrite').partitionBy('order_status').parquet('/content/ecommerce11/') --> folders based on order_status and inside num of partitions files	
- 	df.write.mode('overwrite').bucketBy(2, 'order_status').saveAsTable('bucketed_table')   --->  6 partitions * 2 buckets = 12 files
 5. what is data skewness and salting technique? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
    skewed partition : uneven data distribution
 	job is taking time, unutilization of resources, oom or data spill (write results to disk -- very costly)
@@ -196,11 +201,7 @@ partitioning & bucketing:
    df.rdd.getNumPartitions()
    df.select(spark_partition_id().alias("partid")).groupBy("partid").count()	    
 
-14. What is the significance of partitioning and bucketing in PySpark, and how does it affect the performance of data processing tasks?
-	Partitioning: Divides data based on column values, creating separate directories for each partition. Best for filtering queries.
-	df.write.partitionBy("country", "year").parquet("output/partitioned_sales")
-	Bucketing: Divides data into a fixed number of buckets based on the hash of a column. Best for join queries.
-	df.write.bucketBy(4, "user_id").saveAsTable("bucketed_sales")
+
 >> create spark session with config optimization
 spark = SparkSession.builder \
 .appName("olist config optimization") \
