@@ -166,12 +166,23 @@ partitioning & bucketing:
 	df.write.mode('overwrite').partitionBy('listen_date').parquet('/content/ecommer/') --> folder based on order_status & inside num of parti files	
 	df.reparttion(3).write.mode('overwrite').partitionBy('listen_date').parquet('/content/ecommer/') 
 	column should be medium cardinality & filter column
+	suppose filter column has high cordinality - end up with small file problem. - buckting is rec
 
-	Bucketing: Divides data into a fixed number of buckets based on the hash of a column. Best for join queries.
-	name, age, country --> partition by contry --> filter india (400mb) --> secound level partition based on age --> 100 files in 4mb --> small size problem -->
-	reduce performance --> instead of SLP i use bucketing --> hash function (age, 3) --> 3 files ~ 133mb
-
+	Bucketing: Divides data into a fixed number of buckets based on the hash of a column  - filter, groupby, join queries.
+	h(product_id)%no of buckets 
+	during bucketing shuffeling involves.
+	proucts, orders table - bucket 0 from both tables - placed in same executor 
+	DS1		DS2		Performance
+	B, X		B, X		no shuffle
+	B, X 		B, Y		one of the dataset is shuffled
+	B, X		B, X		bucketing x column, but join on Y column - involves full shuffle
  	df.write.mode('overwrite').bucketBy(2, 'order_status').saveAsTable('bucketed_table')   --->  6 partitions * 2 buckets = 12 files
+	df_bucketed = spark.table('bucketed_table')
+
+-- Q/A - how to decide optimal number of buckets = size of dataset / optimal bucket size (128-200mb)
+   size of dataset in mb = (no of records * no of var/col * avg width of var in bytes) / (1024 * 1024)
+-- once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all
+
 >> even after adjusting sp you job is running very slow due to data skewness 
    Sol: salting technique, AQE
 	
