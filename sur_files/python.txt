@@ -120,6 +120,9 @@ def bq_logger(path, name):
 	looger.addHandler(handler)
 	return logger
 
+>>
+file operations: read from file, write into file, read file1 and write into file2, find no of lines, words, chars
+
 >> 
 OOPS: Class, object, constructer, 
 inheritance: parent class, child class
