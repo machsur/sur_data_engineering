@@ -122,6 +122,7 @@ def bq_logger(path, name):
 
 >>
 file operations: read from file, write into file, read file1 and write into file2, find no of lines, words, chars
+working with file paths: os
 
 >> 
 OOPS: Class, object, constructer, 
