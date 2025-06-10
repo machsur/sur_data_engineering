@@ -19,6 +19,40 @@ hdfs dfsadmin -report
 hdfs dfs -df -h
 hdfs dfs -du -s -h /path/to/directory
 hdfs dfs -chmod 755 /path/to/file_or_directory
+
+
+==> low-level api
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName('WordCountDemo').master('yarn').getOrCreate()
+rdd = spark.sparkContext.parallelize(data)
+rdd = spark.sparkContext.textFile(hdfs_path)   ---> hdfs_path = '/tmp/inputhdfsdbz.txt'
+rdd_hdfs_mapped = rdd_hdfs.map(lambda line:line.split(" "))
+rdd1 = rdd.map(lambda line: line.split(','))
+rdd1 = rdd.flatMap(lambda line: line.split(','))
+rdd1 = rdd.filter(lambda row: 'Frieza' in row) / rdd1 = rdd.filter(lambda row : row!=header)  - header = rdd.first()
+rdd1 = rdd.flatMap(lambda line:line.split(' ')).map(lambda word:(word,1)).reduceByKey(lambda a,b : a+b)   ---> word count programme
+rdd1 = rdd.map(lambda row:row.split(',')).map(lambda row:(row[2],1)).groupByKey().map(lambda row:(row[0],len(row[1]))).collect()
+
+rdd1 = rdd.map(parse_row)
+def parse_row(row):
+    fields = row.split(',')
+    return (int(fields[0]), fields[1], fields[2], fields[3], fields[6]=='True')
+
+rdd.first()
+rdd.collect()
+rdd.take(3)
+rdd1.countByValue()
+
+>>
+# spark.conf.get('spark.sql.files.maxPartitionBytes')
+# 544mb => 5 blocks => 5 partition  ----> big_rdd_from_hdfs.getNumPartitions() 
+#1 mb => 1 block --> 1 partition ( This is wrong)  ---> small_rdd_from_hdfs.getNumPartitions()  
+	--> because spark.sparkContext.defaultMinPartitions  / spark.sparkContext.defaultParallelism
+
+>> Q/A- # In this case we will have to start from Scratch only
+rdd1 = rdd_big_file.flatMap(lambda line:line.split(' '))
+rdd1 = rdd1.map(lambda word:(word,1))
+rdd1 = rdd1.reduceByKey(lambda a,b : a+b) 
    
     ==>>
     df = spark.createDataFrame(data, columns)
@@ -232,6 +266,9 @@ spark = SparkSession.builder \
 .config('spark.memory.fraction', 0.8) \
 .config('spark.memory.storageFraction', 0.2) \
 .getOrCreate()
+
+/etc/hadoop/conf/core-site.xml
+
 
 >> steps to follow as data engineer:
 1. Data Ingetion: load data into spark dataframe 
