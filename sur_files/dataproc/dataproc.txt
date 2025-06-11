@@ -168,6 +168,15 @@ location 'gs://surdatabuk/data/olist/olist_customers_dataset.csv'
 spark.sql('describe extended external_customers_sur').show(truncate=False)
 spark.sql('select * from external_customers_sur limit 8').show()
 
+>> create DF in spark
+df_list= spark.createDataFrame(data,columns)
+df_csv = spark.read.format('csv').option('header','true').load('/data/customers_100.csv')
+df_sql = spark.sql('select * from external_customers_2 where is_active=True')
+df_table = spark.table('external_customers_2')
+df_range = spark.range(0,10)
+df_rdd = rdd.toDF(["customer_id", "name"])
+
+
 ==========================================================================================================================================================================
 
 Pyspark Interview QA:
