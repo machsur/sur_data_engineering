@@ -54,7 +54,7 @@ rdd1 = rdd_big_file.flatMap(lambda line:line.split(' '))
 rdd1 = rdd1.map(lambda word:(word,1))
 rdd1 = rdd1.reduceByKey(lambda a,b : a+b) 
    
-    ==>>
+==>> high-level api
     df = spark.createDataFrame(data, columns)
     df_from_pandas = spark.createDataFrame(pandas_df/data_dict)
     df_empty = spark.createDataFrame([], columns)
@@ -132,6 +132,41 @@ rdd1 = rdd1.reduceByKey(lambda a,b : a+b)
 		regexp_replace: df.withColumn("new_file_path", regexp_replace("file_path", r'_\d{14}\.csv$', '_TIMESTAMP.csv'))
 		regexp_contain: df.withColumn("contains_digits", when(regexp_extract(col("text"), r'\d', 0) != "", True).otherwise(False))
 		regexp_substr: df = df.withColumn("first_digits", regexp_extract("text", r'\d+', 0))
+
+==> spark-sql 
+spark = SparkSession.builder.appName('sur rdd1').getOrCreate()
+spark_new_app_session = spark.newSession()
+spark.sparkContext.applicationId
+>
+>> spark temp table / global temp table
+df.createOrReplaceTempView('customers') 		/ 	df.createOrReplaceGlobalTempView('gcustomers')
+spark.sql('show databases').show()
+spark.sql('use db_name')
+spark.sql('show tables').show()   			/   	spark.sql('show tables in global_temp').show()
+spark.sql('select * from customers limit 5').show()   	/    	spark.sql('select * from global_temp.gcustomers limit 5').show()
+spark.sql('describe customers').show()     		/       spark.sql('describe global_temp.gcustomers').show()
+spark.sql('describe extended customers').show()  	/ 	spark.sql('describe extended global_temp.gcustomers').show()
+spark.sql('drop table customers') 			/ 	spark.sql('drop table global_temp.gcustomers')
+
+>> Spark Persistant: Managed table
+spark.sql('''
+CREATE TABLE IF NOT EXISTS customers (
+customer_id STRING, customer_unique_id STRING, customer_zip_code_prefix INT, customer_city STRING, customer_state STRING) 
+USING CSV
+''')
+df.write.mode('overwrite').saveAsTable('default.customers_sur')
+spark.sql('describe extended customers_sur').show(truncate=False)
+spark.sql('select * from customers_sur limit 6').show()
+
+>> Spark Persistant: external table
+spark.sql('''
+create external table external_customers_sur (
+customer_id STRING, customer_unique_id STRING, customer_zip_code_prefix INT, customer_city STRING, customer_state STRING) 
+using csv
+location 'gs://surdatabuk/data/olist/olist_customers_dataset.csv'
+''')
+spark.sql('describe extended external_customers_sur').show(truncate=False)
+spark.sql('select * from external_customers_sur limit 8').show()
 
 ==========================================================================================================================================================================
 
