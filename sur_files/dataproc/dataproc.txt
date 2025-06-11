@@ -449,20 +449,7 @@ beeline : uses jdbc for remote connection / support auth / multiple concurrant s
     Column 1: Default String
     Column 2: Default Integer
 
-
-
-
-
-
-
-
-
-
-
-
-
-
->> Word count program in pyspark
+>> Word count program in pyspark rdd & DF
     df1 = df.select(explode(split(df["name"], " ")).alias("word")).groupBy("word").agg(count("*").alias("count"))
 
 >> Write a PySpark query to count the number of null values in each column of a DataFrame.
@@ -596,7 +583,6 @@ data = [ (1, "Laptop", 10, 50000, "North", "2025-01-01"), (2, "Mobile", None, 15
 	df = df.na.drop(subset=['Product'])
 	df = df.na.drop(how='all')
 	df.show()
-
 
 >>
 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧:
