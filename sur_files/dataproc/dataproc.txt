@@ -176,6 +176,53 @@ df_table = spark.table('external_customers_2')
 df_range = spark.range(0,10)
 df_rdd = rdd.toDF(["customer_id", "name"])
 
+====>>  HiveQL: 
+-- sql like interface (HQL) --> translator ---> MR/spark/tej code (is abstraction for java or MR programe)
+-- table --> data (hdfs, s3, gcs) + metadata (hive stores metastore in it). 
+-- hive is database like mysql?
+its not a database. but, its DWH tool built on top of Hadoop to query large datasets from HDFS storage
+	storage			query processing		schema 			transaction type	speed
+mysql   stru data in tables	execute in-memory		schema-on-write		oltp			fast for small queries, real-time updates
+Hive -   HDFS, s3		MR or Spark or Tej 		schema-on-read		olap			opti for large scale batch processing
+-- hive is replacement for Hadoop?
+No, buit on top of hadoop core components (hdfs, yarn, mr/spark/tej)
+-- hive queries like normal sql queries in db?
+HQL queries --> translatior --> mr/spark/tej code which runs on distributed system
+-- hive can perform row-level transaction like mysql?
+yes, it can. but, hive is not designed for row-level operations (if u change one row- it will recreate entire partition file)
+-- hive can works with only HDFS?
+no. HDFS/s3/gcs/data lake
+-- hive tables work like noraml database tables?
+hive is metastore and not storing any tables
+
+>> connect with hive clients
+1. hive: direct connection / no auth / single sessions/ read-heavy for query performance / production not rec /
+or
+beeline : uses jdbc for remote connection / support auth / multiple concurrant sessions/ opti for query performance / production rec /
+	!connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default
+	vi etc/hive/conf/hive-site.xml (for hive properties, we got username: hive and password: Pw1+86Xg4CCq from her as well)
+	
+>> (inside terminal)
+	set hive.execution.engine; / set hive.execution.engine=tez/spark/mr;
+	ctrl + l  --> to clear
+
+>>  Hive external table (data file in GCS)
+create external table h_suret2 (customer_id string, customer_unique_id string, customer_zip_code_prefix string, customer_city string, customer_state string)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+location 'gs://surdatabuk/data/olist/cust_exe/'
+
+>> Hive managed table (data in hdfs)
+create table orders22 (	order_id string, ....) STORED AS TEXTFILE;
+load data inpath '/data/olist/olist_customers_hive.csv' into table orders22;
+set hive.metastore.warehouse.dir;  (hive data files stroed in hdfs) / hdfs dfs -ls /user/hive/warehouse/  
+
+>> hive metastore (connect on vm node): mysql db (see conf xml file), default derby db, might be diff db configured in your companey
+-- connect to mysql db 
+	mysql -u hive -p 
+	Pw1+86Xg4CCq
+-- show databases; use metastore; show tables; select * from TBLS; exit
 
 ==========================================================================================================================================================================
 
@@ -347,78 +394,7 @@ dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs
 
 
 ==========================================================================================================================================================================
-HiveQL: 
-	-- SQL like query lang to query large datasets stored in HDFS
-	-- sql like interface (HQL) --> translator ---> MR/spark/tej code (is abstraction for java or MR programe)
-	-- table --> data (hdfs, s3, gcs) + metadata (hive stores metastore in it). 
-	-- hive is database like mysql?
-	its not a database. but, its DWH tool built on top of Hadoop to query large datasets from HDFS storage
-		storage			query processing		schema 			transaction type	speed
-	mysql   stru data in tables	execute in-memory		schema-on-write		oltp			fast for small queries, real-time updates
-	Hive -   HDFS, s3		MR or Spark or Tej 		schema-on-read		olap			opti for large scale batch processing
-	-- hive is replacement for Hadoop?
-	No, buit on top of hadoop core components (hdfs, yarn, mr/spark/tej)
-	-- hive queries like normal sql queries in db?
-	HQL queries --> translatior --> mr/spark/tej code which runs on distributed system
-	-- hive can perform row-level transaction like mysql?
-	yes, it can. but, hive is not designed for row-level operations (if u change one row- it will recreate entire partition file)
-	-- hive can works with only HDFS?
-	no. HDFS/s3/gcs/data lake
-	-- hive tables work like noraml database tables?
-	hive is metastore and not storing any tables
 
->> connect with hive clients
-1. hive: direct connection / no auth / single sessions/ read-heavy for query performance / production not rec /
-or
-beeline : uses jdbc for remote connection / support auth / multiple concurrant sessions/ opti for query performance / production rec /
-	!connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default
-	vi etc/hive/conf/hive-site.xml (for hive properties, we got username: hive and password: Pw1+86Xg4CCq from her as well)
-	
->> (inside terminal)
-	set hive.execution.engine; / set hive.execution.engine=tez/spark/mr;
-	ctrl + l  --> to clear
-	set hive.metastore.warehouse.dir;  (hive data files stroed in hdfs) / hdfs dfs -ls /user/hive/warehouse/  
-
->> show databases; / use sur_db; / show tables;
-
->>  Hive external table (data file in GCS)
-	create external table customers_exe11 (
-	customer_id INT,
-	customer_unique_id INT,
-	customer_zip_code_prefix STRING,
-	customer_city STRING,
-	customer_state STRING
-	)
-	ROW FORMAT DELIMITED
-	FIELDS TERMINATED BY ','
-	STORED AS TEXTFILE
-	location 'gs://surdatabuk/data/cust_exe/'
-	TBLPROPERTIES ("skip.header.line.count"="1");
-
-	INSERT INTO TABLE `elegant-circle-454709-h5.surtest11.bq_cust_exe`
-	SELECT * FROM customers_exe11;
-
->> Hive managed table (data in hdfs)
-	create table orders22 (
-	order_id string,
-	customer_id string,
-	order_status string, 
-	order_purchase_timestamp timestamp,  
-	order_approved_at timestamp, 
-	order_delivered_carrier_date timestamp,
-	order_delivered_customer_date timestamp,
-	order_estimated_delivery_date timestamp)
-	STORED AS TEXTFILE;
-
-	load data inpath '/data/olist/olist_customers_hive.csv' into table orders22;
-
->> hive metastore (connect on vm node): mysql db (see conf xml file), default derby db, might be diff db configured in your companey
-
--- connect to mysql db 
-	mysql -u hive -p 
-	Pw1+86Xg4CCq
-
--- show databases; / use metastore; / show tables; / select * from TBLS; / exit
 
 
 ===========================================================================================================================================================================
