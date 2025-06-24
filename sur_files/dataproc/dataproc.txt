@@ -308,10 +308,14 @@ partitioning & bucketing:
    size of dataset in mb = (no of records * no of var/col * avg width of var in bytes) / (1024 * 1024)
 -- once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all
 
->> even after adjusting sp you job is running very slow due to data skewness 
-   Sol: salting technique, AQE
-	
->> salt: add random column to divide skewed data among partitions
+>> what is data skewness? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
+	job is taking time, unutilization of resources, oom or data spill (write results to disk -- very costly)
+	fix --> repartition, salting, AQE
+
+>> salt: 
+	decide salt number : [0, 3)
+	ds1 - add salt column to key column 
+	ds2 - add salt column (having array [0, 1, 2] - explode ) to key column
 
 >> AQE (>spark 3.0): based on runtime statastics select best query plan - aqe gives: 
 	tuning shuffle partitions- 200 shuffle parti default, when join it has 15 didtinct keys, aqe coalsese to 15 partitions
@@ -329,13 +333,6 @@ dynamic partition pruning: send partition that is supossed to be scanned
 	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
 
 
-5. what is data skewness and salting technique? (after data shuffling, most of data goes to few partitions as reference to the keys, which leads to data skewness)
-   skewed partition : uneven data distribution
-	job is taking time, unutilization of resources, oom or data spill (write results to disk -- very costly)
-	fix --> repartition, salting, AQE, broadcasting
-   df.repartition(10)
-   df.rdd.getNumPartitions()
-   df.select(spark_partition_id().alias("partid")).groupBy("partid").count()	    
 
 
 >> create spark session with config optimization
