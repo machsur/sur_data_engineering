@@ -1,13 +1,26 @@
 ================================================================================================================================================
-DATE(string in iso) / PARSE_DATE(format, string) / SAFE.PARSE_DATE(format, invalid date)
+DATE(DC in iso) / PARSE_DATE(format, DC) / SAFE.PARSE_DATE(format, DC)	-	Y, y / m, B, b / d, A, a / 
+extract(year from date)      						-     	year / month / date / hour / minute / second / microsecond /
+FORMAT_DATE('%B %d, %Y', sale_date)  	
+DATE_TRUNC(order_date, MONTH) 		
+DATE_DIFF(order_date, previous_date, day)
+Date_add(order_date, INTERVAL 5 day)
+Date_sub(order_date, INTERVAL 5 day)
+
 to_date("date_str in iso") / to_date("date_str", "dd/MM/yyyy") / same for safe
-
-DATE_DIFF() / TIMESTAMP_DIFF(order_time, previous_time, MINUTE)  //  datediff("end_date", "start_date")   (unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600
-extract(month from date)          //			month("order_date")
-DATE_TRUNC(order_date, MONTH) 		//          	trunc("order_date", "MM")
-FORMAT_DATE('%B %d, %Y', sale_date)  - Y, y / m, B, b / d, A, a /   //        date_format("sale_date", "MMMM dd, yyyy") 	yy, yyyy, M, MM, MMM, MMMM, d, dd, E, EEEE
-
+datediff("end_date", "start_date")   (unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600
+month("order_date")
+trunc("order_date", "MM")
+date_format("sale_date", "MMMM dd, yyyy") 	yy, yyyy, M, MM, MMM, MMMM, d, dd, E, EEEE
 =============================================================================================================================================
+
+>> Bigquery arch
+   storage and compute - decoupled/isolated (cost efficient)
+   layers:
+   colossus - is google distributed file system storage layer in column orientaed - fault tolerance by data replicas across different machines.
+   dremel - is compute engine - have root server (co-ordinate mixers & leaf nodes) / mixers (do aggreagtions) / leaf nodes (read data from storage)
+   jupiter- high speed n/w connector - to connect dremel with colossus
+   borg - scheduling jobs like run queries
 
 >>  
 Fact Table
@@ -229,67 +242,27 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
    SELECT d.dept_name FROM dept d LEFT JOIN employee e ON d.dept_id = e.dept_id WHERE e.dept_id IS NULL;
 
 >> Given two tables, find the count of records for Left Outer Join and Inner Join:
-Table A: Table B:
-1 1
-1 1
-1 1 
-1 
+Table A   / Table B:
+1 1 1 1  /  1 1 1 
 Ans. 12 & 12
 
 >> Give the output for DENSE_RANK() and RANK() functions for the below dataset:
-Nums 
-85 
-85 
-80 
-75 
-75 
-70
+Nums: 85 85 80 75 75 70
 
 >> Given a table with column 'Country', select data in the below sequence:
-Table: Matches
-Country 
-India 
-Australia 
-Pakistan 
-Output:
-India vs Australia 
-India vs Pakistan 
-Australia vs Pakistan
-Ans. 
+Country: India Australia Pakistan 
+Output: India vs Australia 	India vs Pakistan 	Australia vs Pakistan
     SELECT a.countryc || ' vs ' || b.countryc as country
-    FROM
-      `powerful-layout-445408-p5.sur_test_ds.countryt` a
-    join
-      `powerful-layout-445408-p5.sur_test_ds.countryt` b
+    FROM `powerful-layout-445408-p5.sur_test_ds.countryt` a  join `powerful-layout-445408-p5.sur_test_ds.countryt` b
     on a.countryc > b.countryc;  -----> or <
 
 >> Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS.
-Table1:
-col1 
----- 
-1 
-1 
-Table2:
----- 
-b 
-a 
-1 
+Table1-  1 1   /  Table2- b a 1
 
 >> Find the 777th highest salary from a table.
-      SELECT salary FROM 
-		(SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num FROM `your_dataset.your_table`) WHERE row_num = 777
+      SELECT salary FROM (SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num FROM `your_dataset.your_table`) WHERE row_num = 777
 
->> Bigquery arch
-   storage and compute - decoupled/isolated (cost efficient)
-   layers:
-   colossus - is google distributed file system storage layer in column orientaed - fault tolerance by data replicas across different machines.
-   dremel - is compute engine - have root server (co-ordinate mixers & leaf nodes) / mixers (do aggreagtions) / leaf nodes (read data from storage)
-   jupiter- high speed n/w connector - to connect dremel with colossus
-   borg - scheduling jobs like run queries
-
->> Identify customers who placed orders in consecutive months.
-	cust, order_date, order
-
+>> Identify customers who placed orders in consecutive months:  	cust, order_date, order
          WITH orders AS (
            SELECT customer_id, DATE_TRUNC(order_date, MONTH) AS order_month FROM `your_dataset.your_table`),
          consecutive_orders AS (
