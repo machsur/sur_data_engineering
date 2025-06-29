@@ -49,138 +49,62 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
 	scd6 - 1+2+3 - 
 
 >> "write a query to how will you get a list of the top ten most expensive queries that have been executed in your project over the past 30 days:"
-	SELECT project_id, job_id, user_email, creation_time, total_slot_ms, total_bytes_billed, total_bytes_processed, query FROM `region-eu`.INFORMATION_SCHEMA.JOBS
-	WHERE creation_time between TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY) AND CURRENT_TIMESTAMP()
-	      AND job_type = "QUERY"
-	      AND total_bytes_processed > 0
-	ORDER BY total_bytes_billed DESC LIMIT 10;
+	SELECT * FROM `region-eu`.INFORMATION_SCHEMA.JOBS WHERE creation_time between TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY) AND CURRENT_TIMESTAMP();
+	to get metadata about datasets:  SELECT * FROM `project_id`.`region-europe-west2`.INFORMATION_SCHEMA.SCHEMATA;
+	to get metadata about tables: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.TABLES;
+	to get metadata about columns: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.COLUMNS;
 
->> difference b/w CAST, SAFE_CAST 
-	If the conversion fails, SAFE_CAST returns NULL instead of throwing an error, allowing the query to continue.
-
->> Create table with metadata from existing table – use where 1 = 2 or false
+>> difference b/w CAST, SAFE_CAST : If the conversion fails, SAFE_CAST returns NULL instead of throwing an error, allowing the query to continue.
 
 >> Union all / Union distinct / Table wildcards: test_*` where _Table_Suffix > 5 / Except distinct / Intersect distinct /
 
->> 
-	Temporary table/cache: exist only for the specified period. - useful for intermediate data processing and caching query results.
+>> 	Temporary table/cache: exist only for the specified period. - useful for intermediate data processing and caching query results.
 	Internal tables: stored in bq - take adv of opti like partitioning & clustering - Ideal for frequently accessed and processed data.
 	External table: Data remains in its original location (e.g., Cloud Storage) - avoid storage costs - Suitable for occasional queries on large datasets.
 
 >> Time travel concept: Query the state of the table as it was at a specific timestamp
 	create table `your_dataset.your_table11` as
-	SELECT * FROM `your_dataset.your_table`
-	FOR SYSTEM_TIME AS OF TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
-
-	bq cp pr_id:mydataset.mytable@7200000 pr_id:mydataset.mytable_restored (millisecounds)
-
+	SELECT * FROM `your_dataset.your_table`	FOR SYSTEM_TIME AS OF TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
 
 >> Creation of view/materialized view and auth view: efficiently manage and secure your data access in BigQuery
    Create view: virtual tables / view hits base table and display data / frequent updates on base table/ infrequent data access / 
    Materialized view: data stored on disk / better performance/ frequent access on data / infrequent updates on base table /
    Authorized views and authorized materialized views: let you share query results with particular users and groups withoutgiving them access to the underlying source data.
-         CREATE VIEW `your_dataset.your_view` AS
-         SELECT customer_id, order_date, total_amount FROM `your_dataset.orders` WHERE order_date >= '2025-01-01'
 
-        CREATE MATERIALIZED VIEW `your_dataset.your_materialized_view` AS
-        SELECT customer_id, order_date, SUM(total_amount) AS total_spent FROM `your_dataset.orders` GROUP BY customer_id, order_date
-
->> Partitioning and clustering:
+>> Partitioning and clustering:    Improved Query Performance, Cost Efficiency
    Partitioning: dividing a table into smaller segments. - single column (time-based & inter range), 4000 max
    clustering: sorts the partition data in storage blocks. - four columns, 
-   Improved Query Performance, Cost Efficiency
-      
 	CREATE TABLE `your_dataset.your_table`
       	PARTITION BY DATE(order_date) / _PARTITIONTIME / RANGE_BUCKET(product_id, GENERATE_ARRAY(1, 1000, 100))
       	CLUSTER BY customer_id, product_id
-      	AS
-      	SELECT * FROM `source_dataset.source_table`
-
-	CREATE TABLE `project_id.dataset_id.table_name`
-	(
-	  id INT64,
-	  name STRING,
-	  created_at DATE,
-	  category STRING,
-	  region STRING
-	)
-	PARTITION BY DATE(created_at)
-	CLUSTER BY category, region;
-
+      	AS SELECT * FROM `source_dataset.source_table`
 
 >> Joins: -  combine rows from two or more tables based on a related column between them.
     INNER JOIN / left join / right join / full join / cross join /
- 	SELECT c.CustomerID, c.CustomerName, o.OrderID, o.OrderDate, oi.OrderItemID,
-	FROM `your_dataset.customers` AS c 
-	JOIN `your_dataset.orders` AS o ON c.CustomerID = o.CustomerID
-	JOIN `your_dataset.order_items` AS oi ON o.OrderID = oi.OrderID;
-
-	SELECT * FROM  `project.dataset.table1` AS a CROSS JOIN `project.dataset.table2` AS b;
-
->> table1 --> 1, 2, 2, 3 table2 --> 1, 1, 2, 3, 3, 3
-	SELECT * FROM  `project.dataset.table1` a JOIN `project.dataset.table2` AS b 
-	on a.id = b.id;  1 1 / 1 1 / 2 2 / 2 2 / 3 3 / 3 3 /3 3 /
-	on a.id > b.id;  2 1 / 2 1 / 2 1 / 2 1 / 3 1 / 3 1 / 3 2/
-	on a.id < b.id;  1 2 / 1 3 / 1 3 / 1 3 / 2 3 / 2 3 / 2 3/ 2 3 / 2 3 / 2 3 /
-
->> With statement: also known as Common Table Expressions (CTEs)
-   Adv: code more readable, resusebility 
-	WITH orders as (select statement)
-	select * from orders
-
-11. Pivoting and unpivoting: help in reshaping your data for analysis or reporting
-   Pivot: row into columns
-	product	| month	| sales
-	select product, IFNULL(Jan, 0) as Jan, IFNULL(Feb, 0) as Feb, IFNULL(Mar, 0) as Mar from table 
-	pivot(sum(sales) for month in ('Jan', 'Feb', 'Mar'));	
-	or use case statement
-	select product, 
-	sum(case when month = 'Jan' then sales else 0 end) as Jan,
-	sum(case when month = 'Feb' then sales else 0 end) as Feb,
-	sum(case when month = 'Mar' then sales else 0 end) as Mar,
-	from table group by product;
-
-   unpivot: columns into rows
-	product | Jan | Feb | Mar
-	select product, month, sales from table 
-	unpivot(sales for month in (Jan, Feb, Mar));
-
-12. Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
-   De Normalization – redundant data (high storage cost) – better Query performance 
-   Why array & structs? – for better query per and lesser storage costs
-   
-   Arrays – list of items having same data type
-   SELECT element FROM mydataset.mytable, UNNEST(my_array) AS element;
-
-   Struct – record with nested fields having different data types
-   SELECT person.id, person.name FROM mydataset.mytable;
  
-13. Window functions: performing advanced calculations over a set of rows, go beyond simple aggregates or filters
-   max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() 
+>> Pivoting and unpivoting: help in reshaping your data for analysis or reporting
+   Pivot: row into columns 	- product| month| sales  	- select * from table pivot(sum(sales) for month in ('Jan', 'Feb', 'Mar'));	 	- or use case st
+   unpivot: columns into rows 	- product | Jan | Feb | Mar	- select product, month, sales from table unpivot(sales for month in (Jan, Feb, Mar));
+
+>>  Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
+    De Normalization – redundant data (high storage cost) – better Query performance 
+    Why array & structs? – for better query per and lesser storage costs
+    Arrays – list of items having same data type  -  SELECT element FROM mydataset.mytable, UNNEST(my_array) AS element; 
+    Struct – record with nested fields having different data types  -   SELECT person.id, person.name FROM mydataset.mytable;
+ 
+>> Window functions: performing advanced calculations over a set of rows, go beyond simple aggregates or filters
+   max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() /  lag(cn) / lead(cn) /   first_value(cn) / last_value(cn) / nth_value(cn, n) /
    SUM(column2) OVER (PARTITION BY column1 ORDER BY column2 ROWS BETWEEN UNBOUNDED/2 PRECEDING AND CURRENT ROW) AS rt
-   lag(cn) / lead(cn): Accesses data from a previous or subsequent row in the same result set without use of a self-join.
-   LAG(column2, 1) OVER (PARTITION BY column1 ORDER BY column2) AS previous_value,
-   first_value(cn) / last_value(cn) / nth_value(cn, n) 
-   FIRST_VALUE(column2) OVER (PARTITION BY column1 ORDER BY column2) AS first_value,
    ntile(n) – n groups 
-   NTILE(4) OVER (PARTITION BY column1 ORDER BY column2) AS quartile
-   cum_dist() / percent_rank() 
-   CUME_DIST= Number of rows with values less than or equal to the current row / Total number of rows
-​   PERCENT_RANK= Rank of current row−1 / Total rows−1
+   CUME_DIST() = Number of rows with values less than or equal to the current row / Total number of rows
+​   PERCENT_RANK() = Rank of current row−1 / Total rows−1
 ​   Rows consider current row even if duplicates / range considers bottom row of duplicates.
 
-14. Regular expressions: used for pattern matching and string manipulation
-	   REGEXP_EXTRACT(column_name, r'pattern') / select regexp_extract('file_name_20250430123056.csv', r'^(.*)_\d{14}\.csv$')
-	   REGEXP_EXTRACT_ALL(column_name, r'pattern') / select regexp_extract_all('abc123def456ghi789', r'\d+')
-	   REGEXP_REPLACE(column_name, r'pattern', 'replacement') / REGEXP_REPLACE(file_path, r'_\d{14}\.csv$', '_TIMESTAMP.csv') 
-	   REGEXP_CONTAINS('abc123def456ghi', r'\d') AS contains_digits
-	   REGEXP_SUBSTR('abc123def456ghi', r'\d+', 5, 2) AS first_digits
-
-15. BigQuery slots vs reservations? 
+>> BigQuery slots vs reservations? 
 	Slots are units of computational capacity in BigQuery. (CPU and memory)
 	Reservations allow you to purchase dedicated slots (called commitments) and allocate them to specific workloads or projects.
 
-15.1. Big Query cost optimization
+>> Big Query cost optimization
 	   -- bq compute optimization: 
 		on-demaned pricing - cost per tb, good for unpredectable workloads
 		Capacity Pricing - purchase dedicated slots, charged per slot-hour (different editions like Enterprise and Enterprise Plus, which offer options for one- or 		three-year commitments at discounted rates)- decide based on your workloads.
@@ -191,38 +115,18 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
 	   	Use Table Expiration Settings, Optimize Data Storage Format (cloumner format - paqruet. ORC), Use Long-Term Storage Pricing (> 90 days)
 	   -- bq query optimization
 
-16. Optimization of query performance in BigQuery?
-	   create dataset in region wehere customer operates
-	   Use Partitioned Tables and Clustered Tables
-	   use avro format to bigquery data load - google rec compressed avro for quick data load
-	   preview option, 
-	   select columns instead of *, use truncate instead of delete
-	   Join pattern larger table join smaller tables, avoid cross join
-	   where class first condition in such way that eliminates most data
-	   late aggregation
-	   Use WITH Clauses for Subquery Caching (Avoid Repeated Scalar Subqueries)
-	   Take Advantage of Query Caching
-	   Aggregate Data at the Source: Use Approximate Aggregations: 
-	   Create a materialized view based on frequently run queries.
-	   Optimize Window Functions
-	   Monitor and Tune Query Performance
-	   nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
+>> Optimization of query performance in BigQuery?
+	Aggregate Data at the Source,  use avro format - for quick data load, 
+	dataset in wehere customer operates, 
+	Partitioned Tables and Clustered,  preview option, select columns instead of *, use truncate instead of delete
+	Join pattern larger table join smaller tables, where class first condition in such way that eliminates most data,   late aggregation, 	   
+	Use WITH Clauses for Subquery Caching (Avoid Repeated Scalar Subqueries),  Take Advantage of Query Caching, 
+	Create a materialized view based on frequently run queries.
+	nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
   
 >> Cost Controls: budget alerts, Set query usage limits in IAM quotas, Billing reports, Schedule queries during off-peak hours
 
->> Explain about data modelling concepts( Star and snowflake schema)? 
-	Star Schema: Faster query performance due to fewer joins.
-	Snowflake Schema: More normalized and reduces data redundancy. May require more joins, potentially impacting query performance.
-
->> How to get metadata of datasets and tables in BigQuery? 	
-	to get metadata about datasets:  SELECT * FROM `project_id`.`region-europe-west2`.INFORMATION_SCHEMA.SCHEMATA;
-	to get metadata about tables: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.TABLES;
-	to get metadata about columns: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.COLUMNS;
-
 >> Database, DWH, DataLake
-	Database: OLTP system - day to day operational data - mysql
-	DWH: Stores current and historical data from multiple sources - BI, analysis and reporting. -  bq
-	DataLake: Stores large volumes of raw data in its native format (Structured, semi-structured, and unstructured data)-  machine learning - gcs, hdfs
 
 >> ETL VS ELT
 
@@ -446,55 +350,12 @@ the output order same as above. give bigquery sql query with custom logic
 	SELECT emp_name, emp_dep FROM CustomOrder ORDER BY emp_dept_sort, row_num;
 
 >> Write a query to detect a sudden drop (>30%) in daily revenue for any restaurant. (restaurant_id, revenue_date, daily_revenue)
-	WITH revenue_changes AS (
-	  SELECT
-	    restaurant_id,
-	    revenue_date,
-	    daily_revenue,
-	    LAG(daily_revenue, 1) OVER (PARTITION BY restaurant_id ORDER BY revenue_date) AS previous_revenue
-	  FROM
-	    `your_project.your_dataset.restaurant_revenue`
-	),
-	sudden_drop AS (
-	  SELECT
-	    restaurant_id,
-	    revenue_date,
-	    daily_revenue,
-	    previous_revenue,
-	    (previous_revenue - daily_revenue) / previous_revenue * 100 AS drop_percentage
-	  FROM
-	    revenue_changes
-	  WHERE
-	    previous_revenue IS NOT NULL AND
-	    (previous_revenue - daily_revenue) / previous_revenue * 100 > 30
-	)
-	SELECT
-	  restaurant_id,
-	  revenue_date,
-	  daily_revenue,
-	  previous_revenue,
-	  drop_percentage
-	FROM
-	  sudden_drop;
+	lag to previous_revenue, sudden_drop > 30
 
->> Find the moving average of daily revenue for each restaurant over a 7-day window.
-	restarant | date | revenue
-		SELECT
-		  restaurant_id,
-		  date,
-		  revenue,
-		  AVG(revenue) OVER (
-		    PARTITION BY restaurant_id
-		    ORDER BY date
-		    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
-		  ) AS moving_avg_revenue
-		FROM
-		  your_table_name
-		ORDER BY
-		  restaurant_id, date;
+>> Find the moving average of daily revenue for each restaurant over a 7-day window.	restarant | date | revenue
+		AVG(revenue) OVER (PARTITION BY restaurant_id ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS moving_avg_revenue
 
->> Calculate month-over-month growth in active users for each city.
-	user_id	| city	| activity_date
+>> Calculate month-over-month growth in active users for each city.	user_id	| city	| activity_date
 		WITH monthly_active_users AS (
 		  SELECT
 		    city,
@@ -533,105 +394,16 @@ the output order same as above. give bigquery sql query with custom logic
 		ORDER BY
 		  city, year, month;
 
->> Find restaurants whose best-selling dish makes up over 60% of their revenue.
-	restaurant_id, dish_id,    dish_name,  quantity, price
-
-	WITH dish_revenue AS (
-	  SELECT
-	    restaurant_id,
-	    dish_id,
-	    dish_name,
-	    SUM(quantity * price) AS total_revenue
-	  FROM
-	    `your_dataset.orders`
-	  GROUP BY
-	    restaurant_id, dish_id, dish_name
-	),
-	
-	restaurant_total_revenue AS (
-	  SELECT
-	    restaurant_id,
-	    SUM(total_revenue) AS restaurant_revenue
-	  FROM
-	    dish_revenue
-	  GROUP BY
-	    restaurant_id
-	),
-	
-	best_selling_dish AS (
-	  SELECT
-	    restaurant_id,
-	    dish_name,
-	    MAX(total_revenue) AS best_dish_revenue
-	  FROM
-	    dish_revenue
-	  GROUP BY
-	    restaurant_id, dish_name
-	),
-	
-	combined AS (
-	  SELECT
-	    b.restaurant_id,
-	    b.dish_name AS best_selling_dish,
-	    b.best_dish_revenue,
-	    r.restaurant_revenue,
-	    b.best_dish_revenue / r.restaurant_revenue AS revenue_share
-	  FROM
-	    best_selling_dish b
-	  JOIN
-	    restaurant_total_revenue r
-	  ON
-	    b.restaurant_id = r.restaurant_id
-	)
-	
-	SELECT
-	  restaurant_id,
-	  best_selling_dish,
-	  best_dish_revenue,
-	  restaurant_revenue,
-	  revenue_share
-	FROM
-	  combined
-	WHERE
-	  revenue_share > 0.6;
-
+>> Find restaurants whose best-selling dish makes up over 60% of their revenue. 	restaurant_id, dish_id,  dish_name,  quantity, price
+	restaurant_total_revenue , best_selling_dish,   b.best_dish_revenue / r.restaurant_revenue AS revenue_share,  revenue_share > 0.6;
 
 >> Rank users based on their total number of orders and total spend, giving more weight to spend. -- Weighted score: 70% weight to spend, 30% to order count
 order_id	user_id		order_amount
 1		U001		100
 2		U001		150
-
-	WITH user_stats AS (
-	  SELECT
-	    user_id,
-	    COUNT(order_id) AS total_orders,
-	    SUM(order_amount) AS total_spend
-	  FROM
-	    `your_dataset.orders`
-	  GROUP BY
-	    user_id
-	),
-	scored_users AS (
-	  SELECT
-	    user_id,
-	    total_orders,
-	    total_spend,
 	    (0.7 * total_spend + 0.3 * total_orders) AS weighted_score
-	  FROM
-	    user_stats
-	),	
-	ranked_users AS (
-	  SELECT
-	    user_id,
-	    total_orders,
-	    total_spend,
-	    weighted_score,
 	    RANK() OVER (ORDER BY weighted_score DESC) AS rank
-	  FROM
-	    scored_users
-	)
-	SELECT * FROM ranked_users;
-
+	
 >> Identify restaurants with high churn rates: drop in unique monthly customers for 3+ months.
 order_id	user_id		restaurant_id	order_date
 1		U001		R001		2024-01-15
@@ -785,40 +557,10 @@ order_id	user_id		restaurant_id	item_id		order_time
 1		U001		R001		I001		2024-01-01 10:00:00
 2		U001		R001		I001		2024-01-01 10:03:00
 3		U002		R002		I002		2024-01-01 11:00:00
-	WITH ordered_data AS (
-	  SELECT
-	    order_id,
-	    user_id,
-	    restaurant_id,
-	    item_id,
-	    order_time,
-	    LAG(order_time) OVER (
-	      PARTITION BY user_id, restaurant_id, item_id
-	      ORDER BY order_time
-	    ) AS previous_order_time
-	  FROM
-	    `your_dataset.orders`
-	),
+	LAG(order_time) OVER (PARTITION BY user_id, restaurant_id, item_id  ORDER BY order_time) AS previous_order_time
+	TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) AS minutes_diff
+	TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) <= 5
 	
-	duplicates AS (
-	  SELECT
-	    order_id,
-	    user_id,
-	    restaurant_id,
-	    item_id,
-	    order_time,
-	    previous_order_time,
-	    TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) AS minutes_diff
-	  FROM
-	    ordered_data
-	  WHERE
-	    previous_order_time IS NOT NULL
-	    AND TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) <= 5
-	)
-	
-	SELECT * FROM duplicates;
-
-
 >> For each cuisine, identify the most loyal customer (most repeat orders).
 order_id	user_id		cuisine		order_date
 1		U001		Italian		2024-01-01
@@ -829,41 +571,13 @@ order_id	user_id		cuisine		order_date
 	SELECT  cuisine,  user_id AS most_loyal_customer,  order_count	FROM  ranked_customers	WHERE rank = 1;
 
 >> Write a query to return the top 5% of users by revenue contribution (Pareto Principle). (user_id,  revenue)
-	
-	WITH ranked_users AS (
-	  SELECT
-	    user_id,
-	    revenue,
-	    PERCENT_RANK() OVER (ORDER BY revenue DESC) AS revenue_percentile
-	  FROM
-	    `your_dataset.user_revenue`
-	)
-	
-	SELECT
-	  user_id,
-	  revenue
-	FROM
-	  ranked_users
-	WHERE
-	  revenue_percentile <= 0.05
-	ORDER BY
-	  revenue DESC;
+	   PERCENT_RANK() OVER (ORDER BY revenue DESC) AS revenue_percentile
+	   revenue_percentile <= 0.05
 	
 >> Determine which users are likely bots based on their ordering patterns (e.g., 50+ orders/day). (user, order_timestamp, order_id)
 	SELECT
-	  user_id,
-	  DATE(order_timestamp) AS order_day,
-	  COUNT(order_id) AS orders_per_day
-	FROM
-	  `your_project.your_dataset.orders`
-	GROUP BY
-	  user_id,
-	  order_day
-	HAVING
-	  orders_per_day >= 50
-	ORDER BY
-	  order_day,
-	  orders_per_day DESC;
+	  user_id, DATE(order_timestamp) AS order_day, COUNT(order_id) AS orders_per_day FROM `your_project.your_dataset.orders`
+	GROUP BY  user_id,  order_day HAVING orders_per_day >= 50;
 
 >> Build a time-series summary table that aggregates revenue per day, per restaurant, for dashboarding.     (restaurant_id, order_day, revenue)
 	SELECT  restaurant_id, order_day, SUM(revenue) AS daily_revenue FROM  `your_project.your_dataset.orders`
