@@ -74,8 +74,8 @@ df.selectExpr("id*2 as nid", "name as nname").show()
 >> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns 
 
 >> 
-union tables: union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/   -->> positional col match / schema must be identical
-union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col match by name / schema can differ / missing col handle with null values
+union tables: union_distinct = df1.union(df2).distinct()  /subtract/intersect/   -->> / col name, position, schema match /
+union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
 >> distanct values/drop duplicates ----> df.select('cn1', 'cn2').distinct() ----> df.dropDuplicates(['cn1', 'cn2'])
 >> 
 add new column ---> newdf = df.withColumn("NewColumn", lit(1))
@@ -108,15 +108,16 @@ window functions 	-------> window_spec = Window.partitionBy("category", "sub_cat
    				max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) / collect_list('cn') / collect_set('cn') 
 				/ first_value('cn') / last_value(cn) / nth_value(cn, n)  /
 				/ row_number() / rank() / dense_rank() / lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
-	==>> splitng column -->> df.withColumn('nc', split(col('name'), '[ ,]'))   -->> [0] or .getItem(0), explode, 
-	     Array length: df.withColumn('nc', size(split(col('name'), '[ ,]')))
-	     word in array or not: df.withColumn('nc', array_contains(split(col('name'), '[ ,]'), 'macha'))
-	     indesxing: df.withColumn('nc', split(col('name'), '[ ,]')[0])  /  df.withColumn('nc', split(col('name'), '[ ,]').getItem(0)).show()
-	     explode/explode_outer: df.withColumn('nc', explode(split(col('name'), '[ ,]')))  /  df.withColumn('nc', explode_outer(split(col('name'), '[ ,]')))
-	     Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
-	==>> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
-	     unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"
- 		      df1.selectExpr("Month", unpivot_exp).show()
+>> 
+splitng column -->> df.withColumn('nc', split(col('name'), '[ ,]'))   
+Array length: df.withColumn('nc', size(split(col('name'), '[ ,]')))
+word in array or not: df.withColumn('nc', array_contains(split(col('name'), '[ ,]'), 'macha'))
+indesxing: df.withColumn('nc', split(col('name'), '[ ,]')[0])  /  df.withColumn('nc', split(col('name'), '[ ,]').getItem(0)).show()
+explode/explode_outer: df.withColumn('nc', explode(split(col('name'), '[ ,]')))  /  df.withColumn('nc', explode_outer(split(col('name'), '[ ,]')))
+	     		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
+>> 
+Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
+unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
 	==> 
 		regexp_extract: df.withColumn("file_name", regexp_extract("file_path", r'^(.*)_\d{14}\.csv$', 1))
 		regexp_replace: df.withColumn("new_file_path", regexp_replace("file_path", r'_\d{14}\.csv$', '_TIMESTAMP.csv'))
@@ -406,55 +407,45 @@ dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs
 	use col format files, Use DataFrame/Dataset over RDD, filter data erly, Cache/persist data, use broadcast Joins
 	Optimize shuffle Partitions (Repartition / Coalesce enable AQE, salting)
 	partitioning & bucketing for frequently accessed based on specific column, Avoid User Defined Functions (UDFs)
-
-======================================================================================================================================================================
->> Find the top 3 highest-paid employees from each department.
-   data = [(1, "Amit", "IT", 90000),
-
->> Write a PySpark code to remove duplicate records based on a specific column.
-   data = [(101, "Mumbai", "Maharashtra"), ]
-
->> Write a PySpark query to calculate the moving average of sales over the last 3 months:   order_id, date, sale_amount
-    window_spec = Window.orderBy("Month").rowsBetween(-2, 0)
-    df_with_moving_avg = df.withColumn("Moving_Avg", avg(col("Sales")).over(window_spec))
-
 >> What is SparkSQL, and how do you perform SQL operations on DataFrames?
 	SparkSQL is a module in Apache Spark that allows you to run SQL queries on large datasets.
-
->> pivot & unpivot data: cricket_data = [("Virat Kohli", 'Match1', 75), ..........], col = ["Player", "Match", "score"]
-	pivot_df = df.groupBy('Player').pivot('Match').agg(sum('score'))
-	unpivoted_df = df.selectExpr("Name", "stack(3, 'Match1', Match1, 'Match2', Match2, 'Match3', Match3) as (Product, Sales)")
-
 >> what is collect list and collect set and when do we use it?
-   result = df.groupBy("name").agg(collect_list("value").alias("values_list")) - allows duplicates in list
-   result = df.groupBy("name").agg(collect_set("value").alias("values_set")) - no duplicates in list
+   allows duplicates in list / no duplicates in list
+======================================================================================================================================================================
 
->> Given a dataset of Indian cities with their respective populations, write a PySpark code snippet to find the top 5 most populous cities.
-     | City    | Population|
-    top_5_cities = df.orderBy(col("Population").desc()).limit(5)
+>> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
+>> Write a PySpark code to remove duplicate records based on a specific column.   data = [(101, "Mumbai", "Maharashtra"), ]
+>> Write a PySpark query to calculate the moving average of sales over the last 3 months:   order_id, date, sale_amount
+>> pivot & unpivot data: cricket_data = [("Virat Kohli", 'Match1', 75), ..........], col = ["Player", "Match", "score"]
+>> write a PySpark code snippet to find the top 5 most populous cities.    | City    | Population|
+>> calculate the average salary for each department.  emp_name, dept, salary
+>> remove duplicate records from a df based on a composite key consisting of 'customer_id' and 'transaction_date'. | customer_id| transaction_id | transaction_date |
+>> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")] 	-----> output:   | 1|Sagar-Prajapati| Sagar|Prajapati|
+>> Given a DataFrame, split the data into two columns (Even, Odd) 
+>> Create a DataFrame with two columns: Column 1: Default String Column 2: Default Integer
+>> query to replace null values in a specific column with the previous non-null value. -----> last('value', ignorenulls=True).over(window_spec)
+>> reading file into df / write df into target
+>> rank students within each state based on their scores in descending order.   student_id, student_name, state, score
+>> Fill the mean salary value in Null. ---> [("Alice", 50000), ..] --> avg_sal = df.select(mean(col('sal'))).collect()[0][0] --> df.fillna({'salary': avg_salary}).show()
+>> What are the different ways to remove duplicate records in PySpark? ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy("name") /
+>> Explain `groupBy()`, `agg()`, and `pivot()` functions with an example.
+>> remove duplicate rows based on the composite key (cust_id, order_id) & retain row with latest order_date for each combination: cust_id, order_id, order_date, amount
+>> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. --> left join / filter null
+>> find the total salary paid in each department.  --->  emp_id`, `name`, `department`, `salary`, and `city`.  
+>>  (1, 'Laptop', 800)  ---->  count number of products in each category / based on its price into three categories below. 
+>> fill missing `purchase_amount` values with the average purchase amount of that product category. -->`cust_id`, `cust_name`, `city`, `pur_amount`, `product_category`. 
+>> ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
+Replace all NULL values in the Quantity column with 0 / Price column with the average price of the existing data / Fill missing Sales_Date with '2025-01-01'.
+Drop rows where the Product column is NULL / Drop rows where all columns are NULL.
+>> ["order_id", "state", "city", "product_id", "category", "units", "unit_price", "order_date"]
+	1. Calculate the total revenue per state and category. (Revenue = units × unit_price)
+	2. For each state, identify the category that has the highest total revenue.
+	3. For each state-category pair, calculate the average units sold per order.
+	4. From the results, list the states along with the category that generated the highest revenue, and the average units sold per order for that category.
+	5. Sort the final output by total revenue in descending order.
 
->> write a PySpark code snippet to group employees by their department and calculate the average salary for each department.  emp_name, dept, salary
-    avg_salary_by_dept = df.groupBy("Department").agg(avg("Salary").alias("AverageSalary"))
 
->> Write a PySpark code snippet to remove duplicate records from a DataFrame based on a composite key consisting of 'customer_id' and 'transaction_date'.
-     | customer_id| transaction_id | transaction_date |
 
->> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")]
-    output 
-   +---+---------------+----------+---------+
-   | ID| Name|First_Name|Last_Name|
-   +---+---------------+----------+---------+
-   | 1|Sagar-Prajapati| Sagar|Prajapati|
-   | 3| John Cena| John| Cena|
-   +---+---------------+----------+---------+
-	df = df.withColumn("fn", split(df.Name, "[- ]").getItem(0)).withColumn("ln", split(df.Name, "[- ]")[1])
-
->> Given a DataFrame, split the data into two columns (Even, Odd) where:
-    Ans. df2 = df1.withColumn('even', when(col('id') % 2 == 0, col('id'))).withColumn('odd', when(col('id')%2!=0, col('id')))
-
->> Create a DataFrame with two columns:
-    Column 1: Default String
-    Column 2: Default Integer
 
 >> Word count program in pyspark rdd & DF
     df1 = df.select(explode(split(df["name"], " ")).alias("word")).groupBy("word").agg(count("*").alias("count"))
@@ -462,102 +453,15 @@ dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs
 >> Write a PySpark query to count the number of null values in each column of a DataFrame.
 	df1.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
 
->> Write a PySpark query to replace null values in a specific column with the previous non-null value.
-	window_spec = Window.orderBy("id").rowsBetween(Window.unboundedPreceding, Window.currentRow)
-	df.withColumn("filled_col", last('value', ignorenulls=True).over(window_spec)).show()
 
->> reading file into df / write df into target
-option("recursiveFileLookup", "true")
-option("compression", "gzip")
-option("modifiedBefore", "2025-04-19T20:58:57") / option("modifiedAfter", "2025-04-19T20:58:57")
-option('header', True)
+
 option("mode", "PERMISSIVE").schema(cust_schema).option("columnNameOfCorruptRecord", "_corrupt_record")  - return null / 
 option("mode", DROPMALFORMED/FAILFAST").schema(cust_schema) - remove wrong records / throw error if any incorrect records are there
 
-df = spark.read.csv("/tmp/compressed_csv_data", sep="|", linesep="/r or /n")
-df.write.mode("overwrite").parquet("/tmp/compressed_data", sep="|", linesep="/r or /n")
-df1.write.mode("overwrite").format("bigquery").option("temporaryGcsBucket", "surdatabuk").option("table", "elegant-circle-454709-h5.surtest11.surtt3").save()
-
->>
-Given two datasets, products and sales, write a PySpark program to identify products that have never been sold. Assume the schema of products is (product_id, product_name) and the schema of sales is (sale_id, product_id, sale_date).
-products = spark.createDataFrame([ (1, "Laptop"), (2, "Tablet"), (3, "Smartphone"), (4, "Monitor"), (5, "Keyboard") ], ["product_id", "product_name"]) 
-sales = spark.createDataFrame([ (101, 1, "2025-01-01"), (102, 3, "2025-01-02"), (103, 5, "2025-01-03") ], ["sale_id", "product_id", "sale_date"]) 
-
-	dfj = products.join(sales, on='product_id', how='left')
-	dfj.filter(dfj.sale_id.isNull()).select('product_id', 'product_name').show()
-
->>
-You are given a dataset of employees in an Indian company with columns: `emp_id`, `name`, `department`, `salary`, and `city`. Write a PySpark program to find the total salary paid in each department.
-Sample Data:
-emp_id, name, department, salary, city
-101, Rajesh, IT, 75000, Bangalore
-Expected Output:
-IT, 233000
-
->> Write a pyspark program to count number of products in each category 
-# based on its price into three categories below. 
-# Display the output in descending order of no of products.
-# 1- "Low Price" for products with a price less than 100
-# 2- "Medium Price" for products with a price between 100 and 500 (inclusive)
-# 3- "High Price" for products with a price greater than 500.
-
-products_data = [
- (1, 'Laptop', 800),
- (2, 'Smartphone', 600)]
 
 
->> Handling Null Values
-You are given a dataset containing customer transactions in an Indian e-commerce platform with columns: `cust_id`, `cust_name`, `city`, `purchase_amount`, and `product_category`. Some records have missing `purchase_amount`. Write a PySpark program to fill missing `purchase_amount` values with the average purchase amount of that product category.
 
-Sample Data:
-cust_id, cust_name, city, purchase_amount, product_category
-201, Aman, Delhi, 1500, Electronics
-202, Kiran, Mumbai, , Fashion
 
-	df_avg_pa = df.groupBy('product_category').agg(avg('purchase_amount').alias('avg_purchase_amount'))
-	df_join = df.join(df_avg_pa, on='product_category', how='left')
-	df_join.withColumn('purchase_amount', when(col('purchase_amount').isNull(), col('avg_purchase_amount')).otherwise(col('purchase_amount')))
-	df_final = df_join.drop('purchase_amount').show()
-
->> 
-You have a dataset of students from different Indian states with columns: `student_id`, `student_name`, `state`, `score`. 
-Write a PySpark program to rank students within each state based on their scores in descending order.
-student_id, student_name, state, score
-301, Rohit, Maharashtra, 85
-Expected Output:
-Maharashtra, Amit, 90, Rank 1
-	window_spec = Window.partitionBy("state").orderBy(desc("score"))
-	ranked_df = df.withColumn("rank", rank().over(window_spec))
-
->> Fill the mean salary value where salary is Null.
-data = [("Alice", 50000), ("Bob", None), ("Charlie", 60000), ("David", None)]
-df = spark.createDataFrame(data, ["name", "salary"])
-
-	avg_salary = df.select(mean(col('salary'))).collect()[0][0]
-	df.fillna({'salary': avg_salary}).show()
-
->> What are the different ways to remove duplicate records in PySpark?
-	1. distinct_df = df.distinct()
-	2. drop_duplicates_df = df.dropDuplicates(["name", 'id'])
-	3. window_spec = Window.partitionBy("name").orderBy("id")
-	   df_with_row_num = df.withColumn("row_num", row_number().over(window_spec))
-	   filtered_df = df_with_row_num.filter(col("row_num") == 1).drop("row_num")
-	4. grouped_df = df.groupBy("name").agg(max("id").alias("max_id"))
-
->> Explain `groupBy()`, `agg()`, and `pivot()` functions with an example.
-	pivot_df = df.groupBy("name").pivot("department").sum("salary")
-
->>
-𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧
-You need to remove the duplicate rows based on the composite key (customer_id, order_id) and retain only the row with the latest order_date for each combination of customer_id and order_id.
-𝐬𝐜𝐡𝐞𝐦𝐚 
-data = [ (101, 1001, "2025-01-15", 500.00), (102, 1002, "2025-01-14", 300.00), (101, 1001, "2025-01-17", 550.00), (103, 1003, "2025-01-16", 450.00), 
-(102, 1002, "2025-01-18", 320.00), (103, 1003, "2025-01-19", 460.00) ] 
-schema = ["customer_id", "order_id", "order_date", "total_amount"] 
-
-	window_spec = Window.partitionBy("customer_id", "order_id").orderBy(desc("order_date"))
-	df = df.withColumn("row_number", row_number().over(window_spec))
-	df.filter(col("row_number") == 1).drop("row_number").orderBy("customer_id").show()
 
 >>
 Hide Credit card number: Accept 16 digit credit card number from user and display only last 4 characters of card number.
@@ -572,60 +476,8 @@ schema = "id int, name string, card_no long"
 	maskfun_udf = udf(maskfun, StringType())
 	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
 
->> 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧
-You are working as a Data Engineer for a company. The sales team has provided you with a dataset containing sales information. However, the data has some missing values that need to be addressed before processing. You are required to perform the following tasks:
-1. Load the following sample dataset into a PySpark DataFrame:
-2. Perform the following operations:
-a. Replace all NULL values in the Quantity column with 0.
-b. Replace all NULL values in the Price column with the average price of the existing data.
-c. Drop rows where the Product column is NULL.
-d. Fill missing Sales_Date with a default value of '2025-01-01'.
-e. Drop rows where all columns are NULL.
-𝐬𝐜𝐡𝐞𝐦𝐚 
-data = [ (1, "Laptop", 10, 50000, "North", "2025-01-01"), (2, "Mobile", None, 15000, "South", None), (3, "Tablet", 20, None, "West", "2025-01-03"), (4, "Desktop", 15, 30000, None, "2025-01-04"), (5, None, None, None, "East", "2025-01-05") ] columns = ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
 
-	from pyspark.sql.functions import *
-	avg_value = df.select(avg('Price')).collect()[0][0]
-	df = df.na.fill({'Quantity':0, 'Price':avg_value, 'Sales_Date':'2025-01-01'})
-	df = df.na.drop(subset=['Product'])
-	df = df.na.drop(how='all')
-	df.show()
-
->>
-𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧:
-You have a PySpark DataFrame df containing detailed sales data from various states in India for an e-commerce company. The DataFrame schema is:
-
-You need to perform the following complex analysis using PySpark:
-1. Calculate the total revenue per state and category.
- (Revenue = units × unit_price)
-2. For each state, identify the category that has the highest total revenue.
-3. For each state-category pair, calculate the average units sold per order.
-4. From the results, list the states along with the category that generated the highest revenue, and the average units sold per order for that category.
-5. Sort the final output by total revenue in descending order.
  
-𝐒𝐚𝐦𝐩𝐥𝐞 𝐃𝐚𝐭𝐚 :
-data = [
- ("O1001", "Maharashtra", "Mumbai", "P100", "Electronics", 3, 15000.0, "2025-05-10"),
- ("O1002", "Maharashtra", "Pune", "P101", "Clothing", 5, 1200.0, "2025-05-11"),
- ("O1003", "Karnataka", "Bengaluru", "P102", "Electronics", 2, 18000.0, "2025-05-10"),
- ("O1004", "Karnataka", "Mysore", "P103", "Grocery", 10, 200.0, "2025-05-12"),
- ("O1005", "Tamil Nadu", "Chennai", "P104", "Electronics", 1, 16000.0, "2025-05-11"),
- ("O1006", "Tamil Nadu", "Coimbatore", "P105", "Clothing", 8, 1100.0, "2025-05-13"),
- ("O1007", "Maharashtra", "Nagpur", "P106", "Grocery", 20, 150.0, "2025-05-12"),
- ("O1008", "Karnataka", "Bengaluru", "P107", "Clothing", 6, 1300.0, "2025-05-14"),
- ("O1009", "Tamil Nadu", "Chennai", "P108", "Grocery", 15, 180.0, "2025-05-14"),
-]
-
-columns = ["order_id", "state", "city", "product_id", "category", "units", "unit_price", "order_date"]
-
-𝐄𝐱𝐩𝐞𝐜𝐭𝐞𝐝 𝐎𝐮𝐭𝐩𝐮𝐭:
-+-----------+-----------+-------------+-------------------+
-|state |category |total_revenue|avg_units_per_order |
-+-----------+-----------+-------------+-------------------+
-|Maharashtra|Electronics|45000.0 |3.0 |
-|Karnataka |Electronics|36000.0 |2.0 |
-|Tamil Nadu |Clothing |8800.0 |8.0 |
-+-----------+-----------+-------------+-------------------+
 
 
 
