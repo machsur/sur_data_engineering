@@ -72,7 +72,6 @@ df.selectExpr("id*2 as nid", "name as nname").show()
 >> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
 >> df_limit = df.limit(10)
 >> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns 
-
 >> 
 union tables: union_distinct = df1.union(df2).distinct()  /subtract/intersect/   -->> / col name, position, schema match /
 union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
@@ -91,14 +90,12 @@ column type change --> df = df.withColumn("Phone", col("Phone").cast("string"))
 		datediff(df["end_date"], df["start_date"])
 		withColumn("months_diff", months_between(df["end_date"], df["start_date"]))  
 		withColumn("timestamp_diff", unix_timestamp(df["end_timestamp"]) - unix_timestamp(df["start_timestamp"]))      
-	==>>    df.dropna("All" subset=['cn1", "cn2"]) 
-		df.fillna("N/A" subset=['cn1", "cn2"]) / df.na.fill({'cn1':'val1', 'cn2': 'val2'}) / is null('CN') 
-		df_replaced_multiple = df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset="fruit")
-	==>> coalesce('cn1', 'cn2','cn3') - return first non-null value from list of columns
-	     df.gruopBy("region").agg(coalesce(mean("units_sold), lit(0))) 
-	==>> when&otherwise -->> df = ( df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult")).withColumn("income_bracket", when(df.salary < 4000, "Low") 					.when((df.salary >= 4000) & (df.salary <= 4500), "Medium") .otherwise("High")) )
-	==>>cast data types -->> df = df.withColumn("column_name", col("column_name").cast("target_data_type"))
-			    -->> cast_expr = [col("column1_name").cast("target_data_type1"), col("column2_name").cast("target_data_type2")] / df = df.select(*cast_expr)
+>>    
+df.dropna(how="All" or how='any' or subset=['cn1", "cn2"]) 
+df.fillna("N/A" or 'sur', subset=['cn1", "cn2"] or {'cn1':'val1', 'cn2': 'val2'}) 
+df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset=["fruit"])
+>> coalesce('cn1', 'cn2','cn3') - return first non-null value from list of columns
+>> when&otherwise -->> df = df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult"))
 >> 
 agg 	 		-------> df.select(sum('CN')).show()  		   ------> note: ignore null values ----> sumDistinct, countDistanct
 grouping and agg 	-------> df.groupBy('CN').agg(sum('CN')).show()   	
