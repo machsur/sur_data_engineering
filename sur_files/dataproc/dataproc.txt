@@ -4,8 +4,7 @@ https://github.com/afaqueahmad7117/spark-experiments/tree/main/spark
 https://allthingdata.substack.com/p/essential-linux-commands-for-data         
 
 ==========================================================================================================================================================================
-commands:
-
+hdfs commands:
 hdfs dfs -ls -R /public/retail_db
 hdfs dfs -mkdir /path/to/new_directory
 hdfs dfs -copyFromLocal /local/path/to/file /hdfs/path/to/destination 		or
@@ -54,43 +53,37 @@ rdd1 = rdd_big_file.flatMap(lambda line:line.split(' '))
 rdd1 = rdd1.map(lambda word:(word,1))
 rdd1 = rdd1.reduceByKey(lambda a,b : a+b) 
    
-==>> high-level api
-    df = spark.createDataFrame(data, columns)
-    df_from_pandas = spark.createDataFrame(pandas_df/data_dict)
-    df_empty = spark.createDataFrame([], columns)
-    df_csv = spark.read.csv("/path/to/file.csv", header=True, inferSchema=True)
-    from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DoubleType
-    custom_schema = StructType([StructField("id", IntegerType(), True), StructField("name", StringType(), True), StructField("age", IntegerType(), True)])
-    custom_schema = ''' ID Integer, Name String, Age Integer, Salary Double '''
-    df = spark.read.csv("your_file.csv", schema=custom_schema, header=True)
-    file_paths = ["file1.csv", "file2.csv", "file3.csv"] 
-    df = spark.read.csv(file_paths, header=True, inferSchema=True, sep=',')
-    df = spark.read.option("modifiedBefore", "2022-02-27T05:30:00").json("file:///path_to_file/data_files/")
-    ==>> join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
-         join_df = df1.crossjoin(df2)
-         broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
-    ==>> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  &|   /
-    ==>> grouped_df = df.groupBy('department').agg(max("sal"))   		
-    ==>> having_df = df.filter(grouped_df['count'] > 1)
-    ==>> selected_df = df.select("customer_id", col("Name").alias('EmployeeName'), column("last_name"), df.email, df["city"] )
-                    = df.selectExpr("id*2 as nid", "name as nname").show()
-    ==>> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
-    ==>> df_limit = df.limit(10)
-    ==>> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns 
+====>> high-level api
+>>
+df = spark.createDataFrame(data, columns) ---> pandas_df/data_dict
+custom_schema = StructType([StructField("id", IntegerType(), True), StructField("name", StringType(), True), StructField("age", IntegerType(), True)])
+custom_schema = ''' ID Integer, Name String, Age Integer, Salary Double '''
+df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).option("mode", "PERMISSIVE").json("file:///path_to_file/data_files/")
+>> 
+join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
+join_df = df1.crossjoin(df2)
+broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
+>> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  &|   /
+>> grouped_df = df.groupBy('department').agg(max("sal"))   		
+>> having_df = df.filter(grouped_df['count'] > 1)
+>> 
+df.select("customer_id", col("Name").alias('EmployeeName'), column("last_name"), df.email, df["city"] )
+df.selectExpr("id*2 as nid", "name as nname").show()
+>> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
+>> df_limit = df.limit(10)
+>> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns 
 
-
-	==>> union tables: union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/   -->> positional col match / schema must be identical
-	     union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col match by name / schema can differ / missing col handle with null values
-	     distanct values/drop duplicates ----> df.select('cn1', 'cn2').distinct() ----> df.dropDuplicates(['cn1', 'cn2'])
-	==>> 
-	add new column ---> newdf = df.withColumn("NewColumn", lit(1))
-	drop columns -->> df2 = df.drop("Country", "Region")
-	column name change -->> new_df = df.withColumnRenamed("oldColumnName", "newColumnName")
-	column type change --> df = df.withColumn("Phone", col("Phone").cast("string"))
-	==>> case sensitive - df.select(initcap(col("country")))  -->> initcap / lower / upper
-	==>> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName))
-			  --> df.select(concat_ws(' | ', col("Region"), col("Country")))
-	==>> result_df = df.select( col("EmployeeID"), ltrim(col("Name")), lpad(col("Name"), 10, "X"))  -->> rtrim / trim / rpad
+>> 
+union tables: union_distinct = df1.union(df2).distinct()  /union/subtract/intersect/   -->> positional col match / schema must be identical
+union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col match by name / schema can differ / missing col handle with null values
+>> distanct values/drop duplicates ----> df.select('cn1', 'cn2').distinct() ----> df.dropDuplicates(['cn1', 'cn2'])
+>> 
+add new column ---> newdf = df.withColumn("NewColumn", lit(1))
+drop columns -->> df2 = df.drop("Country", "Region")
+column name change -->> new_df = df.withColumnRenamed("oldColumnName", "newColumnName")
+column type change --> df = df.withColumn("Phone", col("Phone").cast("string"))
+>> case sensitive - df.select(initcap(col("country")))  -->> initcap / lower / upper / trim / ltrim / rtrim / lpad(col("Name"), 10, "X") /
+>> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName)) / concat_ws(' | ', col("Region"), col("Country"))
 	==>> create date, timestamp columns in df, add/subtract days, 
 		withColumn("date", to_date(df["date_string"], "yyyy-MM-dd"))
 		withColumn("month", month(df["date"]))
@@ -106,15 +99,15 @@ rdd1 = rdd1.reduceByKey(lambda a,b : a+b)
 	==>> when&otherwise -->> df = ( df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult")).withColumn("income_bracket", when(df.salary < 4000, "Low") 					.when((df.salary >= 4000) & (df.salary <= 4500), "Medium") .otherwise("High")) )
 	==>>cast data types -->> df = df.withColumn("column_name", col("column_name").cast("target_data_type"))
 			    -->> cast_expr = [col("column1_name").cast("target_data_type1"), col("column2_name").cast("target_data_type2")] / df = df.select(*cast_expr)
-	==>> 
-	     agg 	 	-------> df.select(sum('CN')).show()  		   ------> note: ignore null values ----> sumDistinct, countDistanct
-	     grouping and agg 	-------> df.groupBy('CN').agg(sum('CN')).show()   	
-	     window functions 	-------> window_spec = Window.partitionBy("category", "sub_category").orderBy(asc("timestamp"))
-                    					.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
-				   			.rowsBetween(-2, 3)
-				   	df = df.withColumn("row_number", row_number().over(window_spec)) 
-   		max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) / collect_list('cn') / collect_set('cn') / first_value('cn') / last_value(cn) / nth_value(cn, n)  /
-		row_number() / rank() / dense_rank() / 	lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
+>> 
+agg 	 		-------> df.select(sum('CN')).show()  		   ------> note: ignore null values ----> sumDistinct, countDistanct
+grouping and agg 	-------> df.groupBy('CN').agg(sum('CN')).show()   	
+window functions 	-------> window_spec = Window.partitionBy("category", "sub_category").orderBy(asc("timestamp"))
+                    				     .rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing) / .rowsBetween(-2, 3)
+				df = df.withColumn("row_number", row_number().over(window_spec)) 
+   				max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) / collect_list('cn') / collect_set('cn') 
+				/ first_value('cn') / last_value(cn) / nth_value(cn, n)  /
+				/ row_number() / rank() / dense_rank() / lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
 	==>> splitng column -->> df.withColumn('nc', split(col('name'), '[ ,]'))   -->> [0] or .getItem(0), explode, 
 	     Array length: df.withColumn('nc', size(split(col('name'), '[ ,]')))
 	     word in array or not: df.withColumn('nc', array_contains(split(col('name'), '[ ,]'), 'macha'))
