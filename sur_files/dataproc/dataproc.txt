@@ -3,8 +3,17 @@ links:
 https://github.com/afaqueahmad7117/spark-experiments/tree/main/spark
 https://allthingdata.substack.com/p/essential-linux-commands-for-data         
 
+========================================================================================================================================================================
+>> steps to follow as data engineer:
+1. Data Ingetion: load data into spark dataframe 
+2  exploration: schema and datatypes, data leakage or drop, Null values, duplicate values, data distribution as per state, avg time taken to deliver item	
+3. data cleaning: handle missing values, duplicate, invalid date (standadize format), data type corretion
+4. data integration (combine data from multiple tables) and aggregation (to compute metrics): 
+5. performance optimization: enhance data processing task - partitioning, cache/persist, spark config
+6. data serving: make processed data available in bq
+
 ==========================================================================================================================================================================
-hdfs commands:
+==> hdfs commands:
 hdfs dfs -ls -R /public/retail_db
 hdfs dfs -mkdir /path/to/new_directory
 hdfs dfs -copyFromLocal /local/path/to/file /hdfs/path/to/destination 		or
@@ -18,7 +27,6 @@ hdfs dfsadmin -report
 hdfs dfs -df -h
 hdfs dfs -du -s -h /path/to/directory
 hdfs dfs -chmod 755 /path/to/file_or_directory
-
 
 ==> low-level api
 from pyspark.sql import SparkSession
@@ -54,6 +62,27 @@ rdd1 = rdd1.map(lambda word:(word,1))
 rdd1 = rdd1.reduceByKey(lambda a,b : a+b) 
    
 ====>> high-level api
+>> create spark session with config optimization
+spark = SparkSession.builder \
+.appName("olist config optimization") \
+.config('spark.executor.memory', '6g') \
+.config('spark.executor.cores', '4') \
+.config('spark.executor.instances', '2') \
+.config('spark.driver.memory', '4g') \
+.config('spark.driver.maxResultSize', '2g') \
+.config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
+.config('spark.default.parallelism', '64') \		# It usually defaults to the number of cores on all executor nodes.
+.config('spark.sql.adaptive.enabled', 'true') \
+.config('spark.sql.adaptive.coalescePartitions.enabled', 'true') \
+.config('spark.sql.autoBroadcastJoinThreshold', 24*1024*1024) \
+.config('spark.sql.adaptive.skewJoin.enabled', 'true') \
+.config('spark.sql.files.maxPartitionBytes', '64MB') \
+.config('spark.sql.files.openCostInBytes', '2MB') \
+.config('spark.memory.fraction', 0.8) \
+.config('spark.memory.storageFraction', 0.2) \
+.getOrCreate()
+
+/etc/hadoop/conf/core-site.xml
 >>
 df = spark.createDataFrame(data, columns) ---> pandas_df/data_dict
 custom_schema = StructType([StructField("id", IntegerType(), True), StructField("name", StringType(), True), StructField("age", IntegerType(), True)])
@@ -115,11 +144,9 @@ explode/explode_outer: df.withColumn('nc', explode(split(col('name'), '[ ,]'))) 
 >> 
 Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
 unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
-	==> 
-		regexp_extract: df.withColumn("file_name", regexp_extract("file_path", r'^(.*)_\d{14}\.csv$', 1))
-		regexp_replace: df.withColumn("new_file_path", regexp_replace("file_path", r'_\d{14}\.csv$', '_TIMESTAMP.csv'))
-		regexp_contain: df.withColumn("contains_digits", when(regexp_extract(col("text"), r'\d', 0) != "", True).otherwise(False))
-		regexp_substr: df = df.withColumn("first_digits", regexp_extract("text", r'\d+', 0))
+>> 
+dfjf.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
+dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-h5.surtest11.customers_orders').save()
 
 ==> spark-sql 
 spark = SparkSession.builder.appName('sur rdd1').getOrCreate()
@@ -217,7 +244,6 @@ set hive.metastore.warehouse.dir;  (hive data files stroed in hdfs) / hdfs dfs -
 Pyspark Interview QA:
 
 >> Spark Architecture:
-
 >> sPARK query plan:
 	code syntax is correct or not --> unresolved logical plan --> catalog --> logical plan --> optimized logical plan (filter pushdown & selct req col)--> 
 	converted several pysical plans --> cost model --> best pysical --> run on cluster.
@@ -320,42 +346,6 @@ dynamic partition pruning: send partition that is supossed to be scanned
 	limits: one of dataset must be partitioned and based on column that is filered from other datase	
 	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
 
-
-
-
->> create spark session with config optimization
-spark = SparkSession.builder \
-.appName("olist config optimization") \
-.config('spark.executor.memory', '6g') \
-.config('spark.executor.cores', '4') \
-.config('spark.executor.instances', '2') \
-.config('spark.driver.memory', '4g') \
-.config('spark.driver.maxResultSize', '2g') \
-.config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
-.config('spark.default.parallelism', '64') \		# It usually defaults to the number of cores on all executor nodes.
-.config('spark.sql.adaptive.enabled', 'true') \
-.config('spark.sql.adaptive.coalescePartitions.enabled', 'true') \
-.config('spark.sql.autoBroadcastJoinThreshold', 24*1024*1024) \
-.config('spark.sql.adaptive.skewJoin.enabled', 'true') \
-.config('spark.sql.files.maxPartitionBytes', '64MB') \
-.config('spark.sql.files.openCostInBytes', '2MB') \
-.config('spark.memory.fraction', 0.8) \
-.config('spark.memory.storageFraction', 0.2) \
-.getOrCreate()
-
-/etc/hadoop/conf/core-site.xml
-
-
->> steps to follow as data engineer:
-1. Data Ingetion: load data into spark dataframe 
-2   exploration: schema and datatypes, data leakage or drop, Null values, duplicate values, data distribution as per state, avg time taken to deliver item	
-3. data cleaning: handle missing values, duplicate, invalid date (standadize format), data type corretion
-4. data integration (combine data from multiple tables) and aggregation (to compute metrics): 
-5. performance optimization: enhance data processing task - partitioning, cache/persist, spark config
-6. data serving: make processed data available in bq
-
-
-
 >> validate pyspark exit() / spark-shell (spark scala) :quit / spark-sql exit; / CLI in dataproc cluster.
 
 >> execute gcs script 
@@ -365,32 +355,28 @@ spark = SparkSession.builder \
    ---> submit pyspark job using UI 
    ---> gcloud dataproc jobs submit pyspark gs://surdatabuk/scripts/pysp1.py --cluster=cluster-1c1f --region=us-central1 
 
->> 
-pyspark script:
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import *
-spark = SparkSession.builder.appName('surapp').getOrCreate()
-dfo=spark.read.csv('gs://surdatabuk/data/olist/olist_orders_dataset.csv', header=True, inferSchema=True)
-dfc = spark.read.csv('gs://surdatabuk/data/olist/olist_customers_dataset.csv', header=True, inferSchema=True)
-dfj = dfc.join(dfo, dfc['customer_id']==dfo['customer_id'], 'inner').drop(dfo['customer_id'])
-dfjf = dfj.select('customer_id', 'customer_unique_id', col('customer_zip_code_prefix').cast('string'), 'customer_city', 'customer_state', 'order_id', 'order_status', 'order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date', 'order_delivered_customer_date', 'order_estimated_delivery_date')
-dfjf.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
-dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-h5.surtest11.customers_orders').save()
-
 
 ==========================================================================================================================================================================
 
+>> why bigdata - growth of internet, social media & IOT devices
+>> (1.1) desiging good bigdata system, onpremise vs cloud, DB vs DWH vs DL, ETL vs ELT
+>> Hadoop Ecosystem (2)
+>> Map Reduce and YARN (3)
+>> limitations of MR, Spark EcoSystem (4)
+	What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
+	what is transformation and action
+	How does Lazy Evaluation work in PySpark?
+	What are wide and narrow transformations in PySpark?
+	reduceByKey vs groupByKey
+	increase and decrease no of partions
+	spark read data and partitioning
+	spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
+>> Spark higher level api (DF, DS, spark-sql) (5)
 
-
-===========================================================================================================================================================================
-
->> How does Lazy Evaluation work in PySpark?
->> What are wide and narrow transformations in PySpark?
 >> Explain shuffle operations in PySpark and their impact on performance.
 	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
 >> What is broadcast join, and when should we use it?
 	small dataset is broadcasted to all worker nodes in the cluster - allows to perform join locally on each node - reducing the amount of data shuffled across the 	network - improved performance
->> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
 >> What is the difference between map() and flatMap() inPySpark?
     returns a single value for each input element / return multiple values for each input element
 >> How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided (memory constraints, performance issues) ?
@@ -440,6 +426,8 @@ Drop rows where the Product column is NULL / Drop rows where all columns are NUL
 	3. For each state-category pair, calculate the average units sold per order.
 	4. From the results, list the states along with the category that generated the highest revenue, and the average units sold per order for that category.
 	5. Sort the final output by total revenue in descending order.
+>>
+
 
 
 
