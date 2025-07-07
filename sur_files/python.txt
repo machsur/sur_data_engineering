@@ -46,17 +46,29 @@ Statement	Purpose				Common Use Case
 break		Exit the loop entirely		Stop when a condition is met
 continue	Skip to the next iteration	Skip unwanted values
 pass		Do nothing (placeholder)	Placeholder for future code
+
 >> 
-    functions: reuse block of code / 
-    	positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data)
-    	Global variable (outside fun) / local variable (inside fun)
-    recursion: function calling it self ex: factorial
-    anonymous function, short, one-line function: x = lambda a: a * a / print(x(5))
-    	filter: list(filter(lambda a: a%2 == 0, lt))
-    	map: list(map(lambda a: a * 2, lt))
-    	reduce: from functools import reduce / sum = reduce(lambda a, b: a + b, lt)
+-- functions: reuse block of code 
+	positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data)
+	Global variable (outside fun) / local variable (inside fun)  
+-- recursion: function calling it self ex: factorial
+-- anonymous function, short, one-line function: 
+	x = lambda a: a * a / print(x(5))
+	filter: list(filter(lambda a: a%2 == 0, lt))
+	map: list(map(lambda a: a * 2, lt))
+	reduce: from functools import reduce / sum = reduce(lambda a, b: a + b, lt)
+
 >> List comprehensation: create new list from existiong list or other iterals
-	filtered_ls = [i for i in ls if i%2 == 0 & i > 2]
+nls = [i for i in ls if i%2==0]   /  	nls1=list(filter(lambda x: x%2==0, ls))
+lsd = {name:dept for name, dept in list_of_tuples}  
+lss = {i for i in ls}
+
+>> 	ordered		mutable		duplicates
+list[]	Y		Y		Y
+tuple() Y		N		Y
+set{}	N		Y		N
+dict{}	Y		Y		N - based on key
+
 >> 
 Feature		List			Array (array)		NumPy Array		Pandas DataFrame
 Data Type	Mixed			Homogeneous		Homogeneous		Mixed (tabular)
