@@ -54,7 +54,7 @@ pass		Do nothing (placeholder)	Placeholder for future code
 -- recursion: function calling it self ex: factorial
 -- anonymous function, short, one-line function: 
 	x = lambda a: a * a / print(x(5))
-	filter: list(filter(lambda a: a%2 == 0, lt))
+	filter: list(filter(lambda a: a%2 == 0, lt))   --> ananous fun, reg function, in-built fun
 	map: list(map(lambda a: a * 2, lt))
 	reduce: from functools import reduce / sum = reduce(lambda a, b: a + b, lt)
 
