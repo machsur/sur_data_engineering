@@ -13,55 +13,34 @@ https://allthingdata.substack.com/p/essential-linux-commands-for-data
 6. data serving: make processed data available in bq
 
 ==========================================================================================================================================================================
-==> hdfs commands:
-hdfs dfs -ls -R /public/retail_db
-hdfs dfs -mkdir /path/to/new_directory
-hdfs dfs -copyFromLocal /local/path/to/file /hdfs/path/to/destination 		or
-hdfs dfs -copyToLocal /hdfs/path/to/file /local/path/to/destination      or
-hdfs dfs -put data/retail_db /public (local to hdfs -put)
-hdfs dfs -cp gs://surretail/retail_db /public/retail_db (hdfs to hdfs, gcs to hdfs, hdfs to gcs, gcs to gcs -cp)
-hdfs dfs -mv /path/to/source /path/to/destination
-hdfs dfs -rm -R -skipTrash /public/retail_db
-hdfs dfs -cat /path/to/file
-hdfs dfsadmin -report
-hdfs dfs -df -h
-hdfs dfs -du -s -h /path/to/directory
-hdfs dfs -chmod 755 /path/to/file_or_directory
 
-==> low-level api
-from pyspark.sql import SparkSession
-spark = SparkSession.builder.appName('WordCountDemo').master('yarn').getOrCreate()
+
+===========================================> hdfs commands:
+hdfs -help
+hdfs dfs -help
+hdfs dfs -help ls
+
+==========================================> low-level api
+>>
 rdd = spark.sparkContext.parallelize(data)
 rdd = spark.sparkContext.textFile(hdfs_path)   ---> hdfs_path = '/tmp/inputhdfsdbz.txt'
-rdd_hdfs_mapped = rdd_hdfs.map(lambda line:line.split(" "))
-rdd1 = rdd.map(lambda line: line.split(','))
-rdd1 = rdd.flatMap(lambda line: line.split(','))
+>>
 rdd1 = rdd.filter(lambda row: 'Frieza' in row) / rdd1 = rdd.filter(lambda row : row!=header)  - header = rdd.first()
 rdd1 = rdd.flatMap(lambda line:line.split(' ')).map(lambda word:(word,1)).reduceByKey(lambda a,b : a+b)   ---> word count programme
 rdd1 = rdd.map(lambda row:row.split(',')).map(lambda row:(row[2],1)).groupByKey().map(lambda row:(row[0],len(row[1]))).collect()
-
+>>
 rdd1 = rdd.map(parse_row)
 def parse_row(row):
     fields = row.split(',')
     return (int(fields[0]), fields[1], fields[2], fields[3], fields[6]=='True')
-
-rdd.first()
-rdd.collect()
-rdd.take(3)
-rdd1.countByValue()
-
+>> rdd.first() / rdd.collect() / rdd.take(3) / rdd1.countByValue()
 >>
-# spark.conf.get('spark.sql.files.maxPartitionBytes')
-# 544mb => 5 blocks => 5 partition  ----> big_rdd_from_hdfs.getNumPartitions() 
-#1 mb => 1 block --> 1 partition ( This is wrong)  ---> small_rdd_from_hdfs.getNumPartitions()  
-	--> because spark.sparkContext.defaultMinPartitions  / spark.sparkContext.defaultParallelism
-
->> Q/A- # In this case we will have to start from Scratch only
-rdd1 = rdd_big_file.flatMap(lambda line:line.split(' '))
-rdd1 = rdd1.map(lambda word:(word,1))
-rdd1 = rdd1.reduceByKey(lambda a,b : a+b) 
+spark.conf.get('spark.sql.files.maxPartitionBytes') / rdd.getNumPartitions() / spark.sparkContext.defaultMinPartitions 
+spark.sparkContext.defaultParallelism  (for local data)
+# 544mb => 5 blocks => 5 partition   
+#1 mb => 1 block --> 1 partition ( This is wrong)  => 2 ---> because spark.sparkContext.defaultMinPartitions  
    
-====>> high-level api
+=============================>> high-level api
 >> create spark session with config optimization
 spark = SparkSession.builder \
 .appName("olist config optimization") \
@@ -83,11 +62,13 @@ spark = SparkSession.builder \
 .getOrCreate()
 
 /etc/hadoop/conf/core-site.xml
+
 >>
-df = spark.createDataFrame(data, columns) ---> pandas_df/data_dict
 custom_schema = StructType([StructField("id", IntegerType(), True), StructField("name", StringType(), True), StructField("age", IntegerType(), True)])
 custom_schema = ''' ID Integer, Name String, Age Integer, Salary Double '''
 df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).option("mode", "PERMISSIVE").json("file:///path_to_file/data_files/")
+df.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
+df.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-h5.surtest11.customers_orders').save()
 >> 
 join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
 join_df = df1.crossjoin(df2)
@@ -105,11 +86,7 @@ df.selectExpr("id*2 as nid", "name as nname").show()
 union tables: union_distinct = df1.union(df2).distinct()  /subtract/intersect/   -->> / col name, position, schema match /
 union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
 >> distanct values/drop duplicates ----> df.select('cn1', 'cn2').distinct() ----> df.dropDuplicates(['cn1', 'cn2'])
->> 
-add new column ---> newdf = df.withColumn("NewColumn", lit(1))
-drop columns -->> df2 = df.drop("Country", "Region")
-column name change -->> new_df = df.withColumnRenamed("oldColumnName", "newColumnName")
-column type change --> df = df.withColumn("Phone", col("Phone").cast("string"))
+>> add new column, drop columns, column name change, column type change 
 >> case sensitive - df.select(initcap(col("country")))  -->> initcap / lower / upper / trim / ltrim / rtrim / lpad(col("Name"), 10, "X") /
 >> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName)) / concat_ws(' | ', col("Region"), col("Country"))
 	==>> create date, timestamp columns in df, add/subtract days, 
@@ -144,11 +121,9 @@ explode/explode_outer: df.withColumn('nc', explode(split(col('name'), '[ ,]'))) 
 >> 
 Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
 unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
->> 
-dfjf.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
-dfjf.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gs://surdatabuk/data/olist_op/csv/').option('table', 'elegant-circle-454709-h5.surtest11.customers_orders').save()
 
-==> spark-sql 
+
+================================================> spark-sql 
 spark = SparkSession.builder.appName('sur rdd1').getOrCreate()
 spark_new_app_session = spark.newSession()
 spark.sparkContext.applicationId
@@ -191,7 +166,7 @@ df_table = spark.table('external_customers_2')
 df_range = spark.range(0,10)
 df_rdd = rdd.toDF(["customer_id", "name"])
 
-====>>  HiveQL: 
+=========================================>>  HiveQL: 
 -- sql like interface (HQL) --> translator ---> MR/spark/tej code (is abstraction for java or MR programe)
 -- table --> data (hdfs, s3, gcs) + metadata (hive stores metastore in it). 
 -- hive is database like mysql?
@@ -243,7 +218,10 @@ set hive.metastore.warehouse.dir;  (hive data files stroed in hdfs) / hdfs dfs -
 
 Pyspark Interview QA:
 
->> Spark Architecture:
+>> dataproc cluster creation:
+	stagging bucket --> cluster metainfo, notebooks
+	temp bucket --> MR/spark job history, YARN logs
+
 >> sPARK query plan:
 	code syntax is correct or not --> unresolved logical plan --> catalog --> logical plan --> optimized logical plan (filter pushdown & selct req col)--> 
 	converted several pysical plans --> cost model --> best pysical --> run on cluster.
