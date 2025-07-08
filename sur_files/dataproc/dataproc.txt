@@ -83,20 +83,12 @@ df.selectExpr("id*2 as nid", "name as nname").show()
 >> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
 >> df_limit = df.limit(10)
 >> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns 
->> 
-union tables: union_distinct = df1.union(df2).distinct()  /subtract/intersect/   -->> / col name, position, schema match /
-union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
->> distanct values/drop duplicates ----> df.select('cn1', 'cn2').distinct() ----> df.dropDuplicates(['cn1', 'cn2'])
+>> union tables: union/subtract/intersect/   -->> / col name, position, schema match /
+>> union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
 >> add new column, drop columns, column name change, column type change 
 >> case sensitive - df.select(initcap(col("country")))  -->> initcap / lower / upper / trim / ltrim / rtrim / lpad(col("Name"), 10, "X") /
 >> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName)) / concat_ws(' | ', col("Region"), col("Country"))
-	==>> create date, timestamp columns in df, add/subtract days, 
-		withColumn("date", to_date(df["date_string"], "yyyy-MM-dd"))
-		withColumn("month", month(df["date"]))
-		withColumn("truncated_timestamp", date_trunc("hour", df["timestamp"]))
-		datediff(df["end_date"], df["start_date"])
-		withColumn("months_diff", months_between(df["end_date"], df["start_date"]))  
-		withColumn("timestamp_diff", unix_timestamp(df["end_timestamp"]) - unix_timestamp(df["start_timestamp"]))      
+>> work with date     
 >>    
 df.dropna(how="All" or how='any' or subset=['cn1", "cn2"]) 
 df.fillna("N/A" or 'sur', subset=['cn1", "cn2"] or {'cn1':'val1', 'cn2': 'val2'}) 
@@ -122,7 +114,9 @@ explode/explode_outer: df.withColumn('nc', explode(split(col('name'), '[ ,]'))) 
 >> 
 Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
 unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
-
+>> cli
+spark application -list
+spark application -kill app_id
 
 ================================================> spark-sql 
 spark = SparkSession.builder.appName('sur rdd1').getOrCreate()
