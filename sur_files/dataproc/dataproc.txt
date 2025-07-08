@@ -16,6 +16,7 @@ https://allthingdata.substack.com/p/essential-linux-commands-for-data
 
 
 ===========================================> hdfs commands:
+>> linux system / hdfs system
 hdfs -help
 hdfs dfs -help
 hdfs dfs -help ls
