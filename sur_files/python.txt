@@ -35,12 +35,13 @@ Python:
 	config = configparser.ConfigParser()   # Create a parser
 	config.read('config.ini')  # Read the config file
 	db_host = config['database']['host']   |   db_port = config.getint('database', 'port')  # Access values
+
 >> Handlling errors: using the try-except block --> catch and respond to errors gracefully, instead of crashing.
 	any error in the try block, exception will be raised and it caught by except block
-
 	compile time error: Syntatical --- print("Hello World"  # Missing closing parenthesis 
 	Logical error: wrong output --- print("Sum is:", a * b)  # Wrong logic: used * instead of +
 	run time error:  occur while the program is running --- print(5 / 0)  # Division by zero
+
 >>  
 Statement	Purpose				Common Use Case
 break		Exit the loop entirely		Stop when a condition is met
@@ -74,11 +75,8 @@ Feature		List			Array (array)		NumPy Array		Pandas DataFrame
 Data Type	Mixed			Homogeneous		Homogeneous		Mixed (tabular)
 Speed		Slow			Faster than list	Very fast		Fast (for tabular ops)
 Use Case	General use		Numeric data		Scientific calc		Data analysis
-Import Needed	No			Yes			Yes			Yes
-    
-Excel - Can not handle large sets of data
-Python - Need to write code to find answers
-Pandas dataframe: its python modules - makes data scientist life easier and effective
+Import Needed	No			Yes			Yes			Yes  
+Pandas dataframe: its python modules - makes data scientist life easier and effective (Python - Need to write code, Excel - Can not handle large data)
 
 >> library (group of packages) --> Package (folder - collection of modules) ---> module (file1.py, file2.py, __init__.py ) : help organize and reuse of code
  	math, random, array, os, shutil, json, csv, datetime, time, re, request, uuid
