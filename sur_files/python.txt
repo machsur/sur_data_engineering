@@ -130,9 +130,7 @@ def bq_logger(path, name):
 	looger.addHandler(handler)
 	return logger
 
->>
-file operations: read from file, write into file, read file1 and write into file2, find no of lines, words, chars
-working with file paths: os
+>> file operations:
 
 >> 
 OOPS: Class, object, constructer, 
@@ -176,19 +174,13 @@ Q&A
 >> Calculate the Intersection of Two Lists without using Built-in Functions:      print(set(ls1) & set(ls2)) or lss =[item for item in ls1 if item in ls2]
 >> What is a docstring in Python?  Docstrings are enclosed in triple quotes (""" or ''') and can span multiple lines.
 >> What is pass in Python? When is it used? --> Placeholder for future class/function / It does nothing when executed 
->> Which data structure occupies more memory: list or tuple? Why?
-	lists generally occupy more memory than tuples. --> their size and contents can change, more methods
+>> Which data structure occupies more memory: list or tuple? Why? --> lists occupy more memory --> their size and contents can change, more methods
 	print(sys.getsizeof(list_obj))   # e.g., 120 bytes
 >>  Given a list [2, 3, 4, 5, 6], how can you sum all elements? (Discuss available functions)
->>  What is a constructor in Python and its purpose?
-	It is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
+>>  What is a constructor? -> is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
 >> Find out common letters between two strings Using Python
-   use set mtd  ////  & 
->> 
-convert two list into dict: result = dict(zip(keys, values))
-convert dict into tuple:     result = tuple(my_dict.items())
->> FIND MISSING NUMBER IN AN ARRAY IN PYTHON
-	1. n(n+1)/2 - sum(array_elements)
+>> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
+>> FIND MISSING NUMBER IN AN ARRAY IN PYTHON  :  n(n+1)/2 - sum(array_elements)
 >> Find Out Pairs with given sum in an array in python of time complexity O(n log n)- FACEBOOK,AMAZON
 
 
