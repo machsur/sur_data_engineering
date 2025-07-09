@@ -345,7 +345,10 @@ dynamic partition pruning: send partition that is supossed to be scanned
 	spark read data and partitioning
 	spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
 >> Spark higher level api (DF, DS, spark-sql) (5)
-
+	key-benfits compared to low-level api
+	reading data in spark is action or transformation?
+	read modes: "PERMISSIVE" - Puts corrupt records in a special column (e.g., _corrupt_record), "DROPMALFORMED": Drops rows, "FAILFAST": Fails immediately
+	option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") // option("mode", DROPMALFORMED/FAILFAST")
 >> Explain shuffle operations in PySpark and their impact on performance.
 	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
 >> What is broadcast join, and when should we use it?
@@ -399,43 +402,11 @@ Drop rows where the Product column is NULL / Drop rows where all columns are NUL
 	3. For each state-category pair, calculate the average units sold per order.
 	4. From the results, list the states along with the category that generated the highest revenue, and the average units sold per order for that category.
 	5. Sort the final output by total revenue in descending order.
->>
-
-
-
-
-
 >> Word count program in pyspark rdd & DF
-    df1 = df.select(explode(split(df["name"], " ")).alias("word")).groupBy("word").agg(count("*").alias("count"))
-
->> Write a PySpark query to count the number of null values in each column of a DataFrame.
-	df1.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
-
-
-
-option("mode", "PERMISSIVE").schema(cust_schema).option("columnNameOfCorruptRecord", "_corrupt_record")  - return null / 
-option("mode", DROPMALFORMED/FAILFAST").schema(cust_schema) - remove wrong records / throw error if any incorrect records are there
-
-
-
-
-
-
->>
-Hide Credit card number: Accept 16 digit credit card number from user and display only last 4 characters of card number.
-data = [(1,'Rahul',1234567891234567),(2,'Raj',1234567892345678),(3,'Priya',1234567893456789),(3,'Murti',1234567890123456)]
-schema = "id int, name string, card_no long"
-
-	from pyspark.sql.functions import udf, StringType
-	
-	def maskfun(num):
-	  return '************' + str(num)[-4:]
-	
-	maskfun_udf = udf(maskfun, StringType())
-	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
-
-
- >> extract filename: df = df.withColumn("state", element_at(split(input_file_name(), "/"), -1)).withColumn("state", split("state", "\\.").getItem(0))
+>> count the number of null values in each column of df. 	df.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
+>> display only last 4 characters of card number. data = [(1,'Rahul',1234567891234567),(2,'Raj',1234567892345678)] schema = "id int, name string, card_no long"
+	maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
+>> extract filename: df = df.withColumn("state", element_at(split(input_file_name(), "/"), -1)).withColumn("state", split("state", "\\.").getItem(0))
 
 
 
