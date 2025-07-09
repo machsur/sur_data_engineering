@@ -86,14 +86,10 @@ df.selectExpr("id*2 as nid", "name as nname").show()
 >> union tables: union/subtract/intersect/   -->> / col name, position, schema match /
 >> union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
 >> add new column, drop columns, column name change, column type change 
->> case sensitive - df.select(initcap(col("country")))  -->> initcap / lower / upper / trim / ltrim / rtrim / lpad(col("Name"), 10, "X") /
+>> terms - initcap / lower / trim / lpad(col("Name"), 10, "X") / coalesce('cn1', 'cn2','cn3')
 >> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName)) / concat_ws(' | ', col("Region"), col("Country"))
->> work with date     
->>    
-df.dropna(how="All" or how='any' or subset=['cn1", "cn2"]) 
-df.fillna("N/A" or 'sur', subset=['cn1", "cn2"] or {'cn1':'val1', 'cn2': 'val2'}) 
-df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset=["fruit"])
->> coalesce('cn1', 'cn2','cn3') - return first non-null value from list of columns
+>> work with dates   
+>> df.dropna() /  df.fillna() / df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset=["fruit"])
 >> when&otherwise -->> df = df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult"))
 >> 
 agg 	 		-------> df.select(sum('CN')).show()  		   ------> note: ignore null values ----> sumDistinct, countDistanct
@@ -104,13 +100,7 @@ window functions 	-------> window_spec = Window.partitionBy("category", "sub_cat
    				max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) / collect_list('cn') / collect_set('cn') 
 				/ first_value('cn') / last_value(cn) / nth_value(cn, n)  /
 				/ row_number() / rank() / dense_rank() / lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
->> 
-splitng column -->> df.withColumn('nc', split(col('name'), '[ ,]'))   
-Array length: df.withColumn('nc', size(split(col('name'), '[ ,]')))
-word in array or not: df.withColumn('nc', array_contains(split(col('name'), '[ ,]'), 'macha'))
-indesxing: df.withColumn('nc', split(col('name'), '[ ,]')[0])  /  df.withColumn('nc', split(col('name'), '[ ,]').getItem(0)).show()
-explode/explode_outer: df.withColumn('nc', explode(split(col('name'), '[ ,]')))  /  df.withColumn('nc', explode_outer(split(col('name'), '[ ,]')))
-	     		Drops rows with null or empty arrays / Keeps rows with null or empty arrays, filling with null
+>> splitng column, array_length (size), word in array (array_contains), explode/explode_outer, indexing: [0] or .getItem(0)
 >> 
 Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
 unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
@@ -349,26 +339,19 @@ dynamic partition pruning: send partition that is supossed to be scanned
 	reading data in spark is action or transformation?
 	read modes: "PERMISSIVE" - Puts corrupt records in a special column (e.g., _corrupt_record), "DROPMALFORMED": Drops rows, "FAILFAST": Fails immediately
 	option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") // option("mode", DROPMALFORMED/FAILFAST")
->> Explain shuffle operations in PySpark and their impact on performance.
-	redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
->> What is broadcast join, and when should we use it?
-	small dataset is broadcasted to all worker nodes in the cluster - allows to perform join locally on each node - reducing the amount of data shuffled across the 	network - improved performance
->> What is the difference between map() and flatMap() inPySpark?
-    returns a single value for each input element / return multiple values for each input element
->> How does .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work, and when should it be avoided (memory constraints, performance issues) ?
-	gathers all the partitions of the df or RDD and brings them to the driver node. - data is no longer distributed, instead stored in the memory of the driver program
+>> shuffle operations - redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
+>> broadcast join - small dataset is broadcasted to all worker nodes - allows to perform join locally - reduced data shuffling across the network - improved performance
+>> map() returns a single value for each input element / flatMap() return multiple values for each input element
+>> .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work?  --> gathers all partitions of RDD and brings them to the driver node. - data is no longer distributed, instead stored in the memory of the driver program
 >> Difference between sortby and orderby? -    sortBy is used with RDDs and orderBy is used with DataFrames.
 >> what is the default block size (128 MB) in hdfs and how to change it?:   Edit the hdfs-site.xml File
->> What is difference between spark session and spark context?
-	SparkContext: entry point for RDD operations/functionality. (used <2.0 spark version)
-	SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. (used >2.0 spark version)
+>> SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
+>> What is SparkSQL, and how do you perform SQL operations on DataFrames? --> is a module in Apache Spark that allows you to run SQL queries on large datasets.
+>> what is collect list and collect set and when do we use it?
 >> what are the optimization techniques in pyspark?
 	use col format files, Use DataFrame/Dataset over RDD, filter data erly, Cache/persist data, use broadcast Joins
 	Optimize shuffle Partitions (Repartition / Coalesce enable AQE, salting)
 	partitioning & bucketing for frequently accessed based on specific column, Avoid User Defined Functions (UDFs)
->> What is SparkSQL, and how do you perform SQL operations on DataFrames?
-	SparkSQL is a module in Apache Spark that allows you to run SQL queries on large datasets.
->> what is collect list and collect set and when do we use it?
 
 ======================================================================================================================================================================
 
