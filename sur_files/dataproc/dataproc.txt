@@ -60,7 +60,7 @@ spark = SparkSession.builder \
 
 /etc/hadoop/conf/core-site.xml
 
->> df_range = spark.range(0,10) / df_rdd = rdd.toDF(["customer_id", "name"])
+>> df=spark.range(0,10) or rdd=spark.sparkContext.rrange(0,10) / df_rdd = rdd.toDF(["customer_id", "name"]) or df_rdd = spark.createDataFrame(rdd, schema)
    custom_schema = StructType([StructField("id", IntegerType(), True), StructField("name", StringType(), True), StructField("age", IntegerType(), True)])
    custom_schema = ''' ID Integer, Name String, Age Integer, Salary Double '''
    df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).option("mode", "PERMISSIVE").json("file:///path_to_file/data_files/")
