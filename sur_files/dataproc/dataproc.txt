@@ -60,34 +60,26 @@ spark = SparkSession.builder \
 
 /etc/hadoop/conf/core-site.xml
 
->> df=spark.range(0,10) or rdd=spark.sparkContext.rrange(0,10) / df_rdd = rdd.toDF(["customer_id", "name"]) or df_rdd = spark.createDataFrame(rdd, schema)
-   custom_schema = StructType([StructField("id", IntegerType(), True), StructField("name", StringType(), True), StructField("age", IntegerType(), True)])
-   custom_schema = ''' ID Integer, Name String, Age Integer, Salary Double '''
+>> custom_schema = StructType([StructField("id", IntegerType(), True), ....]) or ''' ID Integer, Name String '''
    df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).option("mode", "PERMISSIVE").json("file:///path_to_file/data_files/")
    df.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
    df.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gcs_path').option('table', 'p.d.t').save()
 >> join_df = df1.join(df2, df1.department_id == df2.id/on='cn, how='inner/left/right/outer/left_semi/left_anti') 
    join_df = df1.crossjoin(df2)  /  broadcast_join = df1.join(broadcast(df2), on="id", how="inner")
 >> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  &|   /
->> grouped_df = df.groupBy('department').agg(max("sal"))   		
->> having_df = df.filter(grouped_df['count'] > 1)
->> df.select("customer_id", col("Name").alias('EmployeeName'), column("last_name"), df.email, df["city"] )
-   df.selectExpr("id*2 as nid", "name as nname").show()
+>> df.select("customer_id", col("Name"), df.email, df["city"])    /    df.selectExpr("id*2 as nid", "name as nname").show()
 >> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
->> df_limit = df.limit(10)
->> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns 
+>> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns / df.limit(10)
 >> union tables: union/subtract/intersect/   -->> / col name, position, schema match /
->> union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
+   union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
 >> add new column, drop columns, column name change, column type change 
 >> terms - initcap / lower / trim / lpad(col("Name"), 10, "X") / coalesce('cn1', 'cn2','cn3')
 >> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName)) / concat_ws(' | ', col("Region"), col("Country"))
->> work with dates   
 >> df.dropna() /  df.fillna() / df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset=["fruit"])
 >> when&otherwise -->> df = df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult"))
->> 
-agg 	 		-------> df.select(sum('CN')).show()  		   ------> note: ignore null values ----> sumDistinct, countDistanct
-grouping and agg 	-------> df.groupBy('CN').agg(sum('CN')).show()   	
-window functions 	-------> window_spec = Window.partitionBy("category", "sub_category").orderBy(asc("timestamp"))
+>> agg 	 		-------> df.select(sum('CN')).show()  		   ------> note: ignore null values ----> sumDistinct, countDistanct
+   grouping and agg 	-------> df.groupBy('CN').agg(sum('CN')).show()   	
+   window functions 	-------> window_spec = Window.partitionBy("category", "sub_category").orderBy(asc("timestamp"))
                     				     .rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing) / .rowsBetween(-2, 3)
 				df = df.withColumn("row_number", row_number().over(window_spec)) 
    				max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) / collect_list('cn') / collect_set('cn') 
@@ -96,6 +88,7 @@ window functions 	-------> window_spec = Window.partitionBy("category", "sub_cat
 >> splitng column, array_length (size), word in array (array_contains), explode/explode_outer, indexing: [0] or .getItem(0)
 >> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
    unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
+>> Dates
 
 ================================================> spark-sql 
 
