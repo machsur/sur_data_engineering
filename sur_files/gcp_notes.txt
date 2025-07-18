@@ -36,6 +36,16 @@ relational db - to store srtucutred data - sql to intract - for transactional qu
 
 
 =======================
+>> Managed services in GCP: IaaS, PaaS, CaaS, FaaS, serverless - no infra visibility, zero request zero cost, pay for requests not servers. 
+   compute engine - IaaS
+   App Engine - PaaS, CaaS (simple), serverless(1+2)
+   cloud run - CaaS (simple), serverless
+   cloud function - FaaS, serverless(1+2+3)
+   GKE - CaaS (needs cluster)
+
+>> Why containers: microservices (flexibility in diff lang) - but deployment complex - thats where container 
+   docker is popular tool - create docker image with runtime, app code, dependcies - run image to create containers - adv: light weight, isolated, cloud nuetral
+   container orchestration sol (k8s) - offer features: autoscaling, service discovery, load balance, self healing, zero downtime deployments
 
 ==================
 
