@@ -1,4 +1,5 @@
-=======================
+============================
+
 serverless vs fully-managed vs hybrid:
 >> "pay as you use". No traffic, you pay nothing. 
    Ex: Cloud Run, Cloud Function, AppEngine standard, firestore, datastore, dataproc, dataflow, ai-platform 
@@ -11,31 +12,7 @@ serverless vs fully-managed vs hybrid:
    storage is always billed if you have no traffic.
    ex: Cloud Storage or BigQuery:
 
-===================
->> strong consistency provides an up-to-date view of the database at all times, ensuring correctness in financial trans.
->> Patching in Virtual Machines refers to the process of applying updates or fixes to the software running inside a VM. 
->> Backup: Creating a copy of the database (or VM) at a specific point in time, which can be restored in case of data loss,    corruption, or disaster.
-   eX: 
-   Store this file in a safe location (e.g., cloud storage like AWS S3 or Google Cloud Storage).
-   In case of failure, restore the database using the backup:
-   CRON JOBS TO SCHEDULE
-Backup: Think of it as saving your work in a document periodically. If something goes wrong, you can reopen the saved file.
->> Redundancy: Ensuring there are multiple copies or replicas of the database available at all times to handle failures         without downtime.
-   eX:
-   Load Balancer with Failover:
-      Use a load balancer to distribute read requests to the replica VM.
-      In case the primary VM fails, the replica becomes the new primary.
-Redundancy: It’s like having two identical copies of your document open on two computers. If one crashes, the other is ready to take over.
->> synchronously (real-time) or asynchronously (small delayed manner).
-
-=====================
-Databses:
-GCP:
-relational db - to store srtucutred data - sql to intract - for transactional queries such as finacial and retail
-
-
-
-=======================
+================================
 >> Managed services in GCP: IaaS, PaaS, CaaS, FaaS, serverless - no infra visibility, zero request zero cost, pay for requests not servers. 
    compute engine - IaaS
    App Engine - PaaS, CaaS (simple), serverless(1+2)
@@ -47,36 +24,48 @@ relational db - to store srtucutred data - sql to intract - for transactional qu
    docker is popular tool - create docker image with runtime, app code, dependcies - run image to create containers - adv: light weight, isolated, cloud nuetral
    container orchestration sol (k8s) - offer features: autoscaling, service discovery, load balance, self healing, zero downtime deployments
 
-==================
+>> 
+1. gcloud container clusters create
+2. login into cloud shell
+3. connect cluster: gcloud container clusters get-credentials my-cluster --zone us-central1-c --project my-kubernetes-project-304910
+4. deploy microservice to k8s:  
+   kubectl create deployment hello-world-rest-api --image=in28min/hello-world-rest-api:0.0.1.RELEASE (docker image pushed to docker hub)
+   kubectl get deployment
+   expose deploy: 
+   kubectl expose deployment hello-world-rest-api --type=LoadBalancer --port=8080
+   kubectl get services
+   kubectl get services --watch
+   curl 35.184.204.214:8080/hello-world
+5. increase no of instances of microservice: kubectl scale deployment hello-world-rest-api --replicas=3
+6. increase no of nodes of k8s cluster: gcloud container clusters resize my-cluster --node-pool default-pool --num-nodes=2 --zone=us-central1-c
+7. Autoscaling for microservice
+   kubectl autoscale deployment hello-world-rest-api --max=4 --cpu-percent=70
+   kubectl get hpa
+8. Autoscaling cluster
+   gcloud container clusters update my-cluster --enable-autoscaling --min-nodes=1 --max-nodes=10
+9. create config map - app to talk db
+   kubectl create configmap hello-world-config --from-literal=RDS_DB_NAME=todos
+   kubectl get configmap
+   kubectl describe configmap hello-world-config
+10. k8s secreats instead of config map
+    kubectl create secret generic hello-world-secrets-1 --from-literal=RDS_PASSWORD=dummytodos
+    kubectl get secret
+    kubectl describe secret hello-world-secrets-1
+   kubectl apply -f deployment.yaml
+11. deploy new ms with gcpu
+    gcloud container node-pools list --zone=us-central1-c --cluster=my-cluster
+    kubectl get pods -o wide
+12. delete microservice 
+     kubectl delete service hello-world-rest-api
+     kubectl delete deployment hello-world-rest-api
+13. delete cluster
+    gcloud container clusters delete my-cluster --zone us-central1-c
 
-===========================
+===============================
 
-=====================
+>> Secreat Manager: to store, manage and access screats.  use case- passwords, api keys, tls cert, etc..
 
-
-==============
-cloud sql (postgresql)
-Managing PostgreSQL database via UI(pgAdmin), CLI, Python client library
-
-on-prim data files ---> process using python pandas --> Load into PostgreSQL DB --> validate data
-
-read data from PostgreSQL DB --> process using python pandas --> GCS in parquet file --> published into BQ table.
-
-====================
-
-
-
-=======
-Secreat Manager: to store, manage and access screats.
-use case- passwords, api keys, tls cert, etc..
-access DB passwords from the secreat manager by python scripts.
-
-================
-GCP cloud logging: store logs in JSON format
-logs - contains timestamp, resorce, payload, activity (admin/dataAccess/systenEvent/policyDenied)
-export logs to gcs/bq/pubsub topic using sinks (has sa and grant req roles)
-
-=================
+===============================
 pubsub - messaging system for stream analytics (kafca)
 use cases - real time data ingestion, iot devices / parallel processing / replicate data among db 
 
@@ -88,7 +77,8 @@ one to many / many to many / many to one
 IOT (publisher) --> pubsub (stream pipeline) --> dataflow (etl / subscriber) --> BQ--> Looker 
                         gcs (batch pipeline) -->
 
-==================
+=================================
+
 ways to authenticate GCP:
 >> Application Default Credentials (ADC) in GCP: Default authentication in GCP-managed environments
    Local: Use gcloud auth application-default login for local development.
@@ -104,12 +94,11 @@ ways to authenticate GCP:
    gcloud auth login / gcloud auth application-default login
 >> Workload Identity Federation: Your app is running on AWS Lambda, and you need it to access GCP Storage.
 
-=================
-
+================================
 Ways to interact with GCP:
 UI / CLI - Cloud shell (preconfigured cloud SDK) & Terminal/cmd (install cloud sdk) / Client libraries / Rest api
 
-====================
+================================
 
 IAM
 Identity: user, groups, SA, domain
@@ -127,14 +116,12 @@ Bucket level accesses – IAM (uniform)
 Object level accesses – ACL (fine-grained)
 Signed url – user (gcp account not required) can read object from GCS using signurl for specified period.
 
-================
+==============================
 
 GKE:
 https://www.okteto.com/blog/kubernetes-basics/
 
-===============
-
-===============
+==============================
 
 data base concepts:
 Fact tables - contain numerical data, 
@@ -143,7 +130,7 @@ dimension tables - provide context and background information.
 Star schema contains a fact table surrounded by dimension tables.
 Snowflake schema is surrounded by dimension table which are in turn surrounded by dimension table
 
-==================
+===============================
 
 Dataprep for data preparation (cleaning, wrangling) for analysis and ML 
 - built by trifacta 3rd party tool – need to share data with trifacta (dis adv)
@@ -152,12 +139,7 @@ Dataprep for data preparation (cleaning, wrangling) for analysis and ML
  
 Raw – prepare data using dataprep – run job on dataflow/trifacta(for small dataset) – dataflow job created – 
 
-================
-
-
-
-==================
-
+===============================
 
 Could build – builds container image deployed to cloud run – cloudrun see metrics, versions, traffic
 Pre-requisites:
@@ -165,13 +147,12 @@ Cloudfunctions api / cloud build api (its ci-cd tool to deploy function)/cloud l
 
 Project IAM admin role – 
 
-
-================
+===============================
 
 Cloud composer:
 Manages apache airflow env on GCP
 
-===============
+===============================
 
 Cloudrun:
 Container to production in sec
@@ -181,201 +162,9 @@ Automate Python script execution on GCP
  
 https://github.com/rafaello9472/c4ds/tree/main/Automate%20Python%20script%20execution%20on%20GCP%20
 
-
-===================
-
-
-======================
-
-Hoogle:
-
-IAM
->> Create Service account via automation 
->> Create AD group/user account via HSBC active directory request using SNOW portal - through sync process AD group/user s recognized on GCP via single sign-on. (managed at org level).
-Diff AD vs google cloud 
->> Assign roles to AD group/SA via automation
->> creating service account file
-The service account file is used for non-Google environments that need to to communicate with Google Cloud Projects.
-gcloud iam service-accounts add-iam-policy-binding [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com \
---member group:gcp.[PROJECT_ID].devops-team@hsbc.com \
---role roles/iam.serviceAccountKeyAdmin
-gcloud iam service-accounts keys create [FILENAME].json --iam-account=[SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com 
-gcloud iam service-accounts keys list --iam-account=[SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com
-gcloud iam service-accounts keys delete [KEY_ID] --iam-account=[SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com
-gcloud iam service-accounts remove-iam-policy-binding [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com \
---member group:gcp.[PROJECT_ID].devops-team@hsbc.com \
---role roles/iam.serviceAccountKeyAdmin
->> service account impersonation
-Benfits: no floting keys, enhance security, short lived tokens
-User/SA (SATokenCreator role)----impersonate-------> SA ------has permissions --------> gcp resources
-gcloud iam service-accounts add-iam-policy-binding [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com \
---member group:gcp.[PROJECT_ID].devops-team@hsbc.com \
---role roles/iam.serviceAccountTokenCreator
-gcloud [COMMAND] --impersonate-service-account [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com
-gcloud config set auth/impersonate_service_account [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com
-gcloud config unset auth/impersonate_service_account
-gcloud iam service-accounts remove-iam-policy-binding [SERVICE_ACCOUNT]@[PROJECT_ID].iam.gserviceaccount.com \
---member group:gcp.[PROJECT_ID].devops-team@hsbc.com \
---role roles/iam.serviceAccountTokenCreator
-
-===================
-
-BIGQUERY:
-
->> Bigquery arch
-   storage and compute isolated
-   colossus - is google file system storage layer - column orientaed - 
-      in a distubuted manner so maintain replica for fault-   tolerant.
-   dremel - is compute engine - have root server (co-ordinate mixers & leaf nodes) / mixers (do aggreagtions) / leaf nodes        (read data from storage)
-   jupiter- high speed n/w connector - to connect dremel with colossus
-   borg - scheduling jobs like run queries
-
->> 
-DDL(Data Definition Language) – define structure/schema of database (Create/alter/drop/truncate)
-DML(Data Manipulation Language) – manipulate data (Insert/update/delete/merge)
-DQL(Data Query Language) – select 
-TCL(Transaction Control Language) – commit transaction and role back in case of any errors
-DCL(Data Control Language) – for security and access control 
-
->> Sql query execution order: From / where / group by / having / select / distinct / order by / limit
-select 5 /distict 6 / from table 1 / where 2 / group by 3 / having 4/ order by 7 / limit 8
-
->> conversion functions:
-   The CAST function performs a conversion between compatible data types. 
-   If the conversion fails due to data type incompatibility or data loss, the query will fail
-   The SAFE_CAST function also performs a conversion between compatible data types, 
-   but it handles conversion errors differently. Instead of failing the query, it returns NULL when the conversion cannot    be performed.
-
->> commenting: -- or # or /* LINES */
-
->> Create table with metadata from existing table – use where 1 = 2 or false
-
->> .
-   SELECT * EXCEPT(column1, column2, ...) FROM table_name; 
-   SELECT DISTINCT department FROM employees limit 10;
-   SELECT ROUND(56.14159, -2/-1); / SELECT ROUND(56.14159, 2); /
-
->> String functions:
-CONCAT('#', LTRIM('   apple   '), '#') / LENGTH('suresh') / SPLIT('apple,banana,orange', ',') / REPEAT('abc', 3) / REVERSE('abc') / REPLACE ('desert pie', 'pie', 'cobbler') 
-INSTR('banana', 'an', 1, 1) / STRPOS('foo@example.com', '@') 
-LEFT('banana', 3) / RIGHT('apple', 3) / SUBSTR('apple', 2, 2) / SUBSTRING alias for SUBSTR /
-LOWER('FOO BAR BAZ') / UPPER('foo')
-LTRIM('   apple   ') / RTRIM('***apple***', '*') / TRIM( '   apple   ') /
-STARTS_WITH('bar', 'b') / ENDS_WITH('apple', 'e') / CONTAINS_SUBSTR('the blue house', CONCAT('Blue ', 'house')) / 
-
->> Union all / Union distinct / Table wildcards: test_*` where _Table_Suffix > 5 / Except distinct / Intersect distinct /
-
->>   Permanent table: save query results on BQ storage
-   Temporary table/cache – Query results saved on cache and valid for 24 hrs.
-   Internal/native table/managed tables: table in BQ storage
-   External table: BQ querying data from bigtable, gcs, google drive
-
->> Time travel concept: Query the state of the table as it was at a specific timestamp
-
->> Creation of view/materialized view and auth view: efficiently manage and secure your data access in BigQuery
-   Create view: virtual tables / view hits base table and display data / frequent updates on base table/ infrequent data       access / 
-   Materialized view: data stored on disk / better performance/ frequent access on data / infrequent updates on base table /
-   Authorized views and authorized materialized views: let you share query results with particular users and groups without    giving them access to the underlying source data.
-
->> Partitioning and clustering:
-   Improved Query Performance: By scanning only relevant partitions and clustered blocks, queries run faster.
-   Cost Efficiency: Reduced data scanned means lower costs, as BigQuery charges based on the amount of data processed.
-
->> Joins: -  combine rows from two or more tables based on a related column between them.
-   INNER JOIN / left join / right join / full join / cross join / self join /
-   Best Practices for Joins in BigQuery: Use Appropriate Join Types: / Filter Early / Avoid Cross Joins When Possible / 
-   Use Partitioned and Clustered Tables: If joining large tables / Monitor Query Performance /
-
->> With statement: also known as Common Table Expressions (CTEs), allows you to define temporary result sets.
-   Adv: code more readable, resusebility - referenced in several places within the main SQL query. 
-
->> Conditions:
-If condition
-then
-sql statement;
-end if;
-
-for var in list
-do 
-sql statement;
-end for;
-
-/ labels /repeat / while /leave/ break/ continue/ iterate 
-
->> Pivoting and unpivoting: help in reshaping your data for analysis or reporting
-   Pivot: row into columns
-   unpivot: columns into rows
-
->> Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
-   De Normalization – redundant data (high storage cost) – better Query performance 
-   Why array & structs? – for better query per and lesser storage costs
-   
-   Arrays – list of items having same data type
-   SELECT element FROM mydataset.mytable, UNNEST(my_array) AS element;
-
-   Struct – record with nested fields having different data types
-   SELECT person.id, person.name FROM mydataset.mytable;
- 
->> Window functions: performing advanced calculations over a set of rows, go beyond simple aggregates or filters
-   max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() 
-   SUM(column2) OVER (PARTITION BY column1 ORDER BY column2 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS rt
-   lag(cn) / lead(cn): Accesses data from a previous or subsequent row in the same result set without use of a self-join.
-   LAG(column2, 1) OVER (PARTITION BY column1 ORDER BY column2) AS previous_value,
-   first_value(cn) / last_value(cn) / nth_value(cn, n) 
-   FIRST_VALUE(column2) OVER (PARTITION BY column1 ORDER BY column2) AS first_value,
-   ntile(n) – n groups 
-   NTILE(4) OVER (PARTITION BY column1 ORDER BY column2) AS quartile
-   cum_dist() / percent_rank() 
-   Rows consider current row even if duplicates / range considers bottom row of duplicates.
-
->> Regular expressions: used for pattern matching and string manipulation
-   REGEXP_CONTAINS(column_name, r'pattern')
-   REGEXP_EXTRACT_ALL(column_name, r'pattern')
-   REGEXP_REPLACE(column_name, r'pattern', 'replacement')
-   SPLIT(column_name, r'pattern')
-
->> Big Query cost optimization
-   -- bq compute optimization: on-demaned analysis, bq editions - decide based on your workloads.
-   
-   -- BQ data storage – 
-   Billing model: logical- data in uncompressed format/ physical- data in compressed format) 
-   Use Table Expiration Settings 
-   Optimize Data Storage Format (cloumner format - paqruet. ORC)
-   Use Long-Term Storage Pricing (> 90 days)
-
-   -- Query optimization 
-   create dataset in region wehere customer operates
-   Use Partitioned Tables and Clustered Tables
-   use avro format to bigquery data load - google rec compressed avro for quick data load
-   use preview option for bq native table
-   select columns instead of *
-   use truncate instead of delete
-   nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
-   Join pattern larger table join smaller tables, Optimize JOIN Operations, avoid cross join
-   where class first condition in such way that eliminates most data
-   late aggregation
-   Use WITH Clauses for Subquery Caching (Avoid Repeated Scalar Subqueries)
-   Take Advantage of Query Caching
-   Aggregate Data at the Source: Use Approximate Aggregations: 
-   Create a materialized view based on frequently run queries.
-   Optimize Window Functions
-   Monitor and Tune Query Performance
-  
-   -- Cost Controls: 
-   Set quotas and budget alerts
-   set query limits
-   Analyze Cost Breakdown Using Cloud Billing Reports
-   bq compute cost analysis
-   bq query optimi
-   bq storage cost opti
-   Schedule queries during off-peak hours to take advantage of low on-demand pricing typically at mid-night/early morning
-
-==================
+===============================
 
 
-Pipelines:
-
->> loading data from GCS to BigQuery using cloud functions based on gcs file upload event trigger.
 
 
 
