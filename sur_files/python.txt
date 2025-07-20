@@ -137,9 +137,8 @@ OOPS: Class, object, constructer,
 inheritance: parent class, child class
 
 --polymorphisum: 
-	typically achived using method overriding and interfaces(AbstractBaseClass)
-	provides way to perform a single action in different forms.
-method overriding: allows child class to implement specific method that is already defined in parent class.
+method overloading: two same methods in calss but takes diff params - not available in python (can achive by a=None & if condi)
+method overriding: child class method overrides parent class mtd - ex. my phone overrides my dad phone.
 
 -- Encaptulation: 
 	public variable: can access outside class
