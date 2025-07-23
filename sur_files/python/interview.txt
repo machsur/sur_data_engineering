@@ -1,0 +1,11 @@
+
+
+
+
+
+>> Numbers divisible by 3:  divisible_by_3 = [x for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] if x % 3 == 0]
+>> If-Else in list comprehension:  result = ["Even" if x % 2 == 0 else "Odd" for x in range(5)]
+>> Filter list of dictionaries: names_over_30 = [p['name'] for p in people if p['age'] > 30]
+>> Unique words from sentence: unique_words = list({word.lower() for word in "Hello world hello".split()})
+>> Create dictionary from two lists: result_dict = {k: v for k, v in zip(['a', 'b', 'c'], [1, 2, 3])}
+
