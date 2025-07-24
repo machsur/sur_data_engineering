@@ -20,13 +20,14 @@ Python:
    pypi - centralized repository for py packages
 >> terminate the python programme  ---> sys.exit()
    execute the file using the specified program or interpreter (#!/usr/bin/python3.5)
->> Datatypes:
->> operators:
-	arthematic: +  -  /  *  **  %  //
-	comparision:   ==   !=  >   >=   <    <=
-	logical: and or not
-	identify:   x is y    x is not y
-	membership:  x in y   x not in y
+>> set path in windows & help('LISTS')
+>> variables, lists, tuple, set, dictionory
+>> Datatypes: None, Numeric (int, float, bool, complex), sequence(list, tuple, set, range, string), mapping(dictinory)
+>> operators: arthematic: +  comparision: ==   logical: and or not   identify: x is y    membership:  x in y  
+>> swap variables
+>> user input: input / int / eval / python file.py 6(sys.argv[1]) 2 /
+>> if elif else / while loop / for loop / for else / break continue pass /
+
 >> Hiding Passwords and Secret Keys in Environment Variables (linux/mac/Windows) and access them into code -------> os.environ.get("key")
 	export SECRET_KEY="my$ecretP@ssw0rd" for linux  | set SECRET_KEY="my$ecretP@ssw0rd"  for windows
 	secret_key = os.environ.get("SECRET_KEY")
@@ -63,12 +64,6 @@ pass		Do nothing (placeholder)	Placeholder for future code
 nls = [i for i in ls if i%2==0]   /  	nls1=list(filter(lambda x: x%2==0, ls))
 lsd = {name:dept for name, dept in list_of_tuples}  
 lss = {i for i in ls}
-
->> 	ordered		mutable		duplicates
-list[]	Y		Y		Y
-tuple() Y		N		Y
-set{}	N		Y		N
-dict{}	Y		Y		N - based on key
 
 >> 
 Feature		List			Array (array)		NumPy Array		Pandas DataFrame
@@ -132,12 +127,15 @@ def bq_logger(path, name):
 
 >> file operations:
 
->> 
-OOPS: Class, object, constructer, 
-inheritance: parent class, child class
-
+>> OOPS: 
+-- Class, object, constructer (__init__), self - referring to object
+-- variables: instance var, class var | metd: instance mtd, class mtd, static mtd
+-- inner class
+-- inheritance: single level, multi level, multiple
+   constructor in inheritance: super().__init__/mtd | MRO
 --polymorphisum: 
   Duck typing: class: ide.execute() | 
+  operator overloading: + --> 5 + 6 | 'heloo'+'suresh' |
   method overloading: two same methods in calss but takes diff params - not available in python (can achive by a=None & if condi)
   method overriding: child class method overrides parent class mtd - ex. my phone overrides my dad phone.
 
