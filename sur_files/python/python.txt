@@ -27,6 +27,14 @@ Python:
 >> swap variables
 >> user input: input / int / eval / python file.py 6(sys.argv[1]) 2 /
 >> if elif else / while loop / for loop / for else / break continue pass /
+>> why arrays than lists: Optimized/faster, memory efficient for mathematical operations for numerical data.
+   Why NumPy: to work with multi-dimensional arrays 
+   why Pandas:  handle tabulaer data - data scientist life easier and effective (Python - Need to write code, Excel - Can not handle large data)
+>> functions: positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data) /Global variable & local variable  
+   recursion: function calling it self ex: factorial using recurssion
+   anonymous function, short, one-line function: lambda -- map, filter, reduce
+   List comprehensation: create new list from existiong list or other iterals
+
 
 >> Hiding Passwords and Secret Keys in Environment Variables (linux/mac/Windows) and access them into code -------> os.environ.get("key")
 	export SECRET_KEY="my$ecretP@ssw0rd" for linux  | set SECRET_KEY="my$ecretP@ssw0rd"  for windows
@@ -43,35 +51,10 @@ Python:
 	Logical error: wrong output --- print("Sum is:", a * b)  # Wrong logic: used * instead of +
 	run time error:  occur while the program is running --- print(5 / 0)  # Division by zero
 
->>  
-Statement	Purpose				Common Use Case
-break		Exit the loop entirely		Stop when a condition is met
-continue	Skip to the next iteration	Skip unwanted values
-pass		Do nothing (placeholder)	Placeholder for future code
 
->> 
--- functions: reuse block of code 
-	positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data)
-	Global variable (outside fun) / local variable (inside fun)  
--- recursion: function calling it self ex: factorial
--- anonymous function, short, one-line function: 
-	x = lambda a: a * a / print(x(5))
-	filter: list(filter(lambda a: a%2 == 0, lt))   --> ananous fun, reg function, in-built fun
-	map: list(map(lambda a: a * 2, lt))
-	reduce: from functools import reduce / sum = reduce(lambda a, b: a + b, lt)
 
->> List comprehensation: create new list from existiong list or other iterals
-nls = [i for i in ls if i%2==0]   /  	nls1=list(filter(lambda x: x%2==0, ls))
-lsd = {name:dept for name, dept in list_of_tuples}  
-lss = {i for i in ls}
 
->> 
-Feature		List			Array (array)		NumPy Array		Pandas DataFrame
-Data Type	Mixed			Homogeneous		Homogeneous		Mixed (tabular)
-Speed		Slow			Faster than list	Very fast		Fast (for tabular ops)
-Use Case	General use		Numeric data		Scientific calc		Data analysis
-Import Needed	No			Yes			Yes			Yes  
-Pandas dataframe: its python modules - makes data scientist life easier and effective (Python - Need to write code, Excel - Can not handle large data)
+
 
 >> library (group of packages) --> Package (folder - collection of modules) ---> module (file1.py, file2.py, __init__.py ) : help organize and reuse of code
  	math, random, array, os, shutil, json, csv, datetime, time, re, request, uuid
