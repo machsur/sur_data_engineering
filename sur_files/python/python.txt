@@ -39,22 +39,24 @@ Python:
 >> OOPS: Class, object, constructer (__init__), self, variables: instance & class var, metd: instance & class & static mtd,  inner class
    inheritance: single level & multi level & multiple,  constructor in inheritance: super().__init__/mtd | MRO
    polymorphisum: Duck typing, operator overloading, method overloading: NA (achive by a=None), method overriding: child class method overrides parent class mtd 
--- Encaptulation: 
+>> Encaptulation: 
 	public variable: can access outside class
 	private variable: cannt acces from outside of class
 	protected variable: can access from derived class, other not
--- Abstraction
-
--- Magic/Tunder/double underscore methods: enable you to define the behavour of objects for built-in operations such as arth ope, comp oper, more
-
->> Hiding Passwords in Environment Variables ---> set SECRET_KEY="my$ecretP@ssw0rd" ---> secret_key = os.environ.get("SECRET_KEY")
->> Config Files --->  config.read('config.ini')  ---> db_host = config['database']['host']  
+>> Abstract class & method
+>> iterators: 
+ 
 >> Handlling errors: using the try-except block --> any error in the try block, exception will be raised and it caught by except block
-   compile time error: Syntatical, Logical error: wrong output - used * instead of +, run time error:  occur while the program is running --- print(5 / 0)  
+   compile time error: Syntatical, Logical error: wrong output - used * instead of +, run time error:  occur while the program is running --- print(5 / 0) 
+>> multi threading: You're doing multiple tasks at once — that's what multithreading is in a program.
+>> file handling, Comments
 >> library (group of packages) --> Package (folder - collection of modules) ---> module (file1.py)
 >> Why Logging Instead Print: Levels, Output Options, format, Production-Ready.
 >> file operations:
+-- Magic/Tunder/double underscore methods: enable you to define the behavour of objects for built-in operations such as arth ope, comp oper, more
 
+>> Hiding Passwords in Environment Variables ---> set SECRET_KEY="my$ecretP@ssw0rd" ---> secret_key = os.environ.get("SECRET_KEY")
+>> Config Files --->  config.read('config.ini')  ---> db_host = config['database']['host'] 
 
 
 
