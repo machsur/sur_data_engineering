@@ -34,94 +34,11 @@ Python:
    recursion: function calling it self ex: factorial using recurssion
    anonymous function, short, one-line function: lambda -- map, filter, reduce
    List comprehensation: create new list from existiong list or other iterals
-
-
->> Hiding Passwords and Secret Keys in Environment Variables (linux/mac/Windows) and access them into code -------> os.environ.get("key")
-	export SECRET_KEY="my$ecretP@ssw0rd" for linux  | set SECRET_KEY="my$ecretP@ssw0rd"  for windows
-	secret_key = os.environ.get("SECRET_KEY")
->> Config Files usage in python
-	import configparser
-	config = configparser.ConfigParser()   # Create a parser
-	config.read('config.ini')  # Read the config file
-	db_host = config['database']['host']   |   db_port = config.getint('database', 'port')  # Access values
-
->> Handlling errors: using the try-except block --> catch and respond to errors gracefully, instead of crashing.
-	any error in the try block, exception will be raised and it caught by except block
-	compile time error: Syntatical --- print("Hello World"  # Missing closing parenthesis 
-	Logical error: wrong output --- print("Sum is:", a * b)  # Wrong logic: used * instead of +
-	run time error:  occur while the program is running --- print(5 / 0)  # Division by zero
-
-
-
-
-
-
->> library (group of packages) --> Package (folder - collection of modules) ---> module (file1.py, file2.py, __init__.py ) : help organize and reuse of code
- 	math, random, array, os, shutil, json, csv, datetime, time, re, request, uuid
-
-1. create folder structure
-folder
-|
-my_package/
-├── __init__.py       # Marks this as a package
-├── utils.py          # Contains a sample function
-setup.py              # Metadata and build instructions
-README.md             # Basic documentation
-
-# setup.py file
-from setuptools import setup, find_packages
-setup(
-    name='my_package',
-    version='0.1',
-    packages=find_packages(),
-    install_requires=[],  # Add dependencies here
-    author='Your Name',
-    description='A custom Python package',
-)
-2. python setup.py bdist_wheel  --> This will generate a .whl file inside the dist/ directory.
-3. activate venv
-4. Navigate to the directory: pip install dist/my_package-0.1-py3-none-any.whl     /     pip install . (step 2 not required)
-
->> Why Use Logging Instead of Print?
-Levels: You can categorize messages (DEBUG, INFO, WARNING, ERROR, CRITICAL).
-Output Options: Log to files, streams, or external systems.
-Configurability: Control format, level, and destination of logs.
-Production-Ready: Logging is more suitable for real-world applications than print().
-
-import logging
-# Configure the logger
-logging.basicConfig(
-    level=logging.DEBUG,  # Set the minimum level of log messages: info, warning, error, critical
-    format='%(asctime)s - %(levelname)s - %(message)s',  # Log message format
-    filename='app.log',  # Log file name
-    filemode='w'  # Overwrite the log file each time the script runs
-)
-logging.debug("This is a debug message")
-2025-05-30 12:10:31,123 - DEBUG - This is a debug message
-
-def bq_logger(path, name):
-	logger = logging.getLogger(name)
-	logger.setLevel(logging.INFO)
-	fomatter = logging.Formater(' ')
-	handler = logging.FileHandler(os.path.join(path, name), 'w')
-	handler.setFormatter(formatter)
-	looger.addHandler(handler)
-	return logger
-
->> file operations:
-
->> OOPS: 
--- Class, object, constructer (__init__), self - referring to object
--- variables: instance var, class var | metd: instance mtd, class mtd, static mtd
--- inner class
--- inheritance: single level, multi level, multiple
-   constructor in inheritance: super().__init__/mtd | MRO
---polymorphisum: 
-  Duck typing: class: ide.execute() | 
-  operator overloading: + --> 5 + 6 | 'heloo'+'suresh' |
-  method overloading: two same methods in calss but takes diff params - not available in python (can achive by a=None & if condi)
-  method overriding: child class method overrides parent class mtd - ex. my phone overrides my dad phone.
-
+>> decorator: adding extra feature to the existing function without touching them.
+>> Special variable: __name__ == __main__
+>> OOPS: Class, object, constructer (__init__), self, variables: instance & class var, metd: instance & class & static mtd,  inner class
+   inheritance: single level & multi level & multiple,  constructor in inheritance: super().__init__/mtd | MRO
+   polymorphisum: Duck typing, operator overloading, method overloading: NA (achive by a=None), method overriding: child class method overrides parent class mtd 
 -- Encaptulation: 
 	public variable: can access outside class
 	private variable: cannt acces from outside of class
@@ -129,6 +46,16 @@ def bq_logger(path, name):
 -- Abstraction
 
 -- Magic/Tunder/double underscore methods: enable you to define the behavour of objects for built-in operations such as arth ope, comp oper, more
+
+>> Hiding Passwords in Environment Variables ---> set SECRET_KEY="my$ecretP@ssw0rd" ---> secret_key = os.environ.get("SECRET_KEY")
+>> Config Files --->  config.read('config.ini')  ---> db_host = config['database']['host']  
+>> Handlling errors: using the try-except block --> any error in the try block, exception will be raised and it caught by except block
+   compile time error: Syntatical, Logical error: wrong output - used * instead of +, run time error:  occur while the program is running --- print(5 / 0)  
+>> library (group of packages) --> Package (folder - collection of modules) ---> module (file1.py)
+>> Why Logging Instead Print: Levels, Output Options, format, Production-Ready.
+>> file operations:
+
+
 
 
 
