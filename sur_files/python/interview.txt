@@ -27,6 +27,9 @@
 >> number is prime or not
 >> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
 >> Factorial: 
+>> shallow copy and deep copy is way to duplicate lists etc., - behave differently for nested structures (like lists inside lists).
+   New outer object, New inner objects, Affects original when nested changed | Y N Y | Y Y N |
+
 
 List Comprehension:
 >> Numbers divisible by 3:  divisible_by_3 = [x for x in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] if x % 3 == 0]
