@@ -1,3 +1,13 @@
+
+>> Vertex AI: provides tools to implement ML workflow
+   ingest, analyse, transform: using managed datasets, label & annotate data
+   create and train the model: AutoML- for image, video, text, tablar data it works great & custom - for frameworks, architexture
+   evaluate model for efficiency & opti: explainable AI (understand about model like which has more impact)
+   deploy the model : scalable H/W
+   predictions: get predections via cli, sdk, ui, api
+
+>> 
+
 ============================
 
 serverless vs fully-managed vs hybrid:
