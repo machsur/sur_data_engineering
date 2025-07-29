@@ -186,28 +186,23 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
 >> emp earning more than avg sal in their department: SELECT * FROM employees e WHERE salary > (SELECT AVG(salary) FROM employees WHERE department_id = e.department_id))
 >> records where date is within last 7 days from today: SELECT * FROM `table` WHERE date_column BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND CURRENT_DATE()
 
-
-
->> Find the top N customers who made the highest purchases, ensuring no duplicates if customers have the same purchase amount.    CustomerID | PurchaseAmount
-	WITH RankedPurchases AS (
-    		SELECT CustomerID, PurchaseAmount, DENSE_RANK() OVER (ORDER BY PurchaseAmount DESC) AS Rank FROM `your_dataset.your_table`)
-	SELECT CustomerID, PurchaseAmount FROM RankedPurchases WHERE Rank <= N;
-
->> Identify consecutive login streaks for users where they logged in for at least three consecutive days.     user_id | login_date
-
+>> Find the top N customers who made the highest purchases, ensuring no duplicates if customers have the same purchase amount|   CustomerID, PurchaseAmount:
+   WITH rp AS (SELECT *, DENSE_RANK() OVER (ORDER BY PurchaseAmount DESC) AS Rank FROM table) |	SELECT * FROM rp WHERE Rank <= N;
 >> Write an efficient query to detect duplicate records in a table and delete only the extra duplicates, keeping one copy.
-	WITH ranked_records AS (
-	  SELECT *, ROW_NUMBER() OVER (PARTITION BY column1, column2, column3 ORDER BY column1) AS row_num FROM `your_dataset.your_table`)
-	DELETE FROM ranked_records WHERE row_num > 1;
-
+   WITH rr AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY column1, .. ORDER BY column1) AS rn FROM table) | DELETE FROM ranked_records WHERE row_num > 1;
 >> Retrieve 1 order for each customer, ensuring that ties (customers with multiple 1 orders on the same date) are handled correctly.  customer_id | order_id | order_date
-	WITH ranked_orders AS (
-	  SELECT customer_id, order_id, order_date, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date, order_id) AS row_num  FROM `your_dataset.orders`)
-	SELECT customer_id, order_id, order_date FROM ranked_orders WHERE row_num = 1;
-
+   WITH ro AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date, order_id) AS rn  FROM orders) | SELECT * FROM ranked_orders WHERE rn = 1;
 >> Find products that were never purchased by any customer.    t1: product_id, product_name;  t2: product_id, order_id
-	SELECT p.product_id, p.product_name FROM `your_dataset.products` p LEFT JOIN `your_dataset.orders` o
-	ON p.product_id = o.product_id	WHERE o.product_id IS NULL;
+   SELECT p.product_id, p.product_name FROM products p LEFT JOIN orders o ON p.product_id = o.product_id WHERE o.product_id IS NULL;
+>> dept with highest total salary paid| dept, sal:  SELECT dept, SUM(Sal) AS ts FROM table GROUP BY dept ORDER BY ts DESC LIMIT 1;
+>> find top 3 orders per each customer| cust, OrderID, OrderVal: WITH ro AS (SELECT *, RANK() OVER (PARTITION BY cust ORDER BY OrderVal DESC) AS rk FROM table`)
+>> tran_id, sale_date, amount | o/p- year, Jan, Feb, Mar: WITH sales_data AS (SELECT EXTRACT(YEAR FROM sale_date) AS year, FORMAT_DATE('%b', sale_date) AS month, amount        FROM sales) | SELECT * FROM sales_data PIVOT (SUM(amount) FOR month IN ('Jan', 'Feb', 'Mar'))	ORDER BY year;
+>> Find the moving average of sales for the last 7 days for each product in a sales table | product_id, sale_amount, sale_date:
+   WITH ma AS (SELECT *, AVG(SalesAmount) OVER (PARTITION BY ProductID ORDER BY SaleDate ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS avg FROM sales) | SELECT * FROM ma;
+>> moving avg for each resta over a 7-day window | restarant, date, revenue: AVG(revenue) OVER (PARTITION BY resta ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) 
+>> Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year | prodct_id, sale_amount, sale_date
+   SELECT *, RANK() OVER(PARTITION BY year ORDER BY total_sales DESC) AS rank FROM (SELECT EXTRACT(YEAR FROM sd) AS year, pi, SUM(sa) AS ts FROM table GROUP BY year, pi);
+
 
 >> Given a table with customer transactions, find customers who made transactions in every month of the year.    cust_id, date, purchage_amount
 	WITH monthly_transactions AS (
@@ -221,28 +216,8 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
 	  SELECT   department_id, salary, COUNT(*) AS employee_count  FROM employees GROUP BY department_id, salary HAVING COUNT(*) > 1)
 	SELECT e.employee_id, e.department_id, e.salary	FROM employees e JOIN EmployeeSalaries es ON  e.dept_id = es.dept_id AND e.salary = es.salary;
 
->> Write an SQL query to retrieve the department with the highest total salary paid to employees.    dept_od, salary 
-	SELECT DepartmentID, SUM(Salary) AS TotalSalary FROM `your_dataset.your_table` GROUP BY DepartmentID ORDER BY TotalSalary DESC LIMIT 1;
 
->> Use a window function to rank orders based on order value for each customer, and return only the top 3 orders per customer.    CustomerID, OrderID, OrderValue
-	WITH RankedOrders AS (
-	    SELECT CustomerID, OrderID, OrderValue, RANK() OVER (PARTITION BY CustomerID ORDER BY OrderValue DESC) AS Rank FROM `your_dataset.your_table`)
-	SELECT CustomerID, OrderID, OrderValue FROM RankedOrders WHERE Rank <= 3;
 
->> Write a query to pivot a table where each row represents a sales transaction and transform it into a summary format where each column represents a month.
-	transaction_id	sale_date	amount
-	1	        2025-01-15	100
-	year	Jan	Feb	Mar
-	2025	250	450	300
-
-	WITH sales_data AS (
-	  SELECT EXTRACT(YEAR FROM sale_date) AS year, FORMAT_DATE('%b', sale_date) AS month, amount  FROM `project.dataset.sales`)
-	SELECT * FROM sales_data	PIVOT (SUM(amount) FOR month IN ('Jan', 'Feb', 'Mar'))	ORDER BY year;
-
->> Find the moving average of sales for the last 7 days for each product in a sales table.	product_id, sale_amount, sale_date
-	WITH SalesWithMovingAverage AS (SELECT ProductID, SaleDate, SlesAmount, 
-		AVG(SalesAmount) OVER (PARTITION BY ProductID ORDER BY SaleDate ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS MovingAverage FROM `your_dataset.sales`)
-	SELECT ProductID, SaleDate, SalesAmount, MovingAverage FROM SalesWithMovingAverage ORDER BY ProductID, SaleDate;
 
 >> Given an events table, find the first and last occurrence of each event per user.        UserID,   EventID,  EventDate,
 	WITH ranked_events AS (
@@ -263,9 +238,7 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
 	  SELECT  user_id, product_category, purchase_count, RANK() OVER (PARTITION BY user_id ORDER BY purchase_count DESC) AS rank FROM user_category_sales)
 	SELECT user_id, product_category, purchase_count FROM ranked_categories WHERE rank = 1;
 
->> Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year.   prodct_id, sale_amount, sale_date
-	SELECT year, product_id, total_sales, RANK() OVER(PARTITION BY year ORDER BY total_sales DESC) AS rank
-	FROM (SELECT EXTRACT(YEAR FROM sale_date) AS year, product_id, SUM(sales_amount) AS total_sales FROM sales_table GROUP BY year,  product_id) AS yearly_sale);
+
 
 >> Identify customers who placed orders in consecutive months:  	cust, order_date, order
          WITH orders AS (
@@ -300,8 +273,7 @@ the output order same as above. give bigquery sql query with custom logic
 >> Write a query to detect a sudden drop (>30%) in daily revenue for any restaurant. (restaurant_id, revenue_date, daily_revenue)
 	lag to previous_revenue, sudden_drop > 30
 
->> Find the moving average of daily revenue for each restaurant over a 7-day window.	restarant | date | revenue
-		AVG(revenue) OVER (PARTITION BY restaurant_id ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS moving_avg_revenue
+
 
 >> Find restaurants whose best-selling dish makes up over 60% of their revenue. 	restaurant_id, dish_id,  dish_name,  quantity, price
 	restaurant_total_revenue , best_selling_dish,   b.best_dish_revenue / r.restaurant_revenue AS revenue_share,  revenue_share > 0.6;
@@ -376,6 +348,7 @@ order_id	user_id		cuisine		order_date
 	
 
 
+>> Identify consecutive login streaks for users where they logged in for at least three consecutive days.     user_id | login_date
 
 
 
