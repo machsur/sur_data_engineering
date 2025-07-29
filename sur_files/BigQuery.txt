@@ -139,113 +139,54 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
 
 
 =============================================================================================================================================
->> find max id excluding duplicates: 2, 6, 5, 6, 9, 9, 8
-
->> To find the department names where no employees are found, you can use the following SQL query:
-   emp -->> employee_id	employee_name	dept_id
-   Department Table -->> dept_id	dept_name
+>> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: with unique_ids AS (SELECT id FROM id_list GROUP BY id HAVING COUNT(*) = 1) | SELECT MAX(id) FROM unique_ids
+>> find department names where no employees are found: emp -->> employee_id, employee_name, dept_id | Department Table -->> dept_id, dept_name
    SELECT d.dept_name FROM dept d LEFT JOIN employee e ON d.dept_id = e.dept_id WHERE e.dept_id IS NULL;
+>> Given two tables, find the count of records for Left Outer Join and Inner Join | Table A  & Table B | 1 1 1 1  &  1 1 1 | Ans. 12 & 12
+>> table1: 1 2 3 null ""  & table2: 2 2  3 null null "" : inner join - 2 2, 2 2, 3 3, empty empty |  Null doesnt include matching, empty string includes matching
+>> Give the output for DENSE_RANK() and RANK() functions for the below dataset: Nums: 85 85 80 75 75 70
+>> column Country: India Australia Pakistan | Output: India vs Australia India vs Pakistan Australia vs Pakistan
+    SELECT a.country || ' vs ' || b.country as country FROM country a  join country b on a.country > b.country;  
+>> Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS | Table1-  1 1 & Table2- b a 1
+>> Find the 777th highest salary:  SELECT salary FROM (SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num FROM `your_table`) WHERE row_num = 777
+>> number of patients per doctor including unassigned patients: docter_id | pationt_id, doctor_id
+   SELECT d.doctor_id, COUNT(p.patient_id) AS total_patients FROM doctors d  LEFT JOIN patients p ON  d.doctor_id = p.doctor_id GROUP BY d.doctor_id
+>> Handling NULL values using the average salary | emp_id, salary: IFNULL(cn, rep_val) COALESCE(cn, rep_val1, rep_val2, ...) 
+   SELECT employee_id,  COALESCE(salary, (SELECT avg(salary) FROM table)) AS adjusted_salary  FROM table;
+>> Src, beforeTgt, tgt after src ing: MERGE INTO target_table AS T  USING source_table AS S  ON T.id = S.id	
+   WHEN MATCHED THEN UPDATE SET T.name = S.name WHEN NOT MATCHED THEN INSERT (id, name) VALUES (S.id, S.name);
+>> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
+   SELECT PRODUCT_ID, COUNT(*) AS COUNT FROM orders WHERE ORDER_DAY IN ('01-JUL-11', '02-JUL-11') GROUP BY PRODUCT_ID HAVING COUNT(DISTINCT ORDER_DAY) = 2;
+>> i/p - customer_id, region, sales_amount | o/p - customer_id,	north_sales, south_sales, East sales, West Sales
+   SELECT customer_id, SUM(CASE WHEN region = 'North' THEN sales_amount ELSE 0 END) AS north_sales, .... FROM orders GROUP BY customer_id;
+   select * from (select customer_id, region, sales_amount from orders) pivot(sum(sales_amount) for region in ('north', 'south', 'east', 'west'));
+>> 2 highest sal without LIMIT&OFFSET | emp, sal: WITH cte AS (SELECT sal, dense_rank() OVER(ORDER BY sal DESC) AS rk FROM employees) |select sal FROM cte WHERE rk = 2;
+>> running total of revenue for each day| order_date, revenue:	SELECT  order_date, revenue, SUM(revenue) OVER (ORDER BY order_date) AS running_total FROM  orders
+>> employees sal > managers | EMPID, EMPNAME, MANAGERID, SLARY: 
+   SELECT  e.employee_id,  e.name,  e.salary FROM  employees e JOIN  employees m ON e.manager_id = m.employee_id WHERE  e.salary > m.salary ORDER BY  e.salary DESC;
+>> department with highest avg sal | dept, salary: SELECT dept,  AVG(salary) AS average_salary FROM `table` group by  dept ORDER BY average_salary DESC LIMIT 1;
+>> top 3 frequently sold products| product_name , quantity_sold: SELECT PN,  SUM(quantity_sold) AS tqs FROM  `sales_data` GROUP BY PN ORDER BY  tqs DESC LIMIT 3;
+>> employees who hired in last 90 days: SELECT * FROM  employee_data` WHERE hire_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY);
+>> Extract the Domain from the Email column:	substring(email, strpos(email, '@')+1, length-opt) 
+>> Find the 2nd Highest Salary: SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees)
+>> Count Of Employees in Each Department: SELECT department, COUNT(*) AS employee_count FROM employees GROUP BY department
+>> duplicate records based on column: select * from `table` where email in (SELECT email FROM `table` group by email having count(*)>1);
+>> Duplicate Records based on column: SELECT column_name, COUNT(*) FROM table_name GROUP BY column_name HAVING COUNT(*)>1  /  row_number()
+>> delete duplicate records: WITH CTE AS (SELECT column_name, ROW_NUMBER() OVER (PARTITION BY CN ORDER BY CN) AS rn FROM table_name) | DELETE FROM CTE WHERE rn > 1
+>> Find Employees Who joined in 2024: SELECT * FROM employees WHERE EXTRACT(YEAR FROM join_date) = 2024;
+>> Find Customers Without Orders: SELECT c.customer_id, c.name FROM customers c  LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.customer_id IS NULL
+>> Get Total Salary by Department: SELECT department, SUM(salary) AS total_salary FROM employees GROUP BY department
+>> Find Nth Highest Salary (Nth = 3): SELECT DISTINCT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 2
+>> Find all employees whose names contain the letters "a" exactly twice: SELECT * FROM employees WHERE LENGTH(name) - LENGTH(REPLACE(LOWER(name),'a','')) = 2
+>> Running total of sales by date:  SELECT date, sales, SUM(sales) OVER (ORDER BY date) AS RunningTotal FROM sales_data
+>> Write a query to count how many employees share the same salary: SELECT salary, COUNT(*) AS employee_count FROM employees GROUP BY salary HAVING COUNT(*) > 1
+>> find the most frequently occurring value in a column: SELECT column_name, COUNT(*) AS freq FROM table_name GROUP BY column_name ORDER BY freq DESC LIMIT 1
+>> How to get the common records from two tables: SELECT * FROM table1 INTERSECT SELECT * FROM table2
+>> How to retrieve the last 10 records from a table:  SELECT * FROM employees ORDER BY employee_id DESC LIMIT 10
+>> emp earning more than avg sal in their department: SELECT * FROM employees e WHERE salary > (SELECT AVG(salary) FROM employees WHERE department_id = e.department_id))
+>> records where date is within last 7 days from today: SELECT * FROM `table` WHERE date_column BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND CURRENT_DATE()
 
->> Given two tables, find the count of records for Left Outer Join and Inner Join:
-Table A   / Table B:
-1 1 1 1  /  1 1 1 
-Ans. 12 & 12
 
->> Give the output for DENSE_RANK() and RANK() functions for the below dataset:
-Nums: 85 85 80 75 75 70
-
->> Given a table with column 'Country', select data in the below sequence:
-Country: India Australia Pakistan 
-Output: India vs Australia 	India vs Pakistan 	Australia vs Pakistan
-    SELECT a.countryc || ' vs ' || b.countryc as country
-    FROM `powerful-layout-445408-p5.sur_test_ds.countryt` a  join `powerful-layout-445408-p5.sur_test_ds.countryt` b
-    on a.countryc > b.countryc;  -----> or <
-
->> Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS.
-Table1-  1 1   /  Table2- b a 1
-
->> Find the 777th highest salary from a table.
-      SELECT salary FROM (SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num FROM `your_dataset.your_table`) WHERE row_num = 777
-
->> Identify customers who placed orders in consecutive months:  	cust, order_date, order
-         WITH orders AS (
-           SELECT customer_id, DATE_TRUNC(order_date, MONTH) AS order_month FROM `your_dataset.your_table`),
-         consecutive_orders AS (
-           SELECT customer_id, order_month, LEAD(order_month) OVER (PARTITION BY customer_id ORDER BY order_month) AS next_order_month FROM orders)
-         SELECT customer_id, order_month, next_order_month FROM consecutive_orders WHERE DATE_DIFF(next_order_month, order_month, MONTH) = 1
-
->> Query to get the total number of patients per doctor, including unassigned patients: 	docter_id | pationt_id, doctor_id
-         SELECT d.doctor_id, COUNT(p.patient_id) AS total_patients FROM `your_dataset.doctors` d  LEFT JOIN `your_dataset.patients` p
-         ON  d.doctor_id = p.doctor_id GROUP BY d.doctor_id
-
->> Handling NULL values in employee salary using the average salary:	emp_id, salary
-         IFNULL(expression, replacement_value) -->> It takes two arguments. If the first argument is NULL, it returns the second argument.
-         COALESCE(expression1, expression2, ..., expressionN) -->> It can take multiple arguments. It returns the first non-NULL argument from the list.
-         SELECT employee_id,  COALESCE(salary, (SELECT avg(salary) FROM table)) AS adjusted_salary  FROM table;
-
->>
-	Src					
-	id	name											
-	2	b1							
-	4	d								
-						
-	beforeTgt					
-	id	name
-	1	a
-	2	b
-	3	c
-	
-	after source ingestion Tgt	
-	id	name
-	1	a
-	2	b1
-	3	c
-	4	d
-
-	MERGE INTO target_table AS T   USING source_table AS S
-	ON T.id = S.id
-	WHEN MATCHED THEN UPDATE SET T.name = S.name
-	WHEN NOT MATCHED THEN INSERT (id, name) VALUES (S.id, S.name);
-
->>
-ORDER_DAY         ORDER_ID            PRODUCT_ID   QUANTITY     PRICE
-01-JUL-11         O1                  P1                 5          5
-Get me all products that got sold both the days and the number of times the product is sold.  
-PRODUCT_ID  COUNT
-P1            3
-	SELECT PRODUCT_ID, COUNT(*) AS COUNT FROM orders WHERE ORDER_DAY IN ('01-JUL-11', '02-JUL-11') GROUP BY PRODUCT_ID HAVING COUNT(DISTINCT ORDER_DAY) = 2;
-
->>
-order_id	customer_id	region	   order_date	  sales_amount
-1	        101	        North	   1/1/2022	  100
-customer_id	north_sales	south_sales	East sales	West Sales
-101		500		0		700		0
-	SELECT customer_id,
-	  SUM(CASE WHEN region = 'North' THEN sales_amount ELSE 0 END) AS north_sales,
-	  SUM(CASE WHEN region = 'South' THEN sales_amount ELSE 0 END) AS south_sales,
-	  SUM(CASE WHEN region = 'East' THEN sales_amount ELSE 0 END) AS east_sales,
-	  SUM(CASE WHEN region = 'West' THEN sales_amount ELSE 0 END) AS west_sales
-	FROM orders GROUP BY customer_id;
-
-	select * from (select customer_id, region, sales_amount from orders) pivot(sum(sales_amount) for region in ('north', 'south', 'east', 'west'));
-
->> Null doesnt include matching, empty string includes matching
-table1: 1 2 3 null ""
-table2: 2 2  3 null null ""
-	inner join  - 2 2 / 2 2 / 3 3 / empty empty / 
-	left join - 1 null / 2 2 / 2 2/ 3 3/ empty empty / null null /
-
->> Find the second highest salary without using LIMIT, OFFSET, or TOP.:		emp_id, salary
-	WITH RankedSalaries AS (SELECT salary, dense_rank() OVER(ORDER BY salary DESC) AS rank FROM employees)
-	SELECT salary FROM RankedSalaries WHERE rank = 2;
-	SELECT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 1;
-
->> Given a table of orders, write a query to find the running total (cumulative sum) of revenue for each day.:    order_date, revenue
-	SELECT  order_date, revenue, SUM(revenue) OVER (ORDER BY order_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total FROM  orders
-
->> Write an SQL query to identify employees who earn more than their managers.		EMPID, EMPNAME, MANAGERID, SLARY
-	SELECT  e.employee_id,  e.name AS employee_name,  e.salary AS employee_salary,  m.name AS manager_name,  m.salary AS manager_salary 
-	FROM  employees e JOIN  employees m ON e.manager_id = m.employee_id WHERE  e.salary > m.salary	ORDER BY  e.salary DESC;
 
 >> Find the top N customers who made the highest purchases, ensuring no duplicates if customers have the same purchase amount.    CustomerID | PurchaseAmount
 	WITH RankedPurchases AS (
@@ -325,6 +266,13 @@ table2: 2 2  3 null null ""
 >> Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year.   prodct_id, sale_amount, sale_date
 	SELECT year, product_id, total_sales, RANK() OVER(PARTITION BY year ORDER BY total_sales DESC) AS rank
 	FROM (SELECT EXTRACT(YEAR FROM sale_date) AS year, product_id, SUM(sales_amount) AS total_sales FROM sales_table GROUP BY year,  product_id) AS yearly_sale);
+
+>> Identify customers who placed orders in consecutive months:  	cust, order_date, order
+         WITH orders AS (
+           SELECT customer_id, DATE_TRUNC(order_date, MONTH) AS order_month FROM `your_dataset.your_table`),
+         consecutive_orders AS (
+           SELECT customer_id, order_month, LEAD(order_month) OVER (PARTITION BY customer_id ORDER BY order_month) AS next_order_month FROM orders)
+         SELECT customer_id, order_month, next_order_month FROM consecutive_orders WHERE DATE_DIFF(next_order_month, order_month, MONTH) = 1
 
 >>
 input table:
@@ -425,106 +373,10 @@ order_id	user_id		cuisine		order_date
 	SELECT  restaurant_id, order_day, SUM(revenue) AS daily_revenue FROM  `your_project.your_dataset.orders`
 	GROUP BY  restaurant_id,  order_day ORDER BY  order_day,  restaurant_id;
 
->> Identify duplicate records in a table based on a specific column. (like email)
-	select * from `table` where email in (SELECT email FROM `table` group by email having count(*)>1);
 	
->> Find the department with the highest average salary. 	dept, salary
-	SELECT department,  AVG(salary) AS average_salary FROM `table` group by  department ORDER BY average_salary DESC LIMIT 1;
-
->> List the top 3 most frequently sold products. (product_name , quantity_sold)
-	SELECT  product_name,  SUM(quantity_sold) AS tqs FROM  `sales_data` GROUP BY product_name ORDER BY  tqs DESC LIMIT 3;
-
->> Fetch employees who were hired in the last 90 days.  (emp_name, hire_date)
-	SELECT * FROM  `your_project.your_dataset.employee_data` WHERE hire_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY);
-
->> Question:- Extract the Domain from the Email column in Employee Table.
-	substring(email, strpos(email, '@')+1, length-opt) 
-
->> Find the 2nd Highest Salary: SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees)
->> Count Of Employees in Each Department: SELECT department, COUNT(*) AS employee_count FROM employees GROUP BY department
->> Find Duplicate Records based on column: SELECT column_name, COUNT(*) FROM table_name GROUP BY column_name HAVING COUNT(*)>1  /  row_number()
->> How can you delete duplicate records: WITH CTE AS (SELECT column_name, ROW_NUMBER() OVER (PARTITION BY column_name ORDER BY column_name) AS row_num FROM table_name)
-                                         DELETE FROM CTE WHERE row_num > 1
->> Find Employees Who joined in 2024: SELECT * FROM employees WHERE EXTRACT(YEAR FROM join_date) = 2024;
 
 
-6. Find Customers Without Orders
-SELECT c.customer_id, c.name
-FROM customers c
-LEFT JOIN orders o ON c.customer_id = o.customer_id
-WHERE o.customer_id IS NULL
 
-7. Get Total Salary by Department
-SELECT department, SUM(salary) AS
-total_salary
-FROM employees
-GROUP BY department
 
-8. Find Nth Highest Salary (Nth = 3)
-SELECT DISTINCT salary
-FROM employees
-ORDER BY salary DESC
-LIMIT 1 OFFSET 2
 
-9. Get Employee Details with Department Names
-SELECT e.name, d.department_name 
-FROM employees e
-JOIN departments d ON e.department_id = d.department_id
-
-10. Find all employees whose names contain the letters "a" exactly twice
-SELECT * FROM employees
-WHERE LENGTH(name) - 
-LENGTH(REPLACE(LOWER(name),'a','')) = 2
-
-11. Running total of sales by date
-SELECT date, sales,
-SUM(sales) OVER (ORDER BY date) AS RunningTotal
-FROM sales_data
-
-12. Find employees earning more than average salary in their department
-SELECT * FROM employees e
-WHERE salary > (
- SELECT AVG(salary) 
- FROM employees
- WHERE department_id = 
-e.department_id
-)
-
-13. Write a query to count how many employees share the same salary
-SELECT salary, COUNT(*) AS
-employee_count
-FROM employees
-GROUP BY salary 
-HAVING COUNT(*) > 1
-
-14. Write a query to find the most frequently occurring value in a column
-SELECT column_name, COUNT(*) AS freq
-FROM table_name
-GROUP BY column_name
-ORDER BY freq DESC
-LIMIT 1
-
-15. Fetch the records where the date is within the last 7 days from today
-SELECT * 
-FROM table_name
-WHERE date_column >= CURRENT_DATE -
-INTERVAL 7 DAY
-
-16. How to get the common records from two tables?
-SELECT * FROM table1 
-INTERSECT 
-SELECT * FROM table2
-
-17. How to retrieve the last 10 records from a table
-SELECT * 
-FROM employees 
-ORDER BY employee_id DESC 
-LIMIT 10
-
-18. How to find employees whose salary is higher than their manager's 
-salary?
-SELECT e.employee_id, e.name 
-FROM employees e 
-JOIN employees m ON e.manager_id = m.employee_id 
-WHERE e.salary > m.salary
 
