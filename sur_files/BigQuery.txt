@@ -202,6 +202,12 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
 >> moving avg for each resta over a 7-day window | restarant, date, revenue: AVG(revenue) OVER (PARTITION BY resta ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) 
 >> Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year | prodct_id, sale_amount, sale_date
    SELECT *, RANK() OVER(PARTITION BY year ORDER BY total_sales DESC) AS rank FROM (SELECT EXTRACT(YEAR FROM sd) AS year, pi, SUM(sa) AS ts FROM table GROUP BY year, pi);
+>> WITH CustomOrder AS (SELECT emp_name, emp_dep, CASE WHEN emp_dep = 'it' THEN 1 WHEN emp_dep = 'hr' THEN 2 WHEN emp_dep = 'sales' THEN 3 end as emp_dept_sort,     
+   ROW_NUMBER() OVER(PARTITION BY emp_dep ORDER BY emp_name) AS row_num  FROM table) | SELECT * FROM CustomOrder ORDER BY emp_dept_sort, row_num;
+>> Determine which users are likely bots based on their ordering patterns (e.g., 50+ orders/day). (user, order_timestamp, order_id)
+   SELECT user_id, DATE(order_timestamp) AS order_day, COUNT(order_id) AS orders_per_day FROM orders GROUP BY  user_id,  order_day HAVING orders_per_day >= 50;
+>> Build a time-series summary table that aggregates revenue per day, per restaurant, for dashboarding.     (restaurant_id, order_day, revenue)
+   SELECT  restaurant_id, order_day, SUM(revenue) AS daily_revenue FROM  orders GROUP BY  restaurant_id,  order_day;
 
 
 >> Given a table with customer transactions, find customers who made transactions in every month of the year.    cust_id, date, purchage_amount
@@ -247,28 +253,7 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
            SELECT customer_id, order_month, LEAD(order_month) OVER (PARTITION BY customer_id ORDER BY order_month) AS next_order_month FROM orders)
          SELECT customer_id, order_month, next_order_month FROM consecutive_orders WHERE DATE_DIFF(next_order_month, order_month, MONTH) = 1
 
->>
-input table:
-emp_name emp_dep
-abc   it
-def   hr
-ghi  sales
-uio  dev
-pqr   sales
-jkl   it
-output table:
-emp_name emp_dep
-abc   it
-jkl   it
-def   hr
-ghi  sales
-pqr  sales
-uio  dev
-the output order same as above. give bigquery sql query with custom logic
-	WITH CustomOrder AS (SELECT emp_name, emp_dep, 
-           CASE WHEN emp_dep = 'it' THEN 1 WHEN emp_dep = 'hr' THEN 2 WHEN emp_dep = 'sales' THEN 3 WHEN emp_dep ='dev'THEN 4 end as emp_dept_sort,
-	   ROW_NUMBER() OVER(PARTITION BY emp_dep ORDER BY emp_name) AS row_num  FROM your_table_name)
-	SELECT emp_name, emp_dep FROM CustomOrder ORDER BY emp_dept_sort, row_num;
+
 
 >> Write a query to detect a sudden drop (>30%) in daily revenue for any restaurant. (restaurant_id, revenue_date, daily_revenue)
 	lag to previous_revenue, sudden_drop > 30
@@ -336,14 +321,6 @@ order_id	user_id		cuisine		order_date
 	   PERCENT_RANK() OVER (ORDER BY revenue DESC) AS revenue_percentile
 	   revenue_percentile <= 0.05
 	
->> Determine which users are likely bots based on their ordering patterns (e.g., 50+ orders/day). (user, order_timestamp, order_id)
-	SELECT
-	  user_id, DATE(order_timestamp) AS order_day, COUNT(order_id) AS orders_per_day FROM `your_project.your_dataset.orders`
-	GROUP BY  user_id,  order_day HAVING orders_per_day >= 50;
-
->> Build a time-series summary table that aggregates revenue per day, per restaurant, for dashboarding.     (restaurant_id, order_day, revenue)
-	SELECT  restaurant_id, order_day, SUM(revenue) AS daily_revenue FROM  `your_project.your_dataset.orders`
-	GROUP BY  restaurant_id,  order_day ORDER BY  order_day,  restaurant_id;
 
 	
 
