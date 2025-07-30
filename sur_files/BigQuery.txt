@@ -139,6 +139,7 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
 
 
 =============================================================================================================================================
+
 >> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: with unique_ids AS (SELECT id FROM id_list GROUP BY id HAVING COUNT(*) = 1) | SELECT MAX(id) FROM unique_ids
 >> find department names where no employees are found: emp -->> employee_id, employee_name, dept_id | Department Table -->> dept_id, dept_name
    SELECT d.dept_name FROM dept d LEFT JOIN employee e ON d.dept_id = e.dept_id WHERE e.dept_id IS NULL;
@@ -208,124 +209,29 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
    SELECT user_id, DATE(order_timestamp) AS order_day, COUNT(order_id) AS orders_per_day FROM orders GROUP BY  user_id,  order_day HAVING orders_per_day >= 50;
 >> Build a time-series summary table that aggregates revenue per day, per restaurant, for dashboarding.     (restaurant_id, order_day, revenue)
    SELECT  restaurant_id, order_day, SUM(revenue) AS daily_revenue FROM  orders GROUP BY  restaurant_id,  order_day;
-
-
->> Given a table with customer transactions, find customers who made transactions in every month of the year.    cust_id, date, purchage_amount
-	WITH monthly_transactions AS (
-	  SELECT customer_id, EXTRACT(MONTH FROM transaction_date) AS month FROM `your_dataset.transactions`  GROUP BY customer_id, month),
-	customer_months AS (
-	  SELECT customer_id, COUNT(month) AS months_count FROM monthly_transactions GROUP BY customer_id)
-	SELECT customer_id FROM customer_months WHERE months_count = 12;
-
->> Find employees who have the same salary as another employee in the same department.    dept_id, emp_name, salary
-	WITH EmployeeSalaries AS (
-	  SELECT   department_id, salary, COUNT(*) AS employee_count  FROM employees GROUP BY department_id, salary HAVING COUNT(*) > 1)
-	SELECT e.employee_id, e.department_id, e.salary	FROM employees e JOIN EmployeeSalaries es ON  e.dept_id = es.dept_id AND e.salary = es.salary;
-
-
-
-
->> Given an events table, find the first and last occurrence of each event per user.        UserID,   EventID,  EventDate,
-	WITH ranked_events AS (
-	  SELECT    user_id, event_type, event_time,
-	    ROW_NUMBER() OVER (PARTITION BY user_id, event_type ORDER BY event_time ASC) AS rn_first,
-	    ROW_NUMBER() OVER (PARTITION BY user_id, event_type ORDER BY event_time DESC) AS rn_last	  FROM events)
-	SELECT user_id, event_type,
-	  MIN(CASE WHEN rn_first = 1 THEN event_time END) AS first_occurrence, MIN(CASE WHEN rn_last = 1 THEN event_time END) AS last_occurrence
-	  FROM  ranked_events GROUP BY user_id, event_type ORDER BY user_id, event_type;
-    
->> Identify users who have placed an order in two consecutive months but not in the third month.	user_id, order_date
-
->> Find the most frequently purchased product category by each user over the past year. 	user, product_category, order_id, sale_date
-	WITH user_category_sales AS (
-	  SELECT user_id,  product_category, COUNT(*) AS purchase_count FROM sales_table
-	  WHERE sale_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) GROUP BY user_id, product_category),
-	ranked_categories AS (
-	  SELECT  user_id, product_category, purchase_count, RANK() OVER (PARTITION BY user_id ORDER BY purchase_count DESC) AS rank FROM user_category_sales)
-	SELECT user_id, product_category, purchase_count FROM ranked_categories WHERE rank = 1;
-
-
-
->> Identify customers who placed orders in consecutive months:  	cust, order_date, order
-         WITH orders AS (
-           SELECT customer_id, DATE_TRUNC(order_date, MONTH) AS order_month FROM `your_dataset.your_table`),
-         consecutive_orders AS (
-           SELECT customer_id, order_month, LEAD(order_month) OVER (PARTITION BY customer_id ORDER BY order_month) AS next_order_month FROM orders)
-         SELECT customer_id, order_month, next_order_month FROM consecutive_orders WHERE DATE_DIFF(next_order_month, order_month, MONTH) = 1
-
-
-
->> Write a query to detect a sudden drop (>30%) in daily revenue for any restaurant. (restaurant_id, revenue_date, daily_revenue)
-	lag to previous_revenue, sudden_drop > 30
-
-
-
->> Find restaurants whose best-selling dish makes up over 60% of their revenue. 	restaurant_id, dish_id,  dish_name,  quantity, price
-	restaurant_total_revenue , best_selling_dish,   b.best_dish_revenue / r.restaurant_revenue AS revenue_share,  revenue_share > 0.6;
-
->> Rank users based on their total number of orders and total spend, giving more weight to spend. -- Weighted score: 70% weight to spend, 30% to order count
-order_id	user_id		order_amount
-1		U001		100
-2		U001		150
-	    (0.7 * total_spend + 0.3 * total_orders) AS weighted_score
-	    RANK() OVER (ORDER BY weighted_score DESC) AS rank
-	
->> Identify restaurants with high churn rates: drop in unique monthly customers for 3+ months.
-order_id	user_id		restaurant_id	order_date
-1		U001		R001		2024-01-15
-2		U002		R001		2024-01-20
-	WITH monthly_customers AS (SELECT restaurant_id, FORMAT_DATE('%Y-%m', DATE(order_date)) AS month,  COUNT(DISTINCT user_id) AS unique_customers
-	  FROM `your_dataset.orders` GROUP BY restaurant_id, month),
-	monthly_with_lag AS (SELECT restaurant_id, month, unique_customers, LAG(unique_customers, 1) OVER (PARTITION BY restaurant_id ORDER BY month) AS prev_month_1,
-	    LAG(unique_customers, 2) OVER (PARTITION BY restaurant_id ORDER BY month) AS prev_month_2,
-	    LAG(unique_customers, 3) OVER (PARTITION BY restaurant_id ORDER BY month) AS prev_month_3 FROM monthly_customers),
-	churn_flags AS (SELECT restaurant_id, month, unique_customers, prev_month_1, prev_month_2, prev_month_3,
-	    CASE WHEN prev_month_1 IS NOT NULL AND prev_month_2 IS NOT NULL AND prev_month_3 IS NOT NULL AND unique_customers < prev_month_1
-	    AND prev_month_1 < prev_month_2 AND prev_month_2 < prev_month_3 THEN 1 ELSE 0 END AS churn_flag FROM monthly_with_lag)
-	SELECT DISTINCT restaurant_id FROM churn_flags WHERE churn_flag = 1;
-
->> Calculate the percentage of abandoned carts (added to cart but not ordered). user & order tables
-user_id		item_id		event_type	event_time
-U001		I001		add_to_cart	2024-01-01 10:00:00
-user_id		item_id		order_id	order_time
-U001		I001		O001		2024-01-01 10:10:00
-	  ROUND(100 * abandoned_count / total_added, 2) AS abandoned_percentage
-
->> Find cities where lunch orders (12–3 PM) have higher revenue than dinner orders (7–10 PM).
-order_id	user_id		city	order_time		order_amount
-1		U001		Delhi	2024-01-01 12:30:00	200
-2		U002		Delhi	2024-01-01 19:30:00	150
-	order_hour
-	CASE WHEN order_hour BETWEEN 12 AND 14 THEN 'lunch'  WHEN order_hour BETWEEN 19 AND 21 THEN 'dinner' ELSE NULL END AS meal_period,
-	pivoted_revenue 
-
->> Detect duplicated orders — same items, user, and restaurant within 5 minutes.
-order_id	user_id		restaurant_id	item_id		order_time
-1		U001		R001		I001		2024-01-01 10:00:00
-2		U001		R001		I001		2024-01-01 10:03:00
-3		U002		R002		I002		2024-01-01 11:00:00
-	LAG(order_time) OVER (PARTITION BY user_id, restaurant_id, item_id  ORDER BY order_time) AS previous_order_time
-	TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) AS minutes_diff
-	TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) <= 5
-	
->> For each cuisine, identify the most loyal customer (most repeat orders).
-order_id	user_id		cuisine		order_date
-1		U001		Italian		2024-01-01
-	WITH order_counts AS (
-	  SELECT   cuisine,    user_id,  COUNT(*) AS order_count FROM `your_dataset.orders` GROUP BY  cuisine, user_id),
-	ranked_customers AS (
-	  SELECT   cuisine,  user_id, order_count, ROW_NUMBER() OVER (PARTITION BY cuisine ORDER BY order_count DESC) AS rank FROM  order_counts)
-	SELECT  cuisine,  user_id AS most_loyal_customer,  order_count	FROM  ranked_customers	WHERE rank = 1;
-
->> Write a query to return the top 5% of users by revenue contribution (Pareto Principle). (user_id,  revenue)
-	   PERCENT_RANK() OVER (ORDER BY revenue DESC) AS revenue_percentile
-	   revenue_percentile <= 0.05
-	
-
-	
-
-
->> Identify consecutive login streaks for users where they logged in for at least three consecutive days.     user_id | login_date
+>> Rank users based on orders and spend, giving more weight to spend. -- (0.7 * total_spend + 0.3 * total_orders) AS weighted_score
+>> employees same sal as another emp in same dept | dept_id, emp_name, salary: WITH es AS (SELECT dept, sal, COUNT(*) FROM employees GROUP BY dept, sal HAVING COUNT(*) > 1)    | SELECT * FROM employees e JOIN es es ON  e.dept_id = es.dept_id AND e.salary = es.salary;
+>> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
+   EXTRACT(MONTH FROM transaction_date) | GROUP BY customer_id, month | customer_id, COUNT(month) | WHERE months_count = 12;
+>> find the first and last occurrence of each event per user | UserID, EventID, EventDate,
+   ROW_NUMBER() for rn_first |  ROW_NUMBER() for rn_last | MIN(CASE WHEN rn_first = 1 THEN event_time END) AS first_occurrence
+>> Find the most frequently purchased product category by each user over the past year | user, product_category, order_id, sale_date:
+   user_id,  product_category, COUNT(*) & sale_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) | RANK() | WHERE rank = 1;
+   
+>> cust who orders in consecutive months | cust, order_date, order: DATE_TRUNC(order_date, MONTH) | LEAD(order_month) | WHERE DATE_DIFF(next_month, order_month, MONTH) = 1
+>> Write a query to detect a sudden drop (>30%) in daily revenue for any restaurant | restaurant_id, revenue_date, daily_revenue: lag to previous_revenue, sudden_drop > 30
+>> Detect duplicated orders — same items, user, and restaurant within 5 minutes | order_id, user_id, restaurant_id, item_id, order_time:
+   LAG(order_time) AS previous_order_time | TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) AS minutes_diff | minutes_diff <= 5
+>> For each cuisine, identify the most loyal customer (most repeat orders)| order_id, user_id, cuisine, order_date:  ROW_NUMBER() | WHERE rank = 1;
+>> return the top 5% of users by revenue contribution | user_id,  revenue: PERCENT_RANK() OVER (ORDER BY revenue DESC) AS revenue_percentile |revenue_percentile <= 0.05
+>> Calculate % of abandoned carts (added to cart but not ordered) | user- user_id, item_id, event_type, event_time & order - user_id, item_id, order_id, order_time
+   ROUND(100 * abandoned_count / total_added, 2) 
+>> Find cities where lunch orders (12–3 PM) have higher revenue than dinner orders (7–10 PM)| order_id, user_id, city, order_time, order_amount
+   order_hour |	CASE WHEN order_hour BETWEEN 12 AND 14 THEN 'lunch'  WHEN order_hour BETWEEN 19 AND 21 THEN 'dinner' ELSE NULL | pivot-city, meal-period, revenue	
+>> Find restaurants whose best-selling dish makes up over 60% of their revenue | restaurant_id, dish_id,  dish_name, quantity, price
+   restaurant_total_revenue, best_selling_dish,  best_dish_revenue / restaurant_revenue AS revenue_share, revenue_share > 0.6;
+>> Identify consecutive login streaks for users where they logged in for at least three consecutive days | user_id, login_date
+>> Identify users who have placed an order in two consecutive months but not in the third month | user_id, order_date
 
 
 
