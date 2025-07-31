@@ -1,4 +1,5 @@
 ================================================================================================================================================
+
 DATE(DC in iso) / PARSE_DATE(format, DC) / SAFE.PARSE_DATE(format, DC)	-	Y, y / m, B, b / d, A, a / 
 extract(year from date)      						-     	year / month / date / hour / minute / second / microsecond /
 FORMAT_DATE('%B %d, %Y', sale_date)  	
@@ -7,91 +8,36 @@ DATE_DIFF(order_date, previous_date, day)
 Date_add(order_date, INTERVAL 5 day)
 Date_sub(order_date, INTERVAL 5 day)
 
-to_date("date_str in iso") / to_date("date_str", "dd/MM/yyyy") / same for safe
-datediff("end_date", "start_date")   (unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600
-month("order_date")
-trunc("order_date", "MM")
-date_format("sale_date", "MMMM dd, yyyy") 	yy, yyyy, M, MM, MMM, MMMM, d, dd, E, EEEE
 =============================================================================================================================================
 
->> Bigquery arch
-   storage and compute - decoupled/isolated (cost efficient)
-   layers:
-   colossus - is google distributed file system storage layer in column orientaed - fault tolerance by data replicas across different machines.
+>> Bigquery arch: storage and compute - decoupled/isolated (cost efficient)
+   colossus - distributed file system storage layer in column orientaed - fault tolerance by data replicas across different machines.
    dremel - is compute engine - have root server (co-ordinate mixers & leaf nodes) / mixers (do aggreagtions) / leaf nodes (read data from storage)
-   jupiter- high speed n/w connector - to connect dremel with colossus
-   borg - scheduling jobs like run queries
-
->>  
-Fact Table
-Contains numeric values (quantitative data ) (facts) like sales, revenue, profit, etc.
-Has foreign keys referencing dimension tables.
-Grows rapidly as new transactions are added.
-Date_ID	Product_ID	Store_ID	Sales_Amount	Quantity_Sold
-20250601		101		1		5000
-
-Dimension Table
-A Dimension Table contains descriptive attributes or textual or categorical data.
-Typically smaller and changes less frequently.
-Product_ID	Product_Name	Category	Brand
-101		Laptop		Electronics	Dell
-
->>
-Star Schema: Multiple Dimension Tables directly connected to the fact table
-Snowflake Schema: is a more normalized form of the star schema. Dimension tables are split into sub-dimensions, reducing redundancy.
-
->> SCD: dimensions that change over time
-	SCD0 - NO CHANGE - change in source, no update on DWH table - change column is not relavant to the DWH table anymore (ex: fax number)	
-	SCD1 - Overwrite -Updates the existing record with new data - No history is preserved.
-	SCD2 - Add New Row  -- Keeps full history by adding a new row with versioning or effective dates.
-	SCD3 - Add New Column -- Keeps limited history by adding a new column for the previous value.
-	SCD4 - scd1+scd2 - Current Table: Stores only the latest data. & History Table: Stores all historical changes with timestamps or versioning.
-	scd6 - 1+2+3 - 
-
->> "write a query to how will you get a list of the top ten most expensive queries that have been executed in your project over the past 30 days:"
-	SELECT * FROM `region-eu`.INFORMATION_SCHEMA.JOBS WHERE creation_time between TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY) AND CURRENT_TIMESTAMP();
-	to get metadata about datasets:  SELECT * FROM `project_id`.`region-europe-west2`.INFORMATION_SCHEMA.SCHEMATA;
-	to get metadata about tables: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.TABLES;
-	to get metadata about columns: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.COLUMNS;
-
+   jupiter- high speed n/w connector - to connect dremel with colossus;    borg - scheduling jobs like run queries
+>> Fact Table: Contains numeric values (quantitative data - sales, revenue, profit, etc), foreign keys, Grows rapidly
+   Dimension Table: contains textual or categorical data, smaller and changes less frequently.
+>> Star Schema: Multiple Dimension Tables directly connected to the fact table
+   Snowflake Schema: Dimension tables are split into sub-dimensions, reducing redundancy, more normalized form. 
+>> Change Data Capture -->> identify & capture changes made to data in DB --> log based - very efficient, query based on timestamp, triggers load changes into new tables
+>> SCD0 - NO CHANGE - change in source, no update on DWH table - change column is not relavant to the DWH table anymore (ex: fax number)	
+   SCD1 - Overwrite - Updates the existing record with new data - No history is preserved.
+   SCD2 - Add New Row  -- Keeps full history by adding a new row with versioning or effective dates.
+   SCD3 - Add New Column -- Keeps limited history by adding a new column for the previous value | SCD4 - scd1+scd2 - Current Table & History Table
+>> to get expensive queries, metadata about datasets:  SELECT * FROM `project_id`.`region-europe-west2`.INFORMATION_SCHEMA..JOBS/SCHEMATA;
+   to get metadata about tables/columns: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.TABLES/.COLUMNS;
 >> difference b/w CAST, SAFE_CAST : If the conversion fails, SAFE_CAST returns NULL instead of throwing an error, allowing the query to continue.
-
->> Union all / Union distinct / Table wildcards: test_*` where _Table_Suffix > 5 / Except distinct / Intersect distinct /
-
->> 	Temporary table/cache: exist only for the specified period. - useful for intermediate data processing and caching query results.
-	Internal tables: stored in bq - take adv of opti like partitioning & clustering - Ideal for frequently accessed and processed data.
-	External table: Data remains in its original location (e.g., Cloud Storage) - avoid storage costs - Suitable for occasional queries on large datasets.
-
->> Time travel concept: Query the state of the table as it was at a specific timestamp
-	create table `your_dataset.your_table11` as
-	SELECT * FROM `your_dataset.your_table`	FOR SYSTEM_TIME AS OF TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
-
->> Creation of view/materialized view and auth view: efficiently manage and secure your data access in BigQuery
-   Create view: virtual tables / view hits base table and display data / frequent updates on base table/ infrequent data access / 
-   Materialized view: data stored on disk / better performance/ frequent access on data / infrequent updates on base table /
-   Authorized views and authorized materialized views: let you share query results with particular users and groups withoutgiving them access to the underlying source data.
-
->> Partitioning and clustering:    Improved Query Performance, Cost Efficiency
-   Partitioning: dividing a table into smaller segments. - single column (time-based & inter range), 4000 max
-   clustering: sorts the partition data in storage blocks. - four columns, 
-	CREATE TABLE `your_dataset.your_table`
-      	PARTITION BY DATE(order_date) / _PARTITIONTIME / RANGE_BUCKET(product_id, GENERATE_ARRAY(1, 1000, 100))
-      	CLUSTER BY customer_id, product_id
-      	AS SELECT * FROM `source_dataset.source_table`
-
->> Joins: -  combine rows from two or more tables based on a related column between them.
-    INNER JOIN / left join / right join / full join / cross join /
- 
->> Pivoting and unpivoting: help in reshaping your data for analysis or reporting
-   Pivot: row into columns 	- product| month| sales  	- select * from table pivot(sum(sales) for month in ('Jan', 'Feb', 'Mar'));	 	- or use case st
+>> Union all / Union distinct  / Except distinct / Intersect distinct / Table wildcards: test_*` where _Table_Suffix > 5
+>> Temporary table - intermediate data proce and caching | Internal table- freq accessed and processed data | External table - for occasional queries on large datasets.
+>> Time travel concept: SELECT * FROM `your_dataset.your_table`	FOR SYSTEM_TIME AS OF TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
+>> view, materialized view and auth view (share results without giving access to source data): efficiently manage and secure your data access in BigQuery
+>> Partitioning (single column, 4000 max) and clustering (sorts parti data in storage blocks, four col): Improved Query Performance, Cost Efficiency
+>> Joins: - INNER JOIN / left join / right join / full join / cross join /
+>> Pivot: row into columns 	- product| month| sales  	- select * from table pivot(sum(sales) for month in ('Jan', 'Feb', 'Mar')); --> or use case statement
    unpivot: columns into rows 	- product | Jan | Feb | Mar	- select product, month, sales from table unpivot(sales for month in (Jan, Feb, Mar));
-
->>  Normalization – avoid redundant data (lesser storage costs)- poor query performance (joining tables)
-    De Normalization – redundant data (high storage cost) – better Query performance 
+>>  Normalization – avoid redundant data, poor query performance |  De Normalization – redundant data (high storage cost) – better Query performance 
     Why array & structs? – for better query per and lesser storage costs
     Arrays – list of items having same data type  -  SELECT element FROM mydataset.mytable, UNNEST(my_array) AS element; 
     Struct – record with nested fields having different data types  -   SELECT person.id, person.name FROM mydataset.mytable;
- 
 >> Window functions: performing advanced calculations over a set of rows, go beyond simple aggregates or filters
    max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() /  lag(cn) / lead(cn) /   first_value(cn) / last_value(cn) / nth_value(cn, n) /
    SUM(column2) OVER (PARTITION BY column1 ORDER BY column2 ROWS BETWEEN UNBOUNDED/2 PRECEDING AND CURRENT ROW) AS rt
@@ -99,45 +45,13 @@ Snowflake Schema: is a more normalized form of the star schema. Dimension tables
    CUME_DIST() = Number of rows with values less than or equal to the current row / Total number of rows
 ​   PERCENT_RANK() = Rank of current row−1 / Total rows−1
 ​   Rows consider current row even if duplicates / range considers bottom row of duplicates.
-
->> BigQuery slots vs reservations? 
-	Slots are units of computational capacity in BigQuery. (CPU and memory)
-	Reservations allow you to purchase dedicated slots (called commitments) and allocate them to specific workloads or projects.
-
+>> bq slots: units of computational capacity -CPU and memory, Reservations: allow you to purchase dedicated slots (called commitments) 
 >> Big Query cost optimization
-	   -- bq compute optimization: 
-		on-demaned pricing - cost per tb, good for unpredectable workloads
-		Capacity Pricing - purchase dedicated slots, charged per slot-hour (different editions like Enterprise and Enterprise Plus, which offer options for one- or 		three-year commitments at discounted rates)- decide based on your workloads.
-	   -- BQ data storage – 
-		Billing model: logical- data in uncompressed format/ physical- data in compressed format) 
-	         # For logical bytes billing:   bq update --dataset --storage_billing_model=LOGICAL my_dataset
-	         # For physical bytes billing:  bq update --dataset --storage_billing_model=PHYSICAL my_dataset
-	   	Use Table Expiration Settings, Optimize Data Storage Format (cloumner format - paqruet. ORC), Use Long-Term Storage Pricing (> 90 days)
-	   -- bq query optimization
-
->> Optimization of query performance in BigQuery?
-	Aggregate Data at the Source,  use avro format - for quick data load, 
-	dataset in wehere customer operates, 
-	Partitioned Tables and Clustered,  preview option, select columns instead of *, use truncate instead of delete
-	Join pattern larger table join smaller tables, where class first condition in such way that eliminates most data,   late aggregation, 	   
-	Use WITH Clauses for Subquery Caching (Avoid Repeated Scalar Subqueries),  Take Advantage of Query Caching, 
-	Create a materialized view based on frequently run queries.
-	nest repeated data, Denormalize Data Where Appropriate (Use ARRAY Functions for Multi-Value Fields)
-  
->> Cost Controls: budget alerts, Set query usage limits in IAM quotas, Billing reports, Schedule queries during off-peak hours
-
->> Database, DWH, DataLake
-
->> ETL VS ELT
-
->> Subquery, cte
-   
->> Change Data Capture (CDC) -->> identify and capture changes made to data in a database 
-      log based --> very efficient, no impact on source system
-      query based on timestamp
-      triggers load changes into new tables
-
-
+   bq compute optimization: on-demaned pricing, Capacity Pricing (slots reserve)
+   BQ data storage: Billing model: logical/physical, Use Table Expiration, Use Long-Term Storage Pricing (> 90 days)
+   query Opti: Agg at Source,  use avro, dataset at cust loc, Parti & Clust, preview, select col, use trun, Join, where, late agg, Caching, mat view for freq queries
+>> Cost Controls: budget alerts, Set query usage limits, export Billing reports, Schedule queries during off-peak hours
+ 
 =============================================================================================================================================
 
 >> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: with unique_ids AS (SELECT id FROM id_list GROUP BY id HAVING COUNT(*) = 1) | SELECT MAX(id) FROM unique_ids
