@@ -33,7 +33,8 @@ serverless vs fully-managed vs hybrid:
 >> Why containers: microservices (flexibility in diff lang) - but deployment complex - thats where container 
    docker is popular tool - create docker image with runtime, app code, dependcies - run image to create containers - adv: light weight, isolated, cloud nuetral
    container orchestration sol (k8s) - offer features: autoscaling, service discovery, load balance, self healing, zero downtime deployments
-
+>> Cluster --> Node Pool --> node
+   App --> Container --> Pod, deployment, service, security (iam), logging & Monitoring
 >> 
 1. gcloud container clusters create
 2. login into cloud shell
