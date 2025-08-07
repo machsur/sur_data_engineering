@@ -146,21 +146,19 @@ spark = SparkSession.builder \
 >> executor tuning: thin exe-45, fat exe-3, optSizedExe- leave 1C1gbM per Node for hadoop/yarn/os - leave 1Exe or 1C1gbM for app master container at cluster level 
    3N16C48gbM, totC=16-1(os)*3=45, totM=48-1(os)*3=141gb, exe=45/4~11, M/exe=141/11~12gb, for app driver 1exe (exe=10, cores=4, memory = 12gb)
    file size=25GB, cores=25*1024*1024/128 =200, executor=200/4=50, exeMemory=1.5*300(RM)or4*128(PZ)=512mb/core=2gb/exe, totMemoryReq=50*2=100gb
->> shuffling: happenned when the wide transformation is performed and partitions after shufflling known as Shuffle Partition
-   if data per sp is large - Increase no of shuffle partitions --> if data per sp is small - decrease no of shuffle partitions
+>> shuffling: happenned when the wide transformation is performed and Shuffle Partition: partitions after shufflling 
+>> what is data skewness? most of data goes to few partitions (based on keys) after data shuffling. job is taking time, unutilization of resources, oom or data spill 
+   repartition:
+   salt: decide salt number : [0, 3) --> ds1: add salt column to key column -->	ds2: add salt column (having array [0, 1, 2] - explode ) to key column
+   AQE (>3.0): based on runtime stat select best query plan: tuning shuffle part (200 default- 15 keys-red 15) --> converts SMJ to BJ --> opti skew joins by splitting
 >> Partitioning: Divides based on column values - Separate folders - Filtering	(Adv: fast access, parallesium/resource utilization)
    df.write.mode('overwrite').partitionBy('listen_date').parquet('/content/ecommer/') >> high cordinality - small file problem - buckting is rec
    Bucketing: Divides based on hash of column  - Fixed number of files (buckets) - Joins and aggregations.
    df.write.mode('overwrite').bucketBy(2, 'order_status').saveAsTable('bucketed_table')   --->  6 partitions * 2 buckets = 12 files
    Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)   dataset size,mb = (no_records * no_col * avg width of var in bytes) / (1024 * 1024)
    Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all
->> what is data skewness? most of data goes to few partitions (based on keys) after data shuffling. job is taking time, unutilization of resources, oom or data spill 
-   repartition:
-   salt: decide salt number : [0, 3) --> ds1: add salt column to key column -->	ds2: add salt column (having array [0, 1, 2] - explode ) to key column
-   AQE (>3.0): based on runtime stat select best query plan: tuning shuffle part (200 default- 15 keys-red 15) --> converts SMJ to BJ --> opti skew joins by splitting  
->> 
-static partition pruning: partition on listen date data on disk - this scans only listen date that user eants
-dynamic partition pruning: send partition that is supossed to be scanned
+>> static partition pruning: partition on listen date data on disk - this scans only listen date that user eants
+   dynamic partition pruning: send partition that is supossed to be scanned
 	release date table --> filter to get requ data which comes to know during run time --> spark uses results to scan on other dataset based on listen date
 	Adv: reduce time to scan/process)
 	limits: one of dataset must be partitioned and based on column that is filered from other datase	
@@ -168,39 +166,28 @@ dynamic partition pruning: send partition that is supossed to be scanned
 
 ==========================================================================================================================================================================
 
->> why bigdata - growth of internet, social media & IOT devices
->> (1.1) desiging good bigdata system, onpremise vs cloud, DB vs DWH vs DL, ETL vs ELT
+>> why bigdata, desiging good bigdata system, onpremise vs cloud, DB vs DWH vs DL, ETL vs ELT 	(1)
 >> Hadoop Ecosystem (2)
 >> Map Reduce and YARN (3)
 >> limitations of MR, Spark EcoSystem (4)
-	What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
-	what is transformation and action
-	How does Lazy Evaluation work in PySpark?
-	What are wide and narrow transformations in PySpark?
-	reduceByKey vs groupByKey
-	increase and decrease no of partions
-	spark read data and partitioning
-	spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
+   What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
+   what is transformation and action?      How does Lazy Evaluation work in PySpark?      What are wide and narrow transformations in PySpark?
+   reduceByKey vs groupByKey?		increase and decrease no of partions?		spark read data and partitioning?
+   spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
 >> Spark higher level api (DF, DS, spark-sql) (5)
-	key-benfits compared to low-level api
-	reading data in spark is action or transformation?
-	read modes: "PERMISSIVE" - Puts corrupt records in a special column (e.g., _corrupt_record), "DROPMALFORMED": Drops rows, "FAILFAST": Fails immediately
-	option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") // option("mode", DROPMALFORMED/FAILFAST")
->> cache() - when default memory-disk behaviour is sufficient (6)
-   persist - when we need to control how data is stored - MEMORY_AND_DISK_SER_3
+	--> key-benfits compared to low-level api   -->	reading data in spark is action or transformation?
+	--> read modes: option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") // option("mode", DROPMALFORMED/FAILFAST")
+>> df.cache()  # Stores in memory, spills to disk if needed  -->> df.persist(StorageLevel.MEMORY_AND_DISK_SER_3)   (6)
 >> shuffle operations - redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
 >> broadcast join - small dataset is broadcasted to all worker nodes - allows to perform join locally - reduced data shuffling across the network - improved performance
 >> map() returns a single value for each input element / flatMap() return multiple values for each input element
 >> .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work?  --> gathers all partitions of RDD and brings them to the driver node. - data is no longer distributed, instead stored in the memory of the driver program
->> Difference between sortby and orderby? -    sortBy is used with RDDs and orderBy is used with DataFrames.
+>> Difference between sortby and orderby? - sortBy is used with RDDs and orderBy is used with DataFrames.
 >> what is the default block size (128 MB) in hdfs and how to change it?:   Edit the hdfs-site.xml File
 >> SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
 >> What is SparkSQL, and how do you perform SQL operations on DataFrames? --> is a module in Apache Spark that allows you to run SQL queries on large datasets.
->> what is collect list and collect set and when do we use it?
->> what are the optimization techniques in pyspark?
-	use col format files, Use DataFrame/Dataset over RDD, filter data erly, Cache/persist data, use broadcast Joins
-	Optimize shuffle Partitions (Repartition / Coalesce enable AQE, salting)
-	partitioning & bucketing for frequently accessed based on specific column, Avoid User Defined Functions (UDFs)
+>> collect_list vs collect_set and when do we use it?
+>> what are the opti techniques: use col format files, partitioning & bucketing, Use DataFrame/Dataset over RDD, use broadcast Joins, filter data early, Cache/persist data,    Optimize shuffle Partitions, Avoid User Defined Functions (UDFs)
 
 ======================================================================================================================================================================
 
