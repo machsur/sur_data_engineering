@@ -93,17 +93,13 @@ Python:
 >> Find Out Pairs with given sum in an array in python of time complexity O(n log n)- FACEBOOK,AMAZON
 >> PRINT PATTERNS
 >> number is prime or not
+
 >> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
->> Factorial: 
->> shallow copy and deep copy is way to duplicate lists etc., - behave differently for nested structures (like lists inside lists).
-   New outer object, New inner objects, Affects original when nested changed | Y N Y | Y Y N |
-
-
->> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]
->> Filter list of dictionaries: names_over_30 = [p['name'] for p in people if p['age'] > 30]
->> Unique words from sentence: unique_words = list({word.lower() for word in "Hello world hello".split()})
+>> Factorial
+>> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
+>> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]  //
+   [p['name'] for p in people if p['age'] > 30]      //   unique_words = list({word.lower() for word in "Hello world hello".split()})
 >> Create dictionary from two lists: result_dict = {k: v for k, v in zip(['a', 'b', 'c'], [1, 2, 3])}
-
 >> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
 >> What is the difference between list and tuple in Python?
 
