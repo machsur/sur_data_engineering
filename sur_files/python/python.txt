@@ -67,3 +67,43 @@ Python:
 =================================================================================================================================
 
 
+>> find student details corresponding to max_marks:    student = [('suresh', 'ong', 85), ('seshu', 'bng', 74), ('naven', 'kk', 40)]
+>> Given an array, find the minimum and maximum values:    ans. builtin mtds, sorting, python code
+>> Given a string, count the char occurrences of word in a dictionary:    Input: 'aaabbbccddeeeee'
+>> Count Vowels from Given words .
+>> find line_count, words, chars in the files
+>> Write a Python script to count the frequency of characters/words in a text file.  --------> using for loop /from collections import Counter
+>> Reversing a String using an Extended Slicing techniques. -------> builtin / slicing / code
+>> Find the highest occurrences of each word from string and sort them in order.
+>> Remove Duplicates from List. set / for loop / list comprehension 
+>> Sort a List without using Sort keyword. built-in / bubble sort /
+>> Find the pair of numbers in this list whose sum is n no.
+>> Read and print values from an Excel file using Pandas.
+>> Handle file exceptions (missing or corrupted Excel files) gracefully. no error in try block --> try - else - finally /// error ---> except - finally
+>> Calculate the Intersection of Two Lists without using Built-in Functions:      print(set(ls1) & set(ls2)) or lss =[item for item in ls1 if item in ls2]
+>> What is a docstring in Python?  Docstrings are enclosed in triple quotes (""" or ''') and can span multiple lines.
+>> What is pass in Python? When is it used? --> Placeholder for future class/function / It does nothing when executed 
+>> Which data structure occupies more memory: list or tuple? Why? --> lists occupy more memory --> their size and contents can change, more methods
+	print(sys.getsizeof(list_obj))   # e.g., 120 bytes
+>>  Given a list [2, 3, 4, 5, 6], how can you sum all elements? (Discuss available functions)
+>>  What is a constructor? -> is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
+>> Find out common letters between two strings Using Python
+>> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
+>> FIND MISSING NUMBER IN AN ARRAY IN PYTHON  :  n(n+1)/2 - sum(array_elements)
+>> Find Out Pairs with given sum in an array in python of time complexity O(n log n)- FACEBOOK,AMAZON
+>> PRINT PATTERNS
+>> number is prime or not
+>> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
+>> Factorial: 
+>> shallow copy and deep copy is way to duplicate lists etc., - behave differently for nested structures (like lists inside lists).
+   New outer object, New inner objects, Affects original when nested changed | Y N Y | Y Y N |
+
+
+>> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]
+>> Filter list of dictionaries: names_over_30 = [p['name'] for p in people if p['age'] > 30]
+>> Unique words from sentence: unique_words = list({word.lower() for word in "Hello world hello".split()})
+>> Create dictionary from two lists: result_dict = {k: v for k, v in zip(['a', 'b', 'c'], [1, 2, 3])}
+
+>> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
+>> What is the difference between list and tuple in Python?
+
