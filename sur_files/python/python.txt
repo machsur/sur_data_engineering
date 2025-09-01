@@ -15,12 +15,15 @@
 ============================================================================================================================================================================
 Python:
 >> Interpreter: The programme that runs your code.
-   Virtual Environment: A separate "workspace" that uses a Python interpreter but has its own packages and dependencies.
+>> Virtual Environment: Python interpreter + dependencies  - Keeps dependencies isolated from other projects
+	python -m venv myenv	/ 	venv\Scripts\activate	/	pip install <package-name>	/	deactivate	/
 >> pip - tool for install python packages
-   pypi - centralized repository for py packages
+>> pypi - centralized repository for py packages
 >> terminate the python programme  ---> sys.exit()
-   execute the file using the specified program or interpreter (#!/usr/bin/python3.5)
->> set path in windows & help('LISTS')
+>> Shebang: #!/usr/bin/python3.5  -  tells the operating system which interpreter to use to run the file. 
+>> set path in windows: allows to run script from cmd
+   hide passwords in Windows and access them securely from Python, you can use environment variables or more secure options like the Windows Credential Manager   
+   Config Files: great way to manage settings (API keys,..) separately from your main Python code.
 >> variables, lists, tuple, set, dictionory
 >> Datatypes: None, Numeric (int, float, bool, complex), sequence(list, tuple, set, range, string), mapping(dictinory)
 >> operators: arthematic: +  comparision: ==   logical: and or not   identify: x is y    membership:  x in y  
@@ -55,8 +58,7 @@ Python:
 >> file operations:
 -- Magic/Tunder/double underscore methods: enable you to define the behavour of objects for built-in operations such as arth ope, comp oper, more
 
->> Hiding Passwords in Environment Variables ---> set SECRET_KEY="my$ecretP@ssw0rd" ---> secret_key = os.environ.get("SECRET_KEY")
->> Config Files --->  config.read('config.ini')  ---> db_host = config['database']['host'] 
+
 
 
 
