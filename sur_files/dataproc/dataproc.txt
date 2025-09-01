@@ -227,5 +227,28 @@ Drop rows where the Product column is NULL / Drop rows where all columns are NUL
 	maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
 >> extract filename: df = df.withColumn("state", element_at(split(input_file_name(), "/"), -1)).withColumn("state", split("state", "\\.").getItem(0))
 
+>> Find the top 2 highest-paid employees in each department using window functions.
+>> Calculate the cumulative sum of sales for each product ordered by date.
+>> Retrieve employees who joined in the last 6 months.
+>> Find and display duplicate records based on specific columns
+>> Identify employees whose salary is greater than the average salary of their department.
+>> Get the first and last transaction date for each customer.
+>> Calculate the number of days between consecutive orders placed by each customer.
+>> Replace null values in a column with the last non-null value in that partition.
+>> Categorize employees based on years of experience into Junior, Mid, and Senior levels.
+>> Calculate the percentage change in salary compared to the previous year for each employee.
+
+
+
+date_trunc("month", col("start_date"))
+date_sub(col("start_date"), 10)
+date_add(col("start_date"), 10)
+df.filter(datediff(current_date(), employees_df["join_date"]) <= 180)
+
+
+
+
+
+
 
 
