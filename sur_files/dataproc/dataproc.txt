@@ -23,12 +23,7 @@ hdfs dfs -help ls
 
 ==========================================> low-level api
 
->> spark.conf.get('spark.sql.files.maxPartitionBytes') / rdd.getNumPartitions() / spark.sparkContext.defaultMinPartitions 
-   spark.sparkContext.defaultParallelism  (for local data)
-   # 544mb => 5 blocks => 5 partition   
-   #1 mb => 1 block --> 1 partition ( This is wrong)  => 2 ---> because spark.sparkContext.defaultMinPartitionsspark application -list
-   spark.sparkContext.applicationId, spark application -list, spark application -kill app_id
-   spark_new_app_session = spark.newSession()
+
 >> rdd = spark.sparkContext.parallelize(data)  /  rdd = spark.sparkContext.textFile(hdfs_gcs_path) 
 >> rdd1 = rdd.filter(lambda row: 'Frieza' in row) / rdd1 = rdd.filter(lambda row : row!=header)  - header = rdd.first()
    rdd1 = rdd.flatMap(lambda line:line.split(' ')).map(lambda word:(word,1)).reduceByKey(lambda a,b : a+b)   ---> word count programme
@@ -37,28 +32,6 @@ hdfs dfs -help ls
 >> rdd.first() / rdd.collect() / rdd.take(3) / rdd1.countByValue()
    
 =============================>> high-level api
-
->> create spark session with config optimization
-spark = SparkSession.builder \
-.appName("olist config optimization") \
-.config('spark.executor.memory', '6g') \
-.config('spark.executor.cores', '4') \
-.config('spark.executor.instances', '2') \
-.config('spark.driver.memory', '4g') \
-.config('spark.driver.maxResultSize', '2g') \
-.config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
-.config('spark.default.parallelism', '64') \		# It usually defaults to the number of cores on all executor nodes.
-.config('spark.sql.adaptive.enabled', 'true') \
-.config('spark.sql.adaptive.coalescePartitions.enabled', 'true') \
-.config('spark.sql.autoBroadcastJoinThreshold', 24*1024*1024) \
-.config('spark.sql.adaptive.skewJoin.enabled', 'true') \
-.config('spark.sql.files.maxPartitionBytes', '64MB') \
-.config('spark.sql.files.openCostInBytes', '2MB') \
-.config('spark.memory.fraction', 0.8) \
-.config('spark.memory.storageFraction', 0.2) \
-.getOrCreate()
-
-/etc/hadoop/conf/core-site.xml
 
 >> custom_schema = StructType([StructField("id", IntegerType(), True), ....]) or ''' ID Integer, Name String '''
    df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).option("mode", "PERMISSIVE").json("file:///path_to_file/data_files/")
@@ -119,6 +92,21 @@ spark = SparkSession.builder \
 -- hive tables work like noraml database tables? 	hive is metastore and not storing any tables
 
 ==========================================================================================================================================================================
+>> spark.conf.get('spark.sql.files.maxPartitionBytes') / rdd.getNumPartitions() / spark.sparkContext.defaultMinPartitions 
+   spark.sparkContext.defaultParallelism  (for local data)
+   # 544mb => 5 blocks => 5 partition   
+   #1 mb => 1 block --> 1 partition ( This is wrong)  => 2 ---> because spark.sparkContext.defaultMinPartitionsspark application -list
+   spark.sparkContext.applicationId, spark application -list, spark application -kill app_id
+   spark_new_app_session = spark.newSession()
+>> gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g
+   spark = SparkSession.builder.appName("olist config optimization").config('spark.executor.memory', '6g').getOrCreate()
+   .config('spark.executor.instances', '2') \ config('spark.executor.memory', '6g') \ .config('spark.executor.cores', '4') \
+   .config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
+   .config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
+   .config('spark.sql.adaptive.enabled', 'true') \ .config('spark.sql.adaptive.coalescePartitions.enabled', 'true') \
+   .config('spark.sql.autoBroadcastJoinThreshold', 24*1024*1024) \ .config('spark.sql.adaptive.skewJoin.enabled', 'true') \
+   .config('spark.sql.files.maxPartitionBytes', '64MB') \
+   .config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
 
 >> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
 >> validate pyspark exit() / spark-sql exit; / 
