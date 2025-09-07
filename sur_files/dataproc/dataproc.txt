@@ -177,7 +177,10 @@ hdfs dfs -help ls
 >> SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
 >> What is SparkSQL, and how do you perform SQL operations on DataFrames? --> is a module in Apache Spark that allows you to run SQL queries on large datasets.
 >> collect_list vs collect_set and when do we use it?
->> what are the opti techniques: use col format files, partitioning & bucketing, Use DataFrame/Dataset over RDD, use broadcast Joins, filter data early, Cache/persist data,    Optimize shuffle Partitions, Avoid User Defined Functions (UDFs)
+>> Spark performance tuning: 
+   master in reading query plan & dags, spark memory managment, tune executor cores and memory, 
+   tune no of SP, solve data skew, partitioning & bucketing, Cache/persist data
+   Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
 ======================================================================================================================================================================
 
