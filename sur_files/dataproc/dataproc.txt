@@ -47,7 +47,9 @@ hdfs dfs -help ls
 >> add new column, drop columns, column name change, column type change 
 >> terms - initcap / lower / trim / lpad(col("Name"), 10, "X") / coalesce('cn1', 'cn2','cn3')
 >> concatnation --> df = df.withColumn("FullName", concat(df.FirstName, lit(" "), df.LastName)) / concat_ws(' | ', col("Region"), col("Country"))
->> df.dropna() /  df.fillna() / df.replace(to_replace=["banana", "cherry"], value=["orange", "grape"], subset=["fruit"])
+>> df.dropna(how="all/any", subset=["age"]).show()
+   df.fillna({'name': 'suresh', 'age': 40}).show()   /   avg_value = df.select(avg("age")).collect()[0][0]
+   df.replace(to_replace=['Alice', 'Bob'], value=['suresh', 'unknown']).show()
 >> when&otherwise -->> df = df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult"))
 >> agg 	 	   ----> df.select(sum('CN')).show()  		   ------> note: ignore null values ----> sumDistinct, countDistanct
    grouping and agg----> df.groupBy('CN').agg(sum('CN')).show()   	
