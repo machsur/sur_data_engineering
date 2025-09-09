@@ -74,7 +74,8 @@ Python:
 >> Given a string, count the char occurrences of word in a dictionary:    Input: 'aaabbbccddeeeee'
 >> Count Vowels from Given words .
 >> find line_count, words, chars in the files
->> Write a Python script to count the frequency of characters/words in a text file.  --------> using for loop /from collections import Counter
+>> Write a Python script to count the frequency of characters/words in a text file.  
+
 >> Reversing a String using an Extended Slicing techniques. -------> builtin / slicing / code
 >> Find the highest occurrences of each word from string and sort them in order.
 >> Remove Duplicates from List. set / for loop / list comprehension 
