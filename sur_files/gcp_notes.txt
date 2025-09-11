@@ -1,4 +1,16 @@
 
+
+===========================================
+>> Service Account Impersonation: Instead of giving a user or SA direct access to a resource, you allow them to impersonate a SA that has the required permissions. 
+   use: logging and SA opeartes the commands on behalf of user
+   Deployer Service Account: deployer-sa@my-project.iam.gserviceaccount.com Has roles/storage.admin.
+   Impersonator Identity (SA or user): user/SA Has roles/iam.serviceAccountTokenCreator & serviceAccountUser on the deployer SA.
+   gcloud storage buckets create gs://my-unique-bucket-name \
+     --project=my-project \
+     --impersonate-service-account=deployer-sa@my-project.iam.gserviceaccount.com \
+     --location=us-central1
+===========================================
+========================
 >> Vertex AI: provides tools to implement ML workflow
    ingest, analyse, transform: using managed datasets, label & annotate data
    create and train the model: AutoML- for image, video, text, tablar data it works great & custom - for frameworks, architexture
