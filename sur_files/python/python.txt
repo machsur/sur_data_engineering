@@ -75,10 +75,9 @@ Python:
 >> Count Vowels from Given words .
 >> find line_count, words, chars in the files
 >> Write a Python script to count the frequency of characters/words in a text file.  
-
 >> Reversing a String using an Extended Slicing techniques. -------> builtin / slicing / code
 >> Find the highest occurrences of each word from string and sort them in order.
->> Remove Duplicates from List. set / for loop / list comprehension 
+>> Remove Duplicates from List. 
 >> Sort a List without using Sort keyword. built-in / bubble sort /
 >> Find the pair of numbers in this list whose sum is n no.
 >> Read and print values from an Excel file using Pandas.
@@ -93,16 +92,16 @@ Python:
 >> Find out common letters between two strings Using Python
 >> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
 >> FIND MISSING NUMBER IN AN ARRAY IN PYTHON  :  n(n+1)/2 - sum(array_elements)
->> Find Out Pairs with given sum in an array in python of time complexity O(n log n)- FACEBOOK,AMAZON
+
 >> PRINT PATTERNS
 >> number is prime or not
-
 >> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
 >> Factorial
 >> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
 >> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]  //
    [p['name'] for p in people if p['age'] > 30]      //   unique_words = list({word.lower() for word in "Hello world hello".split()})
->> Create dictionary from two lists: result_dict = {k: v for k, v in zip(['a', 'b', 'c'], [1, 2, 3])}
 >> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
 >> What is the difference between list and tuple in Python?
+>> array contains duplicates - use for in for (n2, 1) - compare element with previous element (n, n)
+
 
