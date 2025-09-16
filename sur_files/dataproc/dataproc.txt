@@ -94,6 +94,25 @@ hdfs dfs -help ls
 -- hive tables work like noraml database tables? 	hive is metastore and not storing any tables
 
 ==========================================================================================================================================================================
+
+>> Spark performance tuning
+
+1. master in reading query plan
+	syntax check ---> unresolved logical plan --> catalyst optimizer --> optimal logical plan (filter push down & req col) --> several pysical plan -->
+	based on cost model select best pysical plan  --> executes and create RDD/DF
+	df.explain(True)
+2. master in reading spark dags
+3. Tune no of shuffle partitions (optimal SP size b/w 1 to 200 mb )
+	* if data per SP is large - cores = 20, SP = 200, data = 300 gb - data/sp = 1.5gb - no of SP = 300*1000/200 = 1500 SP
+	* if data per SP is large - cores = 12, SP = 200, data = 50 mb - data/sp = 0.25 mb - no of SP=50/5=10 or data/SP = 50/12 = 4.5 mb
+4. Data Skew (job taking time, uneven resource utilization, OOM/data spill)
+	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
+		-> tuning no of SP - 15 keys - coalesce(15) - spark.sql.adaptive.enabled, spark.sql.adaptive.coalescePartitions.enabled
+		-> optimize joins - SMJ to BJ - df1.repartiton(4), df2 broadcasted on all executors - spark.sql.autoBroadcastJoinThreshold
+		-> optimize Skew joins - breaks larger part into smaller part - spark.sql.adaptive.skewJoin.enabled
+	Salt - adding randomness (key) to distribute uneven data evenly.
+
+
 >> spark.conf.get('spark.sql.files.maxPartitionBytes') / rdd.getNumPartitions() / spark.sparkContext.defaultMinPartitions 
    spark.sparkContext.defaultParallelism  (for local data)
    # 544mb => 5 blocks => 5 partition   
@@ -105,10 +124,9 @@ hdfs dfs -help ls
    .config('spark.executor.instances', '2') \ config('spark.executor.memory', '6g') \ .config('spark.executor.cores', '4') \
    .config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
    .config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
-   .config('spark.sql.adaptive.enabled', 'true') \ .config('spark.sql.adaptive.coalescePartitions.enabled', 'true') \
-   .config('spark.sql.autoBroadcastJoinThreshold', 24*1024*1024) \ .config('spark.sql.adaptive.skewJoin.enabled', 'true') \
    .config('spark.sql.files.maxPartitionBytes', '64MB') \
    .config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
+   spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 MB
 
 >> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
 >> validate pyspark exit() / spark-sql exit; / 
