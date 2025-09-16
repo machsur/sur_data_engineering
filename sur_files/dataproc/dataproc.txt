@@ -4,16 +4,6 @@ https://github.com/afaqueahmad7117/spark-experiments/tree/main/spark
 https://allthingdata.substack.com/p/essential-linux-commands-for-data         
 
 ========================================================================================================================================================================
->> steps to follow as data engineer:
-1. Data Ingetion: load data into spark dataframe 
-2  exploration: schema and datatypes, data leakage or drop, Null values, duplicate values, data distribution as per state, avg time taken to deliver item	
-3. data cleaning: handle missing values, duplicate, invalid date (standadize format), data type corretion
-4. data integration (combine data from multiple tables) and aggregation (to compute metrics): 
-5. performance optimization: enhance data processing task - partitioning, cache/persist, spark config
-6. data serving: make processed data available in bq
-
-==========================================================================================================================================================================
-
 ===========================================> hdfs commands:
 
 >> linux system / hdfs system
@@ -101,38 +91,33 @@ hdfs dfs -help ls
 	syntax check ---> unresolved logical plan --> catalyst optimizer --> optimal logical plan (filter push down & req col) --> several pysical plan -->
 	based on cost model select best pysical plan  --> executes and create RDD/DF
 	df.explain(True)
+
 2. master in reading spark dags
+
 3. Tune no of shuffle partitions (optimal SP size b/w 1 to 200 mb )
 	* if data per SP is large - cores = 20, SP = 200, data = 300 gb - data/sp = 1.5gb - no of SP = 300*1000/200 = 1500 SP
 	* if data per SP is large - cores = 12, SP = 200, data = 50 mb - data/sp = 0.25 mb - no of SP=50/5=10 or data/SP = 50/12 = 4.5 mb
+
 4. Data Skew (job taking time, uneven resource utilization, OOM/data spill)
 	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
 		-> tuning no of SP - 15 keys - coalesce(15) - spark.sql.adaptive.enabled, spark.sql.adaptive.coalescePartitions.enabled
 		-> optimize joins - SMJ to BJ - df1.repartiton(4), df2 broadcasted on all executors - spark.sql.autoBroadcastJoinThreshold
 		-> optimize Skew joins - breaks larger part into smaller part - spark.sql.adaptive.skewJoin.enabled
 	Salt - adding randomness (key) to distribute uneven data evenly.
+		-> add salt columnn - hash(key, salt)% SP
 
+5. Partitioning: Divides based on column values - Separate folders - Filtering	(Adv: fast access, parallesium/resource utilization)
+   df.write.mode('overwrite').partitionBy('country').parquet('/content/ecommer/') >> high cordinality - small file problem - buckting is rec
+   Bucketing: Joins and aggregations, filter - hash(product_id)%4
+   df.write.mode('overwrite').bucketBy(4, 'product_id').saveAsTable('bucketed_table')   
+   Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)  
+   Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all 
 
->> spark.conf.get('spark.sql.files.maxPartitionBytes') / rdd.getNumPartitions() / spark.sparkContext.defaultMinPartitions 
-   spark.sparkContext.defaultParallelism  (for local data)
-   # 544mb => 5 blocks => 5 partition   
-   #1 mb => 1 block --> 1 partition ( This is wrong)  => 2 ---> because spark.sparkContext.defaultMinPartitionsspark application -list
-   spark.sparkContext.applicationId, spark application -list, spark application -kill app_id
-   spark_new_app_session = spark.newSession()
->> gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g
-   spark = SparkSession.builder.appName("olist config optimization").config('spark.executor.memory', '6g').getOrCreate()
-   .config('spark.executor.instances', '2') \ config('spark.executor.memory', '6g') \ .config('spark.executor.cores', '4') \
-   .config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
-   .config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
-   .config('spark.sql.files.maxPartitionBytes', '64MB') \
-   .config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
-   spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 MB
+6. executor tuning: 
+   Rules:leave 1C1gbM per Node for hadoop/yarn/os - leave 1Exe or 1C1gbM for app master container at cluster level - 3 t0 5 cores/exe - overhead mem max(384 or 10% exe mem)
+   12c48gb/node - 11c47gb/node-55c235gb-54c234gb-total exe=54/5=10 & mem/exe=234/10=23.4-actual memory/exe=23-2.3=20gb
 
->> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
->> validate pyspark exit() / spark-sql exit; / 
->> execute gcs script: master node: spark-submit gs://buk/pysp1.py   >> submit pyspark job using UI >> gcloud dataproc jobs submit pyspark pysp1.py --cluster --region
->> sPARK query plan: code syntax -> unresolved logical plan --> catalog --> optimized logical plan -> convert pysical plans --> cost --> best pysical (df.explain(True))
->> Spark memory management
+7.Spark memory management
 	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
 	spark.driver.memory --> JVM memory 
 	spark.driver.memoryOverhead --> 10% 0r 384mb max one --> used for container processes, pyspark app
@@ -151,40 +136,48 @@ hdfs dfs -help ls
 	yarn.scheduler.maximum-allocation-mb --> pysical memory limit at the worker node
 	yarn.nodemanager.resource.memory-mb 
 
->> executor tuning: thin exe-45, fat exe-3, optSizedExe- leave 1C1gbM per Node for hadoop/yarn/os - leave 1Exe or 1C1gbM for app master container at cluster level 
-   3N16C48gbM, totC=16-1(os)*3=45, totM=48-1(os)*3=141gb, exe=45/4~11, M/exe=141/11~12gb, for app driver 1exe (exe=10, cores=4, memory = 12gb)
-   file size=25GB, cores=25*1024*1024/128 =200, executor=200/4=50, exeMemory=1.5*300(RM)or4*128(PZ)=512mb/core=2gb/exe, totMemoryReq=50*2=100gb
->> shuffling: happenned when the wide transformation is performed and Shuffle Partition: partitions after shufflling 
->> what is data skewness? most of data goes to few partitions (based on keys) after data shuffling. job is taking time, unutilization of resources, oom or data spill 
-   repartition:
-   salt: decide salt number : [0, 3) --> ds1: add salt column to key column -->	ds2: add salt column (having array [0, 1, 2] - explode ) to key column
-   AQE (>3.0): based on runtime stat select best query plan: tuning shuffle part (200 default- 15 keys-red 15) --> converts SMJ to BJ --> opti skew joins by splitting
->> Partitioning: Divides based on column values - Separate folders - Filtering	(Adv: fast access, parallesium/resource utilization)
-   df.write.mode('overwrite').partitionBy('listen_date').parquet('/content/ecommer/') >> high cordinality - small file problem - buckting is rec
-   Bucketing: Divides based on hash of column  - Fixed number of files (buckets) - Joins and aggregations.
-   df.write.mode('overwrite').bucketBy(2, 'order_status').saveAsTable('bucketed_table')   --->  6 partitions * 2 buckets = 12 files
-   Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)   dataset size,mb = (no_records * no_col * avg width of var in bytes) / (1024 * 1024)
-   Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all
->> static partition pruning: partition on listen date data on disk - this scans only listen date that user eants
+8. static partition pruning: partition on listen date data on disk - this scans only listen date that user eants
    dynamic partition pruning: send partition that is supossed to be scanned
 	release date table --> filter to get requ data which comes to know during run time --> spark uses results to scan on other dataset based on listen date
 	Adv: reduce time to scan/process)
 	limits: one of dataset must be partitioned and based on column that is filered from other datase	
 	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
 
+9. cache/persist, Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
+
+=====================================================================================================================================================
+>> spark.conf.get('spark.sql.files.maxPartitionBytes') / rdd.getNumPartitions() / spark.sparkContext.defaultMinPartitions 
+   spark.sparkContext.defaultParallelism  (for local data)
+   # 544mb => 5 blocks => 5 partition   
+   #1 mb => 1 block --> 1 partition ( This is wrong)  => 2 ---> because spark.sparkContext.defaultMinPartitionsspark application -list
+   spark.sparkContext.applicationId, spark application -list, spark application -kill app_id
+   spark_new_app_session = spark.newSession()
+>> gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g
+   spark = SparkSession.builder.appName("olist config optimization").config('spark.executor.memory', '6g').getOrCreate()
+   .config('spark.executor.instances', '2') \ config('spark.executor.memory', '6g') \ .config('spark.executor.cores', '4') \
+   .config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
+   .config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
+   .config('spark.sql.files.maxPartitionBytes', '64MB') \
+   .config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
+   spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 MB
+
+>> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
+>> validate pyspark exit() / spark-sql exit; / 
+>> execute gcs script: master node: spark-submit gs://buk/pysp1.py   >> submit pyspark job using UI >> gcloud dataproc jobs submit pyspark pysp1.py --cluster --region
+
 ==========================================================================================================================================================================
 
->> why bigdata, desiging good bigdata system, onpremise vs cloud, DB vs DWH vs DL, ETL vs ELT 	(1)
->> Hadoop Ecosystem (2)
->> Map Reduce and YARN (3)
->> limitations of MR, Spark EcoSystem (4)
-   What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
-   what is transformation and action?      How does Lazy Evaluation work in PySpark?      What are wide and narrow transformations in PySpark?
-   reduceByKey vs groupByKey?		increase and decrease no of partions?		spark read data and partitioning?
-   spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
->> Spark higher level api (DF, DS, spark-sql) (5)
-	--> key-benfits compared to low-level api   -->	reading data in spark is action or transformation?
-	--> read modes: option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") // option("mode", DROPMALFORMED/FAILFAST")
+>> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
+   what is transformation and action?      
+	How does Lazy Evaluation work in PySpark?      
+	What are wide and narrow transformations in PySpark?
+   	reduceByKey vs groupByKey?		
+	increase and decrease no of partions?		
+	spark read data and partitioning?
+	spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
+>> key-benfits compared to low-level api  
+	reading data in spark is action or transformation?
+	read modes: option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") // option("mode", DROPMALFORMED/FAILFAST")
 >> df.cache()  # Stores in memory, spills to disk if needed  -->> df.persist(StorageLevel.MEMORY_AND_DISK_SER_3)   (6)
 >> shuffle operations - redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
 >> broadcast join - small dataset is broadcasted to all worker nodes - allows to perform join locally - reduced data shuffling across the network - improved performance
@@ -194,11 +187,6 @@ hdfs dfs -help ls
 >> what is the default block size (128 MB) in hdfs and how to change it?:   Edit the hdfs-site.xml File
 >> SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
 >> What is SparkSQL, and how do you perform SQL operations on DataFrames? --> is a module in Apache Spark that allows you to run SQL queries on large datasets.
->> collect_list vs collect_set and when do we use it?
->> Spark performance tuning: 
-   master in reading query plan & dags, spark memory managment, tune executor cores and memory, 
-   tune no of SP, solve data skew, partitioning & bucketing, Cache/persist data
-   Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
 ======================================================================================================================================================================
 
