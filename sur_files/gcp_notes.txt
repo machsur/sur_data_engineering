@@ -10,6 +10,12 @@
      --impersonate-service-account=deployer-sa@my-project.iam.gserviceaccount.com \
      --location=us-central1
 ===========================================
+ACID:Imagine a transaction where Suresh transfers ₹1000 from Account A to Account B.
+Atomicity – All parts of a transaction must succeed or none at all.
+Consistency – The total money in the system remains ₹8000. No data corruption.
+Isolation – Transactions must not interfere with each other.
+Durability – Once a transaction is committed, it remains even in case of a system failure
+
 ========================
 >> Vertex AI: provides tools to implement ML workflow
    ingest, analyse, transform: using managed datasets, label & annotate data
