@@ -106,10 +106,10 @@ hdfs dfs -help ls
 	Salt - adding randomness (key) to distribute uneven data evenly.
 		-> add salt columnn - hash(key, salt)% SP
 
-5. Partitioning: Divides based on column values - Separate folders - Filtering	(Adv: fast access, parallesium/resource utilization)
+5. Partitioning: create folders for each country within files are equal to no of partitions - Filtering	(Adv: fast access, parallesium/resource utilization)
    df.write.mode('overwrite').partitionBy('country').parquet('/content/ecommer/') >> high cordinality - small file problem - buckting is rec
-   Bucketing: Joins and aggregations, filter - hash(product_id)%4
-   df.write.mode('overwrite').bucketBy(4, 'product_id').saveAsTable('bucketed_table')   
+   Bucketing: Joins and aggregations, filter - hash(product_id)%4  
+   df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('bucketed_table')  - 2buc*2part=4files
    Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)  
    Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all 
 
@@ -146,20 +146,20 @@ hdfs dfs -help ls
 9. cache/persist, Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
 =====================================================================================================================================================
->> spark.conf.get('spark.sql.files.maxPartitionBytes') / rdd.getNumPartitions() / spark.sparkContext.defaultMinPartitions 
-   spark.sparkContext.defaultParallelism  (for local data)
-   # 544mb => 5 blocks => 5 partition   
-   #1 mb => 1 block --> 1 partition ( This is wrong)  => 2 ---> because spark.sparkContext.defaultMinPartitionsspark application -list
-   spark.sparkContext.applicationId, spark application -list, spark application -kill app_id
-   spark_new_app_session = spark.newSession()
->> gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g
-   spark = SparkSession.builder.appName("olist config optimization").config('spark.executor.memory', '6g').getOrCreate()
-   .config('spark.executor.instances', '2') \ config('spark.executor.memory', '6g') \ .config('spark.executor.cores', '4') \
-   .config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
-   .config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
-   .config('spark.sql.files.maxPartitionBytes', '64MB') \
-   .config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
-   spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 MB
+
+>> 
+spark = SparkSession.builder.appName('surapp11').config('spark.sql.files.maxPartitionBytes', '3mb').getOrCreate()
+spark.sparkContext.applicationId, spark.stop(), spark application -list, spark application -kill app_id
+df.explain(True)
+spark_new_app_session = spark.newSession()
+df.rdd.getNumPartitions()
+spark.conf.get('spark.sql.files.maxPartitionBytes') / rdd.getNumPartitions() / spark.sparkContext.defaultMinPartitions 
+
+gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g,spark:spark.executor.instances=2
+.config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
+.config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
+.config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
+spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 MB
 
 >> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
 >> validate pyspark exit() / spark-sql exit; / 
