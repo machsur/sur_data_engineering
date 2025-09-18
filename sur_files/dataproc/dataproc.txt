@@ -191,8 +191,15 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 ======================================================================================================================================================================
 
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
->> Write a PySpark code to remove duplicate records based on a specific column.   data = [(101, "Mumbai", "Maharashtra"), ]
 >> Write a PySpark query to calculate the moving average of sales over the last 3 months:   order_id, date, sale_amount
+>> rank students within each state based on their scores in descending order.   student_id, student_name, state, score
+>> What are the different ways to remove duplicate records in PySpark? ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy("name") /
+>> Calculate the percentage change in salary compared to the previous year for each employee.
+>> Calculate the number of days between consecutive orders placed by each customer. 
+>> Find the top 2 highest-paid employees in each department using window functions.
+>> Calculate the cumulative sum of sales for each product ordered by date.
+
+>> Write a PySpark code to remove duplicate records based on a specific column.   data = [(101, "Mumbai", "Maharashtra"), ]
 >> pivot & unpivot data: cricket_data = [("Virat Kohli", 'Match1', 75), ..........], col = ["Player", "Match", "score"]
 >> write a PySpark code snippet to find the top 5 most populous cities.    | City    | Population|
 >> calculate the average salary for each department.  emp_name, dept, salary
@@ -202,9 +209,7 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 >> Create a DataFrame with two columns: Column 1: Default String Column 2: Default Integer
 >> query to replace null values in a specific column with the previous non-null value. -----> last('value', ignorenulls=True).over(window_spec)
 >> reading file into df / write df into target
->> rank students within each state based on their scores in descending order.   student_id, student_name, state, score
 >> Fill the mean salary value in Null. ---> [("Alice", 50000), ..] --> avg_sal = df.select(mean(col('sal'))).collect()[0][0] --> df.fillna({'salary': avg_salary}).show()
->> What are the different ways to remove duplicate records in PySpark? ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy("name") /
 >> Explain `groupBy()`, `agg()`, and `pivot()` functions with an example.
 >> remove duplicate rows based on the composite key (cust_id, order_id) & retain row with latest order_date for each combination: cust_id, order_id, order_date, amount
 >> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. --> left join / filter null
@@ -226,16 +231,13 @@ Drop rows where the Product column is NULL / Drop rows where all columns are NUL
 	maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
 >> extract filename: df = df.withColumn("state", element_at(split(input_file_name(), "/"), -1)).withColumn("state", split("state", "\\.").getItem(0))
 
->> Find the top 2 highest-paid employees in each department using window functions.
->> Calculate the cumulative sum of sales for each product ordered by date.
+
 >> Retrieve employees who joined in the last 6 months.
 >> Find and display duplicate records based on specific columns
 >> Identify employees whose salary is greater than the average salary of their department.
 >> Get the first and last transaction date for each customer.
->> Calculate the number of days between consecutive orders placed by each customer. 
 >> Replace null values in a column with the last non-null value in that partition.
 >> Categorize employees based on years of experience into Junior, Mid, and Senior levels.
->> Calculate the percentage change in salary compared to the previous year for each employee.
 
 
 
