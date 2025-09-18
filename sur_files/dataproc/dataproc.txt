@@ -190,24 +190,21 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 
 ======================================================================================================================================================================
 
+year(col("timestamp_str"))  -  month / day / hour / minute / second 
+date_trunc("month", col("start_date"))
+datediff(col("transaction_date"), col("previous_transaction_date"))
+date_sub(col("start_date"), 10)
+date_add(col("start_date"), 10)
+
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
->> Write a PySpark query to calculate the moving average of sales over the last 3 months:   order_id, date, sale_amount
->> rank students within each state based on their scores in descending order.   student_id, student_name, state, score
->> What are the different ways to remove duplicate records in PySpark? ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy /
->> Calculate the percentage change in salary compared to the previous year for each employee.
->> Calculate the number of days between consecutive orders placed by each customer. 
->> Find the top 2 highest-paid employees in each department using window functions.
->> Calculate the cumulative sum of sales for each product ordered by date.
+>> What are the different ways to remove duplicate records ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy /
 >> find the top 5 most populous cities.    | City    | Population|
 >> calculate the average salary for each department.  emp_name, dept, salary
->> remove duplicate records based on a composite key consisting of 'customer_id' and 'transaction_date'. | customer_id| transaction_id | transaction_date |
 >> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")] 
 >> split the data into two columns (Even, Odd) 
->> Create a DataFrame with two columns: Column 1: Default String Column 2: Default Integer
 >> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. --> left join / filter null
 
 >> Retrieve employees who joined in the last 6 months.
->> Find and display duplicate records based on specific columns
 >> Identify employees whose salary is greater than the average salary of their department.
 >> Get the first and last transaction date for each customer.
 >> Replace null values in a column with the last non-null value in that partition.
@@ -290,10 +287,7 @@ Drop rows where the Product column is NULL / Drop rows where all columns are NUL
 >> Identify users who have placed an order in two consecutive months but not in the third month | user_id, order_date
 >> pivot & unpivot data: cricket_data = [("Virat Kohli", 'Match1', 75), ..........], col = ["Player", "Match", "score"]
 
-date_trunc("month", col("start_date"))
-datediff(col("transaction_date"), col("previous_transaction_date"))
-date_sub(col("start_date"), 10)
-date_add(col("start_date"), 10)
+
 
 
 
