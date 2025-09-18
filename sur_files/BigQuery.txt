@@ -1,12 +1,6 @@
 ================================================================================================================================================
 
-DATE(DC in iso) / PARSE_DATE(format, DC) / SAFE.PARSE_DATE(format, DC)	-	Y, y / m, B, b / d, A, a / 
-extract(year from date)      						-     	year / month / date / hour / minute / second / microsecond /
-FORMAT_DATE('%B %d, %Y', sale_date)  	
-DATE_TRUNC(order_date, MONTH) 		
-DATE_DIFF(order_date, previous_date, day)
-Date_add(order_date, INTERVAL 5 day)
-Date_sub(order_date, INTERVAL 5 day)
+
 
 =============================================================================================================================================
 
@@ -49,6 +43,14 @@ Date_sub(order_date, INTERVAL 5 day)
 >> Cost Controls: budget alerts, Set query usage limits, export Billing reports, Schedule queries during off-peak hours
  
 =============================================================================================================================================
+>>
+DATE(DC in iso) / PARSE_DATE(format, DC) / SAFE.PARSE_DATE(format, DC)	-	Y, y / m, B, b / d, A, a / 
+extract(year from date)      						-     	year / month / date / hour / minute / second / microsecond /
+FORMAT_DATE('%B %d, %Y', sale_date)  	
+DATE_TRUNC(order_date, MONTH) 		
+DATE_DIFF(order_date, previous_date, day)
+Date_add(order_date, INTERVAL 5 day)
+Date_sub(order_date, INTERVAL 5 day)
 
 >> FROM / WHERE / Filters / GROUP BY / HAVING / WINDOW functions like ROW_NUMBER() / SELECT / DISTINCT / ORDER BY / LIMIT or OFFSET
 
