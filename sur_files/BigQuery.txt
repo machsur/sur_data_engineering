@@ -38,13 +38,9 @@ Date_sub(order_date, INTERVAL 5 day)
     Why array & structs? – for better query per and lesser storage costs
     Arrays – list of items having same data type  -  SELECT element FROM mydataset.mytable, UNNEST(my_array) AS element; 
     Struct – record with nested fields having different data types  -   SELECT person.id, person.name FROM mydataset.mytable;
->> Window functions: performing advanced calculations over a set of rows, go beyond simple aggregates or filters
-   max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /row_number() / rank() / dense_rank() /  lag(cn) / lead(cn) /   first_value(cn) / last_value(cn) / nth_value(cn, n) /
-   SUM(column2) OVER (PARTITION BY column1 ORDER BY column2 ROWS BETWEEN UNBOUNDED/2 PRECEDING AND CURRENT ROW) AS rt
-   ntile(n) – n groups 
-   CUME_DIST() = Number of rows with values less than or equal to the current row / Total number of rows
-​   PERCENT_RANK() = Rank of current row−1 / Total rows−1
-​   Rows consider current row even if duplicates / range considers bottom row of duplicates.
+
+
+
 >> bq slots: units of computational capacity -CPU and memory, Reservations: allow you to purchase dedicated slots (called commitments) 
 >> Big Query cost optimization
    bq compute optimization: on-demaned pricing, Capacity Pricing (slots reserve)
@@ -54,98 +50,27 @@ Date_sub(order_date, INTERVAL 5 day)
  
 =============================================================================================================================================
 
->> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: with unique_ids AS (SELECT id FROM id_list GROUP BY id HAVING COUNT(*) = 1) | SELECT MAX(id) FROM unique_ids
->> find department names where no employees are found: emp -->> employee_id, employee_name, dept_id | Department Table -->> dept_id, dept_name
-   SELECT d.dept_name FROM dept d LEFT JOIN employee e ON d.dept_id = e.dept_id WHERE e.dept_id IS NULL;
->> Given two tables, find the count of records for Left Outer Join and Inner Join | Table A  & Table B | 1 1 1 1  &  1 1 1 | Ans. 12 & 12
->> table1: 1 2 3 null ""  & table2: 2 2  3 null null "" : inner join - 2 2, 2 2, 3 3, empty empty |  Null doesnt include matching, empty string includes matching
->> Give the output for DENSE_RANK() and RANK() functions for the below dataset: Nums: 85 85 80 75 75 70
->> column Country: India Australia Pakistan | Output: India vs Australia India vs Pakistan Australia vs Pakistan
-    SELECT a.country || ' vs ' || b.country as country FROM country a  join country b on a.country > b.country;  
->> Given two tables, output the result of INNER, LEFT, RIGHT, FULL JOINS | Table1-  1 1 & Table2- b a 1
->> Find the 777th highest salary:  SELECT salary FROM (SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num FROM `your_table`) WHERE row_num = 777
->> number of patients per doctor including unassigned patients: docter_id | pationt_id, doctor_id
-   SELECT d.doctor_id, COUNT(p.patient_id) AS total_patients FROM doctors d  LEFT JOIN patients p ON  d.doctor_id = p.doctor_id GROUP BY d.doctor_id
->> Handling NULL values using the average salary | emp_id, salary: IFNULL(cn, rep_val) COALESCE(cn, rep_val1, rep_val2, ...) 
-   SELECT employee_id,  COALESCE(salary, (SELECT avg(salary) FROM table)) AS adjusted_salary  FROM table;
->> Src, beforeTgt, tgt after src ing: MERGE INTO target_table AS T  USING source_table AS S  ON T.id = S.id	
-   WHEN MATCHED THEN UPDATE SET T.name = S.name WHEN NOT MATCHED THEN INSERT (id, name) VALUES (S.id, S.name);
->> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
-   SELECT PRODUCT_ID, COUNT(*) AS COUNT FROM orders WHERE ORDER_DAY IN ('01-JUL-11', '02-JUL-11') GROUP BY PRODUCT_ID HAVING COUNT(DISTINCT ORDER_DAY) = 2;
->> i/p - customer_id, region, sales_amount | o/p - customer_id,	north_sales, south_sales, East sales, West Sales
-   SELECT customer_id, SUM(CASE WHEN region = 'North' THEN sales_amount ELSE 0 END) AS north_sales, .... FROM orders GROUP BY customer_id;
-   select * from (select customer_id, region, sales_amount from orders) pivot(sum(sales_amount) for region in ('north', 'south', 'east', 'west'));
->> 2 highest sal without LIMIT&OFFSET | emp, sal: WITH cte AS (SELECT sal, dense_rank() OVER(ORDER BY sal DESC) AS rk FROM employees) |select sal FROM cte WHERE rk = 2;
->> running total of revenue for each day| order_date, revenue:	SELECT  order_date, revenue, SUM(revenue) OVER (ORDER BY order_date) AS running_total FROM  orders
->> employees sal > managers | EMPID, EMPNAME, MANAGERID, SLARY: 
-   SELECT  e.employee_id,  e.name,  e.salary FROM  employees e JOIN  employees m ON e.manager_id = m.employee_id WHERE  e.salary > m.salary ORDER BY  e.salary DESC;
->> department with highest avg sal | dept, salary: SELECT dept,  AVG(salary) AS average_salary FROM `table` group by  dept ORDER BY average_salary DESC LIMIT 1;
->> top 3 frequently sold products| product_name , quantity_sold: SELECT PN,  SUM(quantity_sold) AS tqs FROM  `sales_data` GROUP BY PN ORDER BY  tqs DESC LIMIT 3;
->> employees who hired in last 90 days: SELECT * FROM  employee_data` WHERE hire_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY);
->> Extract the Domain from the Email column:	substring(email, strpos(email, '@')+1, length-opt) 
->> Find the 2nd Highest Salary: SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees)
->> Count Of Employees in Each Department: SELECT department, COUNT(*) AS employee_count FROM employees GROUP BY department
->> duplicate records based on column: select * from `table` where email in (SELECT email FROM `table` group by email having count(*)>1);
->> Duplicate Records based on column: SELECT column_name, COUNT(*) FROM table_name GROUP BY column_name HAVING COUNT(*)>1  /  row_number()
->> delete duplicate records: WITH CTE AS (SELECT column_name, ROW_NUMBER() OVER (PARTITION BY CN ORDER BY CN) AS rn FROM table_name) | DELETE FROM CTE WHERE rn > 1
->> Find Employees Who joined in 2024: SELECT * FROM employees WHERE EXTRACT(YEAR FROM join_date) = 2024;
->> Find Customers Without Orders: SELECT c.customer_id, c.name FROM customers c  LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.customer_id IS NULL
->> Get Total Salary by Department: SELECT department, SUM(salary) AS total_salary FROM employees GROUP BY department
->> Find Nth Highest Salary (Nth = 3): SELECT DISTINCT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 2
->> Find all employees whose names contain the letters "a" exactly twice: SELECT * FROM employees WHERE LENGTH(name) - LENGTH(REPLACE(LOWER(name),'a','')) = 2
->> Running total of sales by date:  SELECT date, sales, SUM(sales) OVER (ORDER BY date) AS RunningTotal FROM sales_data
->> Write a query to count how many employees share the same salary: SELECT salary, COUNT(*) AS employee_count FROM employees GROUP BY salary HAVING COUNT(*) > 1
->> find the most frequently occurring value in a column: SELECT column_name, COUNT(*) AS freq FROM table_name GROUP BY column_name ORDER BY freq DESC LIMIT 1
->> How to get the common records from two tables: SELECT * FROM table1 INTERSECT SELECT * FROM table2
->> How to retrieve the last 10 records from a table:  SELECT * FROM employees ORDER BY employee_id DESC LIMIT 10
->> emp earning more than avg sal in their department: SELECT * FROM employees e WHERE salary > (SELECT AVG(salary) FROM employees WHERE department_id = e.department_id))
->> records where date is within last 7 days from today: SELECT * FROM `table` WHERE date_column BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND CURRENT_DATE()
+>> FROM / WHERE / Filters / GROUP BY / HAVING / WINDOW functions like ROW_NUMBER() / SELECT / DISTINCT / ORDER BY / LIMIT or OFFSET
 
->> Find the top N customers who made the highest purchases, ensuring no duplicates if customers have the same purchase amount|   CustomerID, PurchaseAmount:
-   WITH rp AS (SELECT *, DENSE_RANK() OVER (ORDER BY PurchaseAmount DESC) AS Rank FROM table) |	SELECT * FROM rp WHERE Rank <= N;
->> Write an efficient query to detect duplicate records in a table and delete only the extra duplicates, keeping one copy.
-   WITH rr AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY column1, .. ORDER BY column1) AS rn FROM table) | DELETE FROM ranked_records WHERE row_num > 1;
->> Retrieve 1 order for each customer, ensuring that ties (customers with multiple 1 orders on the same date) are handled correctly.  customer_id | order_id | order_date
-   WITH ro AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date, order_id) AS rn  FROM orders) | SELECT * FROM ranked_orders WHERE rn = 1;
->> Find products that were never purchased by any customer.    t1: product_id, product_name;  t2: product_id, order_id
-   SELECT p.product_id, p.product_name FROM products p LEFT JOIN orders o ON p.product_id = o.product_id WHERE o.product_id IS NULL;
->> dept with highest total salary paid| dept, sal:  SELECT dept, SUM(Sal) AS ts FROM table GROUP BY dept ORDER BY ts DESC LIMIT 1;
->> find top 3 orders per each customer| cust, OrderID, OrderVal: WITH ro AS (SELECT *, RANK() OVER (PARTITION BY cust ORDER BY OrderVal DESC) AS rk FROM table`)
->> tran_id, sale_date, amount | o/p- year, Jan, Feb, Mar: WITH sales_data AS (SELECT EXTRACT(YEAR FROM sale_date) AS year, FORMAT_DATE('%b', sale_date) AS month, amount        FROM sales) | SELECT * FROM sales_data PIVOT (SUM(amount) FOR month IN ('Jan', 'Feb', 'Mar'))	ORDER BY year;
->> Find the moving average of sales for the last 7 days for each product in a sales table | product_id, sale_amount, sale_date:
-   WITH ma AS (SELECT *, AVG(SalesAmount) OVER (PARTITION BY ProductID ORDER BY SaleDate ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS avg FROM sales) | SELECT * FROM ma;
->> moving avg for each resta over a 7-day window | restarant, date, revenue: AVG(revenue) OVER (PARTITION BY resta ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) 
->> Write a query to generate a sequential ranking of products based on total sales, but reset the ranking for each year | prodct_id, sale_amount, sale_date
-   SELECT *, RANK() OVER(PARTITION BY year ORDER BY total_sales DESC) AS rank FROM (SELECT EXTRACT(YEAR FROM sd) AS year, pi, SUM(sa) AS ts FROM table GROUP BY year, pi);
->> WITH CustomOrder AS (SELECT emp_name, emp_dep, CASE WHEN emp_dep = 'it' THEN 1 WHEN emp_dep = 'hr' THEN 2 WHEN emp_dep = 'sales' THEN 3 end as emp_dept_sort,     
-   ROW_NUMBER() OVER(PARTITION BY emp_dep ORDER BY emp_name) AS row_num  FROM table) | SELECT * FROM CustomOrder ORDER BY emp_dept_sort, row_num;
->> Determine which users are likely bots based on their ordering patterns (e.g., 50+ orders/day). (user, order_timestamp, order_id)
-   SELECT user_id, DATE(order_timestamp) AS order_day, COUNT(order_id) AS orders_per_day FROM orders GROUP BY  user_id,  order_day HAVING orders_per_day >= 50;
->> Build a time-series summary table that aggregates revenue per day, per restaurant, for dashboarding.     (restaurant_id, order_day, revenue)
-   SELECT  restaurant_id, order_day, SUM(revenue) AS daily_revenue FROM  orders GROUP BY  restaurant_id,  order_day;
->> Rank users based on orders and spend, giving more weight to spend. -- (0.7 * total_spend + 0.3 * total_orders) AS weighted_score
->> employees same sal as another emp in same dept | dept_id, emp_name, salary: WITH es AS (SELECT dept, sal, COUNT(*) FROM employees GROUP BY dept, sal HAVING COUNT(*) > 1)    | SELECT * FROM employees e JOIN es es ON  e.dept_id = es.dept_id AND e.salary = es.salary;
->> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
-   EXTRACT(MONTH FROM transaction_date) | GROUP BY customer_id, month | customer_id, COUNT(month) | WHERE months_count = 12;
->> find the first and last occurrence of each event per user | UserID, EventID, EventDate,
-   ROW_NUMBER() for rn_first |  ROW_NUMBER() for rn_last | MIN(CASE WHEN rn_first = 1 THEN event_time END) AS first_occurrence
->> Find the most frequently purchased product category by each user over the past year | user, product_category, order_id, sale_date:
-   user_id,  product_category, COUNT(*) & sale_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) | RANK() | WHERE rank = 1;
-   
->> cust who orders in consecutive months | cust, order_date, order: DATE_TRUNC(order_date, MONTH) | LEAD(order_month) | WHERE DATE_DIFF(next_month, order_month, MONTH) = 1
->> Write a query to detect a sudden drop (>30%) in daily revenue for any restaurant | restaurant_id, revenue_date, daily_revenue: lag to previous_revenue, sudden_drop > 30
->> Detect duplicated orders — same items, user, and restaurant within 5 minutes | order_id, user_id, restaurant_id, item_id, order_time:
-   LAG(order_time) AS previous_order_time | TIMESTAMP_DIFF(order_time, previous_order_time, MINUTE) AS minutes_diff | minutes_diff <= 5
->> For each cuisine, identify the most loyal customer (most repeat orders)| order_id, user_id, cuisine, order_date:  ROW_NUMBER() | WHERE rank = 1;
->> return the top 5% of users by revenue contribution | user_id,  revenue: PERCENT_RANK() OVER (ORDER BY revenue DESC) AS revenue_percentile |revenue_percentile <= 0.05
->> Calculate % of abandoned carts (added to cart but not ordered) | user- user_id, item_id, event_type, event_time & order - user_id, item_id, order_id, order_time
-   ROUND(100 * abandoned_count / total_added, 2) 
->> Find cities where lunch orders (12–3 PM) have higher revenue than dinner orders (7–10 PM)| order_id, user_id, city, order_time, order_amount
-   order_hour |	CASE WHEN order_hour BETWEEN 12 AND 14 THEN 'lunch'  WHEN order_hour BETWEEN 19 AND 21 THEN 'dinner' ELSE NULL | pivot-city, meal-period, revenue	
->> Find restaurants whose best-selling dish makes up over 60% of their revenue | restaurant_id, dish_id,  dish_name, quantity, price
-   restaurant_total_revenue, best_selling_dish,  best_dish_revenue / restaurant_revenue AS revenue_share, revenue_share > 0.6;
->> Identify consecutive login streaks for users where they logged in for at least three consecutive days | user_id, login_date
->> Identify users who have placed an order in two consecutive months but not in the third month | user_id, order_date
+>> Window functions: performing advanced calculations over a set of rows, go beyond simple aggregates or filters
+   SELECT *, SUM(sales) OVER (PARTITION BY id ORDER BY updated_at ROWS BETWEEN UNBOUNDED/2 PRECEDING AND CURRENT ROW) AS rolling_sum FROM my_table
+   max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /  first_value(cn) / last_value(cn) / nth_value(cn, n) /
+   row_number() / rank() / dense_rank() 
+   lag(cn) / lead(cn) / 
+   ntile(n) – n groups 
+   CUME_DIST() = Number of rows with values less than or equal to the current row / Total number of rows /   PERCENT_RANK() = Rank of current row−1 / Total rows−1
+>> SPLIT(REPLACE(name, '-', ' '), ' ')[OFFSET(0)] 
+>> CASE WHEN MOD(number, 2) = 0 THEN number ELSE NULL END AS Even,
+
+
+
+
+
+
+
+
+
+
 
 
 
