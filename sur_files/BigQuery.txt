@@ -1,7 +1,3 @@
-================================================================================================================================================
-
-
-
 =============================================================================================================================================
 
 >> Bigquery arch: storage and compute - decoupled/isolated (cost efficient)
@@ -32,9 +28,6 @@
     Why array & structs? – for better query per and lesser storage costs
     Arrays – list of items having same data type  -  SELECT element FROM mydataset.mytable, UNNEST(my_array) AS element; 
     Struct – record with nested fields having different data types  -   SELECT person.id, person.name FROM mydataset.mytable;
-
-
-
 >> bq slots: units of computational capacity -CPU and memory, Reservations: allow you to purchase dedicated slots (called commitments) 
 >> Big Query cost optimization
    bq compute optimization: on-demaned pricing, Capacity Pricing (slots reserve)
@@ -45,12 +38,11 @@
 =============================================================================================================================================
 >>
 DATE(DC in iso) / PARSE_DATE(format, DC) / SAFE.PARSE_DATE(format, DC)	-	Y, y / m, B, b / d, A, a / 
+FORMAT_DATE('%B %d, %Y', sale_date)
 extract(year from date)      						-     	year / month / date / hour / minute / second / microsecond /
-FORMAT_DATE('%B %d, %Y', sale_date)  	
-DATE_TRUNC(order_date, MONTH) 		
-DATE_DIFF(order_date, previous_date, day)
-Date_add(order_date, INTERVAL 5 day)
-Date_sub(order_date, INTERVAL 5 day)
+DATE_TRUNC(order_date, MONTH) 
+DATE_DIFF(order_date, previous_date, day) 
+Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
 
 >> FROM / WHERE / Filters / GROUP BY / HAVING / WINDOW functions like ROW_NUMBER() / SELECT / DISTINCT / ORDER BY / LIMIT or OFFSET
 
