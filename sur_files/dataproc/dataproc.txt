@@ -191,10 +191,9 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 ======================================================================================================================================================================
 
 year(col("timestamp_str"))  -  month / day / hour / minute / second 
-date_trunc("month", col("start_date"))
-datediff(col("transaction_date"), col("previous_transaction_date"))
-date_sub(col("start_date"), 10)
-date_add(col("start_date"), 10)
+date_trunc("month", "date_col") 
+date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600, 2)
+date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interval -2 year")
 
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
 >> What are the different ways to remove duplicate records ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy /
