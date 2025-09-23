@@ -46,6 +46,10 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
    CREATE MATERIALIZED VIEW mydataset.mv_high_value_sales AS
    SELECT  customer_id, SUM(amount) AS total_amount FROM  mydataset.sales WHERE  amount > 1000 GROUP BY  customer_id;
 >> Partitioning (single column, 4000 max) and clustering (sorts parti data in storage blocks, four col): Improved Query Performance, Cost Efficiency
+   CREATE TABLE mydataset.events_part_clustered
+   PARTITION BY DATE(event_date)
+   CLUSTER BY user_id
+   AS SELECT * FROM mydataset.events;
 >> Joins: - INNER JOIN / left join / right join / full join / cross join /
 >> Pivot: row into columns 	- product| month| sales  	- select * from table pivot(sum(sales) for month in ('Jan', 'Feb', 'Mar')); --> or use case statement
    unpivot: columns into rows 	- product | Jan | Feb | Mar	- select product, month, sales from table unpivot(sales for month in (Jan, Feb, Mar));
