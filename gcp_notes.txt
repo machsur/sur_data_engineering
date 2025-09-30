@@ -1,0 +1,357 @@
+==================================================================
+>> Cloud Composer: Apache airflow version in GCP for workflow (series of task) orchestration
+   A DAG (Directed Acyclic Graph) in Apache Airflow - is like workflow that tells Airflow what tasks to run, when to run them, and in what order.
+   Apache airflow operators guide: https://airflow.apache.org/docs/apache-airflow/stable/howto/operator/index.html
+
+-- create composer environment: runs on GKE
+    enable api, env_name, location, image version (cloud composer and airflow), Cloud Composer v2 API Service Agent Extension role to the service account
+    enivronment (schedular, triggerrer, web server, worker), network, bucket, cmek, ...
+
+-- Architexture of composer: Dags dir in gcs - each dag associated schedule with it - based on schedule, scheduler will trigger the dags - 
+   the Executor within scheduler, runs dag on worker nodes, metadata db stores info, Web server (for airflow UI)
+
+-- setup local vs code env and install required dependcies (pip install apache-airflow==2.3.3, pip install apache-airflow-providers-google)
+    use gcloud commands to intract with cloud composer env
+    deploy airflow dag into composer env by placing into gcs dags folder
+
+
+-- Advantage of cloud composer:
+   | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
+   | py app                             |       dataproc workflow                                            |
+   |              cloud composer                                                                              |
+
+>> dag constructor/class - with in dag id, default args, keyword args, tasks are created by instntiating operators - it helps to create dag object
+    note: multiple dags in one py script / one dag can spans multiple py scripts
+    Dags, task, operator (execute task at its scheduled time), sensor(pause task until specified condition mets ex: file arrives, record update)
+    Calling bash/py script in different folder / machine by using connections
+
+>> templating in Airflow : use templating to inject dynamic values (like macros and parameters) into your bash commands in Airflow.
+      https://airflow.apache.org/docs/apache-airflow/1.10.13/macros-ref.html#
+
+
+>> install packages in a Cloud Composer environment:
+   UI
+   gcloud composer environments update my-composer-env --location us-central1 --update-pypi-packages-from-file requirements.txt or --update-pypi-packages=pandas==1.3.3
+
+>> variables - key value pairs - stroes airflow metadata db - adv: avoid hardcoding, reusebility, flexibility, efficiency
+   -- my_var = Variable.get("my_variable")
+   -- my_var = Variable.get("non_existent_variable", default_var="Default Value")
+   -- Key: config & Value: {"retry_count": 3, "email": "admin@example.com"} / config = json.loads(Variable.get("config")) /       print(config["retry_count"])  # Output: 3
+   -- If you use Jinja in an Airflow task, you can access variables like {{ var.value.var_key }}
+
+>> why connection: CC connects with external machines usinng ssh and run the scripts.
+      in gcp - create custom connection for bq,gcs in cc - composer sa, download json key, place it in gcs, use gcs path - assign roles to sa
+
+   XCom (Cross-communication) - for passing small pieces of data between tasks - making workflows more dynamic and flexible
+   branching -  allows you to control the execution path of a workflow based on certain conditions - BranchPythonOperator 
+   Subdag : consists group of parellel tasks.
+   SLA (Service Level Agreement) - 
+      - is a time-based contract specifying how long a task or DAG should take to run. 
+      - If a task exceeds this time limit, Airflow will trigger an alert to notify that the SLA has been missed.
+
+>>
+   Apache Airflow with Kubernetes allows for a scalable and flexible infrastructure, integrating the dynamic orchestration power of Airflow with the container management       capabilities of Kubernetes. This integration provides benefits like dynamic resource allocation, auto-scaling, and isolated task execution in containers. There are two       primary ways Kubernetes can be integrated with Airflow:
+   --   Kubernetes Executor: Airflow tasks are dynamically launched in Kubernetes pods.
+   --   KubernetesPodOperator: Individual tasks are run inside Kubernetes pods, but Airflow is otherwise deployed with a different executor.
+
+>> Sensors continuously check (or "poke") to see if a condition has been met. 
+      Once the condition is satisfied, the sensor task succeeds, allowing the next task in the workflow to execute. 
+      If the condition is not met within the defined timeout period, the sensor fails.
+
+   Types of Sensors
+   FileSensor: Waits for a file to appear in a directory.
+   ExternalTaskSensor: Waits for another task in a different DAG to complete.
+   HttpSensor: Waits for an HTTP endpoint to return a certain response.
+   S3/GCSKeySensor: Waits for a file to appear in an S3 bucket.
+   TimeSensor: Waits until a specific time of day.
+
+>> Apache Airflow vs beam vs spark
+   Airflow: schedule and monitor workflows
+   Beam: data processing pipeline (google has cloud dataflow)
+   Spark: fast and general processing engine compatible with hadoop eco system. (Dataproc in Google)
+
+======================
+>> BashOperator --> running bash command / running bash script, python script placed in gcs data folder / running gcloud command
+>> pythonoperator -->> calling 1. py function (2. executes gcs py script) from dag / 
+>> The BranchPythonOperator : conditionally branch your DAG based on the output of a Python function. 
+>> DummyOperator: it does nothing / improve the readability and structure of the DAG. / act as a placeholder, or ensure that certain paths in the DAG are not left empty. 
+>> EmptyOperator: tasks that do nothing / used as a placeholder for tasks that will be defined later 
+
+================================
+Cloud functions:
+
+>> cloud functions (ist gen, 2nd gen) renaned to cloud run functions -->> then aligned with cloud run UI 
+    
+>> deploy function in cloud run
+    1) Deploy one revision from an existing container image (in Artifact Registry, Docker Hub)
+    2) Continuously deploy from a GitHub repository (source or function)
+    3) Use an inline editor to create a function
+
+>> trigger function based on event
+>> Its serverless – pay for what use like number innvocations
+
+>> 1st gen: timeout- 1 to 9 min / 2cpu 8 gb ram / 1 concurent request per fuction instance / only 7 event types support/ app eng sa  / 
+
+>> 2nd gen: timeout - 1 t0 10 min for event & 60 min for https/ 4 cpu 16gb ram / upto 1000 per inst / multiple function revisions and traffic splitting supported /
+    90+ event types support /  CE SA / container image build in backend using cloud build ci/cd pipeline
+
+=====================
+Data Fusion:
+>> Fully managed , cloud native solution to quickly building data pipelines
+>> Code free, Drag n drop tool
+>> 150+ preconfigured connectors & transformations
+>> Built with Open source CDAP
+>> 3 Edition are available: Developer / Basic / Enterprise
+
+>> enable api - create data fusion instance (apox 20 min) - click on view instance - opens web ui in new tab - 
+click on wrangler - select source (here csv files on GCS) - 
+apply transformations (split body column into multiple columns using parse as csv - remove body column - filter remove rows
+if value is empty - change data type - concate - upper - trim whitespaces - find and replace - fill null or empty values - custom transform - 
+extract fields - explode - join columns - swap columns - mask data - hash data using algorithum ) 
+- click on create pipeline - choose batch / stream here gcs supports batch pipeline - select bigquery target using sink - 
+configure bq properties (poject, dataset, table, review columns) - click on validate  - name your pipeline - deploy pipeline - configure pipeline - schedule or run on demand or airflow orch - 
+while running pipeline it will create dataproc cluster (provising - starting - running - failed or Succeeded - review logs  ) - 
+pipeline failed - review logs - click on actions - duplicate pipeline - click on wranger properties - remove hash algorithum trans - validate - 
+deploy pipeline - run it again
+
+
+>> use data fusion pipeline RunID to filter logs in logs explorer / use data fusion console to check logs.
+
+===========================================
+>> Databricks: big data processing 
+1. signup for databricks from marketplace to use on GCP. then page redirected to workspaces.
+2. create databricks workspace on GCP
+   data bricks run on cloud platform and utilizes some resorces from underlying gcp project.
+3. open workspace UI and spin up databrick clusters on GCP.(cluster mode, node type, runtime version-scala,spark)
+4. getting started with databrick notebook on cluster. (do developement using python code and use magic commands to interact with databricks fs)
+5. setup databricks cli/sdk or restApi for clients/servers on winodws.
+6. manage databricks clusters/fs/jobs/secreats using cli
+7. copy datasets from local dir to dbfs using cli
+8. process data in dbfs using spark sql in notebooks
+9. spark sql to find daily product revenue from the dbfs files
+10. convert csv to parquet with schema using pyspark.
+
+11. overview of databricks workflows
+    task1(py) --> task2(databricks app) --> task3a/3b(databricks app)--> task4(db app) --> task5(py app)
+               |                    databricks workflow                                 |
+    |                               external orchestration (airflow)                                     |
+12. Pass arguments to databricks python notebooks/ sql notebooks
+13. click on dataflow workflow - create job - under job define several tasks and dependency, also utlize cluster type based 
+     task load 
+    --> create and run first databricks job.
+    --> pass arg at task level / job level.
+    --> schedule the db workflow job in Job ui (but usally schedule these jobs using external orchestration i.e. airflow)
+14. real time databricks job
+    --> cleanup database and datasets. Task1
+    --> convert csv to parquet by applying schema. Task2
+    --> create spark sql table on top of parquet files. Task3
+    --> claucate daily product revenue from sql  tables and write result to target in parquet format. Task4
+    --> validata app (tasks) for ELT pipeline using databricks.
+    --> build ELT pipeline using databricks job in workflows.
+    --> run and review execution elt pipeline using databricks job.
+
+
+>> databricks --> developed by founder of apache spark, consists of spark engine, integrates with diff languages & cloud
+
+>> databricks concepts
+   -->> interface : UI / rest api / cli
+   -->> workspace : notebooks, dasboards, libraries, experiments
+
+====================================================
+
+>> Service Account Impersonation: Instead of giving a user or SA direct access to a resource, you allow them to impersonate a SA that has the required permissions. 
+   use: logging and SA opeartes the commands on behalf of user
+   Deployer Service Account: deployer-sa@my-project.iam.gserviceaccount.com Has roles/storage.admin.
+   Impersonator Identity (SA or user): user/SA Has roles/iam.serviceAccountTokenCreator & serviceAccountUser on the deployer SA.
+   gcloud storage buckets create gs://my-unique-bucket-name \
+     --project=my-project \
+     --impersonate-service-account=deployer-sa@my-project.iam.gserviceaccount.com \
+     --location=us-central1
+===========================================
+ACID:Imagine a transaction where Suresh transfers ₹1000 from Account A to Account B.
+Atomicity – All parts of a transaction must succeed or none at all.
+Consistency – The total money in the system remains ₹8000. No data corruption.
+Isolation – Transactions must not interfere with each other.
+Durability – Once a transaction is committed, it remains even in case of a system failure
+
+========================
+>> Vertex AI: provides tools to implement ML workflow
+   ingest, analyse, transform: using managed datasets, label & annotate data
+   create and train the model: AutoML- for image, video, text, tablar data it works great & custom - for frameworks, architexture
+   evaluate model for efficiency & opti: explainable AI (understand about model like which has more impact)
+   deploy the model : scalable H/W
+   predictions: get predections via cli, sdk, ui, api
+
+>> 
+
+============================
+
+serverless vs fully-managed vs hybrid:
+>> "pay as you use". No traffic, you pay nothing. 
+   Ex: Cloud Run, Cloud Function, AppEngine standard, firestore, datastore, dataproc, dataflow, ai-platform 
+>> managed but not serverless. 
+   You always have a minimal number of VM/node up and you pay for these, traffic or not.           
+   However, you have nothing to worry about: patching, updates, networking, backups, HA, redundancy(...) are managed for       you.  
+   Ex:like Cloud SQL, BigTable or Spanner, AppEngine flex
+>> hybrid product: 
+   you pay as you use the processing (BigQuery) or the traffic (Cloud Storage), 
+   storage is always billed if you have no traffic.
+   ex: Cloud Storage or BigQuery:
+
+================================
+>> Managed services in GCP: IaaS, PaaS, CaaS, FaaS, serverless - no infra visibility, zero request zero cost, pay for requests not servers. 
+   compute engine - IaaS
+   App Engine - PaaS, CaaS (simple), serverless(1+2)
+   cloud run - CaaS (simple), serverless
+   cloud function - FaaS, serverless(1+2+3)
+   GKE - CaaS (needs cluster)
+
+>> Why containers: microservices (flexibility in diff lang) - but deployment complex - thats where container 
+   docker is popular tool - create docker image with runtime, app code, dependcies - run image to create containers - adv: light weight, isolated, cloud nuetral
+   container orchestration sol (k8s) - offer features: autoscaling, service discovery, load balance, self healing, zero downtime deployments
+>> Cluster --> Node Pool --> node
+   App --> Container --> Pod, deployment, service, security (iam), logging & Monitoring
+>> 
+1. gcloud container clusters create
+2. login into cloud shell
+3. connect cluster: gcloud container clusters get-credentials my-cluster --zone us-central1-c --project my-kubernetes-project-304910
+4. deploy microservice to k8s:  
+   kubectl create deployment hello-world-rest-api --image=in28min/hello-world-rest-api:0.0.1.RELEASE (docker image pushed to docker hub)
+   kubectl get deployment
+   expose deploy: 
+   kubectl expose deployment hello-world-rest-api --type=LoadBalancer --port=8080
+   kubectl get services
+   kubectl get services --watch
+   curl 35.184.204.214:8080/hello-world
+5. increase no of instances of microservice: kubectl scale deployment hello-world-rest-api --replicas=3
+6. increase no of nodes of k8s cluster: gcloud container clusters resize my-cluster --node-pool default-pool --num-nodes=2 --zone=us-central1-c
+7. Autoscaling for microservice
+   kubectl autoscale deployment hello-world-rest-api --max=4 --cpu-percent=70
+   kubectl get hpa
+8. Autoscaling cluster
+   gcloud container clusters update my-cluster --enable-autoscaling --min-nodes=1 --max-nodes=10
+9. create config map - app to talk db
+   kubectl create configmap hello-world-config --from-literal=RDS_DB_NAME=todos
+   kubectl get configmap
+   kubectl describe configmap hello-world-config
+10. k8s secreats instead of config map
+    kubectl create secret generic hello-world-secrets-1 --from-literal=RDS_PASSWORD=dummytodos
+    kubectl get secret
+    kubectl describe secret hello-world-secrets-1
+   kubectl apply -f deployment.yaml
+11. deploy new ms with gcpu
+    gcloud container node-pools list --zone=us-central1-c --cluster=my-cluster
+    kubectl get pods -o wide
+12. delete microservice 
+     kubectl delete service hello-world-rest-api
+     kubectl delete deployment hello-world-rest-api
+13. delete cluster
+    gcloud container clusters delete my-cluster --zone us-central1-c
+
+===============================
+
+>> Secreat Manager: to store, manage and access screats.  use case- passwords, api keys, tls cert, etc..
+
+===============================
+pubsub - messaging system for stream analytics (kafca)
+use cases - real time data ingestion, iot devices / parallel processing / replicate data among db 
+
+publisher(IOT, App) --> sends message --> | Topic (here msg storage system) --> Subscription | -->
+message --> subscriber(BQ)
+subscriber ack message from subscription -  pull / push
+one to many / many to many / many to one
+
+IOT (publisher) --> pubsub (stream pipeline) --> dataflow (etl / subscriber) --> BQ--> Looker 
+                        gcs (batch pipeline) -->
+
+=================================
+
+ways to authenticate GCP:
+>> Application Default Credentials (ADC) in GCP: Default authentication in GCP-managed environments
+   Local: Use gcloud auth application-default login for local development.
+   Cloud: Deploy the code to GCP, where ADC will use the default service account.
+   gcloud auth application-default set-quota-project powerful-layout-445408-p5 
+   gcloud auth application-default login    (Quota project "powerful-layout-445408-p5" was added to ADC which can be used by Google client libraries for billing and quota.)
+   gcloud auth application-default print-access-token (to verofy credintial)
+>> Service Account Key file: Local scripts accessing GCP resources.  / used for on-prim app, other cloud, CI/CD pipelines
+   in Bash:   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your-service-account-key.json"
+   In Python: os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/path/to/service-account-key.json"
+>> OAuth 2.0: For web apps requiring user interaction / You are building a web app that allows users to access their Google Drive.
+>> Using User Credentials: Easy for local development
+   gcloud auth login / gcloud auth application-default login
+>> Workload Identity Federation: Your app is running on AWS Lambda, and you need it to access GCP Storage.
+
+================================
+Ways to interact with GCP:
+UI / CLI - Cloud shell (preconfigured cloud SDK) & Terminal/cmd (install cloud sdk) / Client libraries / Rest api
+
+================================
+
+IAM
+Identity: user, groups, SA, domain
+Resource
+Roles – primitive, predefined, custom
+Policy – binding identity with role
+SA- default, user-maintained, google-maintained
+
+App on vm – accessing GCS bucket
+On-prim - accessing GCS bucket (long-lived)
+On-prim – GCP API (short-lived)
+Static website - accessing GCS bucket (public access)
+
+Bucket level accesses – IAM (uniform)
+Object level accesses – ACL (fine-grained)
+Signed url – user (gcp account not required) can read object from GCS using signurl for specified period.
+
+==============================
+
+GKE:
+https://www.okteto.com/blog/kubernetes-basics/
+
+==============================
+
+data base concepts:
+Fact tables - contain numerical data, 
+dimension tables - provide context and background information.
+
+Star schema contains a fact table surrounded by dimension tables.
+Snowflake schema is surrounded by dimension table which are in turn surrounded by dimension table
+
+===============================
+
+Dataprep for data preparation (cleaning, wrangling) for analysis and ML 
+- built by trifacta 3rd party tool – need to share data with trifacta (dis adv)
+- serverless
+- automatically detects schema and anomalies
+ 
+Raw – prepare data using dataprep – run job on dataflow/trifacta(for small dataset) – dataflow job created – 
+
+===============================
+
+Could build – builds container image deployed to cloud run – cloudrun see metrics, versions, traffic
+Pre-requisites:
+Cloudfunctions api / cloud build api (its ci-cd tool to deploy function)/cloud logging api/ cloud pubsub api/ eventarc api
+
+Project IAM admin role – 
+
+===============================
+
+Cloud composer:
+Manages apache airflow env on GCP
+
+===============================
+
+Cloudrun:
+Container to production in sec
+
+Automate Python script execution on GCP
+
+ 
+https://github.com/rafaello9472/c4ds/tree/main/Automate%20Python%20script%20execution%20on%20GCP%20
+
+===============================
+
+
+
+
+

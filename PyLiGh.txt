@@ -1,0 +1,241 @@
+============================================================================================================================================================
+>> BigO
+	time complexity: code1 - 15 sec < code2-60sec, means code1 is better than code2 / different machine time varies / so, we measure in terms of no of operations
+	Space complexity: code1 15sec but larger space and code2 60sec lesser space, here code2 is better if we concern about space.
+
+>> omega (best case), theta (avg case), omecron (bigO-worst case)	
+	O(1) - const oper even n varies
+	O(logn) - 2^3 = 8 / log8=3 / divide two parts
+	O(n) - for loop
+	O(nlogn) - some sorting algortiums
+	O(n2) - nested for loop
+	for different inputs - O(a+b) - O(a*b)
+
+>> 
+============================================================================================================================================================================
+Python:
+>> Interpreter: The programme that runs your code.
+>> Virtual Environment: Python interpreter + dependencies  - Keeps dependencies isolated from other projects
+	python -m venv myenv	/ 	venv\Scripts\activate	/	pip install <package-name>	/	deactivate	/
+>> pip - tool for install python packages
+>> pypi - centralized repository for py packages
+>> terminate the python programme  ---> sys.exit()
+>> Shebang: #!/usr/bin/python3.5  -  tells the operating system which interpreter to use to run the file. 
+>> set path in windows: allows to run script from cmd
+   hide passwords in Windows and access them securely from Python, you can use environment variables or more secure options like the Windows Credential Manager   
+   Config Files: great way to manage settings (API keys,..) separately from your main Python code.
+>> variables, lists, tuple, set, dictionory
+>> Datatypes: None, Numeric (int, float, bool, complex), sequence(list, tuple, set, range, string), mapping(dictinory)
+>> operators: arthematic: +  comparision: ==   logical: and or not   identify: x is y    membership:  x in y  
+>> swap variables
+>> user input: input / int / eval / python file.py 6(sys.argv[1]) 2 /
+>> if elif else / while loop / for loop / for else / break continue pass /
+>> why arrays than lists: Optimized/faster, memory efficient for mathematical operations for numerical data.
+   Why NumPy: to work with multi-dimensional arrays 
+   why Pandas:  handle tabulaer data - data scientist life easier and effective (Python - Need to write code, Excel - Can not handle large data)
+>> functions: positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data) /Global variable & local variable  
+   recursion: function calling it self ex: factorial using recurssion
+   anonymous function, short, one-line function: lambda -- map, filter, reduce
+   List comprehensation: create new list from existiong list or other iterals
+>> decorator: adding extra feature to the existing function without touching them.
+>> Special variable: __name__ == __main__
+>> OOPS: Class, object, constructer (__init__), self, variables: instance & class var, metd: instance & class & static mtd,  inner class
+   inheritance: single level & multi level & multiple,  constructor in inheritance: super().__init__/mtd | MRO
+   polymorphisum: Duck typing, operator overloading, method overloading: NA (achive by a=None), method overriding: child class method overrides parent class mtd 
+>> Encaptulation: 
+	public variable: can access outside class
+	private variable: cannt acces from outside of class
+	protected variable: can access from derived class, other not
+>> Abstract class & method
+>> iterators: 
+ 
+>> Handlling errors: using the try-except block --> any error in the try block, exception will be raised and it caught by except block
+   compile time error: Syntatical, Logical error: wrong output - used * instead of +, run time error:  occur while the program is running --- print(5 / 0) 
+>> multi threading: You're doing multiple tasks at once — that's what multithreading is in a program.
+>> file handling, Comments
+>> library (group of packages) --> Package (folder - collection of modules) ---> module (file1.py)
+>> Why Logging Instead Print: Levels, Output Options, format, Production-Ready.
+>> file operations:
+-- Magic/Tunder/double underscore methods: enable you to define the behavour of objects for built-in operations such as arth ope, comp oper, more
+
+
+
+
+
+
+	
+
+
+=================================================================================================================================
+
+
+>> find student details corresponding to max_marks:    student = [('suresh', 'ong', 85), ('seshu', 'bng', 74), ('naven', 'kk', 40)]
+>> Given an array, find the minimum and maximum values:    ans. builtin mtds, sorting, python code
+>> Given a string, count the char occurrences of word in a dictionary:    Input: 'aaabbbccddeeeee'
+>> Count Vowels from Given words .
+>> find line_count, words, chars in the files
+>> Write a Python script to count the frequency of characters/words in a text file.  
+>> Reversing a String using an Extended Slicing techniques. -------> builtin / slicing / code
+>> Find the highest occurrences of each word from string and sort them in order.
+>> Remove Duplicates from List. 
+>> Sort a List without using Sort keyword. built-in / bubble sort /
+>> Find the pair of numbers in this list whose sum is n no.
+>> Read and print values from an Excel file using Pandas.
+>> Handle file exceptions (missing or corrupted Excel files) gracefully. no error in try block --> try - else - finally /// error ---> except - finally
+>> Calculate the Intersection of Two Lists without using Built-in Functions:      print(set(ls1) & set(ls2)) or lss =[item for item in ls1 if item in ls2]
+>> What is a docstring in Python?  Docstrings are enclosed in triple quotes (""" or ''') and can span multiple lines.
+>> What is pass in Python? When is it used? --> Placeholder for future class/function / It does nothing when executed 
+>> Which data structure occupies more memory: list or tuple? Why? --> lists occupy more memory --> their size and contents can change, more methods
+	print(sys.getsizeof(list_obj))   # e.g., 120 bytes
+>>  Given a list [2, 3, 4, 5, 6], how can you sum all elements? (Discuss available functions)
+>>  What is a constructor? -> is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
+>> Find out common letters between two strings Using Python
+>> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
+>> FIND MISSING NUMBER IN AN ARRAY IN PYTHON  :  n(n+1)/2 - sum(array_elements)
+
+>> PRINT PATTERNS
+>> number is prime or not
+>> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
+>> Factorial
+>> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
+>> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]  //
+   [p['name'] for p in people if p['age'] > 30]      //   unique_words = list({word.lower() for word in "Hello world hello".split()})
+>> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
+>> What is the difference between list and tuple in Python?
+>> array contains duplicates - use for in for (n2, 1) - compare element with previous element (n, n)
+
+
+================================================
+
+==========================
+https://allthingdata.substack.com/p/essential-linux-commands-for-data         
+
+>> Why linux rather than winndows, macos:  open source & free to use, multi-users work on shared system , good security (no antivirus req), stable and reliable
+
+>> user --> give commands on terminal --> shell(program/CLI) interprets and executes/passes them on --> OS
+  type of shell: bash, etc.
+  why bash shell: feature-rich, fast, very common
+
+>> Bash Script structure:
+    shebang line - tell to shell what type of script running like bash, py, etc
+    commands
+    exit statement - 0 successful; 1-255 unsuccessful
+    chmod + to give executable permissions for script
+
+    script more professional: comments (#) / Author: / Date Created / Date Modified / Description / Usage
+
+>> 
+-- sudo su - , useradd - seshuu , passwd seshuu, su - seshuu , sudo apt install ncal
+-- nproc, cal 2023, cat /etc/shells, echo $SHELL
+-- touch FN, vi/vim/nano FN
+-- ls -a -R -ltr -h (a hidden, R recurssive, l detail list, t time latest file first, r reverse, h human readble)
+-- cd ~    	>> cd ../..     	>> pwd      	>> clear 
+
+-- File Operations
+navigation
+listing
+copying
+removing
+moving
+file viewing
+File editing (vi editor)
+
+# Force remove (use with caution!)
+rm -f locked_file.csv
+-- file viewing: cat data.csv / head data.csv (10 lines) / head -n 5 data.csv / tail data.csv (10 lines) / tail -n 20 data.csv
+   file editing: vi data.csv (i, esc, :w, :q, :wq, :q! - quit without saving )
+-- file permissions:  owner group other (rwx - 421)    	 >> chmod 744 sur.txt
+-- Search and Pattern Matching
+	grep -i -r -c "error" pipeline.log (# Case insensitive search / # Recursive search in directory /# Count occurrences)
+	# Find files by name  		>> find /data -name "*.csv"
+	# Find files modified in last 24 hours 		>> find /data -mtime -1	
+	# Find and execute command 		>> find /data -name "*.tmp" -exec rm {} \;
+
+# Follow log file in real-time (crucial for monitoring data pipelines)
+tail -f pipeline.log
+-- convert shell script onto bash script (shebang) -- #!/bin/bash (in first line of script)
+-- editing path variable (./hello.py - hello.py works now) --- echo $PATH, export PATH=$PATH:/home/surmacha/scripts
+-- adding comments #
+-- variables: 
+	make script generic & dynamic 
+	datatype is blind/untyped, 
+	constant variable (cant reassign later ex-PI) - readonly PI=3.1452
+	command substution -- today=$(command) or `command` -- echo $today
+
+
+
+>> https://allthingdata.substack.com/p/essential-linux-commands-for-data
+
+
+==========================================================
+
+Here are the Git commands that make up most of my workflow: 
+
+working dir : your code
+staging area: temporary holding spot for changes before committing
+local repository: store committed changes locally
+remote repository: server like github for sharing and backing up code
+
+1. `git diff`: Peek into file changes not staged yet. 
+2. `git commit -a -m "commit message"`: Commit all tracked changes with a snappy message. 
+3. `git status`: Get a snapshot of your working directory. 
+4. `git add file_path`: Stage specific files for commit. 
+5. `git checkout -b branch_name`: Create and hop onto a new branch. 
+6. `git checkout branch_name`: Switch to an existing branch. 
+7. `git commit --amend`: Polish or edit your last commit. 
+8. `git push origin branch_name`: Push a branch to the remote repo. 
+9. `git pull`: Grab and merge the latest remote changes. 
+10. `git rebase -i`: Rewrite commit history with interactive rebase. 
+11. `git clone`: Copy a remote repo to your local machine. 
+12. `git merge`: Combine branches seamlessly. 
+13. `git log --stat`: Dive into commit logs with stats. 
+14. `git stash`: Temporarily save your changes for later. 
+15. `git stash pop`: Reapply stashed changes like a pro. 
+16. `git show commit_id`: Uncover details about a specific commit. 
+17. `git reset HEAD~1`: Undo the last commit, but keep your local changes. 
+18. `git format-patch -1 commit_id`: Create a patch for a particular commit. 
+19. `git apply patch_file_name`: Apply changes from a patch file. 
+20. `git branch -D branch_name`: Ruthlessly delete a branch. 
+21. `git reset`: Roll back commits by moving the branch pointer. 
+22. `git revert`: Undo commits by creating a "rollback" commit. 
+23. `git cherry-pick commit_id`: Apply a specific commit's changes onto your branch. 
+24. `git branch`: Display all branches in the repo. 
+25. `git reset --hard`: Reset everything to a previous commit, nuking uncommitted changes. 
+
+
+Here are the Git commands that make up most of my workflow: 
+
+working dir : your code
+staging area: temporary holding spot for changes before committing
+local repository: store committed changes locally
+remote repository: server like github for sharing and backing up code
+
+git clone
+git clone: Copy a remote repo to your local machine. 
+git pull: Grab and merge the latest remote changes. (git fetch - RR to LR + git merge - LR to WR)
+
+git status`: Get a snapshot of your working directory. 
+git log --stat / --oneline /: Dive into commit logs with stats. 
+git branch / git branch / git checkout -b branch_name / git merge branch_name / git branch -d branch_name / 
+
+git add file_path / . : Stage specific files for commit. 
+git commit -m "commit message
+git commit -a -m "commit message"`: Commit all tracked changes with a snappy message. 
+git commit --amend -m "Initial commit with additional file": Polish or edit your last commit. 
+git push origin branch_name`: Push a branch to the remote repo. 
+
+1. `git diff`: Peek into file changes not staged yet. 
+5. `git checkout -b branch_name`: Create and hop onto a new branch. 
+6. `git checkout branch_name`: Switch to an existing branch. 
+10. `git rebase -i`: Rewrite commit history with interactive rebase. 
+14. `git stash`: Temporarily save your changes for later. 
+15. `git stash pop`: Reapply stashed changes like a pro. 
+16. `git show commit_id`: Uncover details about a specific commit. 
+17. `git reset HEAD~1`: Undo the last commit, but keep your local changes. 
+18. `git format-patch -1 commit_id`: Create a patch for a particular commit. 
+19. `git apply patch_file_name`: Apply changes from a patch file. 
+21. `git reset`: Roll back commits by moving the branch pointer. 
+22. `git revert`: Undo commits by creating a "rollback" commit. 
+23. `git cherry-pick commit_id`: Apply a specific commit's changes onto your branch. 
+25. `git reset --hard`: Reset everything to a previous commit, nuking uncommitted changes. 
+
