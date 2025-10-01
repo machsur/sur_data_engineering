@@ -64,14 +64,15 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
    lag(cn) / lead(cn) / 
    ntile(n) – n groups 
    CUME_DIST() = Number of rows with values less than or equal to the current row / Total number of rows /   PERCENT_RANK() = Rank of current row−1 / Total rows−1
->> SPLIT(REPLACE(name, '-', ' '), ' ')[OFFSET(0)] 
->> CASE WHEN MOD(number, 2) = 0 THEN number ELSE NULL END AS Even,
 >> SELECT customer_id, SUM(CASE WHEN region = 'North' THEN sales_amount ELSE 0 END) AS north_sales, .... FROM orders GROUP BY customer_id;
    select * from (select customer_id, region, sales_amount from orders) pivot(sum(sales_amount) for region in ('north', 'south', 'east', 'west'));
 >> WITH CustomOrder AS (SELECT emp_name, emp_dep, CASE WHEN emp_dep = 'it' THEN 1 WHEN emp_dep = 'hr' THEN 2 WHEN emp_dep = 'sales' THEN 3 end as emp_dept_sort,     
    ROW_NUMBER() OVER(PARTITION BY emp_dep ORDER BY emp_name) AS row_num  FROM table) | SELECT * FROM CustomOrder ORDER BY emp_dept_sort, row_num;
 >> Src, beforeTgt, tgt after src ing: MERGE INTO target_table AS T  USING source_table AS S  ON T.id = S.id	
    WHEN MATCHED THEN UPDATE SET T.name = S.name WHEN NOT MATCHED THEN INSERT (id, name) VALUES (S.id, S.name);
+>> 
+Length	Upper	Lower	substr 	Trim	Replace		Concat		Position:STRPOS,instr	Split	Starts_With 	Ends_With
+
 
 
 ==================================================================DataProc======================================================================================
