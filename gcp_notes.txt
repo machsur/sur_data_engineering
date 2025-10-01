@@ -1,3 +1,5 @@
+===============>> cloud scheduler
+
 ================>> composer
 >> Cloud Composer: Apache airflow version in GCP - for workflow (series of task) orchestration - defined by DAG
 >> Architexture of composer: Dags dir in gcs - scheduler will trigger the dags - runs dag on worker nodes - metadata db stores inf0 - Web server (for airflow UI)
@@ -10,67 +12,20 @@
 >> Cloud run functions: 1st gen >> 2nd gen runs on cloud run >> renaned to cloud run functions (aligned with cloud run UI)
 >> trigger function on event basis
 
-=====================
-Data Fusion:
->> Fully managed , cloud native solution to quickly building data pipelines
->> Code free, Drag n drop tool
->> 150+ preconfigured connectors & transformations
->> Built with Open source CDAP
->> 3 Edition are available: Developer / Basic / Enterprise
-
->> enable api - create data fusion instance (apox 20 min) - click on view instance - opens web ui in new tab - 
-click on wrangler - select source (here csv files on GCS) - 
-apply transformations (split body column into multiple columns using parse as csv - remove body column - filter remove rows
-if value is empty - change data type - concate - upper - trim whitespaces - find and replace - fill null or empty values - custom transform - 
-extract fields - explode - join columns - swap columns - mask data - hash data using algorithum ) 
-- click on create pipeline - choose batch / stream here gcs supports batch pipeline - select bigquery target using sink - 
-configure bq properties (poject, dataset, table, review columns) - click on validate  - name your pipeline - deploy pipeline - configure pipeline - schedule or run on demand or airflow orch - 
-while running pipeline it will create dataproc cluster (provising - starting - running - failed or Succeeded - review logs  ) - 
-pipeline failed - review logs - click on actions - duplicate pipeline - click on wranger properties - remove hash algorithum trans - validate - 
-deploy pipeline - run it again
-
-
+================>> Data Fusion
+>> Data Fusion: Code free, Drag and drop tool - 150+ preconfigured connectors 
+>> enable api - create data fusion instance (apox 20 min) - click on view instance - opens web ui in new tab - click on wrangler - select source (here csv files on GCS) - 
+   apply transformations - click on create pipeline - select bigquery target using sink - click on validate  - name your pipeline - deploy pipeline - configure pipeline -      schedule or run on demand or airflow orch - 
+   while running pipeline it will create dataproc cluster (provising - starting - running - failed or Succeeded - review logs  ) - pipeline failed - review logs - click on     actions - duplicate pipeline - click on wranger properties - remove hash algorithum trans - validate - deploy pipeline - run it again
 >> use data fusion pipeline RunID to filter logs in logs explorer / use data fusion console to check logs.
 
-===========================================
+=================>> Databricks
 >> Databricks: big data processing 
-1. signup for databricks from marketplace to use on GCP. then page redirected to workspaces.
-2. create databricks workspace on GCP
-   data bricks run on cloud platform and utilizes some resorces from underlying gcp project.
-3. open workspace UI and spin up databrick clusters on GCP.(cluster mode, node type, runtime version-scala,spark)
-4. getting started with databrick notebook on cluster. (do developement using python code and use magic commands to interact with databricks fs)
-5. setup databricks cli/sdk or restApi for clients/servers on winodws.
-6. manage databricks clusters/fs/jobs/secreats using cli
-7. copy datasets from local dir to dbfs using cli
-8. process data in dbfs using spark sql in notebooks
-9. spark sql to find daily product revenue from the dbfs files
-10. convert csv to parquet with schema using pyspark.
-
-11. overview of databricks workflows
+>> spin up databrick clusters on GCP  >> copy datasets from local dir to dbfs using cli >> process data >> save in target
+>> overview of databricks workflows
     task1(py) --> task2(databricks app) --> task3a/3b(databricks app)--> task4(db app) --> task5(py app)
                |                    databricks workflow                                 |
     |                               external orchestration (airflow)                                     |
-12. Pass arguments to databricks python notebooks/ sql notebooks
-13. click on dataflow workflow - create job - under job define several tasks and dependency, also utlize cluster type based 
-     task load 
-    --> create and run first databricks job.
-    --> pass arg at task level / job level.
-    --> schedule the db workflow job in Job ui (but usally schedule these jobs using external orchestration i.e. airflow)
-14. real time databricks job
-    --> cleanup database and datasets. Task1
-    --> convert csv to parquet by applying schema. Task2
-    --> create spark sql table on top of parquet files. Task3
-    --> claucate daily product revenue from sql  tables and write result to target in parquet format. Task4
-    --> validata app (tasks) for ELT pipeline using databricks.
-    --> build ELT pipeline using databricks job in workflows.
-    --> run and review execution elt pipeline using databricks job.
-
-
->> databricks --> developed by founder of apache spark, consists of spark engine, integrates with diff languages & cloud
-
->> databricks concepts
-   -->> interface : UI / rest api / cli
-   -->> workspace : notebooks, dasboards, libraries, experiments
 
 ====================================================
 
