@@ -56,7 +56,14 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
    SELECT customer_id, SUM(CASE WHEN region = 'North' THEN sales_amount ELSE 0 END) AS north_sales, .... FROM orders GROUP BY customer_id;
    unpivot: columns into rows 	- product | Jan | Feb | Mar	- select product, month, sales from table unpivot(sales for month in (Jan, Feb, Mar));
 >> Union all / Union distinct  / Except distinct / Intersect distinct / Table wildcards: test_*` where _Table_Suffix > 5
->> Length	Upper	Lower	substr 	Trim	Replace		Concat		Position:STRPOS,instr	Split	Starts_With 	Ends_With	CAST	SAFE_CAST 
+>> Length	Upper	Lower	substr 	Trim	Replace		Concat		Position:STRPOS		Split	Starts_With 	Ends_With	CAST	SAFE_CAST 
+   Length	Upper	Lower	substr 	Trim	Replace		Concat		Position:instr		Split	StartsWith 		EndsWith	CAST	CAST 
+
+   coalesce/ifnull
+   coalesce
+
+
+   initcap	concat_ws
 
 ==================================================================DataProc======================================================================================
 
@@ -74,7 +81,6 @@ hdfs dfs -help ls
 
 ===================> low-level api Syntax
 
-
 >> rdd = spark.sparkContext.parallelize(data)  /  rdd = spark.sparkContext.textFile(hdfs_gcs_path) 
 >> rdd1 = rdd.filter(lambda row: 'Frieza' in row) / rdd1 = rdd.filter(lambda row : row!=header)  - header = rdd.first()
    rdd1 = rdd.flatMap(lambda line:line.split(' ')).map(lambda word:(word,1)).reduceByKey(lambda a,b : a+b)   ---> word count programme
@@ -83,6 +89,11 @@ hdfs dfs -help ls
 >> rdd.first() / rdd.collect() / rdd.take(3) / rdd1.countByValue()
    
 ===================>> high-level api syntax
+
+>> year(col("timestamp_str"))  -  month / day / hour / minute / second 
+	date_trunc("month", "date_col") 
+	date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600, 2)
+	date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interval -2 year")
 
 >> custom_schema = StructType([StructField("id", IntegerType(), True), ....]) or ''' ID Integer, Name String '''
    df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).json("file:///path_to_file/data_files/")
@@ -97,9 +108,6 @@ hdfs dfs -help ls
 >> union tables: union/subtract/intersect/   -->> / col name, position, schema match /
    union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
 >> add new column, drop columns, column name change, column type change 
->> initcap / lower / trim /  coalesce('cn1', 'cn2','cn3') / substring(col("name"), 1, 3)  / length(col("name"))  / 
-	regexp_replace(col("phone"), "-", "") / regexp_extract(col("email"), "@(.+)", 1) / instr(col("name"), "a")
-    concat(df.FirstName, lit(" "), df.LastName) / concat_ws(' | ', col("Region"), col("Country"))
 >> df.dropna(how="all/any", subset=["age"]).show()
    df.fillna({'name': 'suresh', 'age': 40}).show()   /   avg_value = df.select(avg("age")).collect()[0][0]
    df.replace(to_replace=['Alice', 'Bob'], value=['suresh', 'unknown']).show()
@@ -114,8 +122,6 @@ hdfs dfs -help ls
 >> splitng column, array_length (size), word in array (array_contains), explode/explode_outer, indexing: [0] or .getItem(0)
 >> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
    unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
->> Dates
-
 
 ==================> spark-sql 
 
@@ -255,10 +261,7 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 
 ==============> coding QA
 
-year(col("timestamp_str"))  -  month / day / hour / minute / second 
-date_trunc("month", "date_col") 
-date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600, 2)
-date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interval -2 year")
+
 
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
 >> What are the different ways to remove duplicate records ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy /
