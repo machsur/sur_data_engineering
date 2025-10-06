@@ -55,8 +55,11 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
    SELECT customer_id, SUM(CASE WHEN region = 'North' THEN sales_amount ELSE 0 END) AS north_sales, .... FROM orders GROUP BY customer_id;
    unpivot: columns into rows 	- product | Jan | Feb | Mar	- select product, month, sales from table unpivot(sales for month in (Jan, Feb, Mar));
 >> Union all / Union distinct  / Except distinct / Intersect distinct / Table wildcards: test_*` where _Table_Suffix > 5
->> Length	initcap Upper	Lower	substr 	Trim	Replace		Concat		STRPOS/instr		Split	Starts_With/StartsWith 		Ends_With/EndsWith	CASE SAFE_CAST/CAST    coalesce		ifnull/E   	
-	E/concat_ws		round 	abs		ceil 	floor	safe_devide/when	if/when		case/when	generate_uuid()/expr("uuid()")
+>> Length	Upper	Lower	substr 	Trim	Replace		Concat		STRPOS/instr		Split	Starts_With/StartsWith 		Ends_With/EndsWith	
+	SAFE_CAST/CAST    	coalesce		ifnull/E   	E/concat_ws		
+	round 	abs		ceil 	floor	safe_devide/when	
+	if/when		case/when	
+	generate_uuid()/expr("uuid()")
 
 ==================================================================DataProc======================================================================================
 
