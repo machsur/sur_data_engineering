@@ -68,7 +68,7 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
 	round 	abs		ceil 	floor	safe_devide/when	
 	if		case	
 	generate_uuid()
-
+hi
 ===========================
 
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
