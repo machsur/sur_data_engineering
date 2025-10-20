@@ -60,7 +60,7 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
 	round 	abs		ceil 	floor	safe_devide/when	
 	if/when		case/when	
 	generate_uuid()/expr("uuid()")
-
+>> Execute Immidiate: runs the dynamically constructed query
 ==================================================================DataProc======================================================================================
 
 ===================> links:
