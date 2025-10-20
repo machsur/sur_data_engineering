@@ -1,2 +1,21 @@
 
+>> What is AI: development of computer systems/ machines that simulates human intelligence, such as visual perception, speech recognition,
+    Self-driving cars, Email Grouping, Recommendation Systems, Play Chess
+>> Types of AI:
+    Strong AI (General AI): Machine intelligence = Human intelligence
+    Narrow AI (Weak AI): Designed for a specific task
+>>
+  Traditional Programming: Based on Rules - IF this THEN do that
+  Machine Learning: Learns from examples (instead of rules)
+  AI: Full system that mimics human intelligence
+
 >> Creating ML models -steps
+  1: Data Ingestion   2: Data Preparation   3: Model Training   4: Model Deployment   5: Model Management
+
+>> Data Types
+  Structured Data: organized and easily searchable - Employee table - columns for ID, department, salary
+  Unstructured Data: Free-form, lacks a predefined format - customer emails describing issues in their own words, User review on a website
+  Labeled data: data tagged with meaning (Tags help ML models learn relationships)
+         Images tagged as “cat” or “dog”, Customer reviews labeled: positive, negative, neutral - Used in supervised learning
+  Unlabeled data: raw data with no predefined tags (Models must discover patterns without guidance) - 
+         Customer reviews, A folder of random photos with no captions or tags  - Used in unsupervised or semi-supervised learning
