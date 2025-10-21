@@ -6,8 +6,18 @@
     Narrow AI (Weak AI): Designed for a specific task
 >>
   Traditional Programming: Based on Rules - IF this THEN do that
-  Machine Learning: Learns from examples (instead of rules)
   AI: Full system that mimics human intelligence
+  Machine Learning: A subset of AI where machines learn from data. 
+  GenAI: An subset of ML that creates new content (Instead of making predictions in ML) - ex: Text Generation, Code Generation, Media Creation
+        1. uses Foundation Models - tarined with Complex Process, Huge Volumes of Data, Specialized Hardware
+        2. Large Language Models: Text Foundation Models - Trained on huge volumes of diverse text data
+        3. Diffusion Models: Turning Noise into Art - great at generating images, audio, and video
+
+>> Foundation Models in GCP: Google AI Studio to Play with Foundation Models.
+Gemini: Multimodal capabilities: Understand and generate language, Write and explain code, Create images and videos
+Imagen: Trained on: Images + Text descriptions - Specializes in: Text-to-image generation, Image editing from prompts, Understanding image content
+Chirp: Trained on Massive multilingual audio datasets - Real-time transcription of meetings, calls, and lectures, Audio translation across languages
+Veo: Text-to-Video, Image-to-Video
 
 >> Creating ML models -steps
   1: Data Ingestion   2: Data Preparation   3: Model Training   4: Model Deployment   5: Model Management
@@ -15,7 +25,8 @@
 >> Data Types
   Structured Data: organized and easily searchable - Employee table - columns for ID, department, salary
   Unstructured Data: Free-form, lacks a predefined format - customer emails describing issues in their own words, User review on a website
-  Labeled data: data tagged with meaning (Tags help ML models learn relationships)
-         Images tagged as “cat” or “dog”, Customer reviews labeled: positive, negative, neutral - Used in supervised learning
-  Unlabeled data: raw data with no predefined tags (Models must discover patterns without guidance) - 
-         Customer reviews, A folder of random photos with no captions or tags  - Used in unsupervised or semi-supervised learning
+  Labeled data: data tagged with meaning (Tags help ML models learn relationships) - Images tagged as “cat” or “dog”, Customer reviews labeled: positive, negative, neutral 
+                labelled data used in supervised learning - Learn from past → Predict the future
+  Unlabeled data: raw data with no predefined tags (Models must discover patterns without guidance) - customer reviews, A folder of random photos with no captions or tags  
+                unlabelled data used in unsupervised or semi-supervised learning - Here’s a mess —> can you make sense of it?”
+                reinforcement learning: Try → Fail or Succeed → Learn → Try Again - Child Learn to Walk
