@@ -30,3 +30,22 @@ Veo: Text-to-Video, Image-to-Video
   Unlabeled data: raw data with no predefined tags (Models must discover patterns without guidance) - customer reviews, A folder of random photos with no captions or tags  
                 unlabelled data used in unsupervised or semi-supervised learning - Here’s a mess —> can you make sense of it?”
                 reinforcement learning: Try → Fail or Succeed → Learn → Try Again - Child Learn to Walk
+
+>> vertex AI: ML/AI platform in gcp
+-- ML in Google Cloud – After Generative AI (Foundation models trained on vast, diverse datasets)
+    1. Use Pretrained APIs: Natural Language API, Vision API, Speech-to-Text, etc. - Fastest way to integrate AI into applications — just call the API
+    2. Use Foundation Models (as-is via API) - Vertex AI Model Garden: Gemini, or Partner models like Llama
+    3. Customize Foundation Models - Vertex AI Model Garden + Fine Tuning: Fine-tune base models using your domain-specific data
+    4. Vertex AI AutoML - build from scratch without extensive ML expertise
+    5. Vertex AI Custom Models - build from sratch with deep ML expertise - Use frameworks like TensorFlow, PyTorch,..
+
+-- End-to-end MLOps: From data to predictions
+    Fully managed infrastructure >> Datasets >> Experiments >> Model Registry >> Model Monitoring
+
+-- Vertex AI Studio - Gen AI Made Easy 
+    Model Garden - Prompt Gallery - Tuning 
+
+-- Model vs Agent vs Application
+    Model: generates content Example: “Summarize this document”
+    Agent: Goal-oriented system that uses models and tools to take action Example: “Send summary to team and schedule a review”
+    Application: User-facing interface that embeds one or more agents into a workflow Example: Chatbot for managing leave requests
