@@ -63,6 +63,7 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
    unpivot: columns into rows 	- product | Jan | Feb | Mar	- select product, month, sales from table unpivot(sales for month in (Jan, Feb, Mar));
 >> Union all / Union distinct  / Except distinct / Intersect distinct / Table wildcards: test_*` where _Table_Suffix > 5
 >> SPLIT(full_name, ' ')[OFFSET(0)]
+>> +	 -	 * 	/ 	MOD(10, 3)		ROUND(value, digits) 	CEIL(value) 	FLOOR(value) 	ABS(value) 	POWER(x, y) 
 >> Length	Upper	Lower	substr 	Trim	Replace		Concat		STRPOS		Starts_With 		Ends_With	
 	SAFE_CAST/CAST    	coalesce		ifnull/E   	E/concat_ws		
 	round 	abs		ceil 	floor	safe_devide/when	
