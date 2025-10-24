@@ -62,10 +62,12 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
    SELECT customer_id, SUM(CASE WHEN region = 'North' THEN sales_amount ELSE 0 END) AS north_sales, .... FROM orders GROUP BY customer_id;
    unpivot: columns into rows 	- product | Jan | Feb | Mar	- select product, month, sales from table unpivot(sales for month in (Jan, Feb, Mar));
 >> Union all / Union distinct  / Except distinct / Intersect distinct / Table wildcards: test_*` where _Table_Suffix > 5
+>> CASE WHEN years_of_experience < 3 THEN 'Junior' WHEN years_of_experience BETWEEN 3 AND 7 THEN 'Mid' WHEN years_of_experience > 7 THEN 'Senior'  ELSE 'Unknown' END AS El
 >> SPLIT(full_name, ' ')[OFFSET(0)]
 >> +	 -	 * 	/ 	MOD(10, 3)		ROUND(value, digits) 	CEIL(value) 	FLOOR(value) 	ABS(value) 	POWER(x, y) 
+>> coalesce(NULL, NULL, 'siva')		ifnull(cn, 'siva')
 >> Length	Upper	Lower	substr 	Trim	Replace		Concat		STRPOS		Starts_With 		Ends_With	
-	SAFE_CAST/CAST    	coalesce		ifnull/E   	E/concat_ws		
+	SAFE_CAST/CAST    	   	E/concat_ws		
 	round 	abs		ceil 	floor	safe_devide/when	
 	if		case	
 	generate_uuid()
@@ -85,7 +87,8 @@ hi
 >> Get the first and last transaction date for each customer.
 >> Replace null values in a column with the last non-null value in that partition. -----> last_value('cn', ignorenulls=True).over(window_spec)
 >> Categorize employees based on years of experience into Junior, Mid, and Senior levels.
->> Fill the mean salary value in Null. ---> avg_sal = df.select(mean(col('sal'))).collect()[0][0] --> df.fillna({'salary': avg_salary}).show() / avg_sal and cross join
+
+>> Fill the mean salary value in Null. 
 >> ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
 	Replace all NULL values in the Quantity column with 0 / Price column with the average price of the existing data / Fill missing Sales_Date with '2025-01-01'. / 
     Drop rows where the Product column is NULL / Drop rows where all columns are NULL.
