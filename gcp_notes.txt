@@ -1,5 +1,9 @@
 ===============>> cloud scheduler
 
+===============>> Looker Studio
+>> Data modelling: blending, add cal fields (string, arithematic, conditional, datetime, )
+>> Project: 
+
 ================>> composer
 >> Cloud Composer: Apache airflow version in GCP - for workflow (series of task) orchestration - defined by DAG
 >> Architexture of composer: Dags dir in gcs - scheduler will trigger the dags - runs dag on worker nodes - metadata db stores inf0 - Web server (for airflow UI)
