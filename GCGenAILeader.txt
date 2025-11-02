@@ -49,3 +49,14 @@ Veo: Text-to-Video, Image-to-Video
     Model: generates content Example: “Summarize this document”
     Agent: Goal-oriented system that uses models and tools to take action Example: “Send summary to team and schedule a review”
     Application: User-facing interface that embeds one or more agents into a workflow Example: Chatbot for managing leave requests
+
+-- Prompting: Your Key to Great Gen AI Results
+    Examples (zero-, one-, few-shot):
+    Role prompting
+    Prompt chaining: 1️⃣ "Summarize top skills for a Data Analyst" 2️⃣ "Generate 5 behavioral questions per skill" 3️⃣ "Add tips for answering each question"
+    Chain-of-thought prompting: "Solve: A train travels 60 km in 1.5 hours. What is its average speed? Show your calculation.”
+    ReAct prompting: "Is Apple a good investment right now based on its P/E ratio compared to the tech industry average?"
+   Experiment with Parameters: 
+    Output token limit: A token is approx. 4 characters. 100 tokens approximate to 60-80 words.
+    top_p value is 0.6 (60%) => Next token is either A or B (A:40%, B:20%, C:10%, D:5%, E:2%, F:1%,)
+    temperature: Find Capital City of India: use low value, Write a creative essay: use high value
