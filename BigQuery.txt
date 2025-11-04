@@ -66,12 +66,12 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
 >> SPLIT(full_name, ' ')[OFFSET(0)]
 >> +	 -	 * 	/ 	MOD(10, 3)		ROUND(value, digits) 	CEIL(value) 	FLOOR(value) 	ABS(value) 	POWER(x, y) 
 >> coalesce(NULL, NULL, 'siva')		ifnull(cn, 'siva')
->> Length	Upper	Lower	substr 	Trim	Replace		Concat		STRPOS		Starts_With 		Ends_With	
-	SAFE_CAST/CAST    	   	E/concat_ws		
-	round 	abs		ceil 	floor	safe_devide/when	
-	if		case	
-	generate_uuid()
-hi
+>> mask card number: CONCAT(REPEAT('*', 12), RIGHT(card_number, 4))
+>> extract filename: SELECT _FILE_NAME AS file_name, * FROM `project.dataset.external_table`;
+>> col null count: COUNTIF(column1 IS NULL) AS column1_null_count
+>> Length /	Upper / Lower / Replace / substr / strpos / Trim / Starts_With / Ends_With	/SAFE_CAST / CAST    	   
+	round / abs	/ ceil / floor / safe_devide / 	if / case / generate_uuid()
+
 ===========================
 
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
@@ -87,29 +87,20 @@ hi
 >> Get the first and last transaction date for each customer.
 >> Replace null values in a column with the last non-null value in that partition. -----> last_value('cn', ignorenulls=True).over(window_spec)
 >> Categorize employees based on years of experience into Junior, Mid, and Senior levels.
-
->> Fill the mean salary value in Null. 
->> ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
-	Replace all NULL values in the Quantity column with 0 / Price column with the average price of the existing data / Fill missing Sales_Date with '2025-01-01'. / 
-    Drop rows where the Product column is NULL / Drop rows where all columns are NULL.
->> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: with unique_ids AS (SELECT id FROM id_list GROUP BY id HAVING COUNT(*) = 1) | SELECT MAX(id) FROM unique_ids
+>> Replace NULL values in Quantity column with 0 / Price with avg price/Sales_Date with '2025-01-01'/ Drop rows where Product col is NULL & all columns are NULL.
+>> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: 
 >> table1: 1 2 3 null ""  & table2: 2 2  3 null null "" : inner join - 2 2, 2 2, 3 3, empty empty |  Null doesnt include matching, empty string includes matching
 >> employees who hired in last 90 days: 
 >> number of patients per doctor including unassigned patients: docter_id | pationt_id, doctor_id
 >> Handling NULL values using the average salary | emp_id, salary: IFNULL(cn, rep_val) COALESCE(cn, rep_val1, rep_val2, ...) 
 >> emp earning more than avg sal in their department: 
-
 >> column Country: India Australia Pakistan | Output: India vs Australia India vs Pakistan Australia vs Pakistan
-	df.alias("a").crossJoin(df.alias("b")).filter(col("a.Country") < col("b.Country")).selectExpr("concat(a.Country, ' vs ', b.Country) as Matchup")
-    SELECT a.country || ' vs ' || b.country as country FROM country a  join country b on a.country > b.country;  
 >> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
 >> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
 >> employees sal > managers | EMPID, EMPNAME, MANAGERID, SLARY: 
 >> Extract the Domain from the Email column:	substring(email, strpos(email, '@')+1, length-opt) 
 >> Find all employees whose names contain the letters "a" exactly twice: SELECT * FROM employees WHERE LENGTH(name) - LENGTH(REPLACE(LOWER(name),'a','')) = 2
 >> Write a query to count how many employees share the same salary.
->> Word count program in pyspark rdd & DF
->> count the number of null values in each column of df. 	df.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
->> display only last 4 characters of card number. data = [(1,'Rahul',1234567891234567),(2,'Raj',1234567892345678)] schema = "id int, name string, card_no long"
-	maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
->> extract filename: df = df.withColumn("state", element_at(split(input_file_name(), "/"), -1)).withColumn("state", split("state", "\\.").getItem(0))
+>> count the number of null values in each column: 
+>> display only last 4 characters of card number. 
+
