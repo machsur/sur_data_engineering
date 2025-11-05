@@ -5,37 +5,25 @@
    colossus - distributed file system storage layer in column orientaed - fault tolerance by data replicas across different machines.
    dremel - is compute engine - have root server (co-ordinate mixers & leaf nodes) / mixers (do aggreagtions) / leaf nodes (read data from storage)
    jupiter- high speed n/w connector - to connect dremel with colossus;    borg - scheduling jobs like run queries
-
 >> Fact Table: Contains numeric values (quantitative data - sales, revenue, profit, etc), foreign keys, Grows rapidly
    Dimension Table: contains textual or categorical data, smaller and changes less frequently.
-
 >> Star Schema: Multiple Dimension Tables directly connected to the fact table
    Snowflake Schema: Dimension tables are split into sub-dimensions, reducing redundancy, more normalized form. 
-
 >> Change Data Capture -->> identify & capture changes made to data in DB --> log based - very efficient, query based on timestamp, triggers load changes into new tables
-
 >> SCD0 - NO CHANGE - change in source, no update on DWH table - change column is not relavant to the DWH table anymore (ex: fax number)	
    SCD1 - Overwrite - Updates the existing record with new data - No history is preserved.
    SCD2 - Add New Row  -- Keeps full history by adding a new row with versioning or effective dates.
    SCD3 - Add New Column -- Keeps limited history by adding a new column for the previous value | SCD4 - scd1+scd2 - Current Table & History Table
-
->> to get expensive queries, metadata about datasets:  SELECT * FROM `project_id`.`region-europe-west2`.INFORMATION_SCHEMA..JOBS/SCHEMATA;
-   to get metadata about tables/columns: SELECT * FROM `project_id`.`dataset_id`.INFORMATION_SCHEMA.TABLES/.COLUMNS;
-
 >> Temporary table - intermediate data proce and caching | Internal table- freq accessed and processed data | External table - for occasional queries on large datasets.
-
->>  Normalization – avoid redundant data, poor query performance |  De Normalization – redundant data (high storage cost) – better Query performance 
+>> Normalization – avoid redundant data, poor query performance |  De Normalization – redundant data (high storage cost) – better Query performance 
     Why array & structs? – for better query per and lesser storage costs
     Arrays – list of items having same data type  -  SELECT element FROM mydataset.mytable, UNNEST(my_array) AS element; 
     Struct – record with nested fields having different data types  -   SELECT person.id, person.name FROM mydataset.mytable;
-
 >> bq slots: units of computational capacity -CPU and memory, Reservations: allow you to purchase dedicated slots (called commitments) 
-
 >> Big Query cost optimization
    bq compute optimization: on-demaned pricing, Capacity Pricing (slots reserve)
    BQ data storage: Billing model: logical/physical, Use Table Expiration, Use Long-Term Storage Pricing (> 90 days)
    query Opti: Agg at Source,  use avro, dataset at cust loc, Parti & Clust, preview, select col, use trun, Join, where, late agg, Caching, mat view for freq queries
-
 >> Cost Controls: budget alerts, Set query usage limits, export Billing reports, Schedule queries during off-peak hours
 
 =========================
