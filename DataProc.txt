@@ -34,14 +34,14 @@ hdfs dfs -help ls
    option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") / option("mode", "DROPMALFORMED") / option("mode", "FAILFAST") 
    df.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
    df.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gcs_path').option('table', 'p.d.t').save()
->> join_df = df1.join(df2, df1.id == df2.id/on='cn', how='inner/left/right/outer/left_semi/left_anti') / df1.crossjoin(df2)  / df1.join(broadcast(df2), "id", "inner")
->> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  &|   /
+>> join_df = df1.join(df2, df1.id == df2.id/on='id'/&, how='inner/left/right/outer/left_semi/left_anti') / df1.crossjoin(df2)  / df1.join(broadcast(df2), "id", "inner")
+>> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  (& AND | OR) +  ~ NOT /
 >> df.select("customer_id", col("Name"), df.email, df["city"])    /    df.selectExpr("id*2 as nid", "name as nname").show()
 >> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
 >> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns / df.limit(10) / 
 >> union tables: union/subtract/intersect/   -->> / col name, position, schema match /
    union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
->> add new column, drop columns, column name change, column type change 
+>> add new column/columns, column/columns name change, column type change, drop columns, 
 >> df.dropna(how="all/any", subset=["age"]).show()
    df.fillna({'name': 'suresh', 'age': 40}).show()   /   avg_value = df.select(avg("age")).collect()[0][0]
    df.replace(to_replace=['Alice', 'Bob'], value=['suresh', 'unknown']).show()
