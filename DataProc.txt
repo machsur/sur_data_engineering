@@ -40,7 +40,7 @@ hdfs dfs -help ls
 >> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
 >> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns / df.limit(10) / 
 >> union tables: union/subtract/intersect/   -->> / col name, position, schema match /
-   union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> col name / position, schema can differ / missing col handle with null values
+   union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> handle col inorder / missing col handle with null values /
 >> add new column/columns, column/columns name change, column type change, drop columns, 
 >> df.dropna(how="all/any", subset=["age"]).show()
    df.fillna({'name': 'suresh', 'age': 40}).show()   /   avg_value = df.select(avg("age")).collect()[0][0]
