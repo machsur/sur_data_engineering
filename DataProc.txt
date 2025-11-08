@@ -48,12 +48,9 @@ hdfs dfs -help ls
 >> when&otherwise -->> df = df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult"))
 >> drop duplicates: df.distinct() / df.orderBy('Age').dropDuplicates(['Name']) / row_number()  / 
    find duplicattes: dup_df=df.groupBy(df.columns).agg(count('*').alias('count')).filter(col('count')>1)  --> inner join df & dup_df -->  /"name" / ["name", "age"] /df.columns
->> agg 	 	   ----> df.select(sum('CN')).show()  		   ------> note: ignore null values ----> sumDistinct, countDistanct
-   grouping and agg----> df.groupBy('CN').agg(sum('CN')).show()   	
-   window functions----> win_spe=Window.partitionBy("category").orderBy(asc("timestamp")).rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing) / (-2, 3)
-				df = df.withColumn("row_number", row_number().over(window_spec)) 
-   	max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) / collect_list('cn') / collect_set('cn') / first_value('cn') / last_value(cn) / nth_value(cn, n)  /
-	/ row_number() / rank() / dense_rank() / lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
+>> agg 	----> df.select(sum('CN')).show()  /   grouping and agg----> df.groupBy('CN').agg(sum('CN')).show()   	---> note: ignore null values 	---> 11
+   window functions----> win_spe=Window.partitionBy("category").orderBy(asc("timestamp")).rowsBetween(Window.unboundedPreceding, ..) or (-2, 3) / df.withColumn("row_number", row_number().over(window_spec)) 
+   max(cn) / collect_list('cn') / first_value('cn') / row_number() / lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
 >> splitng column, array_length (size), word in array (array_contains), explode/explode_outer, indexing: [0] or .getItem(0)
 >> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
    unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
