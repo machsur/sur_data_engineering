@@ -24,8 +24,8 @@ hdfs dfs -help ls
    
 ===================>> high-level api syntax
 
->> year(col("timestamp_str"))  -  month / day / hour / minute / second 
-	date_trunc("month", "date_col") 
+>> year(col("dt/ts"))  -  month / day / hour / minute / second 
+   date_trunc("month", "dt/ts") 
 	date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600, 2)
 	date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interval -2 year")
 
