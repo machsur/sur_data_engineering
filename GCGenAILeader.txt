@@ -1,14 +1,8 @@
 
->> What is AI: development of computer systems/ machines that simulates human intelligence, such as visual perception, speech recognition,
-    Self-driving cars, Email Grouping, Recommendation Systems, Play Chess
->> Types of AI:
-    Strong AI (General AI): Machine intelligence = Human intelligence
-    Narrow AI (Weak AI): Designed for a specific task
->>
-  Traditional Programming: Based on Rules - IF this THEN do that
-  AI: Full system that mimics human intelligence
+>> What is AI: development of computer systems/ machines that simulates human intelligence:  Self-driving cars, Email Grouping, Play Chess
+  Strong AI (General AI): Machine intelligence = Human intelligence   |    Narrow AI (Weak AI): Designed for a specific task
   Machine Learning: A subset of AI where machines learn from data. 
-  GenAI: An subset of ML that creates new content (Instead of making predictions in ML) - ex: Text Generation, Code Generation, Media Creation
+  GenAI: An subset of ML/AI that creates new content (Instead of making predictions in ML) - ex: Text Generation, Code Generation, Media Creation
         1. uses Foundation Models - tarined with Complex Process, Huge Volumes of Data, Specialized Hardware
         2. Large Language Models: Text Foundation Models - Trained on huge volumes of diverse text data
         3. Diffusion Models: Turning Noise into Art - great at generating images, audio, and video
@@ -60,3 +54,5 @@ Veo: Text-to-Video, Image-to-Video
     Output token limit: A token is approx. 4 characters. 100 tokens approximate to 60-80 words.
     top_p value is 0.6 (60%) => Next token is either A or B (A:40%, B:20%, C:10%, D:5%, E:2%, F:1%,)
     temperature: Find Capital City of India: use low value, Write a creative essay: use high value
+
+>> 
