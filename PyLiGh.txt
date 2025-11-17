@@ -68,7 +68,6 @@ Python:
 
 =================================================================================================================================
 
-
 >> find student details corresponding to max_marks:    student = [('suresh', 'ong', 85), ('seshu', 'bng', 74), ('naven', 'kk', 40)]
 >> Given an array, find the minimum and maximum values:    ans. builtin mtds, sorting, python code
 >> Given a string, count the char occurrences of word in a dictionary:    Input: 'aaabbbccddeeeee'
@@ -107,64 +106,14 @@ Python:
 
 ================================================
 
-==========================
-https://allthingdata.substack.com/p/essential-linux-commands-for-data         
-
 >> Why linux rather than winndows, macos:  open source & free to use, multi-users work on shared system , good security (no antivirus req), stable and reliable
 
 >> user --> give commands on terminal --> shell(program/CLI) interprets and executes/passes them on --> OS
   type of shell: bash, etc.
   why bash shell: feature-rich, fast, very common
 
->> Bash Script structure:
-    shebang line - tell to shell what type of script running like bash, py, etc
-    commands
-    exit statement - 0 successful; 1-255 unsuccessful
-    chmod + to give executable permissions for script
-
-    script more professional: comments (#) / Author: / Date Created / Date Modified / Description / Usage
-
 >> 
--- sudo su - , useradd - seshuu , passwd seshuu, su - seshuu , sudo apt install ncal
--- nproc, cal 2023, cat /etc/shells, echo $SHELL
--- touch FN, vi/vim/nano FN
--- ls -a -R -ltr -h (a hidden, R recurssive, l detail list, t time latest file first, r reverse, h human readble)
--- cd ~    	>> cd ../..     	>> pwd      	>> clear 
 
--- File Operations
-navigation
-listing
-copying
-removing
-moving
-file viewing
-File editing (vi editor)
-
-# Force remove (use with caution!)
-rm -f locked_file.csv
--- file viewing: cat data.csv / head data.csv (10 lines) / head -n 5 data.csv / tail data.csv (10 lines) / tail -n 20 data.csv
-   file editing: vi data.csv (i, esc, :w, :q, :wq, :q! - quit without saving )
--- file permissions:  owner group other (rwx - 421)    	 >> chmod 744 sur.txt
--- Search and Pattern Matching
-	grep -i -r -c "error" pipeline.log (# Case insensitive search / # Recursive search in directory /# Count occurrences)
-	# Find files by name  		>> find /data -name "*.csv"
-	# Find files modified in last 24 hours 		>> find /data -mtime -1	
-	# Find and execute command 		>> find /data -name "*.tmp" -exec rm {} \;
-
-# Follow log file in real-time (crucial for monitoring data pipelines)
-tail -f pipeline.log
--- convert shell script onto bash script (shebang) -- #!/bin/bash (in first line of script)
--- editing path variable (./hello.py - hello.py works now) --- echo $PATH, export PATH=$PATH:/home/surmacha/scripts
--- adding comments #
--- variables: 
-	make script generic & dynamic 
-	datatype is blind/untyped, 
-	constant variable (cant reassign later ex-PI) - readonly PI=3.1452
-	command substution -- today=$(command) or `command` -- echo $today
-
-
-
->> https://allthingdata.substack.com/p/essential-linux-commands-for-data
 
 
 ==========================================================
