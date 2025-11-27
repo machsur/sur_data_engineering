@@ -1,10 +1,21 @@
 
 ==================================================================DataProc======================================================================================
 
-===================> links:
+>> 5Vs of big data: Volume, Velocity, Varity, Veracity (quality of data), Value
+>> designing good big data system: Scalability (storage & processing), Reliablility & Foult tolerance, cost effectiveness, security
+>> Data Engineer (ETL: source - transform - DWH - DataScintinst), Big Data Engineer (ELT: source - DataLake - Transform - DataScintinst)
+>> Hadoop & its components:
+>> 4 
+	Limitations of Map Reduce
+	Spark Eco System
+	Transformation vs action? 	Why transformation are lazy?	Narrow vs wide transformation?
+	how spark reads the data? 
+	ReduceByKey vs groupByKey?
+	increase/decrease no of partitions? repartition vs coalesce
 
-https://github.com/afaqueahmad7117/spark-experiments/tree/main/spark
-https://allthingdata.substack.com/p/essential-linux-commands-for-data         
+
+	
+
 
 =====================> hdfs commands:
 
