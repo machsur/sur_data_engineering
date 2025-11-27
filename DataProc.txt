@@ -14,16 +14,6 @@
 	increase/decrease no of partitions? repartition vs coalesce
 
 
-	
-
-
-=====================> hdfs commands:
-
->> linux system / hdfs system
-hdfs -help
-hdfs dfs -help
-hdfs dfs -help ls
-
 ===================> low-level api Syntax
 
 >> rdd = spark.sparkContext.parallelize(data)  /  rdd = spark.sparkContext.textFile(hdfs_gcs_path) 
