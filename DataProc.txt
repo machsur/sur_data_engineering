@@ -12,6 +12,14 @@
 	how spark reads the data? 
 	ReduceByKey vs groupByKey?
 	increase/decrease no of partitions? repartition vs coalesce
+>> 5. 
+	why high-level api (dataframes/datasets/spark-sql) than low-level api (rdd)?
+	what is spark-sql? spark-table (data + metadata) ?
+	reading data is action or transformation ? depends on inferschema and header options
+	read modes in spark?
+	Write operation is action or trans ? its action
+
+
 
 
 ===================> low-level api Syntax
