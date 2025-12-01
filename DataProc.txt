@@ -40,6 +40,7 @@
 
 >> custom_schema = StructType([StructField("id", IntegerType(), True), ....]) or ''' ID Integer, Name String '''
    df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).json("file:///path_to_file/data_files/")
+   df = spark.read.format("csv").option("header", True).option("inferSchema", True)/schema(cust_schema).load("file:///path_to_file/data_files/")
    option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") / option("mode", "DROPMALFORMED") / option("mode", "FAILFAST") 
    df.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
    df.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gcs_path').option('table', 'p.d.t').save()
