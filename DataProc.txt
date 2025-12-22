@@ -1,101 +1,6 @@
 
 ==================================================================DataProc======================================================================================
 
->> 5Vs of big data: Volume, Velocity, Varity, Veracity (quality of data), Value
->> designing good big data system: Scalability (storage & processing), Reliablility & Foult tolerance, cost effectiveness, security
->> Data Engineer (ETL: source - transform - DWH - DataScintinst), Big Data Engineer (ELT: source - DataLake - Transform - DataScintinst)
->> Hadoop & its components:
->> 4 
-	Limitations of Map Reduce
-	Spark Eco System
-	Transformation vs action? 	Why transformation are lazy?	Narrow vs wide transformation?
-	how spark reads the data? 
-	ReduceByKey vs groupByKey?
-	increase/decrease no of partitions? repartition vs coalesce
->> 5. 
-	why high-level api (dataframes/datasets/spark-sql) than low-level api (rdd)?
-	what is spark-sql? spark-table (data + metadata) ?
-	reading data is action or transformation ? depends on inferschema and header options
-	read modes in spark?
-	Write operation is action or trans ? its action
-
-
-
-
-===================> low-level api Syntax
-
->> rdd = spark.sparkContext.parallelize(data)  /  rdd = spark.sparkContext.textFile(hdfs_gcs_path) 
->> rdd1 = rdd.filter(lambda row: 'Frieza' in row) / rdd1 = rdd.filter(lambda row : row!=header)  - header = rdd.first()
-   rdd1 = rdd.flatMap(lambda line:line.split(' ')).map(lambda word:(word,1)).reduceByKey(lambda a,b : a+b)   ---> word count programme
-   rdd1 = rdd.map(lambda row:row.split(',')).map(lambda row:(row[2],1)).groupByKey().map(lambda row:(row[0],len(row[1]))).collect()
-   rdd1 = rdd.map(parse_row) / def parse_row(row):
->> rdd.first() / rdd.collect() / rdd.take(3) / rdd1.countByValue()
-   
-===================>> high-level api syntax
-
->> year(col("dt/ts"))  -  month / day / hour / minute / second 
-   date_trunc("month", "dt/ts") 
-	date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600, 2)
-	date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interval -2 year")
-
->> custom_schema = StructType([StructField("id", IntegerType(), True), ....]) or ''' ID Integer, Name String '''
-   df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).json("file:///path_to_file/data_files/")
-   df = spark.read.format("csv").option("header", True).option("inferSchema", True)/schema(cust_schema).load("file:///path_to_file/data_files/")
-   option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") / option("mode", "DROPMALFORMED") / option("mode", "FAILFAST") 
-   df.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
-   df.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gcs_path').option('table', 'p.d.t').save()
->> join_df = df1.join(df2, df1.id == df2.id / () & () / on='id'/ on=["id", "country"] / &, how='inner/left/right/outer/left_semi/left_anti') 
-    df1.join(broadcast(df2), "id", "inner") /  df1.crossjoin(df2)  
->> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  (& AND | OR) +  ~ NOT /
->> df.select("customer_id", col("Name"), df.email, df["city"])    /    df.selectExpr("id*2 as nid", "name as nname").show()
->> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
->> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns / df.limit(10) / 
->> union tables: union/subtract/intersect/   -->> / col name, position, schema match /
-   union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> handle col inorder / missing col handle with null values /
->> add new column/columns, column/columns name change, column type change, drop columns, 
->> df.dropna(how="all/any", subset=["age"]).show()
-   df.fillna({'name': 'suresh', 'age': 40}).show()   /   avg_value = df.select(avg("age")).collect()[0][0]
-   df.replace(to_replace=['Alice', 'Bob'], value=['suresh', 'unknown']).show()
->> when&otherwise -->> df = df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult"))
->> drop duplicates: df.distinct() / df.orderBy('Age').dropDuplicates(['Name']) / row_number()  / 
-   find duplicattes: dup_df=df.groupBy(df.columns).agg(count('*').alias('count')).filter(col('count')>1)  --> inner join df & dup_df -->  /"name" / ["name", "age"] /df.columns
->> agg 	----> df.select(sum('CN')).show()  /   grouping and agg----> df.groupBy('CN').agg(sum('CN')).show()   	---> note: ignore null values 	---> 11
-   window functions----> win_spe=Window.partitionBy("category").orderBy(asc("timestamp")).rowsBetween(Window.unboundedPreceding, ..) or (-2, 3) / df.withColumn("row_number", row_number().over(window_spec)) 
-   max(cn) / collect_list('cn') / first_value('cn') / row_number() / lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
->> splitng column, array_length (size), word in array (array_contains), explode/explode_outer, indexing: [0] or .getItem(0)
->> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
-   unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
-
-==================> spark-sql 
-
->> spark temp table (exists only for SS) / global temp table (exists all SS within same app)
-   spark.sql('show databases') --> spark.sql('use db_name') --> spark.sql('show tables') --> spark.sql('show tables in global_temp')
-   df.createOrReplaceTempView('customers') -->	df.createOrReplaceGlobalTempView('gcustomers')
-   spark.sql('select * from customers limit 5') or spark.table('customers') --> spark.sql('describe extended customers') --> spark.sql('drop table customers') 		
->> Spark Persistant: Managed table (spark owns both metadata and data)
-   spark.sql('''CREATE TABLE custm (customer_id STRING, customer_unique_id STRING, customer_zip_code_prefix INT, customer_city STRING, customer_state STRING) USING CSV''')
-   df.write.mode('overwrite').saveAsTable('default.customers_sur')
-   data: hdfs://sur-dp-clu11-m/user/hive/warehouse/customers 
-   metadata: vi etc/hive/conf/hive-site.xml -> connect mysql -u hive -p  -> Pw1+fgC9gJI+ -> show databases; use metastore; show tables; select * from TBLS; exit
->> Spark Persistant: external table (spark owns metadata and gcs/hdfs owns data)
-   spark.sql(''' create external table custe (customer_id STRING, ...) using csv location 'gs://surdatabuk/data/olist/olist_customers_dataset.csv' ''')
-
-=================>>  HiveQL: 
-
->> sql like interface (HQL) --> translator ---> MR/spark/tej code (is abstraction for java or MR programe) >> cli: set hive.execution.engine=tez/spark/mr;
-   table --> data (hdfs, s3, gcs) + metadata (hive stores metastore in it). 
->>  Hive external table (data file in GCS)
-   create external table custe (customer_id string, ...) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE location 'gs://surdatabuk/data/olist/cust_exe/'
->> Hive managed table (data in hdfs --> hdfs dfs -ls /user/hive/warehouse/  --> set hive.metastore.warehouse.dir; )
-   create table custm (	order_id string, ....) STORED AS TEXTFILE;
->> connect: 1.hive & 2.beeline : prod rec --> !connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default (hive & Pw1+fgC9gJI+)
-
--- hive is database like mysql?		its not a database. but, its DWH tool built on top of Hadoop to query large datasets from HDFS storage
--- hive is replacement for Hadoop? 	No, buit on top of hadoop core components (hdfs, yarn, mr/spark/tej)
--- hive queries like normal sql queries in db?  	HQL queries --> translatior --> mr/spark/tej code which runs on distributed system
--- hive can perform row-level transaction like mysql? 	yes, but, hive is not designed for it (if u change one row- it will recreate entire partition file)
--- hive can works with only HDFS?  			no. HDFS/s3/gcs/data lake
--- hive tables work like noraml database tables? 	hive is metastore and not storing any tables
 
 
 ==============>> Spark performance tuning
@@ -186,6 +91,8 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
    What are wide and narrow transformations in PySpark?
    reduceByKey vs groupByKey?		
    spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
+ 	how spark reads the data? 
+	increase/decrease no of partitions? repartition vs coalesce
 >> key-benfits compared to low-level api  
    reading data in spark is action or transformation?
 >> df.cache()  # Stores in memory, spills to disk if needed  -->> df.persist(StorageLevel.MEMORY_AND_DISK_SER_3)   (6)
@@ -244,6 +151,87 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 - Metadata: contains Min/Max values for each column in every data block - help skip blocks -  SELECT * FROM sales WHERE region = 'Asia'
 - Schema evolution: You can add new columns later without breaking old data.
 - Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
+
+
+
+
+
+
+===================> low-level api Syntax
+
+>> rdd = spark.sparkContext.parallelize(data)  /  rdd = spark.sparkContext.textFile(hdfs_gcs_path) 
+>> rdd1 = rdd.filter(lambda row: 'Frieza' in row) / rdd1 = rdd.filter(lambda row : row!=header)  - header = rdd.first()
+   rdd1 = rdd.flatMap(lambda line:line.split(' ')).map(lambda word:(word,1)).reduceByKey(lambda a,b : a+b)   ---> word count programme
+   rdd1 = rdd.map(lambda row:row.split(',')).map(lambda row:(row[2],1)).groupByKey().map(lambda row:(row[0],len(row[1]))).collect()
+   rdd1 = rdd.map(parse_row) / def parse_row(row):
+>> rdd.first() / rdd.collect() / rdd.take(3) / rdd1.countByValue()
+   
+===================>> high-level api syntax
+
+>> year(col("dt/ts"))  -  month / day / hour / minute / second 
+   date_trunc("month", "dt/ts") 
+	date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600, 2)
+	date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interval -2 year")
+
+>> custom_schema = StructType([StructField("id", IntegerType(), True), ....]) or ''' ID Integer, Name String '''
+   df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).json("file:///path_to_file/data_files/")
+   df = spark.read.format("csv").option("header", True).option("inferSchema", True)/schema(cust_schema).load("file:///path_to_file/data_files/")
+   option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") / option("mode", "DROPMALFORMED") / option("mode", "FAILFAST") 
+   df.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
+   df.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gcs_path').option('table', 'p.d.t').save()
+>> join_df = df1.join(df2, df1.id == df2.id / () & () / on='id'/ on=["id", "country"] / &, how='inner/left/right/outer/left_semi/left_anti') 
+    df1.join(broadcast(df2), "id", "inner") /  df1.crossjoin(df2)  
+>> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  (& AND | OR) +  ~ NOT /
+>> df.select("customer_id", col("Name"), df.email, df["city"])    /    df.selectExpr("id*2 as nid", "name as nname").show()
+>> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
+>> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns / df.limit(10) / 
+>> union tables: union/subtract/intersect/   -->> / col name, position, schema match /
+   union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> handle col inorder / missing col handle with null values /
+>> add new column/columns, column/columns name change, column type change, drop columns, 
+>> df.dropna(how="all/any", subset=["age"]).show()
+   df.fillna({'name': 'suresh', 'age': 40}).show()   /   avg_value = df.select(avg("age")).collect()[0][0]
+   df.replace(to_replace=['Alice', 'Bob'], value=['suresh', 'unknown']).show()
+>> when&otherwise -->> df = df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult"))
+>> drop duplicates: df.distinct() / df.orderBy('Age').dropDuplicates(['Name']) / row_number()  / 
+   find duplicattes: dup_df=df.groupBy(df.columns).agg(count('*').alias('count')).filter(col('count')>1)  --> inner join df & dup_df -->  /"name" / ["name", "age"] /df.columns
+>> agg 	----> df.select(sum('CN')).show()  /   grouping and agg----> df.groupBy('CN').agg(sum('CN')).show()   	---> note: ignore null values 	---> 11
+   window functions----> win_spe=Window.partitionBy("category").orderBy(asc("timestamp")).rowsBetween(Window.unboundedPreceding, ..) or (-2, 3) / df.withColumn("row_number", row_number().over(window_spec)) 
+   max(cn) / collect_list('cn') / first_value('cn') / row_number() / lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
+>> splitng column, array_length (size), word in array (array_contains), explode/explode_outer, indexing: [0] or .getItem(0)
+>> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
+   unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
+
+==================> spark-sql 
+
+>> spark temp table (exists only for SS) / global temp table (exists all SS within same app)
+   spark.sql('show databases') --> spark.sql('use db_name') --> spark.sql('show tables') --> spark.sql('show tables in global_temp')
+   df.createOrReplaceTempView('customers') -->	df.createOrReplaceGlobalTempView('gcustomers')
+   spark.sql('select * from customers limit 5') or spark.table('customers') --> spark.sql('describe extended customers') --> spark.sql('drop table customers') 		
+>> Spark Persistant: Managed table (spark owns both metadata and data)
+   spark.sql('''CREATE TABLE custm (customer_id STRING, customer_unique_id STRING, customer_zip_code_prefix INT, customer_city STRING, customer_state STRING) USING CSV''')
+   df.write.mode('overwrite').saveAsTable('default.customers_sur')
+   data: hdfs://sur-dp-clu11-m/user/hive/warehouse/customers 
+   metadata: vi etc/hive/conf/hive-site.xml -> connect mysql -u hive -p  -> Pw1+fgC9gJI+ -> show databases; use metastore; show tables; select * from TBLS; exit
+>> Spark Persistant: external table (spark owns metadata and gcs/hdfs owns data)
+   spark.sql(''' create external table custe (customer_id STRING, ...) using csv location 'gs://surdatabuk/data/olist/olist_customers_dataset.csv' ''')
+
+=================>>  HiveQL: 
+
+>> sql like interface (HQL) --> translator ---> MR/spark/tej code (is abstraction for java or MR programe) >> cli: set hive.execution.engine=tez/spark/mr;
+   table --> data (hdfs, s3, gcs) + metadata (hive stores metastore in it). 
+>>  Hive external table (data file in GCS)
+   create external table custe (customer_id string, ...) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE location 'gs://surdatabuk/data/olist/cust_exe/'
+>> Hive managed table (data in hdfs --> hdfs dfs -ls /user/hive/warehouse/  --> set hive.metastore.warehouse.dir; )
+   create table custm (	order_id string, ....) STORED AS TEXTFILE;
+>> connect: 1.hive & 2.beeline : prod rec --> !connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default (hive & Pw1+fgC9gJI+)
+
+-- hive is database like mysql?		its not a database. but, its DWH tool built on top of Hadoop to query large datasets from HDFS storage
+-- hive is replacement for Hadoop? 	No, buit on top of hadoop core components (hdfs, yarn, mr/spark/tej)
+-- hive queries like normal sql queries in db?  	HQL queries --> translatior --> mr/spark/tej code which runs on distributed system
+-- hive can perform row-level transaction like mysql? 	yes, but, hive is not designed for it (if u change one row- it will recreate entire partition file)
+-- hive can works with only HDFS?  			no. HDFS/s3/gcs/data lake
+-- hive tables work like noraml database tables? 	hive is metastore and not storing any tables
+
 
 >>
 !apt-get install openjdk-11-jdk -y
