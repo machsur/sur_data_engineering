@@ -44,7 +44,8 @@
    option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") / option("mode", "DROPMALFORMED") / option("mode", "FAILFAST") 
    df.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
    df.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gcs_path').option('table', 'p.d.t').save()
->> join_df = df1.join(df2, df1.id == df2.id/on='id'/&, how='inner/left/right/outer/left_semi/left_anti') / df1.crossjoin(df2)  / df1.join(broadcast(df2), "id", "inner")
+>> join_df = df1.join(df2, df1.id == df2.id / () & () / on='id'/ on=["id", "country"] / &, how='inner/left/right/outer/left_semi/left_anti') 
+    df1.join(broadcast(df2), "id", "inner") /  df1.crossjoin(df2)  
 >> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  (& AND | OR) +  ~ NOT /
 >> df.select("customer_id", col("Name"), df.email, df["city"])    /    df.selectExpr("id*2 as nid", "name as nname").show()
 >> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
