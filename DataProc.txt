@@ -153,10 +153,6 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 - Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
 
 
-
-
-
-
 ===================> low-level api Syntax
 
 >> rdd = spark.sparkContext.parallelize(data)  /  rdd = spark.sparkContext.textFile(hdfs_gcs_path) 
