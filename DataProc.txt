@@ -114,8 +114,9 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 >> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")] 
 >> split the data into two columns (Even, Odd) 
 >> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. --> left join / filter null
->> Retrieve employees who joined in the last 6 months.
 >> Identify employees whose salary is greater than the average salary of their department.
+
+>> Retrieve employees who joined in the last 6 months.
 >> fill missing `purchase_amount` values with the average purchase amount of that product category. -->`cust_id`, `cust_name`, `city`, `pur_amount`, `product_category`. 
 >> Get the first and last transaction date for each customer.
 >> Replace null values in a column with the last non-null value in that partition. -----> last_value('cn', ignorenulls=True).over(window_spec)
@@ -189,13 +190,16 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
    df.replace(to_replace=['Alice', 'Bob'], value=['suresh', 'unknown']).show()
 >> when&otherwise -->> df = df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult"))
 >> drop duplicates: df.distinct() / df.orderBy('Age').dropDuplicates(['Name']) / row_number()  / 
-   find duplicattes: dup_df=df.groupBy(df.columns).agg(count('*').alias('count')).filter(col('count')>1)  --> inner join df & dup_df -->  /"name" / ["name", "age"] /df.columns
+   find duplicattes: 
 >> agg 	----> df.select(sum('CN')).show()  /   grouping and agg----> df.groupBy('CN').agg(sum('CN')).show()   	---> note: ignore null values 	
    sum / min / max / avg / count / first_value / last_value / sum_distinct / count_distinct / collect_list / collect_set
    window functions----> win_spe=Window.partitionBy("category").orderBy(asc("timestamp")).rowsBetween(Window.unboundedPreceding, ..) or (-2, 3) /    
    df.withColumn("row_number", row_number().over(window_spec)) 
    max(cn) / collect_list('cn') / first_value('cn') / row_number() / lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
 >> splitng column, array_length (size), word in array (array_contains), explode/explode_outer, indexing: [0] or .getItem(0)
+   df_split = df.withColumn("name_parts", size/explode(split(col("full_name"), " ")))
+   df_split = df.withColumn("name_parts", array_contains(split(col("full_name"), " "), 'Alice'))
+   df_split = df.withColumn("name_parts", split(col("full_name"), " ").getItem(1)/[0])
 >> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
    unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
 
