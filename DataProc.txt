@@ -145,12 +145,17 @@
 
 ==============>> spark config
 
+>>
+spark.conf.get('spark.sql.files.maxPartitionBytes') 
+df.rdd.getNumPartitions()
+spark.sparkContext.defaultMinPartitions
+spark.sparkContext.defaultParallelism
+
+
 spark = SparkSession.builder.appName('surapp11').config('spark.sql.files.maxPartitionBytes', '3mb').getOrCreate()
 spark.sparkContext.applicationId, spark.stop(), spark application -list, spark application -kill app_id
 df.explain(True)
 spark_new_app_session = spark.newSession()
-df.rdd.getNumPartitions()
-spark.conf.get('spark.sql.files.maxPartitionBytes') / rdd.getNumPartitions() / spark.sparkContext.defaultMinPartitions 
 
 gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g,spark:spark.executor.instances=2
 .config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
@@ -171,7 +176,8 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 >> how spark reads the data? (from distributed or read data and partition based on config)
 >> sc,parallelize: Create an RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
    sc.textFile: Create an RDD by reading a text file from HDFS/S3/local FS. Best for large datasets.
->> 
+
+
 What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
    What are wide and narrow transformations in PySpark?
    reduceByKey vs groupByKey?		
