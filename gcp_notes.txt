@@ -4,13 +4,7 @@
 >> Data modelling: blending, add cal fields (string, arithematic, conditional, datetime, )
 >> Project: 
 
-================>> composer
->> Cloud Composer: Apache airflow version in GCP - for workflow (series of task) orchestration - defined by DAG
->> Architexture of composer: Dags dir in gcs - scheduler will trigger the dags - runs dag on worker nodes - metadata db stores inf0 - Web server (for airflow UI)
->> Advantage of cloud composer:
-   | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
-   | py app                             |       dataproc workflow                                            |
-   |              cloud composer                                                                              |
+
 
 ===============>> Cloud Run Functions
 >> Cloud run functions: 1st gen >> 2nd gen runs on cloud run >> renaned to cloud run functions (aligned with cloud run UI)
