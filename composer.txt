@@ -9,6 +9,8 @@
                            - dags runs on worker nodes - dags & dag runs info stored in metadata db - Web server (for airflow UI)
 4. multiple DAGs are defined in py script, same dag can be in multiple py scipts.
    UI > admin > configurations 
+   UI > admin > variables 
+
 5.
 >> Advantage of cloud composer:
    | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
