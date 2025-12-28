@@ -176,17 +176,16 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 >> how spark reads the data? (from distributed or read data and partition based on config)
 >> sc,parallelize: Create an RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
    sc.textFile: Create an RDD by reading a text file from HDFS/S3/local FS. Best for large datasets.
-
-
+>> What are wide and narrow transformations in PySpark?
+>> spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
+>> reduceByKey vs groupByKey?		
+>> increase/decrease no of partitions? repartition vs coalesce
+>> repartion vs coalecse
 What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
-   What are wide and narrow transformations in PySpark?
-   reduceByKey vs groupByKey?		
-   spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
-	increase/decrease no of partitions? repartition vs coalesce
+
 >> key-benfits compared to low-level api  
    reading data in spark is action or transformation?
 >> df.cache()  # Stores in memory, spills to disk if needed  -->> df.persist(StorageLevel.MEMORY_AND_DISK_SER_3)   (6)
->> shuffle operations - redistributing data across different nodes in a cluster, which is necessary for certain transformations like groupBy, join, and distinct.
 >> broadcast join - small dataset is broadcasted to all worker nodes - allows to perform join locally - reduced data shuffling across the network - improved performance
 >> map() returns a single value for each input element / flatMap() return multiple values for each input element
 >> .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work?  --> gathers all partitions of RDD and brings them to the driver node. - data is no longer distributed, instead stored in the memory of the driver program
