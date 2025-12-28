@@ -1,5 +1,8 @@
 ================>> composer
->> Cloud Composer: Apache airflow version in GCP - for workflow (series of task) orchestration - defined by DAG
+>> Cloud Composer: Apache airflow version in GCP - for workflow orchestration - defined by DAG
+>> Create composer environment: runs on GKE cluster
+   region, image version, SA, env resources (scheduler, web server, worker), N/W
+   Airflow UI, GCS bucket for dags, 
 >> Architexture of composer: Dags dir in gcs - scheduler will trigger the dags - runs dag on worker nodes - metadata db stores inf0 - Web server (for airflow UI)
 >> Advantage of cloud composer:
    | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
