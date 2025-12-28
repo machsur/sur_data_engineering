@@ -1,9 +1,31 @@
 𝗦𝗤𝗟
 
-1️⃣ Find employees who earn more than their managers
-2️⃣ Identify duplicates in a table
-3️⃣ Find 2nd highest salary (multiple ways)
-4️⃣ Detect consecutive occurrences in logs
+>> Find employees who earn more than their managers
+>> Identify duplicates in a table
+>> Find 2nd highest salary (multiple ways)
+>> Detect consecutive occurrences in logs
+>> How do you compare two tables and find records that exist in one but not the other?
+>> How can you remove leading and trailing spaces from a column, and why does it matter in joins?
+>> What’s the difference between INNER JOIN and CROSS JOIN?
+>> How do you find the first and last record per group using SQL?
+>> How can you calculate the percentage contribution of each row to a total?
+
+ 6️⃣ How do you handle NULL values in aggregations like SUM and AVG?
+ 7️⃣ How can you split a comma-separated string into multiple rows?
+ 8️⃣ What’s the difference between DELETE, TRUNCATE, and DROP?
+ 9️⃣ How do you find gaps in a sequence of numbers (like missing order IDs)?
+ 🔟 How do you fetch records from a table based on a dynamic date range (last 7, 30, 90 days)?
+ 1️⃣1️⃣ How do you identify duplicate rows based on multiple columns?
+ 1️⃣2️⃣ How can you swap values between two columns without using a temporary table?
+ 1️⃣3️⃣ How do you find the top-performing category by total sales?
+ 1️⃣4️⃣ What’s the difference between a subquery and a CTE, and when would you prefer one?
+ 1️⃣5️⃣ How do you convert rows into columns without using PIVOT?
+ 1️⃣6️⃣ How can you identify customers with consecutive-day activity?
+ 1️⃣7️⃣ How do you find records updated in the last X minutes or hours?
+ 1️⃣8️⃣ What’s the difference between RANK() and NTILE()?
+ 1️⃣9️⃣ How do you detect sudden spikes or drops in metrics using SQL?
+ 2️⃣0️⃣ How do you rewrite a correlated subquery to improve performance?
+
 
 𝗣𝘆𝘁𝗵𝗼𝗻
 
