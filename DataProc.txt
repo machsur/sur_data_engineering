@@ -85,6 +85,11 @@
 
 ==============>> Spark performance tuning
 
+>> Spark Architexture:
+	Spark Run mode: Standalone mode (spark built-in), YARN, Misos, k8s
+	Spark Distibuted nature and in-memory computution
+	Spark Archit & components: 
+
 1. master in reading query plan
 	syntax check ---> unresolved logical plan --> catalyst optimizer --> optimal logical plan (filter push down & req col) --> several pysical plan -->
 	based on cost model select best pysical plan  --> executes and create RDD/DF
