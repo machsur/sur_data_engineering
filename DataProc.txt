@@ -89,6 +89,7 @@
 	Spark Run mode: Standalone mode (spark built-in), YARN, Misos, k8s
 	Spark Distibuted nature and in-memory computution
 	Spark Archit & components: 
+	Spark deployment modes: dectate where driver prog runs and how executors interact with driver: local, client, cluster
 
 1. master in reading query plan
 	syntax check ---> unresolved logical plan --> catalyst optimizer --> optimal logical plan (filter push down & req col) --> several pysical plan -->
