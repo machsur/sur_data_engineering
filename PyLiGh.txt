@@ -39,7 +39,10 @@ Python:
    List comprehensation: create new list from existiong list or other iterals
 >> decorator: adding extra feature to the existing function without touching them.
 >> Special variable: __name__ == __main__
->> OOPS: Class, object, constructer (__init__), self, variables: instance & class var, metd: instance & class & static mtd,  inner class
+
+>> OOPS: Class, object/instance of class, constructer (__init__), self referring object, 
+   variables: instance & class var
+   methods: instance & class & static mtd
    inheritance: single level & multi level & multiple,  constructor in inheritance: super().__init__/mtd | MRO
    polymorphisum: Duck typing, operator overloading, method overloading: NA (achive by a=None), method overriding: child class method overrides parent class mtd 
 >> Encaptulation: 
