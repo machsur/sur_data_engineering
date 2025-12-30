@@ -76,15 +76,17 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 >> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
    unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
 
->>  substring(col, pos, len) 
-	length("text").alias("len")
-    trim("text").alias("trim")  / ltrim / rtrim / 
-    upper("first").alias("first_upper")	/ lower / initcap /
-	concat(col("first"), lit(" "), col("last")).alias("full_name_raw") / concat_ws(" ", "first", "last").alias("full_name_ws")
-	locate(substr, col[, pos]) / instr("text", "World")
-translate(col, matching, replace)
+>>  
+substring(col, pos, len) 
+length("text").alias("len")
+trim("text").alias("trim")  / ltrim / rtrim / 
+upper("first").alias("first_upper")	/ lower / initcap /
+concat(col("first"), lit(" "), col("last")).alias("full_name_raw") / concat_ws(" ", "first", "last").alias("full_name_ws")
+locate(substr, col[, pos]) / instr("text", "World")
+translate(col, matching, replace) / df.select("id", expr("replace(text, 'World', 'Universe')").alias("replaced"))
 substring_index(col, delim, count) – before/after delimiter
-    lpad(col("first"), 8, "0").alias("lpad_first")  / rpad
+lpad(col("first"), 8, "0").alias("lpad_first")  / rpad
+repeat(col("first"), 3).alias("first_x3")
 
 
 
@@ -236,22 +238,21 @@ substring_index(col, delim, count) – before/after delimiter
 >> emp earning more than avg sal in their department: 
 >> Handling NULL values using the average salary | emp_id, salary: IFNULL(cn, rep_val) COALESCE(cn, rep_val1, rep_val2, ...) 
 >> Extract the Domain from the Email column 
-
-
->> Get the first and last transaction date for each customer.
->> employees who hired in last 90 days: 
->> number of patients per doctor including unassigned patients: docter_id | pationt_id, doctor_id
->> Retrieve employees who joined in the last 6 months.
-
->> column Country: India Australia Pakistan | Output: India vs Australia India vs Pakistan Australia vs Pakistan
-	df.alias("a").crossJoin(df.alias("b")).filter(col("a.Country") < col("b.Country")).selectExpr("concat(a.Country, ' vs ', b.Country) as Matchup")
-    SELECT a.country || ' vs ' || b.country as country FROM country a  join country b on a.country > b.country;  
->> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
->> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
->> Find all employees whose names contain the letters "a" exactly twice: SELECT * FROM employees WHERE LENGTH(name) - LENGTH(REPLACE(LOWER(name),'a','')) = 2
->> Write a query to count how many employees share the same salary.
 >> Word count program in pyspark rdd & DF
 >> count the number of null values in each column of df. 	df.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
+>> column Country: India Australia Pakistan | Output: India vs Australia India vs Pakistan Australia vs Pakistan
+	df.alias("a").crossJoin(df.alias("b")).filter(col("a.Country") < col("b.Country")).selectExpr("concat(a.Country, ' vs ', b.Country) as Matchup")
+>> Get the first and last transaction date for each customer. | row_number()
+>> Find all employees whose names contain the letters "a" exactly twice:  length("name_lc") - length(regexp_replace("name_lc", "a", ""))
+
+
+
+
+>> employees who hired in last 90 days: 
+>> Retrieve employees who joined in the last 6 months.
+>> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
+>> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
+>> Write a query to count how many employees share the same salary.
 >> display only last 4 characters of card number. data = [(1,'Rahul',1234567891234567),(2,'Raj',1234567892345678)] schema = "id int, name string, card_no long"
 	maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
 >> extract filename: df = df.withColumn("state", element_at(split(input_file_name(), "/"), -1)).withColumn("state", split("state", "\\.").getItem(0))
