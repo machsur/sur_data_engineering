@@ -12,6 +12,28 @@
    
 ===================>> high-level api syntax
 
+>>
+spark.conf.get('spark.sql.files.maxPartitionBytes') 
+df.rdd.getNumPartitions()
+spark.sparkContext.defaultMinPartitions
+spark.sparkContext.defaultParallelism
+spark = SparkSession.builder.appName('surapp11').config('spark.sql.files.maxPartitionBytes', '3mb').getOrCreate()
+spark.sparkContext.applicationId, spark.stop(), spark application -list, spark application -kill app_id
+df.explain(True)
+spark_new_app_session = spark.newSession()
+
+gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g,spark:spark.executor.instances=2
+.config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
+.config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
+.config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
+spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 MB
+
+>> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
+>> validate pyspark exit() / spark-sql exit; / 
+>> execute gcs script: master node: spark-submit gs://buk/pysp1.py   >> submit pyspark job using UI >> gcloud dataproc jobs submit pyspark pysp1.py --cluster --region
+
+
+
 >> year(col("dt/ts"))  -  month / day / hour / minute / second 
    date_trunc("month", "dt/ts") 
 	date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600, 2)
@@ -151,32 +173,7 @@
 
 9. cache/persist, Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
-==============>> spark config
 
->>
-spark.conf.get('spark.sql.files.maxPartitionBytes') 
-df.rdd.getNumPartitions()
-spark.sparkContext.defaultMinPartitions
-spark.sparkContext.defaultParallelism
-
-
-spark = SparkSession.builder.appName('surapp11').config('spark.sql.files.maxPartitionBytes', '3mb').getOrCreate()
-spark.sparkContext.applicationId, spark.stop(), spark application -list, spark application -kill app_id
-df.explain(True)
-spark_new_app_session = spark.newSession()
-
-gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g,spark:spark.executor.instances=2
-.config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
-.config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
-.config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
-spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 MB
-
->> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
->> validate pyspark exit() / spark-sql exit; / 
->> execute gcs script: master node: spark-submit gs://buk/pysp1.py   >> submit pyspark job using UI >> gcloud dataproc jobs submit pyspark pysp1.py --cluster --region
-
-
-===============> Interview Quetions
 
 >> Spark ecosystem
 >> what is transformation and action?      
@@ -214,29 +211,28 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 >> split the data into two columns (Even, Odd) 
 >> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. --> left join / filter null
 >> Identify employees whose salary is greater than the average salary of their department.
-
->> Retrieve employees who joined in the last 6 months.
 >> fill missing `purchase_amount` values with the average purchase amount of that product category. -->`cust_id`, `cust_name`, `city`, `pur_amount`, `product_category`. 
->> Get the first and last transaction date for each customer.
 >> Replace null values in a column with the last non-null value in that partition. -----> last_value('cn', ignorenulls=True).over(window_spec)
 >> Categorize employees based on years of experience into Junior, Mid, and Senior levels.
 >> Fill the mean salary value in Null. ---> avg_sal = df.select(mean(col('sal'))).collect()[0][0] --> df.fillna({'salary': avg_salary}).show() / avg_sal and cross join
 >> ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
 	Replace all NULL values in the Quantity column with 0 / Price column with the average price of the existing data / Fill missing Sales_Date with '2025-01-01'. / 
     Drop rows where the Product column is NULL / Drop rows where all columns are NULL.
->> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: with unique_ids AS (SELECT id FROM id_list GROUP BY id HAVING COUNT(*) = 1) | SELECT MAX(id) FROM unique_ids
->> table1: 1 2 3 null ""  & table2: 2 2  3 null null "" : inner join - 2 2, 2 2, 3 3, empty empty |  Null doesnt include matching, empty string includes matching
+>> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: df1=df.groupBy('id').agg(count('id').alias('count')).filter(col('count')==1)
+>> emp earning more than avg sal in their department: 
+>> Handling NULL values using the average salary | emp_id, salary: IFNULL(cn, rep_val) COALESCE(cn, rep_val1, rep_val2, ...) 
+
+
+>> Get the first and last transaction date for each customer.
 >> employees who hired in last 90 days: 
 >> number of patients per doctor including unassigned patients: docter_id | pationt_id, doctor_id
->> Handling NULL values using the average salary | emp_id, salary: IFNULL(cn, rep_val) COALESCE(cn, rep_val1, rep_val2, ...) 
->> emp earning more than avg sal in their department: 
+>> Retrieve employees who joined in the last 6 months.
 
 >> column Country: India Australia Pakistan | Output: India vs Australia India vs Pakistan Australia vs Pakistan
 	df.alias("a").crossJoin(df.alias("b")).filter(col("a.Country") < col("b.Country")).selectExpr("concat(a.Country, ' vs ', b.Country) as Matchup")
     SELECT a.country || ' vs ' || b.country as country FROM country a  join country b on a.country > b.country;  
 >> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
 >> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
->> employees sal > managers | EMPID, EMPNAME, MANAGERID, SLARY: 
 >> Extract the Domain from the Email column:	substring(email, strpos(email, '@')+1, length-opt) 
 >> Find all employees whose names contain the letters "a" exactly twice: SELECT * FROM employees WHERE LENGTH(name) - LENGTH(REPLACE(LOWER(name),'a','')) = 2
 >> Write a query to count how many employees share the same salary.
