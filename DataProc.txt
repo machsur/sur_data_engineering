@@ -26,9 +26,11 @@
 >> join_df = df1.join(df2, df1.id == df2.id / () & () / on='id'/ on=["id", "country"] / &, how='inner/left/right/outer/left_semi/left_anti') 
     df1.join(broadcast(df2), "id", "inner") /  df1.crossjoin(df2)  
 >> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  (& AND | OR) +  ~ NOT /
->> df.select("customer_id", col("Name"), df.email, df["city"])    /    df.selectExpr("id*2 as nid", "name as nname").show()
+>> df.select("customer_id", col("Name"), df.email, df["city"])    /    df.selectExpr("id*2 as nid", "name as nname").show()   /  df.select('*').show() / 
+	df.select([c for c in df.columns if c not in ls]).show()	/ ls = ['product','region']
 >> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
 >> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns / df.limit(10) / 
+
 >> union tables: union/subtract/intersect/   -->> / col name, position, schema match /
    union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> handle col inorder / missing col handle with null values /
 >> add new column/columns, column/columns name change, column type change, drop columns, 
