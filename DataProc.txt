@@ -34,7 +34,9 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 
 
 
->> year(col("dt/ts"))  -  month / day / hour / minute / second 
+>> 
+to_date("date")
+year(col("dt/ts"))  -  month / day / hour / minute / second 
    date_trunc("month", "dt/ts") 
 	date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600, 2)
 	date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interval -2 year")
@@ -78,13 +80,13 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 
 >>  
 substring(col, pos, len) 
+substring_index(col, delim, count) – before/after delimiter
+locate(substr, col[, pos]) / instr("text", "World")
+regexp_replace(col("first"), 'Ali', '') / translate(col("first"), 'Al', '') / 
 length("text").alias("len")
 trim("text").alias("trim")  / ltrim / rtrim / 
 upper("first").alias("first_upper")	/ lower / initcap /
 concat(col("first"), lit(" "), col("last")).alias("full_name_raw") / concat_ws(" ", "first", "last").alias("full_name_ws")
-locate(substr, col[, pos]) / instr("text", "World")
-translate(col, matching, replace) / df.select("id", expr("replace(text, 'World', 'Universe')").alias("replaced"))
-substring_index(col, delim, count) – before/after delimiter
 lpad(col("first"), 8, "0").alias("lpad_first")  / rpad
 repeat(col("first"), 3).alias("first_x3")
 
@@ -244,15 +246,15 @@ repeat(col("first"), 3).alias("first_x3")
 	df.alias("a").crossJoin(df.alias("b")).filter(col("a.Country") < col("b.Country")).selectExpr("concat(a.Country, ' vs ', b.Country) as Matchup")
 >> Get the first and last transaction date for each customer. | row_number()
 >> Find all employees whose names contain the letters "a" exactly twice:  length("name_lc") - length(regexp_replace("name_lc", "a", ""))
+>> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
+>> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
+>> Write a query to count how many employees share the same salary.
 
 
 
 
 >> employees who hired in last 90 days: 
 >> Retrieve employees who joined in the last 6 months.
->> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
->> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
->> Write a query to count how many employees share the same salary.
 >> display only last 4 characters of card number. data = [(1,'Rahul',1234567891234567),(2,'Raj',1234567892345678)] schema = "id int, name string, card_no long"
 	maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
 >> extract filename: df = df.withColumn("state", element_at(split(input_file_name(), "/"), -1)).withColumn("state", split("state", "\\.").getItem(0))
