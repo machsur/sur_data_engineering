@@ -187,10 +187,13 @@ spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 M
 >> reduceByKey vs groupByKey?		
 >> increase/decrease no of partitions? repartition vs coalesce
 >> repartion vs coalecse
-What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
+>> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
 
->> key-benfits compared to low-level api  
-   reading data in spark is action or transformation?
+>> key-benfits compared to low-level api : schema awareness, ease of use, optimized, various file supports 
+>> reading data in spark is action or transformation? : without inferschema & header=true | with inferschema | explicit schema |
+>> writing data in spark is action or transformation? : Action
+>> What is SparkSQL, and how do you perform SQL operations on DataFrames? 
+
 >> df.cache()  # Stores in memory, spills to disk if needed  -->> df.persist(StorageLevel.MEMORY_AND_DISK_SER_3)   (6)
 >> broadcast join - small dataset is broadcasted to all worker nodes - allows to perform join locally - reduced data shuffling across the network - improved performance
 >> map() returns a single value for each input element / flatMap() return multiple values for each input element
@@ -198,7 +201,6 @@ What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 
 >> Difference between sortby and orderby? - sortBy is used with RDDs and orderBy is used with DataFrames.
 >> what is the default block size (128 MB) in hdfs and how to change it?:   Edit the hdfs-site.xml File
 >> SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
->> What is SparkSQL, and how do you perform SQL operations on DataFrames? 
 
 ==============> coding QA
 
