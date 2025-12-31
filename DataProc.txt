@@ -13,7 +13,7 @@
 ===================>> high-level api syntax
 
 >>
-spark.conf.get('spark.sql.files.maxPartitionBytes') 
+spark.conf.set("spark.sql.files.maxPartitionBytes", "1000")
 df.rdd.getNumPartitions()
 spark.sparkContext.defaultMinPartitions
 spark.sparkContext.defaultParallelism
@@ -165,9 +165,10 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	Salt - adding randomness (key) to distribute uneven data evenly.
 		-> add salt columnn - hash(key, salt)% SP
 
-5. Partitioning: create folders for each country within files are equal to no of partitions - Filtering	(Adv: fast access, parallesium/resource utilization)
-   df.write.mode('overwrite').partitionBy('country').parquet('/content/ecommer/') >> high cordinality - small file problem - buckting is rec
-   Bucketing: Joins and aggregations, filter - hash(product_id)%4  
+>> Partitioning: for fast access, parallesium/resource utilization) | which column: low to medium cordinality  & filter (high cordi - small file problem - buckting is rec)
+   df.write.repartition(3).mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/content/ecommer/') 
+   
+>> Bucketing: Joins and aggregations, filter - hash(product_id)%4  
    df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('bucketed_table')  - 2buc*2part=4files
    Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)  
    Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all 
