@@ -247,10 +247,9 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 >> Write a query to count how many employees share the same salary.
 >> employees who hired in last 90 days: 
 >> Retrieve employees who joined in the last 6 months.
-
->> display only last 4 characters of card number. data = [(1,'Rahul',1234567891234567),(2,'Raj',1234567892345678)] schema = "id int, name string, card_no long"
+>> display only last 4 characters of card number. : lpad(substring(col("card_no").cast("string"), -4, 4),16, '#')
 	maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
->> extract filename: df = df.withColumn("state", element_at(split(input_file_name(), "/"), -1)).withColumn("state", split("state", "\\.").getItem(0))
+>> extract filename: element_at(split(input_file_name(), "/"), -1)
 >> why parquet?
 - Columnar format: Only reads the region column to filter — better compression better than rows..
 - Metadata: contains Min/Max values for each column in every data block - help skip blocks -  SELECT * FROM sales WHERE region = 'Asia'
