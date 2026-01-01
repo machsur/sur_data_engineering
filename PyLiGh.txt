@@ -1,4 +1,6 @@
 ============================================================================================================================================================
+
+===================================>> DSA
 >> BigO
 	time complexity: code1 - 15 sec < code2-60sec, means code1 is better than code2 / different machine time varies / so, we measure in terms of no of operations
 	Space complexity: code1 15sec but larger space and code2 60sec lesser space, here code2 is better if we concern about space.
@@ -11,21 +13,20 @@
 	O(n2) - nested for loop
 	for different inputs - O(a+b) - O(a*b)
 
->> 
-============================================================================================================================================================================
-Python:
+====================================>> concepts
+
 >> Interpreter: The programme that runs your code.
 >> Virtual Environment: Python interpreter + dependencies  - Keeps dependencies isolated from other projects
-	python -m venv myenv	/ 	venv\Scripts\activate	/	pip install <package-name>	/	deactivate	/
+	python -m venv myenv	/ 	venv\Scripts\activate	/		deactivate	/
 >> pip - tool for install python packages
 >> pypi - centralized repository for py packages
+	pip install <package-name>	/ pip install -r requirements.txt  / 	pip freeze > requirements.txt
 >> terminate the python programme  ---> sys.exit()
 >> Shebang: #!/usr/bin/python3.5  -  tells the operating system which interpreter to use to run the file. 
->> set path in windows: allows to run script from cmd
-   hide passwords in Windows and access them securely from Python, you can use environment variables or more secure options like the Windows Credential Manager   
-   Config Files: great way to manage settings (API keys,..) separately from your main Python code.
 >> variables, lists, tuple, set, dictionory
 >> Datatypes: None, Numeric (int, float, bool, complex), sequence(list, tuple, set, range, string), mapping(dictinory)
+
+
 >> operators: arthematic: +  comparision: ==   logical: and or not   identify: x is y    membership:  x in y  
 >> swap variables
 >> user input: input / int / eval / python file.py 6(sys.argv[1]) 2 /
@@ -39,7 +40,6 @@ Python:
    List comprehensation: create new list from existiong list or other iterals
 >> decorator: adding extra feature to the existing function without touching them.
 >> Special variable: __name__ == __main__
-
 >> OOPS: Class, object/instance of class, constructer (__init__), self referring object, 
    variables: instance & class var
    methods: instance & class & static mtd
@@ -61,40 +61,32 @@ Python:
 >> file operations:
 -- Magic/Tunder/double underscore methods: enable you to define the behavour of objects for built-in operations such as arth ope, comp oper, more
 
-
-
-
-
-
-	
-
-
-=================================================================================================================================
+=============================>> QA
 
 >> find student details corresponding to max_marks:    student = [('suresh', 'ong', 85), ('seshu', 'bng', 74), ('naven', 'kk', 40)]
 >> Given an array, find the minimum and maximum values:    ans. builtin mtds, sorting, python code
 >> Given a string, count the char occurrences of word in a dictionary:    Input: 'aaabbbccddeeeee'
 >> Count Vowels from Given words .
->> find line_count, words, chars in the files
->> Write a Python script to count the frequency of characters/words in a text file.  
+>> Remove Duplicates from List. 
 >> Reversing a String using an Extended Slicing techniques. -------> builtin / slicing / code
 >> Find the highest occurrences of each word from string and sort them in order.
->> Remove Duplicates from List. 
+>>  Given a list [2, 3, 4, 5, 6], how can you sum all elements? (Discuss available functions)
+>> What is a docstring in Python?  Docstrings are enclosed in triple quotes (""" or ''') and can span multiple lines.
+>> What is pass in Python? When is it used? --> Placeholder for future class/function / It does nothing when executed 
+>> Calculate the Intersection of Two Lists without using Built-in Functions:      print(set(ls1) & set(ls2)) or lss =[item for item in ls1 if item in ls2]
+>> What is the difference between list and tuple in Python?
+>> Which data structure occupies more memory: list or tuple? Why? --> lists occupy more memory --> their size and contents can change, more methods
+
+
+>> find line_count, words, chars in the files
 >> Sort a List without using Sort keyword. built-in / bubble sort /
 >> Find the pair of numbers in this list whose sum is n no.
 >> Read and print values from an Excel file using Pandas.
 >> Handle file exceptions (missing or corrupted Excel files) gracefully. no error in try block --> try - else - finally /// error ---> except - finally
->> Calculate the Intersection of Two Lists without using Built-in Functions:      print(set(ls1) & set(ls2)) or lss =[item for item in ls1 if item in ls2]
->> What is a docstring in Python?  Docstrings are enclosed in triple quotes (""" or ''') and can span multiple lines.
->> What is pass in Python? When is it used? --> Placeholder for future class/function / It does nothing when executed 
->> Which data structure occupies more memory: list or tuple? Why? --> lists occupy more memory --> their size and contents can change, more methods
-	print(sys.getsizeof(list_obj))   # e.g., 120 bytes
->>  Given a list [2, 3, 4, 5, 6], how can you sum all elements? (Discuss available functions)
 >>  What is a constructor? -> is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
 >> Find out common letters between two strings Using Python
 >> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
 >> FIND MISSING NUMBER IN AN ARRAY IN PYTHON  :  n(n+1)/2 - sum(array_elements)
-
 >> PRINT PATTERNS
 >> number is prime or not
 >> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
@@ -103,11 +95,10 @@ Python:
 >> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]  //
    [p['name'] for p in people if p['age'] > 30]      //   unique_words = list({word.lower() for word in "Hello world hello".split()})
 >> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
->> What is the difference between list and tuple in Python?
 >> array contains duplicates - use for in for (n2, 1) - compare element with previous element (n, n)
 
 
-================================================
+===============================================================================================================================================================
 
 >> Why linux rather than winndows, macos:  open source & free to use, multi-users work on shared system , good security (no antivirus req), stable and reliable
 
@@ -119,7 +110,7 @@ Python:
 
 
 
-==========================================================
+====================================================================================================================================================================
 
 Here are the Git commands that make up most of my workflow: 
 
