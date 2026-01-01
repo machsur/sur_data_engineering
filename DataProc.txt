@@ -168,10 +168,10 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 >> Partitioning: for fast access, parallesium/resource utilization) | which column: low to medium cordinality  & filter (high cordi - small file problem - buckting is rec)
    df.write.repartition(3).mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/content/ecommer/') 
    
->> Bucketing: Joins and aggregations, filter - hash(product_id)%4  
+>> Bucketing: helps to speed up in Joins and aggregations, filter - hash(product_id)%4  
    df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('bucketed_table')  - 2buc*2part=4files
    Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)  
-   Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all 
+   Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all (bucket pruning) 
 
 6. executor tuning: 
    Rules:leave 1C1gbM per Node for hadoop/yarn/os - leave 1Exe or 1C1gbM for app master container at cluster level - 3 t0 5 cores/exe - overhead mem max(384 or 10% exe mem)
