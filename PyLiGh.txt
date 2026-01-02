@@ -25,10 +25,16 @@
 >> Shebang: #!/usr/bin/python3.5  -  tells the operating system which interpreter to use to run the file. 
 >> variables, lists, tuple, set, dictionory
 >> Datatypes: None, Numeric (int, float, bool, complex), sequence(list, tuple, set, range, string), mapping(dictinory)
-
-
->> operators: arthematic: +  comparision: ==   logical: and or not   identify: x is y    membership:  x in y  
+>> 
+operators: arthematic: + - *	/ 	%	**	//
+ASSIGNMENT: = 	X += 3
+comparision: == 	!= 	>	<	>=	<=
+logical: and or not   
+identify: print(x is z) 
+membership:  print("pineapple" not in x)
 >> swap variables
+
+
 >> user input: input / int / eval / python file.py 6(sys.argv[1]) 2 /
 >> if elif else / while loop / for loop / for else / break continue pass /
 >> why arrays than lists: Optimized/faster, memory efficient for mathematical operations for numerical data.
