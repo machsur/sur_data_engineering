@@ -82,24 +82,23 @@ membership:  print("pineapple" not in x)
 >> Calculate the Intersection of Two Lists without using Built-in Functions:      print(set(ls1) & set(ls2)) or lss =[item for item in ls1 if item in ls2]
 >> What is the difference between list and tuple in Python?
 >> Which data structure occupies more memory: list or tuple? Why? --> lists occupy more memory --> their size and contents can change, more methods
-
-
+>> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]  //
+>>  What is a constructor? -> is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
+>> Find out common letters between two strings Using Python
+>> Factorial
 >> find line_count, words, chars in the files
+>> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
+>> FIND MISSING NUMBER IN AN ARRAY IN PYTHON  :  n(n+1)/2 - sum(array_elements)
+
+
 >> Sort a List without using Sort keyword. built-in / bubble sort /
 >> Find the pair of numbers in this list whose sum is n no.
 >> Read and print values from an Excel file using Pandas.
 >> Handle file exceptions (missing or corrupted Excel files) gracefully. no error in try block --> try - else - finally /// error ---> except - finally
->>  What is a constructor? -> is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
->> Find out common letters between two strings Using Python
->> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
->> FIND MISSING NUMBER IN AN ARRAY IN PYTHON  :  n(n+1)/2 - sum(array_elements)
 >> PRINT PATTERNS
 >> number is prime or not
 >> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
->> Factorial
 >> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
->> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]  //
-   [p['name'] for p in people if p['age'] > 30]      //   unique_words = list({word.lower() for word in "Hello world hello".split()})
 >> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
 >> array contains duplicates - use for in for (n2, 1) - compare element with previous element (n, n)
 
