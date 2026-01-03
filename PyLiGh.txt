@@ -33,17 +33,17 @@ logical: and or not
 identify: print(x is z) 
 membership:  print("pineapple" not in x)
 >> swap variables
-
-
 >> user input: input / int / eval / python file.py 6(sys.argv[1]) 2 /
 >> if elif else / while loop / for loop / for else / break continue pass /
 >> why arrays than lists: Optimized/faster, memory efficient for mathematical operations for numerical data.
    Why NumPy: to work with multi-dimensional arrays 
    why Pandas:  handle tabulaer data - data scientist life easier and effective (Python - Need to write code, Excel - Can not handle large data)
->> functions: positional / keyworded / variable length: def sum(a, *b): / keyword variable length: def person(name, **data) /Global variable & local variable  
+>> functions: positional / keyworded / default / variable length: def sum(a, *b): / keyword variable length: def person(name, **data) /Global variable & local variable  
    recursion: function calling it self ex: factorial using recurssion
    anonymous function, short, one-line function: lambda -- map, filter, reduce
    List comprehensation: create new list from existiong list or other iterals
+
+
 >> decorator: adding extra feature to the existing function without touching them.
 >> Special variable: __name__ == __main__
 >> OOPS: Class, object/instance of class, constructer (__init__), self referring object, 
@@ -89,18 +89,17 @@ membership:  print("pineapple" not in x)
 >> find line_count, words, chars in the files
 >> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
 >> FIND MISSING NUMBER IN AN ARRAY IN PYTHON  :  n(n+1)/2 - sum(array_elements)
+>> PRINT PATTERNS
+>> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
 
 
 >> Sort a List without using Sort keyword. built-in / bubble sort /
 >> Find the pair of numbers in this list whose sum is n no.
 >> Read and print values from an Excel file using Pandas.
 >> Handle file exceptions (missing or corrupted Excel files) gracefully. no error in try block --> try - else - finally /// error ---> except - finally
->> PRINT PATTERNS
 >> number is prime or not
->> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
 >> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
 >> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
->> array contains duplicates - use for in for (n2, 1) - compare element with previous element (n, n)
 
 
 ===============================================================================================================================================================
