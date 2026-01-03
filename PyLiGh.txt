@@ -91,15 +91,15 @@ membership:  print("pineapple" not in x)
 >> FIND MISSING NUMBER IN AN ARRAY IN PYTHON  :  n(n+1)/2 - sum(array_elements)
 >> PRINT PATTERNS
 >> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
+>> Handle file exceptions (missing or corrupted Excel files) gracefully. no error in try block --> try - else - finally /// error ---> except - finally
+>> Read and print values from an Excel file using Pandas.
+>> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
 
 
 >> Sort a List without using Sort keyword. built-in / bubble sort /
 >> Find the pair of numbers in this list whose sum is n no.
->> Read and print values from an Excel file using Pandas.
->> Handle file exceptions (missing or corrupted Excel files) gracefully. no error in try block --> try - else - finally /// error ---> except - finally
 >> number is prime or not
 >> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
->> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
 
 
 ===============================================================================================================================================================
