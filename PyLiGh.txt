@@ -95,7 +95,7 @@ membership:  print("pineapple" not in x)
 >> Read and print values from an Excel file using Pandas.
 >> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
 
-
+hh
 >> Sort a List without using Sort keyword. built-in / bubble sort /
 >> Find the pair of numbers in this list whose sum is n no.
 >> number is prime or not
