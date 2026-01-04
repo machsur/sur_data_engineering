@@ -91,4 +91,13 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
 >> Write a query to count how many employees share the same salary.
 >> count the number of null values in each column: 
 >> display only last 4 characters of card number. 
+>>
+
+>> Three options to load more data if the number partition is 4000/full in BigQuery #googlecloud: bq rm | delete | turn on partition expiration
+>> Interview Question What happens if u load 11 years of data into BigQuery with Partitioning enabled? 
+   cant load data because > 4000 partitions
+>> Which is the best Compute option in Google Cloud to run any workload? GKE autopioloit mode
+>> What happens when a virus infected object is uploaded to Cloud Storage? ntg happens its object strorage not for scanning
+
+
 
