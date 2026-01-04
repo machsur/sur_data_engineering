@@ -129,12 +129,12 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	Spark Archit & components: 
 	Spark deployment modes: dectate where driver prog runs and how executors interact with driver: local, client, cluster
 
-1. master in reading query plan
+>> master in reading query plan
 	syntax check ---> unresolved logical plan --> catalyst optimizer --> optimal logical plan (filter push down & req col) --> several pysical plan -->
 	based on cost model select best pysical plan  --> executes and create RDD/DF
 	df.explain(True)
 
-2. master in reading spark dags: diagram
+>> master in reading spark dags: diagram
 
 3.Spark memory management
 	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
@@ -153,9 +153,11 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 
 	yarn.scheduler.maximum-allocation-mb --> pysical memory limit at the worker node
 	yarn.nodemanager.resource.memory-mb 
-3. Tune no of shuffle partitions (optimal SP size b/w 1 to 200 mb )
+
+>> Tune no of shuffle partitions (optimal SP size b/w 1 to 200 mb, default shuffle partitions=200 )
+	* sp = 200, cluster = 1000 cores --> slow completion time & underutilization of resources
 	* if data per SP is large - cores = 20, SP = 200, data = 300 gb - data/sp = 1.5gb - no of SP = 300*1000/200 = 1500 SP
-	* if data per SP is large - cores = 12, SP = 200, data = 50 mb - data/sp = 0.25 mb - no of SP=50/5=10 or data/SP = 50/12 = 4.5 mb
+	* if data per SP is less - cores = 12, SP = 200, data = 50 mb - data/sp = 0.25 mb - no of SP=50/5=10 or data/SP = 50/12 = 4.5 mb
 
 4. Data Skew (job taking time, uneven resource utilization, OOM/data spill)
 	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
