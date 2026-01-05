@@ -19,14 +19,12 @@ spark.sparkContext.defaultMinPartitions
 spark.sparkContext.defaultParallelism
 spark = SparkSession.builder.appName('surapp11').config('spark.sql.files.maxPartitionBytes', '3mb').getOrCreate()
 spark.sparkContext.applicationId, spark.stop(), spark application -list, spark application -kill app_id
-df.explain(True)
 spark_new_app_session = spark.newSession()
 
 gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g,spark:spark.executor.instances=2
 .config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
 .config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
 .config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
-spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10 * 1024 * 1024)  # 10 MB
 
 >> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
 >> validate pyspark exit() / spark-sql exit; / 
@@ -158,25 +156,6 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
    Rules:leave 1C1gbM per Node for hadoop/yarn/os - leave 1Exe or 1C1gbM for app master container at cluster level - 3 t0 5 cores/exe - overhead mem max(384 or 10% exe mem)
    12c48gb/node - 11c47gb/node-55c235gb-54c234gb-total exe=54/5=10 & mem/exe=234/10=23.4-actual memory/exe=23-2.3=20gb
 
->> Tune no of shuffle partitions (optimal SP size b/w 1 to 200 mb, default shuffle partitions=200 )
-	* sp = 200, cluster = 1000 cores --> slow completion time & underutilization of resources
-	* if data per SP is large - cores = 20, SP = 200, data = 300 gb - data/sp = 1.5gb - no of SP = 300*1000/200 = 1500 SP
-	* if data per SP is less - cores = 12, SP = 200, data = 50 mb - data/sp = 0.25 mb - no of SP=50/5=10 or data/SP = 50/12 = 4.5 mb
-
->> Why Data Skew Will Ruin Your Spark Performance: uneven data distribution during shuffle operations like groupBy, join
-	why its bad: taking to much time | uneven resource unutilization | OOM error |
-	
-	spark.conf.set("spark.sql.adaptive.enabled", "false")
-	spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-
-    Data Skew (job taking time, uneven resource utilization, OOM/data spill)
-	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
-		-> tuning no of SP - 15 keys - coalesce(15) - spark.sql.adaptive.enabled, spark.sql.adaptive.coalescePartitions.enabled
-		-> optimize joins - SMJ to BJ - df1.repartiton(4), df2 broadcasted on all executors - spark.sql.autoBroadcastJoinThreshold
-		-> optimize Skew joins - breaks larger part into smaller part - spark.sql.adaptive.skewJoin.enabled
-	Salt - adding randomness (key) to distribute uneven data evenly.
-		-> add salt columnn - hash(key, salt)% SP
-
 >> Partitioning: for fast access, parallesium/resource utilization) | which column: low to medium cordinality  & filter (high cordi - small file problem - buckting is rec)
    df.write.repartition(3).mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/content/ecommer/') 
    
@@ -185,6 +164,19 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
    Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)  
    Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all (bucket pruning) 
 
+>> Tune no of shuffle partitions (optimal SP size b/w 1 to 200 mb, default shuffle partitions=200 )
+	* sp = 200, cluster = 1000 cores --> slow completion time & underutilization of resources
+	* if data per SP is large - cores = 20, SP = 200, data = 300 gb - data/sp = 1.5gb - no of SP = 300*1000/200 = 1500 SP
+	* if data per SP is less - cores = 12, SP = 200, data = 50 mb - data/sp = 0.25 mb - no of SP=50/5=10 or data/SP = 50/12 = 4.5 mb
+
+>>  Data Skew: uneven data distribution during shuffle operations like groupBy, join (job taking time, uneven resource utilization, OOM/data spill)
+	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
+		-> tuning no of SP - 15 keys - coalesce(15) - spark.conf.set("spark.sql.adaptive.enabled", "true"), spark.sql.adaptive.coalescePartitions.enabled
+		-> optimize joins - SMJ to BJ - df1.repartiton(4), df2 broadcasted on all executors - spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10*1024*1024/-1) 
+		-> optimize Skew joins - breaks larger part into smaller part - spark.conf.set("spark.sql.adaptive.skewedJoin.enabled", "true")
+	Salt - adding randomness (key) to distribute uneven data evenly.
+		-> add salt columnn - hash(key, salt)% SP
+	
 >> df.cache() / df.persist(StorageLevel.MEMORY_AND_DISK_DESER_2) / df.unpersist() /
 	SER is CPU intensive, memory saving as data is compact while DESER is CPU efficient, memory intensive
 	Size of data on disk is lesser as data is in serialized format, while deserialized in memory as JVM objects for faster access
@@ -196,7 +188,7 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	limits: one of dataset must be partitioned and based on column that is filered from other datase	
 	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
 
-9. , Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
+>> Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
 
 
