@@ -159,6 +159,13 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 >> Partitioning: for fast access, parallesium/resource utilization) | which column: low to medium cordinality  & filter (high cordi - small file problem - buckting is rec)
    df.write.repartition(3).mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/content/ecommer/') 
    
+   static partition pruning: partition on listen date data on disk - this scans only listen date that user eants
+   dynamic partition pruning: send partition that is supossed to be scanned
+	release date table --> filter to get requ data which comes to know during run time --> spark uses results to scan on other dataset based on listen date
+	Adv: reduce time to scan/process)
+	limits: one of dataset must be partitioned and based on column that is filered from other datase	
+	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
+
 >> Bucketing: helps to speed up in Joins and aggregations, filter - hash(product_id)%4  
    df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('bucketed_table')  - 2buc*2part=4files
    Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)  
@@ -181,12 +188,7 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	SER is CPU intensive, memory saving as data is compact while DESER is CPU efficient, memory intensive
 	Size of data on disk is lesser as data is in serialized format, while deserialized in memory as JVM objects for faster access
 
-8. static partition pruning: partition on listen date data on disk - this scans only listen date that user eants
-   dynamic partition pruning: send partition that is supossed to be scanned
-	release date table --> filter to get requ data which comes to know during run time --> spark uses results to scan on other dataset based on listen date
-	Adv: reduce time to scan/process)
-	limits: one of dataset must be partitioned and based on column that is filered from other datase	
-	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
+
 
 >> Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
