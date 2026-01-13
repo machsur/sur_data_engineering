@@ -94,11 +94,12 @@ membership:  print("pineapple" not in x)
 >> Handle file exceptions (missing or corrupted Excel files) gracefully. no error in try block --> try - else - finally /// error ---> except - finally
 >> Read and print values from an Excel file using Pandas.
 >> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
-
-hh
->> Sort a List without using Sort keyword. built-in / bubble sort /
->> Find the pair of numbers in this list whose sum is n no.
 >> number is prime or not
+>> Find the pair of numbers in this list whose sum is n no.
+
+>> Sort a List without using Sort keyword. built-in / bubble sort /
+	bubble sort: keep largest item at the end (6 items- 5comp in 1st round) 
+	selection sort: find min_index corresponding to lowest value and swap values
 >> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
 
 
