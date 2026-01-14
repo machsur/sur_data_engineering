@@ -100,6 +100,7 @@ membership:  print("pineapple" not in x)
 >> Sort a List without using Sort keyword. built-in / bubble sort /
 	bubble sort: keep largest item at the end (6 items- 5comp in 1st round) 
 	selection sort: find min_index corresponding to lowest value and swap values
+	insertion sort: start at 2 element and compare previous elements (for almost sorted lists - o(n) not n2)
 >> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
 
 
