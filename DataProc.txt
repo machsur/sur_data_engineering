@@ -17,7 +17,6 @@ spark.conf.set("spark.sql.files.maxPartitionBytes", "1000")
 df.rdd.getNumPartitions()
 spark.sparkContext.defaultMinPartitions
 spark.sparkContext.defaultParallelism
-spark = SparkSession.builder.appName('surapp11').config('spark.sql.files.maxPartitionBytes', '3mb').getOrCreate()
 spark.sparkContext.applicationId, spark.stop(), spark application -list, spark application -kill app_id
 spark_new_app_session = spark.newSession()
 
@@ -30,6 +29,11 @@ gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g
 >> validate pyspark exit() / spark-sql exit; / 
 >> execute gcs script: master node: spark-submit gs://buk/pysp1.py   >> submit pyspark job using UI >> gcloud dataproc jobs submit pyspark pysp1.py --cluster --region
 
+>>
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+spark = SparkSession.builder.appName('surapp11').master("local[*]").config('spark.sql.files.maxPartitionBytes', '3mb').getOrCreate()
 >> custom_schema = StructType([StructField("id", IntegerType(), True), ....]) or ''' ID Integer, Name String '''
    df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).json("file:///path_to_file/data_files/")
    df = spark.read.format("csv").option("header", True).option("inferSchema", True)/schema(cust_schema).load("file:///path_to_file/data_files/")
