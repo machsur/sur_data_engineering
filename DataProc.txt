@@ -125,11 +125,6 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 
 ==============>> Spark performance tuning
 
->> Spark Architexture:
-	Spark Run mode: Standalone mode (spark built-in), YARN, Misos, k8s
-	Spark Distibuted nature and in-memory computution
-	Spark Archit & components: 
-	Spark deployment modes: dectate where driver prog runs and how executors interact with driver: local, client, cluster
 
 >> master in reading query plan
 	syntax check ---> unresolved logical plan --> catalyst optimizer --> optimal logical plan (filter push down & req col) --> several pysical plan -->
