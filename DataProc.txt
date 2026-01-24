@@ -191,26 +191,31 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 
 >> Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
-
-
+4. Spark
+>> Limitations of Map Reduce: Performance (disk), complex code, only support batch processing
+>> Spark replaces Map reduce
 >> Spark ecosystem
->> what is transformation and action?      
+>> transformation: operation which creates new rdd from existing one - lazily evaluated
+	action: operation that executes series of transformations and return results.
 >> why trans are lazy & how Lazy Evaluation work in PySpark?      
->> how spark reads the data? (from distributed or read data and partition based on config)
->> sc,parallelize: Create an RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
-   sc.textFile: Create an RDD by reading a text file from HDFS/S3/local FS. Best for large datasets.
->> What are wide and narrow transformations in PySpark?
+>> how spark reads the data? (already distributed data or read data and partition based on config)
+>> sc.parallelize: function to create a RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
+   sc.textFile: function to read data from a text file from HDFS/S3/local FS. Best for large datasets.
+>> narrow transformations: data is not shuffled across the partitions - faster perf - filter
+	wide transformations: data is shufflled acrros partitions, requiring network i/o  - slower perf - groupby
 >> spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
->> reduceByKey vs groupByKey?		
->> increase/decrease no of partitions? repartition vs coalesce
->> repartion vs coalecse
->> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
+>> reduceByKey: local aggregation - less data for shuffling
+	groupByKey: no local aggragation - more data for shuffling	
+>> increase no of partitions: 20 node cluster, 10 parti - better to use all nodes
+   decrease no of partitions: 20 nodes, 50 parti - filter - reduce no of partitions
+   repartion: shuffles data across the nodes to increase/decrease no of partitions vs coalecse: combine partitions without shuffle
 
+
+>> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
 >> key-benfits compared to low-level api : schema awareness, ease of use, optimized, various file supports 
 >> reading data in spark is action or transformation? : without inferschema & header=true | with inferschema | explicit schema |
 >> writing data in spark is action or transformation? : Action
 >> What is SparkSQL, and how do you perform SQL operations on DataFrames? 
-
 >> df.cache()  # Stores in memory, spills to disk if needed  -->> df.persist(StorageLevel.MEMORY_AND_DISK_SER_3)   (6)
 >> broadcast join - small dataset is broadcasted to all worker nodes - allows to perform join locally - reduced data shuffling across the network - improved performance
 >> map() returns a single value for each input element / flatMap() return multiple values for each input element
