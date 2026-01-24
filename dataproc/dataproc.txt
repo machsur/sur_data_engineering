@@ -1,0 +1,276 @@
+
+==================================================================DataProc======================================================================================
+
+===================> low-level api Syntax
+
+>> rdd = spark.sparkContext.parallelize(data)  /  rdd = spark.sparkContext.textFile(hdfs_gcs_path) 
+>> rdd1 = rdd.filter(lambda row: 'Frieza' in row) / rdd1 = rdd.filter(lambda row : row!=header)  - header = rdd.first()
+   rdd1 = rdd.flatMap(lambda line:line.split(' ')).map(lambda word:(word,1)).reduceByKey(lambda a,b : a+b)   ---> word count programme
+   rdd1 = rdd.map(lambda row:row.split(',')).map(lambda row:(row[2],1)).groupByKey().map(lambda row:(row[0],len(row[1]))).collect()
+   rdd1 = rdd.map(parse_row) / def parse_row(row):
+>> rdd.first() / rdd.collect() / rdd.take(3) / rdd1.countByValue()
+   
+===================>> high-level api syntax
+
+>>
+spark.conf.set("spark.sql.files.maxPartitionBytes", "1000")
+df.rdd.getNumPartitions()
+spark.sparkContext.defaultMinPartitions
+spark.sparkContext.defaultParallelism
+spark.sparkContext.applicationId, spark.stop(), spark application -list, spark application -kill app_id
+spark_new_app_session = spark.newSession()
+
+gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g,spark:spark.executor.instances=2
+.config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
+.config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
+.config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
+
+>> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
+>> validate pyspark exit() / spark-sql exit; / 
+>> execute gcs script: master node: spark-submit gs://buk/pysp1.py   >> submit pyspark job using UI >> gcloud dataproc jobs submit pyspark pysp1.py --cluster --region
+
+>>
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+spark = SparkSession.builder.appName('surapp11').master("local[*]").config('spark.sql.files.maxPartitionBytes', '3mb').getOrCreate()
+>> custom_schema = StructType([StructField("id", IntegerType(), True), ....]) or ''' ID Integer, Name String '''
+   df = spark.read.option("header", True).option("inferSchema", True)/schema(cust_schema).json("file:///path_to_file/data_files/")
+   df = spark.read.format("csv").option("header", True).option("inferSchema", True)/schema(cust_schema).load("file:///path_to_file/data_files/")
+   option("mode", "PERMISSIVE").option("columnNameOfCorruptRecord", "_corrupt_record") / option("mode", "DROPMALFORMED") / option("mode", "FAILFAST") 
+   df.write.format('parquet').mode('overwrite').save('gs://surdatabuk/data/olist_op/')
+   df.write.format('bigquery').mode('overwrite').option('temporaryGcsBucket', 'gcs_path').option('table', 'p.d.t').save()
+>> join_df = df1.join(df2, df1.id == df2.id / () & () / on='id'/ on=["id", "country"] / &, how='inner/left/right/outer/left_semi/left_anti') 
+    df1.join(broadcast(df2), "id", "inner") /  df1.crossjoin(df2)  
+>> filtered_df = df.filter(df['cn'] > 10) / .isNull() / .isNotNull() /  isIn(['India', 'USA'])  /  (& AND | OR) +  ~ NOT /
+>> df.select("customer_id", col("Name"), df.email, df["city"])    /    df.selectExpr("id*2 as nid", "name as nname").show()   /  df.select('*').show() / 
+	df.select([c for c in df.columns if c not in ls]).show()	/ ls = ['product','region']
+>> sorted_df = df.orderBy(asc('department')) / col("country).desc())  / asc_nulls_last('value') /
+>> df.show(n=3, truncate=25, vertical=True) / df.collect() / df.count() / df.printSchema() / df.columns / df.limit(10) / 
+
+>> union tables: union/subtract/intersect/   -->> / col name, position, schema match /
+   union by name -->> uni_df = df3.unionByName(df4, allowMissingColumns=True)   -->> handle col inorder / missing col handle with null values /
+>> 	add new columns: df.withColumn("col1", lit(100)).withColumn("col2", col("id") * 10) 
+	column type change: df.withColumn("amount", col("amount").cast("double"))   # Change 'amount' from string to double
+	columns name change: df.withColumnRenamed("old_name", "new_name")
+	drop columns: df.drop("col1", "col2", "col3")
+>> df.dropna(how="all/any", subset=["age"]).show()
+   df.fillna({'name': 'suresh', 'age': 40}).show()   /   avg_value = df.select(avg("age")).collect()[0][0]
+   df.replace(to_replace=['Alice', 'Bob'], value=['suresh', 'unknown']).show()
+>> when&otherwise -->> df = df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult"))
+>> drop duplicates: df.distinct() / df.orderBy('Age').dropDuplicates(['Name']) / row_number()  / 
+>> agg 	----> df.select(sum('CN')).show()  /   grouping and agg----> df.groupBy('CN').agg(sum('CN')).show()   	---> note: ignore null values 	
+   sum / min / max / avg / count / first_value / last_value / sum_distinct / count_distinct / collect_list / collect_set
+   window functions----> win_spe=Window.partitionBy("category").orderBy(asc("timestamp")).rowsBetween(Window.unboundedPreceding, ..) or (-2, 3) /    
+   df.withColumn("row_number", row_number().over(window_spec)) 
+   max(cn) / collect_list('cn') / first_value('cn') / row_number() / lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
+>> splitng column, array_length (size), word in array (array_contains), explode/explode_outer, indexing: [0] or .getItem(0)
+   df_split = df.withColumn("name_parts", size/explode(split(col("full_name"), " ")))
+   df_split = df.withColumn("name_parts", array_contains(split(col("full_name"), " "), 'Alice'))
+   df_split = df.withColumn("name_parts", split(col("full_name"), " ").getItem(1)/[0])
+>> Pivot: df.groupBy('Month').pivot('product').sum('sales').show()
+   unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
+
+>>  
+substring(col, pos, len) 
+substring_index(col, delim, count) – before/after delimiter
+locate(substr, col[, pos]) / instr("text", "World")
+regexp_replace(col("first"), 'Ali', '') / translate(col("first"), 'Al', '') / 
+length("text").alias("len")
+trim("text").alias("trim")  / ltrim / rtrim / 
+upper("first").alias("first_upper")	/ lower / initcap /
+concat(col("first"), lit(" "), col("last")).alias("full_name_raw") / concat_ws(" ", "first", "last").alias("full_name_ws")
+lpad(col("first"), 8, "0").alias("lpad_first")  / rpad
+repeat(col("first"), 3).alias("first_x3")
+
+>> 
+to_date("date")
+year(col("dt/ts"))  -  month / day / hour / minute / second 
+date_trunc("month", "dt/ts") 
+date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600, 2)
+date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interval -2 year")
+
+==================> spark-sql 
+
+>> spark temp table (exists only for SS) / global temp table (exists all SS within same app)
+   spark.sql('show databases') --> spark.sql('use db_name') --> spark.sql('show tables') --> spark.sql('show tables in global_temp')
+   df.createOrReplaceTempView('customers') -->	df.createOrReplaceGlobalTempView('gcustomers')
+   spark.sql('select * from customers limit 5') or spark.table('customers') --> spark.sql('describe extended customers') --> spark.sql('drop table customers') 		
+>> Spark Persistant: Managed table (spark owns both metadata and data)
+   spark.sql('''CREATE TABLE custm (customer_id STRING, customer_unique_id STRING, customer_zip_code_prefix INT, customer_city STRING, customer_state STRING) USING CSV''')
+   df.write.mode('overwrite').saveAsTable('default.customers_sur')
+   data: hdfs://sur-dp-clu11-m/user/hive/warehouse/customers 
+   metadata: vi etc/hive/conf/hive-site.xml -> connect mysql -u hive -p  -> Pw1+fgC9gJI+ -> show databases; use metastore; show tables; select * from TBLS; exit
+>> Spark Persistant: external table (spark owns metadata and gcs/hdfs owns data)
+   spark.sql(''' create external table custe (customer_id STRING, ...) using csv location 'gs://surdatabuk/data/olist/olist_customers_dataset.csv' ''')
+
+=================>>  HiveQL: 
+
+>> sql like interface (HQL) --> translator ---> MR/spark/tej code (is abstraction for java or MR programe) >> cli: set hive.execution.engine=tez/spark/mr;
+   table --> data (hdfs, s3, gcs) + metadata (hive stores metastore in it). 
+>>  Hive external table (data file in GCS)
+   create external table custe (customer_id string, ...) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE location 'gs://surdatabuk/data/olist/cust_exe/'
+>> Hive managed table (data in hdfs --> hdfs dfs -ls /user/hive/warehouse/  --> set hive.metastore.warehouse.dir; )
+   create table custm (	order_id string, ....) STORED AS TEXTFILE;
+>> connect: 1.hive & 2.beeline : prod rec --> !connect jdbc:hive2://<hostname>:<port>/<database> / !connect jdbc:hive2://localhost:10000/default (hive & Pw1+fgC9gJI+)
+
+-- hive is database like mysql?		its not a database. but, its DWH tool built on top of Hadoop to query large datasets from HDFS storage
+-- hive is replacement for Hadoop? 	No, buit on top of hadoop core components (hdfs, yarn, mr/spark/tej)
+-- hive queries like normal sql queries in db?  	HQL queries --> translatior --> mr/spark/tej code which runs on distributed system
+-- hive can perform row-level transaction like mysql? 	yes, but, hive is not designed for it (if u change one row- it will recreate entire partition file)
+-- hive can works with only HDFS?  			no. HDFS/s3/gcs/data lake
+-- hive tables work like noraml database tables? 	hive is metastore and not storing any tables
+
+=========================================================================================================================
+
+==============>> Spark performance tuning
+
+
+>> master in reading query plan
+	syntax check ---> unresolved logical plan --> catalyst optimizer --> optimal logical plan (filter push down & req col) --> several pysical plan -->
+	based on cost model select best pysical plan  --> executes and create RDD/DF
+	df.explain(True)
+
+>> master in reading spark dags: diagram
+
+3.Spark memory management
+	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
+	spark.driver.memory --> JVM memory 
+	spark.driver.memoryOverhead --> 10% 0r 384mb max one --> used for container processes, pyspark app
+	>> Spark executor container: sum of below 3 are the total memory of executor container
+	1. on-heap memory managed by JVM (10 gb) [spark.executor.memory ] - when on-heap memory is full, operations paused and do gcc then resume operation - perfor reduce
+		reserved memory 300 mb --> fixed reserve for spark engine
+		spark memory (unified memory) [spark.memory.fraction] (0.6 default, u can change)
+			executor memory pool --> joins, shuffle, groupBy, 
+			storage memory pool [spark.memory.storageFraction], (0.5 default, u can change) --> RDD, DF cashing, broadcast var
+		user memory --> used for spark internal metada, udf, variables, objects
+	2. overhead [spark.executor.memoryOverhead  --> 10% of spark executor memory 0r 384mb max one] --> for container processes, n/w transfer, read shuffle, python worker 
+	3. off-heap mwmory: managed by OS [spark.memory.offHeap.enabled, spark.memory.offHeap.size - default 0, 10to20% of on-heap memory].
+	   Off-heap memory can reduce garbage collection overhead, leading to better performance and lower latency
+
+	yarn.scheduler.maximum-allocation-mb --> pysical memory limit at the worker node
+	yarn.nodemanager.resource.memory-mb 
+
+6. executor tuning: 
+   Rules:leave 1C1gbM per Node for hadoop/yarn/os - leave 1Exe or 1C1gbM for app master container at cluster level - 3 t0 5 cores/exe - overhead mem max(384 or 10% exe mem)
+   12c48gb/node - 11c47gb/node-55c235gb-54c234gb-total exe=54/5=10 & mem/exe=234/10=23.4-actual memory/exe=23-2.3=20gb
+
+>> Partitioning: for fast access, parallesium/resource utilization) | which column: low to medium cordinality  & filter (high cordi - small file problem - buckting is rec)
+   df.write.repartition(3).mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/content/ecommer/') 
+   
+   static partition pruning: partition on listen date data on disk - this scans only listen date that user eants
+   dynamic partition pruning: send partition that is supossed to be scanned
+	release date table --> filter to get requ data which comes to know during run time --> spark uses results to scan on other dataset based on listen date
+	Adv: reduce time to scan/process)
+	limits: one of dataset must be partitioned and based on column that is filered from other datase	
+	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
+
+>> Bucketing: helps to speed up in Joins and aggregations, filter - hash(product_id)%4  
+   df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('bucketed_table')  - 2buc*2part=4files
+   Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)  
+   Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all (bucket pruning) 
+
+>> Tune no of shuffle partitions (optimal SP size b/w 1 to 200 mb, default shuffle partitions=200 )
+	* sp = 200, cluster = 1000 cores --> slow completion time & underutilization of resources
+	* if data per SP is large - cores = 20, SP = 200, data = 300 gb - data/sp = 1.5gb - no of SP = 300*1000/200 = 1500 SP
+	* if data per SP is less - cores = 12, SP = 200, data = 50 mb - data/sp = 0.25 mb - no of SP=50/5=10 or data/SP = 50/12 = 4.5 mb
+
+>>  Data Skew: uneven data distribution during shuffle operations like groupBy, join (job taking time, uneven resource utilization, OOM/data spill)
+	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
+		-> tuning no of SP - 15 keys - coalesce(15) - spark.conf.set("spark.sql.adaptive.enabled", "true"), spark.sql.adaptive.coalescePartitions.enabled
+		-> optimize joins - SMJ to BJ - df1.repartiton(4), df2 broadcasted on all executors - spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10*1024*1024/-1) 
+		-> optimize Skew joins - breaks larger part into smaller part - spark.conf.set("spark.sql.adaptive.skewedJoin.enabled", "true")
+	Salt - adding randomness (key) to distribute uneven data evenly.
+		-> add salt columnn - hash(key, salt)% SP
+	
+>> df.cache() / df.persist(StorageLevel.MEMORY_AND_DISK_DESER_2) / df.unpersist() /
+	SER is CPU intensive, memory saving as data is compact while DESER is CPU efficient, memory intensive
+	Size of data on disk is lesser as data is in serialized format, while deserialized in memory as JVM objects for faster access
+
+
+
+>> Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
+
+4. Spark
+>> Limitations of Map Reduce: Performance (disk), complex code, only support batch processing
+>> Spark replaces Map reduce
+>> Spark ecosystem
+>> transformation: operation which creates new rdd from existing one - lazily evaluated
+	action: operation that executes series of transformations and return results.
+>> why trans are lazy & how Lazy Evaluation work in PySpark?      
+>> how spark reads the data? (already distributed data or read data and partition based on config)
+>> sc.parallelize: function to create a RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
+   sc.textFile: function to read data from a text file from HDFS/S3/local FS. Best for large datasets.
+>> narrow transformations: data is not shuffled across the partitions - faster perf - filter
+	wide transformations: data is shufflled acrros partitions, requiring network i/o  - slower perf - groupby
+>> spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
+>> reduceByKey: local aggregation - less data for shuffling
+	groupByKey: no local aggragation - more data for shuffling	
+>> increase no of partitions: 20 node cluster, 10 parti - better to use all nodes
+   decrease no of partitions: 20 nodes, 50 parti - filter - reduce no of partitions
+   repartion: shuffles data across the nodes to increase/decrease no of partitions vs coalecse: combine partitions without shuffle
+
+
+>> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
+>> key-benfits compared to low-level api : schema awareness, ease of use, optimized, various file supports 
+>> reading data in spark is action or transformation? : without inferschema & header=true | with inferschema | explicit schema |
+>> writing data in spark is action or transformation? : Action
+>> What is SparkSQL, and how do you perform SQL operations on DataFrames? 
+>> df.cache()  # Stores in memory, spills to disk if needed  -->> df.persist(StorageLevel.MEMORY_AND_DISK_SER_3)   (6)
+>> broadcast join - small dataset is broadcasted to all worker nodes - allows to perform join locally - reduced data shuffling across the network - improved performance
+>> map() returns a single value for each input element / flatMap() return multiple values for each input element
+>> .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work?  --> gathers all partitions of RDD and brings them to the driver node. - data is no longer distributed, instead stored in the memory of the driver program
+>> Difference between sortby and orderby? - sortBy is used with RDDs and orderBy is used with DataFrames.
+>> what is the default block size (128 MB) in hdfs and how to change it?:   Edit the hdfs-site.xml File
+>> SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
+
+==============> coding QA
+
+>> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
+>> What are the different ways to remove duplicate records ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy /
+>> find the top 5 most populous cities.    | City    | Population|
+>> calculate the average salary for each department.  emp_name, dept, salary
+>> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")] 
+>> split the data into two columns (Even, Odd) 
+>> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. --> left join / filter null
+>> Identify employees whose salary is greater than the average salary of their department.
+>> fill missing `purchase_amount` values with the average purchase amount of that product category. -->`cust_id`, `cust_name`, `city`, `pur_amount`, `product_category`. 
+>> Replace null values in a column with the last non-null value in that partition. -----> last_value('cn', ignorenulls=True).over(window_spec)
+>> Categorize employees based on years of experience into Junior, Mid, and Senior levels.
+>> Fill the mean salary value in Null. ---> avg_sal = df.select(mean(col('sal'))).collect()[0][0] --> df.fillna({'salary': avg_salary}).show() / avg_sal and cross join
+>> ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
+	Replace all NULL values in the Quantity column with 0 / Price column with the average price of the existing data / Fill missing Sales_Date with '2025-01-01'. / 
+    Drop rows where the Product column is NULL / Drop rows where all columns are NULL.
+>> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: df1=df.groupBy('id').agg(count('id').alias('count')).filter(col('count')==1)
+>> emp earning more than avg sal in their department: 
+>> Handling NULL values using the average salary | emp_id, salary: IFNULL(cn, rep_val) COALESCE(cn, rep_val1, rep_val2, ...) 
+>> Extract the Domain from the Email column 
+>> Word count program in pyspark rdd & DF
+>> count the number of null values in each column of df. 	df.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
+>> column Country: India Australia Pakistan | Output: India vs Australia India vs Pakistan Australia vs Pakistan
+	df.alias("a").crossJoin(df.alias("b")).filter(col("a.Country") < col("b.Country")).selectExpr("concat(a.Country, ' vs ', b.Country) as Matchup")
+>> Get the first and last transaction date for each customer. | row_number()
+>> Find all employees whose names contain the letters "a" exactly twice:  length("name_lc") - length(regexp_replace("name_lc", "a", ""))
+>> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
+>> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
+>> Write a query to count how many employees share the same salary.
+>> employees who hired in last 90 days: 
+>> Retrieve employees who joined in the last 6 months.
+>> display only last 4 characters of card number. : lpad(substring(col("card_no").cast("string"), -4, 4),16, '#')
+	maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
+>> extract filename: element_at(split(input_file_name(), "/"), -1)
+>> why parquet?
+- Columnar format: Only reads the region column to filter — better compression better than rows..
+- Metadata: contains Min/Max values for each column in every data block - help skip blocks -  SELECT * FROM sales WHERE region = 'Asia'
+- Schema evolution: You can add new columns later without breaking old data.
+- Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
+
+
+
+
+
+>>
+!apt-get install openjdk-11-jdk -y
+!wget -q https://downloads.apache.org/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz
+!tar xf spark-3.4.1-bin-hadoop3.tgz
+!pip install -q findspark
