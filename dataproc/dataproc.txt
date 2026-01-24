@@ -123,16 +123,12 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 
 =========================================================================================================================
 
-==============>> Spark performance tuning
-
-
+===============================>> Spark performance tuning
 >> master in reading query plan
 	syntax check ---> unresolved logical plan --> catalyst optimizer --> optimal logical plan (filter push down & req col) --> several pysical plan -->
 	based on cost model select best pysical plan  --> executes and create RDD/DF
 	df.explain(True)
-
 >> master in reading spark dags: diagram
-
 3.Spark memory management
 	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
 	spark.driver.memory --> JVM memory 
@@ -186,11 +182,11 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 >> df.cache() / df.persist(StorageLevel.MEMORY_AND_DISK_DESER_2) / df.unpersist() /
 	SER is CPU intensive, memory saving as data is compact while DESER is CPU efficient, memory intensive
 	Size of data on disk is lesser as data is in serialized format, while deserialized in memory as JVM objects for faster access
-
-
-
 >> Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
+7.
+>> components and architexture of spark?
+>> Spark deployment modes: Local, Client and cluster mode
 4. Spark
 >> Limitations of Map Reduce: Performance (disk), complex code, only support batch processing
 >> Spark replaces Map reduce
@@ -209,23 +205,23 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 >> increase no of partitions: 20 node cluster, 10 parti - better to use all nodes
    decrease no of partitions: 20 nodes, 50 parti - filter - reduce no of partitions
    repartion: shuffles data across the nodes to increase/decrease no of partitions vs coalecse: combine partitions without shuffle
-
-
+5.
 >> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
->> key-benfits compared to low-level api : schema awareness, ease of use, optimized, various file supports 
->> reading data in spark is action or transformation? : without inferschema & header=true | with inferschema | explicit schema |
->> writing data in spark is action or transformation? : Action
->> What is SparkSQL, and how do you perform SQL operations on DataFrames? 
->> df.cache()  # Stores in memory, spills to disk if needed  -->> df.persist(StorageLevel.MEMORY_AND_DISK_SER_3)   (6)
+>> key-benfits of high level api compared to low-level api : schema awareness, ease of use, optimized, various file supports 
+>> reading data in spark is action or transformation? :  header=true & inferschema=false A |  header=true & inferschema=true A | explicit schema T |
+ 	writing data is action or transformation? : Action
+>> Read modes in spark? 
+>> What is SparkSQL, and how do you perform SQL operations on DataFrames?
+6.
+>> df.cache()  # Stores in memory, -->> df.persist(StorageLevel.MEMORY_AND_DISK_SER_3)  -->> df.unpersist() 
+
+>> SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
 >> broadcast join - small dataset is broadcasted to all worker nodes - allows to perform join locally - reduced data shuffling across the network - improved performance
 >> map() returns a single value for each input element / flatMap() return multiple values for each input element
 >> .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work?  --> gathers all partitions of RDD and brings them to the driver node. - data is no longer distributed, instead stored in the memory of the driver program
 >> Difference between sortby and orderby? - sortBy is used with RDDs and orderBy is used with DataFrames.
->> what is the default block size (128 MB) in hdfs and how to change it?:   Edit the hdfs-site.xml File
->> SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
 
-==============> coding QA
-
+==========================> coding QA
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
 >> What are the different ways to remove duplicate records ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy /
 >> find the top 5 most populous cities.    | City    | Population|
