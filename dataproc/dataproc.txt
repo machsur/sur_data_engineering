@@ -172,13 +172,13 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	* if data per SP is less - cores = 12, SP = 200, data = 50 mb - data/sp = 0.25 mb - no of SP=50/5=10 or data/SP = 50/12 = 4.5 mb
 
 >>  Data Skew: uneven data distribution during shuffle operations like groupBy, join (job taking time, uneven resource utilization, OOM/data spill)
+	repartition df
 	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
-		-> tuning no of SP - 15 keys - coalesce(15) - spark.conf.set("spark.sql.adaptive.enabled", "true"), spark.sql.adaptive.coalescePartitions.enabled
+		-> tuning no of SP - 15 keys - coalesce(15) - spark.conf.set("spark.sql.adaptive.enabled", "true"), ("spark.sql.adaptive.coalescePartitions.enabled", "true")
 		-> optimize joins - SMJ to BJ - df1.repartiton(4), df2 broadcasted on all executors - spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10*1024*1024/-1) 
 		-> optimize Skew joins - breaks larger part into smaller part - spark.conf.set("spark.sql.adaptive.skewedJoin.enabled", "true")
 	Salt - adding randomness (key) to distribute uneven data evenly.
 		-> add salt columnn - hash(key, salt)% SP
-	
 >> df.cache() / df.persist(StorageLevel.MEMORY_AND_DISK_DESER_2) / df.unpersist() /
 	SER is CPU intensive, memory saving as data is compact while DESER is CPU efficient, memory intensive
 	Size of data on disk is lesser as data is in serialized format, while deserialized in memory as JVM objects for faster access
