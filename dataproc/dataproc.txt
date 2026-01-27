@@ -72,16 +72,16 @@ spark = SparkSession.builder.appName('surapp11').master("local[*]").config('spar
    unpivot: unpivot_exp = "stack(2, 'ProductA', ProductA, 'ProductB', ProductB) as (Product, Sales)"  ------> df1.selectExpr("Month", unpivot_exp).show()
 
 >>  
-substring(col, pos, len) 
+extract part 	- 	substring(col, pos, len) 
 substring_index(col, delim, count) – before/after delimiter
 locate(substr, col[, pos]) / instr("text", "World")
 regexp_replace(col("first"), 'Ali', '') / translate(col("first"), 'Al', '') / 
-length("text").alias("len")
-trim("text").alias("trim")  / ltrim / rtrim / 
-upper("first").alias("first_upper")	/ lower / initcap /
-concat(col("first"), lit(" "), col("last")).alias("full_name_raw") / concat_ws(" ", "first", "last").alias("full_name_ws")
-lpad(col("first"), 8, "0").alias("lpad_first")  / rpad
-repeat(col("first"), 3).alias("first_x3")
+element size	-	length("text").alias("len")
+remove spaces  - 	trim("text").alias("trim")  / ltrim / rtrim / 
+capitalize 	-	upper("first").alias("first_upper")	/ lower / initcap /
+merge words	-	concat(col("first"), lit(" "), col("last")).alias("full_name_raw") / concat_ws(" ", "first", "last").alias("full_name_ws")
+fill with some char 	-	lpad(col("first"), 8, "0").alias("lpad_first")  / rpad
+3 times	-	repeat(col("first"), 3).alias("first_x3")
 
 >> 
 to_date("date")
