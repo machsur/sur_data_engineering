@@ -260,7 +260,21 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 - Metadata: contains Min/Max values for each column in every data block - help skip blocks -  SELECT * FROM sales WHERE region = 'Asia'
 - Schema evolution: You can add new columns later without breaking old data.
 - Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
-
+>> your join is slow, what steps will you take to optimize?
+	broadcast small dimnsion table
+	use repartition based on key or salt technique
+	cache or persist for reused dataframes
+	filter unwanted data at early
+	apply wide transformation at the end
+	select only required columns
+>> you join two delta tables is slow, what will you check?
+	is one table small --> broadcast
+	is data skewed --> repartition or salt
+	are both tables partitioned
+	select required columns
+	enable AQE
+>> 
+	
 
 
 
