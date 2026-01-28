@@ -99,4 +99,4 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
 >> Which is the best Compute option in Google Cloud to run any workload? GKE autopioloit mode
 >> What happens when a virus infected object is uploaded to Cloud Storage? ntg happens its object strorage not for scanning
 
->> implement SCD-1 & SCD-2 in bigquery using delta with example
+>> SCD-1 & SCD-2 --> scd2.sql script
