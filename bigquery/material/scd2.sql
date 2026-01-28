@@ -1,3 +1,21 @@
+SCD1
+
+MERGE `my_prj.dim.customer` AS T
+USING `my_prj.stg.customer_updates` S
+ON T.customer_id = S.customer_id
+WHEN MATCHED THEN
+  UPDATE SET
+    T.full_name  = S.full_name,
+    T.email      = S.email,
+    T.city       = S.city,
+    T.updated_at = S.updated_at,
+    T._ingested_at = CURRENT_TIMESTAMP()
+WHEN NOT MATCHED THEN
+  INSERT (customer_id, full_name, email, city, updated_at, _ingested_at)
+  VALUES (S.customer_id, S.full_name, S.email, S.city, S.updated_at, CURRENT_TIMESTAMP());
+
+
+SCD2
 CREATE OR REPLACE TABLE seraphic-camera-266118.scd2_implementation.customer_dim (
   customer_id STRING,
   customer_name STRING,
