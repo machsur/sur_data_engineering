@@ -1,4 +1,11 @@
-
+Subject
+Resignation Submitted on Portal
+Dear [Manager’s Name],
+I would like to inform you that I have submitted my resignation through the company portal today.
+Kindly let me know the next steps and any formalities required from my side during the notice period. I will ensure a smooth handover of my responsibilities.
+Thank you for your support and guidance.
+Best regards,
+Suresh
 ======================================================================== BigQuery ==================================================================
 
 >> Bigquery arch: storage and compute - decoupled/isolated (cost efficient)
