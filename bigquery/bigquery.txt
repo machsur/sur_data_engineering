@@ -10,7 +10,8 @@
 >> Star Schema: Multiple Dimension Tables directly connected to the fact table
    Snowflake Schema: Dimension tables are split into sub-dimensions, reducing redundancy, more normalized form. 
 >> Change Data Capture -->> identify & capture changes made to data in DB --> log based - very efficient, query based on timestamp, triggers load changes into new tables
->> SCD0 - NO CHANGE - change in source, no update on DWH table - change column is not relavant to the DWH table anymore (ex: fax number)	
+>> (SCD) is a dimension where the data changes slowly, not every day.  ex: Customer changes address
+   SCD0 - NO CHANGE - change in source, no update on DWH table - change column is not relavant to the DWH table anymore (ex: fax number)	
    SCD1 - Overwrite - Updates the existing record with new data - No history is preserved.
    SCD2 - Add New Row  -- Keeps full history by adding a new row with versioning or effective dates.
    SCD3 - Add New Column -- Keeps limited history by adding a new column for the previous value | SCD4 - scd1+scd2 - Current Table & History Table
