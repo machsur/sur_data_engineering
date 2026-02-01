@@ -100,5 +100,9 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
 >> SCD-1 & SCD-2 --> scd2.sql script
 >> derive the overall journey (start → end) for that customer. cust_id, from_city, to_city, journy_order
  	use first_value & last_value
+>>  match_id, 	team1, 		team2, 		winner, 	result, 	match_date
+	1,  		'IND', 		'AUS', 		'IND',  	'WIN',  	'2024-01-01'
+    output:
+	team 	played	 wins  draws 	losses		points
 
 
