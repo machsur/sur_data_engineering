@@ -29,7 +29,7 @@
 
 =========================
 >> Syntax
-DATE(DC in iso) / PARSE_DATE(format, DC) / SAFE.PARSE_DATE(format, DC)	-	Y, y / m, B, b / d, A, a / 
+DATE(DC in iso) / PARSE_DATE(format, stringDC) / SAFE.PARSE_DATE(format, DC)	-	Y 2026, y 26/ m 01-12, B January, b Jan / d 01-31, A Monday, a Mon / 
 FORMAT_DATE('%B %d, %Y', sale_date)
 extract(year from date)      						-     	year / month / day / hour / minute / second / microsecond /
 DATE_TRUNC(order_date, MONTH) 
