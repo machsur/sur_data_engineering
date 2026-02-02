@@ -104,5 +104,7 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
 	1,  		'IND', 		'AUS', 		'IND',  	'WIN',  	'2024-01-01'
     output:
 	team 	played	 wins  draws 	losses		points
+>> why avro format recommends for bigquery load?
+	schema support in the file itself, nested & repeated fields, more compression, splittable for parrallel processing - leads to faster load
 
 
