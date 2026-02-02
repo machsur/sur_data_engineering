@@ -106,5 +106,14 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
 	team 	played	 wins  draws 	losses		points
 >> why avro format recommends for bigquery load?
 	schema support in the file itself, nested & repeated fields, more compression, splittable for parrallel processing - leads to faster load
+>> EXECUTE IMMEDIATE FORMAT('your SQL %s', value);   --> to run dynamic sql queries
+
+
+>> Common error found during proc execution:
+failed to parse input string "2026-01-15 :" / "202502023" : use safe_cast instead of cast
+cant replace table with different partitioning spec, instead drop table, then recreate it.
+divizon by zero error: if(den = 0, null, num/den)  /  nullif(den, 0) / 
+bad int64 value: 1.0 --> cast(col as int64) or asfe_cast(col as int64) 
+no dataset was found
 
 
