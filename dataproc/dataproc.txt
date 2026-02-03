@@ -260,6 +260,8 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 - Metadata: contains Min/Max values for each column in every data block - help skip blocks -  SELECT * FROM sales WHERE region = 'Asia'
 - Schema evolution: You can add new columns later without breaking old data.
 - Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
+>> df.repartition(10): random data distribution - to ensure parallelisum
+	df.repartition(10, column): data distributed based hash of key column - prepare data for groupby, join operations
 
 >> Spark optimization techniques.
 ==> Use columnar file formats (parquet or orc) for better compression and faster reads than csv 
@@ -271,19 +273,18 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	df = spark.read.parquet(input_path).select("event_id", "user_id", "device_type", "event_type", "event_ts").filter(col("event_type") == "CLICK")
 ==> Used caching for repeted data access.
 	df = spark.read.parquet(input_path).cache()
-==> tune shuffle partitions:
+==> tune shuffle partitions: any wide transformation (groupby, join) involves shuffeling
 	under partitioning: SP is low - large amount of data - skewed workloads and OOM errors
 	over partitioning: SP is high -  excessive task overhead and slow completion time
+	fix1: based on data size (SP=500GB/128MB = 4000) based on cluster cores (min SP = 160 cores *2-3 = 320) ==> set for 4000
+	fix2: Enable AQE to dynamically adjust no of shuffle partitions ==> spark.sql.adaptive.enabled=true, spark.sql.adaptive.shuffle.targetShufffleFileInputSize, "64MB"
+	Note: else, repartition the df based key column and then perform wide transformation
 ==> optimize joins
-	if one table is small --> use broadcast table on all nodes to avoid shuffeling.
+	if one table is small --> reratition larger table based on join key & broadcast small table on all nodes to avoid shuffeling.
 	when both are large tables --> 
-		1. filter unwanted data before join, 
-		2. repartition the large tables on the join keys to reduce shuffle overhead
-			or bucketing the tables on the join key to avoid shuffelling during the join.
-
-	
-
-
+		repartition the large tables on the join keys to reduce shuffle overhead
+		or bucketing the tables on the join key to avoid shuffelling during the join.
+==> 
 
 
 >>
