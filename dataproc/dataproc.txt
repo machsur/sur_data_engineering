@@ -260,20 +260,27 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 - Metadata: contains Min/Max values for each column in every data block - help skip blocks -  SELECT * FROM sales WHERE region = 'Asia'
 - Schema evolution: You can add new columns later without breaking old data.
 - Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
->> your join is slow, what steps will you take to optimize?
-	broadcast small dimnsion table
-	use repartition based on key or salt technique
-	cache or persist for reused dataframes
-	filter unwanted data at early
-	apply wide transformation at the end
-	select only required columns
->> you join two delta tables is slow, what will you check?
-	is one table small --> broadcast
-	is data skewed --> repartition or salt
-	are both tables partitioned
-	select required columns
-	enable AQE
->> 
+
+>> Spark optimization techniques.
+==> Use columnar file formats (parquet or orc) for better compression and faster reads than csv 
+==> Use partition pruning to select only required partitions : filter or where
+==> Enable Dynamic Resource allocation for varying workloads to use resource efficiently (rec to set at cluster level)
+	gcloud dataproc clusters create my-cluster --region=us-central1 --properties=spark:spark.dynamicAllocation.enabled=true, spark:spark.shuffle.service.enabled=true,
+	spark:spark.dynamicAllocation.minExecutors=2, spark:spark.dynamicAllocation.maxExecutors=50, spark:spark.dynamicAllocation.initialExecutors=5
+==> Column pruning (select req columns) + filter pushdown (Reads only required row groups)
+	df = spark.read.parquet(input_path).select("event_id", "user_id", "device_type", "event_type", "event_ts").filter(col("event_type") == "CLICK")
+==> Used caching for repeted data access.
+	df = spark.read.parquet(input_path).cache()
+==> tune shuffle partitions:
+	under partitioning: SP is low - large amount of data - skewed workloads and OOM errors
+	over partitioning: SP is high -  excessive task overhead and slow completion time
+==> optimize joins
+	if one table is small --> use broadcast table on all nodes to avoid shuffeling.
+	when both are large tables --> 
+		1. filter unwanted data before join, 
+		2. repartition the large tables on the join keys to reduce shuffle overhead
+			or bucketing the tables on the join key to avoid shuffelling during the join.
+
 	
 
 
