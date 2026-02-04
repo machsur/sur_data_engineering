@@ -198,10 +198,18 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 -- hive tables work like noraml database tables? 	hive is metastore and not storing any tables
 
 =========================================================================================================================
+>> joins
+	data1 = [(1,), (1,), (None,), (0,), (3,)]
+	data2 = [(1,), (None,), (0,), (5,), (1,)]
+	'inner' : 5
+	'outer', 'full', 'fullouter', 'full_outer' : 9
+	'leftouter', 'left', 'left_outer': 7
+	'rightouter', 'right', 'right_outer': 7  
+	'leftsemi', 'left_semi', 'semi': 3
+	'leftanti', 'left_anti', 'anti' : 2
+	'crossJoin': 25
 
 
-
-7.
 4. Spark
 >> Spark replaces Map reduce
 >> Spark ecosystem
