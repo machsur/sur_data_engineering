@@ -1,20 +1,72 @@
 
 ==================================================================DataProc======================================================================================
 
->> components and architexture of spark? (see in dataproc11 doc)
+>> 
+execution of spark application? (see in dataproc11 doc)
 	once saprk app reuest submitted - it goes to Yarn - yarn creates application master (AM) container on any one of worker node - AM starts app driver nothing but JVM 		process and its job is to execute main() of spark app - driver programe request resources from yarn - yarn create executors and handover details back driver - before 		driver schedules tasks on executors, driver creates query plan and gives final pysical plan and creates dag by dag scheduler using pysical plan - driver 
 	schedule tasks - executors execute task and return results back to driver
 	NOTE: Spark core written in SCALA --> on top Java wrapper --> python wrapper
 		  if UDF/libraries written that are not natively available in spark, each executor may spinup python process too
-
+	
+components and architexture of spark? (see in dataproc11 doc)
 	Driver Programme: runs on MN of cluster, responsible for converts user code into tasks, distributing tasks to executors, collect results from executors
 	cluster manager: allocate resources 
 	Executors: runs on worker node, responsible for executing tasks assigned by driver, cashing data
 	task: smallest unit of work and executed by executors
 	Job: high level action triggers job, stage: job divided into stages based on shuffle boundaries, task: each stage divided into tasks, one for each partition
 
->> Spark deployment modes: Local, Client (app driver runs on the client machine) and cluster mode (app driver runs any one of node in the cluster)
+Query paln:
 
+DAG: logical representation of sequence of computtations
+
+Spark executor memory management
+	on-heap memory managed by JVM (10 gb) [spark.executor.memory ] - when on-heap memory is full, operations paused and do gcc then resume operation - perfor reduce
+		reserved memory 300 mb --> fixed reserve for spark engine
+		unified memory [spark.memory.fraction] (0.6 default, u can change)
+			executor memory pool --> joins, shuffle, groupBy, 
+			storage memory pool [spark.memory.storageFraction], (0.5 default, u can change) --> RDD, DF cashing, broadcast var
+		user memory --> used for spark internal metada, udf, variables, objects
+	off-heap mwmory: managed by OS [spark.memory.offHeap.enabled/size - default 0, 10to20% of on-heap memory]
+		useful when spark handle large datasets - frequent garbage collection happening - stops programme and does clean to resume progamme - costly operation
+		Off-heap memory can reduce garbage collection overhead, leading to better performance and lower latency
+	overhead memory [spark.executor.memoryOverhead--> 10% of spark executor memory 0r 384mb max one] --> for container processes, n/w transfer, read shuffle, python worker 
+ 
+Spark deployment modes: Local, Client (app driver runs on the client machine) and cluster mode (app driver runs any one of node in the cluster)
+
+executor tuning: rule of thumb - leave 1 core & some memory for system processes, 3-5 cores/executor, leave 1Exe for app master container at cluster level
+	cluster capacity : 10 nodes (16 cores 64gb ram) 
+	reserved : 1 c 8gb per node for system processes - ramaining: 15c 56gb ram
+    executors per node = 15c/5 = 3  total executors = 10 nodes * 3 = 30
+	memory per executor = 56gb / 3 = 18gb
+
+>> Partitioning: for fast access, parallesium/resource utilization) | which column: low to medium cordinality  & filter (high cordi - small file problem - buckting is rec)
+   df.write.repartition(3).mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/content/ecommer/') 
+   
+   static partition pruning: partition on listen date data on disk - this scans only listen date that user eants
+   dynamic partition pruning: send partition that is supossed to be scanned
+	release date table --> filter to get requ data which comes to know during run time --> spark uses results to scan on other dataset based on listen date
+	Adv: reduce time to scan/process)
+	limits: one of dataset must be partitioned and based on column that is filered from other datase	
+	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
+
+>> Bucketing: helps to speed up in Joins and aggregations, filter - hash(product_id)%4  
+   df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('bucketed_table')  - 2buc*2part=4files
+   Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)  
+   Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all (bucket pruning) 
+
+
+>>  Data Skew: uneven data distribution during shuffle operations like groupBy, join (job taking time, uneven resource utilization, OOM/data spill)
+	repartition df
+	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
+		-> tuning no of SP - 15 keys - coalesce(15) - spark.conf.set("spark.sql.adaptive.enabled", "true"), ("spark.sql.adaptive.coalescePartitions.enabled", "true")
+		-> optimize joins - SMJ to BJ - df1.repartiton(4), df2 broadcasted on all executors - spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10*1024*1024/-1) 
+		-> optimize Skew joins - breaks larger part into smaller part - spark.conf.set("spark.sql.adaptive.skewedJoin.enabled", "true")
+	Salt - adding randomness (key) to distribute uneven data evenly.
+		-> add salt columnn - hash(key, salt)% SP
+>> df.cache() / df.persist(StorageLevel.MEMORY_AND_DISK_DESER_2) / df.unpersist() /
+	SER is CPU intensive, memory saving as data is compact while DESER is CPU efficient, memory intensive
+	Size of data on disk is lesser as data is in serialized format, while deserialized in memory as JVM objects for faster access
+>> Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
 >> Spark optimization techniques.
 ==> Use columnar file formats (parquet or orc) for better compression and faster reads than csv 
@@ -163,67 +215,10 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 
 =========================================================================================================================
 
-===============================>> Spark performance tuning
 
-
-3.Spark memory management
-	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
-	spark.driver.memory --> JVM memory 
-	spark.driver.memoryOverhead --> 10% 0r 384mb max one --> used for container processes, pyspark app
-	>> Spark executor container: sum of below 3 are the total memory of executor container
-	1. on-heap memory managed by JVM (10 gb) [spark.executor.memory ] - when on-heap memory is full, operations paused and do gcc then resume operation - perfor reduce
-		reserved memory 300 mb --> fixed reserve for spark engine
-		spark memory (unified memory) [spark.memory.fraction] (0.6 default, u can change)
-			executor memory pool --> joins, shuffle, groupBy, 
-			storage memory pool [spark.memory.storageFraction], (0.5 default, u can change) --> RDD, DF cashing, broadcast var
-		user memory --> used for spark internal metada, udf, variables, objects
-	2. overhead [spark.executor.memoryOverhead  --> 10% of spark executor memory 0r 384mb max one] --> for container processes, n/w transfer, read shuffle, python worker 
-	3. off-heap mwmory: managed by OS [spark.memory.offHeap.enabled, spark.memory.offHeap.size - default 0, 10to20% of on-heap memory].
-	   Off-heap memory can reduce garbage collection overhead, leading to better performance and lower latency
-
-	yarn.scheduler.maximum-allocation-mb --> pysical memory limit at the worker node
-	yarn.nodemanager.resource.memory-mb 
-
-6. executor tuning: 
-   Rules:leave 1C1gbM per Node for hadoop/yarn/os - leave 1Exe or 1C1gbM for app master container at cluster level - 3 t0 5 cores/exe - overhead mem max(384 or 10% exe mem)
-   12c48gb/node - 11c47gb/node-55c235gb-54c234gb-total exe=54/5=10 & mem/exe=234/10=23.4-actual memory/exe=23-2.3=20gb
-
->> Partitioning: for fast access, parallesium/resource utilization) | which column: low to medium cordinality  & filter (high cordi - small file problem - buckting is rec)
-   df.write.repartition(3).mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/content/ecommer/') 
-   
-   static partition pruning: partition on listen date data on disk - this scans only listen date that user eants
-   dynamic partition pruning: send partition that is supossed to be scanned
-	release date table --> filter to get requ data which comes to know during run time --> spark uses results to scan on other dataset based on listen date
-	Adv: reduce time to scan/process)
-	limits: one of dataset must be partitioned and based on column that is filered from other datase	
-	SS: .config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true") \
-
->> Bucketing: helps to speed up in Joins and aggregations, filter - hash(product_id)%4  
-   df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('bucketed_table')  - 2buc*2part=4files
-   Q/A - optimal number of buckets = size of dataset / optimal bucket size (128-200mb)  
-   Q/A - once df is bucketed, no shuffle in groupby & join, scan one buckets when you filter instead of all (bucket pruning) 
-
->> Tune no of shuffle partitions (optimal SP size b/w 1 to 200 mb, default shuffle partitions=200 )
-	* sp = 200, cluster = 1000 cores --> slow completion time & underutilization of resources
-	* if data per SP is large - cores = 20, SP = 200, data = 300 gb - data/sp = 1.5gb - no of SP = 300*1000/200 = 1500 SP
-	* if data per SP is less - cores = 12, SP = 200, data = 50 mb - data/sp = 0.25 mb - no of SP=50/5=10 or data/SP = 50/12 = 4.5 mb
-
->>  Data Skew: uneven data distribution during shuffle operations like groupBy, join (job taking time, uneven resource utilization, OOM/data spill)
-	repartition df
-	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
-		-> tuning no of SP - 15 keys - coalesce(15) - spark.conf.set("spark.sql.adaptive.enabled", "true"), ("spark.sql.adaptive.coalescePartitions.enabled", "true")
-		-> optimize joins - SMJ to BJ - df1.repartiton(4), df2 broadcasted on all executors - spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10*1024*1024/-1) 
-		-> optimize Skew joins - breaks larger part into smaller part - spark.conf.set("spark.sql.adaptive.skewedJoin.enabled", "true")
-	Salt - adding randomness (key) to distribute uneven data evenly.
-		-> add salt columnn - hash(key, salt)% SP
->> df.cache() / df.persist(StorageLevel.MEMORY_AND_DISK_DESER_2) / df.unpersist() /
-	SER is CPU intensive, memory saving as data is compact while DESER is CPU efficient, memory intensive
-	Size of data on disk is lesser as data is in serialized format, while deserialized in memory as JVM objects for faster access
->> Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
 7.
 4. Spark
->> Limitations of Map Reduce: Performance (disk), complex code, only support batch processing
 >> Spark replaces Map reduce
 >> Spark ecosystem
 >> transformation: operation which creates new rdd from existing one - lazily evaluated
