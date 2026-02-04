@@ -102,7 +102,41 @@ membership:  print("pineapple" not in x)
 	selection sort: find min_index corresponding to lowest value and swap values
 	insertion sort: start at 2 element and compare previous elements (for almost sorted lists - o(n) not n2)
 >> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
+>>
+CITY_TABLE
+Delhi
+Mumbai
+Kolkata
+Chennai
 
+source   destination
+-------  -----------
+Delhi    Mumbai
+Delhi    Kolkata
+Delhi    Chennai
+Mumbai   Kolkata
+Mumbai   Chennai
+Kolkata  Chennai
+
+delhi-Mumbai should not be repeat as Mumbai-Delhi
+
+
+You have a DataFrame:
+data = [
+    (1, "A", "2024-01-01"),
+    (1, "A", "2024-01-02"),
+    (1, "B", "2024-01-01"),
+    (2, "A", "2024-01-01"),
+]
+Columns: user_id, product, date
+Find duplicate rows per user where product repeats across different dates, but count only unique product-user pairs.
+
+
+
+Problem: Longest Substring Without Repeating Characters
+Given a string, find the length of the longest substring without repeating characters.
+Example:
+Input: s = "abcabdbcefb" 
 
 ===============================================================================================================================================================
 
