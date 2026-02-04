@@ -68,14 +68,13 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 		or 
 		bucketing the tables on the join key to avoid shuffelling during the join. optimal buckets = size of dataset / 128-200mb	 - 
    		df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('bucketed_table')  - 2buc*2part=4files
->>  Data Skew: uneven data distribution during shuffle operations like groupBy, join (job taking time, uneven resource utilization, OOM/data spill)
-	repartition df
-	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
+==>> Data Skew: uneven data distribution during shuffle operations like groupBy, join (job taking time, uneven resource utilization, OOM/data spill)
+	 Skewed keys in group by : use slating
+	 Skewed keys in join : use slating for large tables, use broadcast for small table
+	 AQE(>3.0) - uses runtime statistics - choose most efficient query plan
 		-> tuning no of SP - 15 keys - coalesce(15) - spark.conf.set("spark.sql.adaptive.enabled", "true"), ("spark.sql.adaptive.coalescePartitions.enabled", "true")
 		-> optimize joins - SMJ to BJ - df1.repartiton(4), df2 broadcasted on all executors - spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10*1024*1024/-1) 
 		-> optimize Skew joins - breaks larger part into smaller part - spark.conf.set("spark.sql.adaptive.skewedJoin.enabled", "true")
-	Salt - adding randomness (key) to distribute uneven data evenly.
-		-> add salt columnn - hash(key, salt)% SP
 ==>> Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
 ===================> low-level api Syntax
