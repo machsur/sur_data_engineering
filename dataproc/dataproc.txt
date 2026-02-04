@@ -1,6 +1,46 @@
 
 ==================================================================DataProc======================================================================================
 
+>> components and architexture of spark? (see in dataproc11 doc)
+	once saprk app reuest submitted - it goes to Yarn - yarn creates application master (AM) container on any one of worker node - AM starts app driver nothing but JVM 		process and its job is to execute main() of spark app - driver programe request resources from yarn - yarn create executors and handover details back driver - before 		driver schedules tasks on executors, driver creates query plan and gives final pysical plan and creates dag by dag scheduler using pysical plan - driver 
+	schedule tasks - executors execute task and return results back to driver
+	NOTE: Spark core written in SCALA --> on top Java wrapper --> python wrapper
+		  if UDF/libraries written that are not natively available in spark, each executor may spinup python process too
+
+	Driver Programme: runs on MN of cluster, responsible for converts user code into tasks, distributing tasks to executors, collect results from executors
+	cluster manager: allocate resources 
+	Executors: runs on worker node, responsible for executing tasks assigned by driver, cashing data
+	task: smallest unit of work and executed by executors
+	Job: high level action triggers job, stage: job divided into stages based on shuffle boundaries, task: each stage divided into tasks, one for each partition
+
+>> Spark deployment modes: Local, Client (app driver runs on the client machine) and cluster mode (app driver runs any one of node in the cluster)
+
+
+>> Spark optimization techniques.
+==> Use columnar file formats (parquet or orc) for better compression and faster reads than csv 
+==> Use partition pruning to select only required partitions : filter or where
+==> Enable Dynamic Resource allocation for varying workloads to use resource efficiently (rec to set at cluster level)
+	gcloud dataproc clusters create my-cluster --region=us-central1 --properties=spark:spark.dynamicAllocation.enabled=true, spark:spark.shuffle.service.enabled=true,
+	spark:spark.dynamicAllocation.minExecutors=2, spark:spark.dynamicAllocation.maxExecutors=50, spark:spark.dynamicAllocation.initialExecutors=5
+==> Column pruning (select req columns) + filter pushdown (Reads only required row groups)
+	df = spark.read.parquet(input_path).select("event_id", "user_id", "device_type", "event_type", "event_ts").filter(col("event_type") == "CLICK")
+==> Used caching for repeted data access.
+	df = spark.read.parquet(input_path).cache()
+==> tune shuffle partitions: any wide transformation (groupby, join) involves shuffeling
+	under partitioning: SP is low - large amount of data - skewed workloads and OOM errors
+	over partitioning: SP is high -  excessive task overhead and slow completion time
+	fix1: based on data size (SP=500GB/128MB = 4000) based on cluster cores (min SP = 160 cores *2-3 = 320) ==> set for 4000
+	fix2: Enable AQE to dynamically adjust no of shuffle partitions ==> spark.sql.adaptive.enabled=true, spark.sql.adaptive.shuffle.targetShufffleFileInputSize, "64MB"
+	Note: else, repartition the df based key column and then perform wide transformation
+==> optimize joins
+	if one table is small --> reratition larger table based on join key & broadcast small table on all nodes to avoid shuffeling.
+	when both are large tables --> 
+		repartition the large tables on the join keys to reduce shuffle overhead
+		or bucketing the tables on the join key to avoid shuffelling during the join.
+==> 
+
+
+
 ===================> low-level api Syntax
 
 >> rdd = spark.sparkContext.parallelize(data)  /  rdd = spark.sparkContext.textFile(hdfs_gcs_path) 
@@ -124,11 +164,8 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 =========================================================================================================================
 
 ===============================>> Spark performance tuning
->> master in reading query plan
-	syntax check ---> unresolved logical plan --> catalyst optimizer --> optimal logical plan (filter push down & req col) --> several pysical plan -->
-	based on cost model select best pysical plan  --> executes and create RDD/DF
-	df.explain(True)
->> master in reading spark dags: diagram
+
+
 3.Spark memory management
 	submit spark app in yarn cluster --> yarn rm allocates app container and starts driver JVM 
 	spark.driver.memory --> JVM memory 
@@ -185,8 +222,6 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 >> Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
 7.
->> components and architexture of spark?
->> Spark deployment modes: Local, Client and cluster mode
 4. Spark
 >> Limitations of Map Reduce: Performance (disk), complex code, only support batch processing
 >> Spark replaces Map reduce
@@ -263,28 +298,7 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 >> df.repartition(10): random data distribution - to ensure parallelisum
 	df.repartition(10, column): data distributed based hash of key column - prepare data for groupby, join operations
 
->> Spark optimization techniques.
-==> Use columnar file formats (parquet or orc) for better compression and faster reads than csv 
-==> Use partition pruning to select only required partitions : filter or where
-==> Enable Dynamic Resource allocation for varying workloads to use resource efficiently (rec to set at cluster level)
-	gcloud dataproc clusters create my-cluster --region=us-central1 --properties=spark:spark.dynamicAllocation.enabled=true, spark:spark.shuffle.service.enabled=true,
-	spark:spark.dynamicAllocation.minExecutors=2, spark:spark.dynamicAllocation.maxExecutors=50, spark:spark.dynamicAllocation.initialExecutors=5
-==> Column pruning (select req columns) + filter pushdown (Reads only required row groups)
-	df = spark.read.parquet(input_path).select("event_id", "user_id", "device_type", "event_type", "event_ts").filter(col("event_type") == "CLICK")
-==> Used caching for repeted data access.
-	df = spark.read.parquet(input_path).cache()
-==> tune shuffle partitions: any wide transformation (groupby, join) involves shuffeling
-	under partitioning: SP is low - large amount of data - skewed workloads and OOM errors
-	over partitioning: SP is high -  excessive task overhead and slow completion time
-	fix1: based on data size (SP=500GB/128MB = 4000) based on cluster cores (min SP = 160 cores *2-3 = 320) ==> set for 4000
-	fix2: Enable AQE to dynamically adjust no of shuffle partitions ==> spark.sql.adaptive.enabled=true, spark.sql.adaptive.shuffle.targetShufffleFileInputSize, "64MB"
-	Note: else, repartition the df based key column and then perform wide transformation
-==> optimize joins
-	if one table is small --> reratition larger table based on join key & broadcast small table on all nodes to avoid shuffeling.
-	when both are large tables --> 
-		repartition the large tables on the join keys to reduce shuffle overhead
-		or bucketing the tables on the join key to avoid shuffelling during the join.
-==> 
+
 
 
 >>
