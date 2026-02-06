@@ -29,3 +29,10 @@
    | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
    | py app                             |       dataproc workflow                                            |
    |              cloud composer                                                                              |
+
+
+pip install apache-airflow==2.3.3
+pip install apache-airflow-providers-google
+gcloud composer environments run --location=us-central1 --project=aesthetic-way-485114-u2 sur-com-env3 dags list
+gsutil cp -r C:\Users\macha\Downloads\pyws\deog\data gs://sur_test_buk/
+
