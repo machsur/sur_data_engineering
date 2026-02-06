@@ -30,6 +30,9 @@
    | py app                             |       dataproc workflow                                            |
    |              cloud composer                                                                              |
 
+>> What max_active_runs=1 -> applies to ONE DAG only ->same DAG cannot have more than one active run at the same time
+  Two different DAGs can: Run at the same time, Run in parallel, Use different or even same resources (unless you restrict them) 
+  what controls parallel runs 1️⃣ Airflow environment limits (Worker count, CPU / memory 2️⃣ Pools (IMPORTANT) Used when DAGs share critical resources.
 
 pip install apache-airflow==2.3.3
 pip install apache-airflow-providers-google
