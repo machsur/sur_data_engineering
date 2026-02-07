@@ -209,41 +209,33 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	'leftanti', 'left_anti', 'anti' : 2
 	'crossJoin': 25
 
-
-4. Spark
->> Spark replaces Map reduce
->> Spark ecosystem
->> transformation: operation which creates new rdd from existing one - lazily evaluated
-	action: operation that executes series of transformations and return results.
->> why trans are lazy & how Lazy Evaluation work in PySpark?      
->> how spark reads the data? (already distributed data or read data and partition based on config)
->> sc.parallelize: function to create a RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
-   sc.textFile: function to read data from a text file from HDFS/S3/local FS. Best for large datasets.
->> narrow transformations: data is not shuffled across the partitions - faster perf - filter
-	wide transformations: data is shufflled acrros partitions, requiring network i/o  - slower perf - groupby
->> spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used) 
->> reduceByKey: local aggregation - less data for shuffling
-	groupByKey: no local aggragation - more data for shuffling	
->> increase no of partitions: 20 node cluster, 10 parti - better to use all nodes
-   decrease no of partitions: 20 nodes, 50 parti - filter - reduce no of partitions
-   repartion: shuffles data across the nodes to increase/decrease no of partitions vs coalecse: combine partitions without shuffle
-5.
 >> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
->> key-benfits of high level api compared to low-level api : schema awareness, ease of use, optimized, various file supports 
+	SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
+	key-benfits of high level api compared to low-level api : schema awareness, ease of use, optimized, various file supports 
 >> reading data in spark is action or transformation? :  header=true & inferschema=false A |  header=true & inferschema=true A | explicit schema T |
  	writing data is action or transformation? : Action
->> Read modes in spark? 
->> What is SparkSQL, and how do you perform SQL operations on DataFrames?
-6.
->> df.cache()  # Stores in memory, -->> df.persist(StorageLevel.MEMORY_AND_DISK_SER_3)  -->> df.unpersist() 
+	how spark reads the data? (already distributed data or read data and partition based on config)
+    transformation: operation which creates new rdd from existing one - lazily evaluated
+	action: operation that executes series of transformations and return results.
+	narrow transformations: data is not shuffled across the partitions - faster perf - filter
+	wide transformations: data is shufflled acrros partitions, requiring network i/o  - slower perf - groupby
+	spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used)
+>> UDF: custom Python logic when no built-in Spark SQL functions. maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
+>> df.repartition(10): random data distribution - to ensure parallelisum
+	df.repartition(10, column): data distributed based hash of key column - prepare data for groupby, join operations
+>> extract filename: element_at(split(input_file_name(), "/"), -1)
 
->> SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
->> broadcast join - small dataset is broadcasted to all worker nodes - allows to perform join locally - reduced data shuffling across the network - improved performance
+>> why trans are lazy & how Lazy Evaluation work in PySpark?      
+>> sc.parallelize: function to create a RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
+   sc.textFile: function to read data from a text file from HDFS/S3/local FS. Best for large datasets.
+>> reduceByKey: local aggregation - less data for shuffling
+	groupByKey: no local aggragation - more data for shuffling
 >> map() returns a single value for each input element / flatMap() return multiple values for each input element
 >> .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work?  --> gathers all partitions of RDD and brings them to the driver node. - data is no longer distributed, instead stored in the memory of the driver program
 >> Difference between sortby and orderby? - sortBy is used with RDDs and orderBy is used with DataFrames.
-
+	
 ==========================> coding QA
+>> display only last 4 characters of card number. : lpad(substring(col("card_no").cast("string"), -4, 4),16, '#')
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
 >> What are the different ways to remove duplicate records ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy /
 >> find the top 5 most populous cities.    | City    | Population|
@@ -274,16 +266,13 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 >> Write a query to count how many employees share the same salary.
 >> employees who hired in last 90 days: 
 >> Retrieve employees who joined in the last 6 months.
->> display only last 4 characters of card number. : lpad(substring(col("card_no").cast("string"), -4, 4),16, '#')
-	maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
->> extract filename: element_at(split(input_file_name(), "/"), -1)
+
 >> why parquet?
 - Columnar format: Only reads the region column to filter — better compression better than rows..
 - Metadata: contains Min/Max values for each column in every data block - help skip blocks -  SELECT * FROM sales WHERE region = 'Asia'
 - Schema evolution: You can add new columns later without breaking old data.
 - Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
->> df.repartition(10): random data distribution - to ensure parallelisum
-	df.repartition(10, column): data distributed based hash of key column - prepare data for groupby, join operations
+
 
 
 
