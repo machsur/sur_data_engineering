@@ -116,4 +116,20 @@ divizon by zero error: if(den = 0, null, num/den)  /  nullif(den, 0) /
 bad int64 value: 1.0 --> cast(col as int64) or asfe_cast(col as int64) 
 no dataset was found
 
+>>
+CITY_TABLE
+Delhi
+Mumbai
+Kolkata
+Chennai
 
+source   destination
+-------  -----------
+Delhi    Mumbai
+Delhi    Kolkata
+Delhi    Chennai
+Mumbai   Kolkata
+Mumbai   Chennai
+Kolkata  Chennai
+
+delhi-Mumbai should not be repeat as Mumbai-Delhi
