@@ -273,6 +273,15 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 - Schema evolution: You can add new columns later without breaking old data.
 - Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
 
+>> You have a DataFrame:
+data = [
+    (1, "A", "2024-01-01"),
+    (1, "A", "2024-01-02"),
+    (1, "B", "2024-01-01"),
+    (2, "A", "2024-01-01"),
+]
+Columns: user_id, product, date
+Find duplicate rows per user where product repeats across different dates, but count only unique product-user pairs.
 
 
 
