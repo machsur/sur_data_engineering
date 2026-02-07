@@ -42,7 +42,8 @@ membership:  print("pineapple" not in x)
    recursion: function calling it self ex: factorial using recurssion
    anonymous function, short, one-line function: lambda -- map, filter, reduce
    List comprehensation: create new list from existiong list or other iterals
-
+>> iterators: is an object - Returns data one element at a time - __iter__()  - __next__()
+   Generators gives iterators using yield.
 
 >> decorator: adding extra feature to the existing function without touching them.
 >> Special variable: __name__ == __main__
@@ -56,7 +57,6 @@ membership:  print("pineapple" not in x)
 	private variable: cannt acces from outside of class
 	protected variable: can access from derived class, other not
 >> Abstract class & method
->> iterators: 
  
 >> Handlling errors: using the try-except block --> any error in the try block, exception will be raised and it caught by except block
    compile time error: Syntatical, Logical error: wrong output - used * instead of +, run time error:  occur while the program is running --- print(5 / 0) 
@@ -69,39 +69,31 @@ membership:  print("pineapple" not in x)
 
 =============================>> QA
 
->> find student details corresponding to max_marks:    student = [('suresh', 'ong', 85), ('seshu', 'bng', 74), ('naven', 'kk', 40)]
->> Given an array, find the minimum and maximum values:    ans. builtin mtds, sorting, python code
->> Given a string, count the char occurrences of word in a dictionary:    Input: 'aaabbbccddeeeee'
->> Count Vowels from Given words .
->> Remove Duplicates from List. 
->> Reversing a String using an Extended Slicing techniques. -------> builtin / slicing / code
->> Find the highest occurrences of each word from string and sort them in order.
->>  Given a list [2, 3, 4, 5, 6], how can you sum all elements? (Discuss available functions)
->> What is a docstring in Python?  Docstrings are enclosed in triple quotes (""" or ''') and can span multiple lines.
->> What is pass in Python? When is it used? --> Placeholder for future class/function / It does nothing when executed 
+>> Generate an Infinite Fibonacci Series Using a Generator. 
+>> Sort a List Without Using the sort Keyword
+>> Check Whether a String is a Palindrome or Not
+>> Python Program to Find the Factorial of a Number.
+>> Frequency of Words in a Sentence
+>> Find the Smallest and Largest Number in an Array
+
 >> Calculate the Intersection of Two Lists without using Built-in Functions:      print(set(ls1) & set(ls2)) or lss =[item for item in ls1 if item in ls2]
->> What is the difference between list and tuple in Python?
 >> Which data structure occupies more memory: list or tuple? Why? --> lists occupy more memory --> their size and contents can change, more methods
 >> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]  //
 >>  What is a constructor? -> is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
 >> Find out common letters between two strings Using Python
->> Factorial
->> find line_count, words, chars in the files
 >> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
->> FIND MISSING NUMBER IN AN ARRAY IN PYTHON  :  n(n+1)/2 - sum(array_elements)
->> PRINT PATTERNS
->> Fibonacci Sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...
->> Handle file exceptions (missing or corrupted Excel files) gracefully. no error in try block --> try - else - finally /// error ---> except - finally
->> Read and print values from an Excel file using Pandas.
 >> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
 >> number is prime or not
->> Find the pair of numbers in this list whose sum is n no.
 
+>> find line_count, words, chars in the files
+>> Find the pair of numbers in this list whose sum is n no.
 >> Sort a List without using Sort keyword. built-in / bubble sort /
 	bubble sort: keep largest item at the end (6 items- 5comp in 1st round) 
 	selection sort: find min_index corresponding to lowest value and swap values
 	insertion sort: start at 2 element and compare previous elements (for almost sorted lists - o(n) not n2)
 >> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
+>> Longest Substring Without Repeating Characters: s = "abcabdbcefb" 
+
 >>
 CITY_TABLE
 Delhi
@@ -133,10 +125,7 @@ Find duplicate rows per user where product repeats across different dates, but c
 
 
 
-Problem: Longest Substring Without Repeating Characters
-Given a string, find the length of the longest substring without repeating characters.
-Example:
-Input: s = "abcabdbcefb" 
+
 
 ===============================================================================================================================================================
 
