@@ -1,6 +1,6 @@
 
 ==================================================================DataProc======================================================================================
-
+h
 >> 
 execution of spark application? (see in dataproc11 doc):
 once saprk app reuest submitted - it goes to Yarn - yarn creates application master (AM) container on any one of worker node - AM starts app driver nothing but JVM process and its job is to execute main() of spark app - driver programe request resources from yarn - yarn create executors and handover details back driver - before driver schedules tasks on executors, driver creates query plan and gives final pysical plan and creates dag by dag scheduler using pysical plan - driver schedule tasks - executors execute task and return results back to driver
