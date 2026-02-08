@@ -2,11 +2,10 @@
 ==================================================================DataProc======================================================================================
 
 >> 
-execution of spark application? (see in dataproc11 doc)
-	once saprk app reuest submitted - it goes to Yarn - yarn creates application master (AM) container on any one of worker node - AM starts app driver nothing but JVM 		process and its job is to execute main() of spark app - driver programe request resources from yarn - yarn create executors and handover details back driver - before 		driver schedules tasks on executors, driver creates query plan and gives final pysical plan and creates dag by dag scheduler using pysical plan - driver 
-	schedule tasks - executors execute task and return results back to driver
-	NOTE: Spark core written in SCALA --> on top Java wrapper --> python wrapper
-		  if UDF/libraries written that are not natively available in spark, each executor may spinup python process too
+execution of spark application? (see in dataproc11 doc):
+once saprk app reuest submitted - it goes to Yarn - yarn creates application master (AM) container on any one of worker node - AM starts app driver nothing but JVM process and its job is to execute main() of spark app - driver programe request resources from yarn - yarn create executors and handover details back driver - before driver schedules tasks on executors, driver creates query plan and gives final pysical plan and creates dag by dag scheduler using pysical plan - driver schedule tasks - executors execute task and return results back to driver
+NOTE: Spark core written in SCALA --> on top Java wrapper --> python wrapper
+	  if UDF/libraries written that are not natively available in spark, each executor may spinup python process too
 	
 components and architexture of spark? (see in dataproc11 doc)
 	Driver Programme: runs on MN of cluster, responsible for converts user code into tasks, distributing tasks to executors, collect results from executors
@@ -38,8 +37,6 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 	reserved : 1 c 8gb per node for system processes - ramaining: 15c 56gb ram
     executors per node = 15c/5 = 3  total executors = 10 nodes * 3 = 30
 	memory per executor = 56gb / 3 = 18gb
-
-
 
 >> Spark optimization techniques.
 ==> Use columnar file formats (parquet or orc) for better compression and faster reads than csv 
@@ -197,7 +194,34 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 -- hive can works with only HDFS?  			no. HDFS/s3/gcs/data lake
 -- hive tables work like noraml database tables? 	hive is metastore and not storing any tables
 
-=========================================================================================================================
+=================================>> CONCEPT interview QA
+
+>> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
+	SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
+	key-benfits of high level api compared to low-level api : schema awareness, ease of use, optimized, various file supports 
+>> reading data in spark is action or transformation? :  header=true & inferschema=false A |  header=true & inferschema=true A | explicit schema T |
+ 	writing data is action or transformation? : Action
+	how spark reads the data? (already distributed data or read data and partition based on config)
+    transformation: operation which creates new rdd from existing one - lazily evaluated -  why trans are lazy & how Lazy Evaluation work in PySpark? 
+	action: operation that executes series of transformations and return results.
+	narrow transformations: data is not shuffled across the partitions - faster perf - filter
+	wide transformations: data is shufflled acrros partitions, requiring network i/o  - slower perf - groupby
+	spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used)
+>> .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work?  --> gathers all partitions of RDD and brings them to the driver node. - data is no longer distributed, instead stored in the memory of the driver program
+>> UDF: custom Python logic when no built-in Spark SQL functions. maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
+>> df.repartition(10): random data distribution - to ensure parallelisum
+	df.repartition(10, column): data distributed based hash of key column - prepare data for groupby, join operations
+>> extract filename: element_at(split(input_file_name(), "/"), -1)
+
+   
+>> sc.parallelize: function to create a RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
+   sc.textFile: function to read data from a text file from HDFS/S3/local FS. Best for large datasets.
+>> RDD - reduceByKey: local aggregation - less data for shuffling / DF - df.groupBy("dept").agg(sum("salary").as("total_salary"))
+	RDD- groupByKey: no local aggragation - more data for shuffling / DF - df.groupBy("dept").agg(collect_list("salary").as("salaries"))
+>> map() returns a single value for each input element / flatMap() return multiple values for each input element
+>> Difference between sortby and orderby? - sortBy is used with RDDs and orderBy is used with DataFrames.
+	
+==========================> coding QA
 >> joins
 	data1 = [(1,), (1,), (None,), (0,), (3,)]
 	data2 = [(1,), (None,), (0,), (5,), (1,)]
@@ -208,33 +232,6 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	'leftsemi', 'left_semi', 'semi': 3
 	'leftanti', 'left_anti', 'anti' : 2
 	'crossJoin': 25
-
->> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
-	SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
-	key-benfits of high level api compared to low-level api : schema awareness, ease of use, optimized, various file supports 
->> reading data in spark is action or transformation? :  header=true & inferschema=false A |  header=true & inferschema=true A | explicit schema T |
- 	writing data is action or transformation? : Action
-	how spark reads the data? (already distributed data or read data and partition based on config)
-    transformation: operation which creates new rdd from existing one - lazily evaluated
-	action: operation that executes series of transformations and return results.
-	narrow transformations: data is not shuffled across the partitions - faster perf - filter
-	wide transformations: data is shufflled acrros partitions, requiring network i/o  - slower perf - groupby
-	spark jobs (no of actions), stages (no of wide trans + 1), tasks (no of partitions used)
->> UDF: custom Python logic when no built-in Spark SQL functions. maskfun_udf = udf(maskfun, StringType()) 	 /	df_final = df.withColumn('ncn', maskfun_udf(col('card_no')))
->> df.repartition(10): random data distribution - to ensure parallelisum
-	df.repartition(10, column): data distributed based hash of key column - prepare data for groupby, join operations
->> extract filename: element_at(split(input_file_name(), "/"), -1)
-
->> why trans are lazy & how Lazy Evaluation work in PySpark?      
->> sc.parallelize: function to create a RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
-   sc.textFile: function to read data from a text file from HDFS/S3/local FS. Best for large datasets.
->> reduceByKey: local aggregation - less data for shuffling
-	groupByKey: no local aggragation - more data for shuffling
->> map() returns a single value for each input element / flatMap() return multiple values for each input element
->> .𝐜𝐨𝐥𝐥𝐞𝐜𝐭() work?  --> gathers all partitions of RDD and brings them to the driver node. - data is no longer distributed, instead stored in the memory of the driver program
->> Difference between sortby and orderby? - sortBy is used with RDDs and orderBy is used with DataFrames.
-	
-==========================> coding QA
 >> display only last 4 characters of card number. : lpad(substring(col("card_no").cast("string"), -4, 4),16, '#')
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
 >> What are the different ways to remove duplicate records ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy /
