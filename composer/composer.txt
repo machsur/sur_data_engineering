@@ -38,3 +38,10 @@ pip install apache-airflow==2.3.3
 pip install apache-airflow-providers-google
 gcloud composer environments run --location=us-central1 --project=aesthetic-way-485114-u2 sur-com-env3 dags list
 gsutil cp -r C:\Users\macha\Downloads\pyws\deog\data gs://sur_test_buk/
+
+
+>>
+TaskGroup and SubDAG are both used to organize complex DAGs, but they solve very different problems.
+SubDAG creates a separate DAG inside a parent DAG. It has its own scheduler, start date, and execution context. SubDAGs were used earlier to modularize code but often caused scheduler delays, deadlocks, and performance issues, especially in Cloud Composer.
+TaskGroup, introduced in Airflow 2, is a UI-level logical grouping of tasks within the same DAG. It does not create a new DAG and does not affect execution or scheduling.
+👉 Today, TaskGroup is the recommended approach, and SubDAG is considered anti-pattern / deprecated in practice.
