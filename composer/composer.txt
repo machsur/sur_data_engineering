@@ -8,10 +8,7 @@
    1. import modules & operators    2. contruct dag object    3. define tasks    4. set task depencies
    UI > admin > configurations 
    
->> variables in airflow dag: 
-   set variable: UI: Airflow UI → Admin → Variables → + (stores in metadata DB). 
-   access: var1 = Variable.get("project_id", default_var="sur_project")  # default
-   Xcom: review runtime variables for dag run using xcom
+
 
 >> * update/review packages in composer environment
    composer2: gcs based approach
@@ -24,11 +21,7 @@
     If values are needed DURING DAG execution → Use Airflow Variables
 
 
-5.
->> Advantage of cloud composer:
-   | DB -- via python --> datalake (gcs) | --> File coneverter csv to parquet --> tarnsform --> load into BQ |
-   | py app                             |       dataproc workflow                                            |
-   |              cloud composer                                                                              |
+
 
 >> What max_active_runs=1 -> applies to ONE DAG only ->same DAG cannot have more than one active run at the same time
   Two different DAGs can: Run at the same time, Run in parallel, Use different or even same resources (unless you restrict them) 
@@ -42,6 +35,15 @@ gsutil cp -r C:\Users\macha\Downloads\pyws\deog\data gs://sur_test_buk/
 
 >>
 TaskGroup and SubDAG are both used to organize complex DAGs, but they solve very different problems.
-SubDAG creates a separate DAG inside a parent DAG. It has its own scheduler, start date, and execution context. SubDAGs were used earlier to modularize code but often caused scheduler delays, deadlocks, and performance issues, especially in Cloud Composer.
-TaskGroup, introduced in Airflow 2, is a UI-level logical grouping of tasks within the same DAG. It does not create a new DAG and does not affect execution or scheduling.
+SubDAG creates a separate DAG inside a parent DAG. It has its own scheduler, start date, and execution context. often caused scheduler delays, deadlocks, and performance issues.
+TaskGroup - logically group related tasks within the same DAG, helps to create parallel processing of etl.
 👉 Today, TaskGroup is the recommended approach, and SubDAG is considered anti-pattern / deprecated in practice.
+
+>>
+Variables - store configuration values outside your DAG code so you don’t hard-code environment-specific or sensitive values.
+Same DAG → works in dev / qa / prod 🎯
+set variable: UI: Airflow UI → Admin → Variables → + (stores in metadata DB). 
+access: var1 = Variable.get("project_id", default_var="sur_project")  # default
+
+>>
+   Xcom: review runtime variables for dag run using xcom
