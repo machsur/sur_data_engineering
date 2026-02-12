@@ -133,3 +133,15 @@ Mumbai   Chennai
 Kolkata  Chennai
 
 delhi-Mumbai should not be repeat as Mumbai-Delhi
+
+>>
+🛑The Input Table:
+1 | Staff 1
+2 | Staff 2
+
+🎯The Goal:
+Row 1: 1 Staff 1, 2 Staff 2
+Row 2: 3 Staff 3, 4 Staff 4
+1️⃣ CONCAT(): 2️⃣ NTILE(4): 0r floor((rownumber - 1) /2 + 1) 3️⃣ STRING_AGG():
+
+
