@@ -40,15 +40,20 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 
 >> Spark optimization techniques.
 ==> Use columnar file formats (parquet or orc) for better compression and faster reads than csv 
-==> Use partition pruning to select only required partitions : access by filter or where 
-	create partioned files to gcs: df.write.mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/con/') 
-	static partition pruning: partition on listen date data on disk - this scans only listen date that user wants
-   	dynamic partition pruning: filter to get requ data which comes to know during run time --> spark uses results to scan on other dataset based on listen date
-		config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true")
+==> partitioning: distibute data into folders based on column values - best for low to medium cardinality columns & select only required partitions (filter or where) 
+	df.write.mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/con/') 
+	static partition pruning: 
+   	dynamic partition pruning: get requ partions to scan during run time - spark uses results to scan only required partitions from other dataset.
+	config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true")
+==>	bucketing: distribute data into fixed no of files based on hash of column - best for high cordinality columns and frequent joins - avoid shuffelling during the join. 
+	optimal buckets = size of dataset / 128-200mb
+	config('spark.sql.warehouse.dir', 'gs://gcs_bucket/warehouse') 
+   	df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('buckted_table')/save('gcspath)  - 2buc*2part=4files
 ==> Enable Dynamic Resource allocation for varying workloads to use resource efficiently (rec to set at cluster level)
 	gcloud dataproc clusters create my-cluster --region=us-central1 --properties=spark:spark.dynamicAllocation.enabled=true, spark:spark.shuffle.service.enabled=true,
 	spark:spark.dynamicAllocation.minExecutors=2, spark:spark.dynamicAllocation.maxExecutors=50, spark:spark.dynamicAllocation.initialExecutors=5
 ==> Column pruning (select req columns) + filter pushdown (Reads only required row groups)
+	config('spark.sql.parquet.filterPushDown', 'true')
 	df = spark.read.parquet(input_path).select("event_id", "user_id", "device_type", "event_type", "event_ts").filter(col("event_type") == "CLICK")
 ==> Used caching for repeted data access:  df.cache() / df.persist(StorageLevel.MEMORY_AND_DISK_DESER_2) / df.unpersist() /
 	SER (ser format & lesser in size) is CPU intensive, memory saving as data is compact while DESER (memory as jvm objects) is CPU efficient, memory intensive
@@ -62,9 +67,6 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 	if one table is small --> reratition larger table based on join key & broadcast small table on all nodes to avoid shuffeling.
 	when both are large tables --> 
 		repartition the large tables on the join keys to reduce shuffle overhead
-		or 
-		bucketing the tables on the join key to avoid shuffelling during the join. optimal buckets = size of dataset / 128-200mb	 - 
-   		df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('bucketed_table')  - 2buc*2part=4files
 ==>> Data Skew: uneven data distribution during shuffle operations like groupBy, join (job taking time, uneven resource utilization, OOM/data spill)
 	 Skewed keys in group by : use slating
 	 Skewed keys in join : use slating for large tables, use broadcast for small table
