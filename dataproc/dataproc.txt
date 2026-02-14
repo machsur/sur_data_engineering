@@ -95,10 +95,7 @@ spark.sparkContext.defaultParallelism
 spark.sparkContext.applicationId, spark.stop(), spark application -list, spark application -kill app_id
 spark_new_app_session = spark.newSession()
 
-gcloud: --properties=spark:spark.executor.cores=4,spark:spark.executor.memory=4g,spark:spark.executor.instances=2
-.config('spark.driver.memory', '4g')  \ .config('spark.driver.maxResultSize', '2g') \
 .config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
-.config('spark.memory.fraction', 0.8) \ .config('spark.memory.storageFraction', 0.2) \
 
 >> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
 >> validate pyspark exit() / spark-sql exit; / 
@@ -140,11 +137,14 @@ getOrCreate()
    df.replace(to_replace=['Alice', 'Bob'], value=['suresh', 'unknown']).show()
 >> when&otherwise -->> df = df.withColumn("status", when(df.age < 30, "Young").otherwise("Adult"))
 >> drop duplicates: df.distinct() / df.orderBy('Age').dropDuplicates(['Name']) / row_number()  / 
->> agg 	----> df.select(sum('CN')).show()  /   grouping and agg----> df.groupBy('CN').agg(sum('CN')).show()   	---> note: ignore null values 	
-   sum / min / max / avg / count / first_value / last_value / sum_distinct / count_distinct / collect_list / collect_set
+>> agg 	----> df.select(sum('CN')).show()  /   ---> note: ignore null values
+   sum / min / max / avg / count / sum_distinct / count_distinct / first_value / last_value / collect_list / collect_set
+   grouping and agg----> df.groupBy('CN').agg(sum('CN')).show()   	---> note: ignore null values 	
+   sum / min / max / avg / count / sum_distinct / count_distinct / first_value / last_value / collect_list / collect_set
    window functions----> win_spe=Window.partitionBy("category").orderBy(asc("timestamp")).rowsBetween(Window.unboundedPreceding, ..) or (-2, 3) /    
    df.withColumn("row_number", row_number().over(window_spec)) 
-   max(cn) / collect_list('cn') / first_value('cn') / row_number() / lag(cn) / lead(cn, 2) / ntile(n) / cume_dist() / percent_rank()
+   sum / min / max / avg / count / collect_list / collect_set / first_value / last_value / nth_value / 
+   row_number / rank / dense_rank / lag / lead / ntile / cume_dist() / percent_rank()
 >> splitng column, array_length (size), word in array (array_contains), explode/explode_outer, indexing: [0] or .getItem(0)
    df_split = df.withColumn("name_parts", size/explode(split(col("full_name"), " ")))
    df_split = df.withColumn("name_parts", array_contains(split(col("full_name"), " "), 'Alice'))
@@ -221,7 +221,6 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	df.repartition(10, column): data distributed based hash of key column - prepare data for groupby, join operations
 >> extract filename: element_at(split(input_file_name(), "/"), -1)
 
-   
 >> sc.parallelize: function to create a RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
    sc.textFile: function to read data from a text file from HDFS/S3/local FS. Best for large datasets.
 >> RDD - reduceByKey: local aggregation - less data for shuffling / DF - df.groupBy("dept").agg(sum("salary").as("total_salary"))
