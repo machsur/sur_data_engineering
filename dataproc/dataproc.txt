@@ -57,23 +57,36 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 	df = spark.read.parquet(input_path).select("event_id", "user_id", "device_type", "event_type", "event_ts").filter(col("event_type") == "CLICK")
 ==> Used caching for repeted data access:  df.cache() / df.persist(StorageLevel.MEMORY_AND_DISK_DESER_2) / df.unpersist() /
 	SER (ser format & lesser in size) is CPU intensive, memory saving as data is compact while DESER (memory as jvm objects) is CPU efficient, memory intensive
+
 ==> tune shuffle partitions: any wide transformation (groupby, join) involves shuffeling
 	under partitioning: SP is low - large amount of data - skewed workloads and OOM errors
 	over partitioning: SP is high -  excessive task overhead and slow completion time
-	fix1: based on data size (SP=500GB/128MB = 4000) based on cluster cores (min SP = 160 cores *2-3 = 320) ==> set for 4000
-	fix2: Enable AQE to dynamically adjust no of shuffle partitions ==> spark.sql.adaptive.enabled=true, spark.sql.adaptive.shuffle.targetShufffleFileInputSize, "64MB"
+	Manual Tuning: if data is small to medium - well understood
+	based on data size (SP=100GB/128MB = 800) based on cluster cores (min SP = 160 cores *2-3 = 320) ==> set for 800
+	AQE: Enable AQE to dynamically adjust no of shuffle partitions - if data size is large and behaviour is unpredictable
+	set initial shuffle partitions: spark.sql.shuffle.partitions		
+	SP is small- coalsece with 64mb - (spark.sql.adaptive.coalescePartitions.enabled", "true") - spark.sql.adaptive.shuffle.targetShufffleFileInputSize, "64MB"
+	SP is large - AQE splits into smaller ones - ("spark.sql.files.maxPartitionBytes", "128mb")
 	Note: else, repartition the df based key column and then perform wide transformation
+
 ==> optimize joins
 	if one table is small --> reratition larger table based on join key & broadcast small table on all nodes to avoid shuffeling.
 	when both are large tables --> 
 		repartition the large tables on the join keys to reduce shuffle overhead
+
 ==>> Data Skew: uneven data distribution during shuffle operations like groupBy, join (job taking time, uneven resource utilization, OOM/data spill)
-	 Skewed keys in group by : use slating
-	 Skewed keys in join : use slating for large tables, use broadcast for small table
-	 AQE(>3.0) - uses runtime statistics - choose most efficient query plan
-		-> tuning no of SP - 15 keys - coalesce(15) - spark.conf.set("spark.sql.adaptive.enabled", "true"), ("spark.sql.adaptive.coalescePartitions.enabled", "true")
+	slating in Join:
+	SALT_NUMBER = int(spark.conf.get("spark.sql.shuffle.partitions"))
+	df_skew = df_skew.withColumn("salt", floor(rand() * SALT_NUMBER))
+	df_uniform = df_uniform.withColumn("salt", explode(col("salt_array")))  # salt_array = array([lit(i) for i in range(SALT_NUMBER)])
+	df_joined = df_skew.join(df_uniform, ["value", "salt"], 'inner').drop('salt')
+	salting in groupBy:
+    df_skew.withColumn("salt", floor(rand() * SALT_NUMBER)).groupBy("value", "salt").agg(count("value").alias("count")).groupBy("value").agg(sum("count").alias("count"))
+	AQE(>3.0) - uses runtime statistics - choose most efficient query plan
 		-> optimize joins - SMJ to BJ - df1.repartiton(4), df2 broadcasted on all executors - spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 10*1024*1024/-1) 
-		-> optimize Skew joins - breaks larger part into smaller part - spark.conf.set("spark.sql.adaptive.skewedJoin.enabled", "true")
+		-> optimize Skew joins - spark.conf.set("spark.sql.adaptive.skewedJoin.enabled", "true")
+		   with aqe enable, spark detects skewed key - splits into smaller chunks - allows to process skewed key in parallel
+
 ==>> Use DataFrame/Dataset over RDD, Avoid User Defined Functions (UDFs)
 
 ===================> low-level api Syntax
@@ -88,7 +101,6 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 ===================>> high-level api syntax
 
 >>
-spark.conf.set("spark.sql.files.maxPartitionBytes", "1000")
 df.rdd.getNumPartitions()
 spark.sparkContext.defaultMinPartitions
 spark.sparkContext.defaultParallelism
