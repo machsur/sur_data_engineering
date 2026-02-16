@@ -70,9 +70,13 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 	Note: else, repartition the df based key column and then perform wide transformation
 
 ==> optimize joins
-	if one table is small --> reratition larger table based on join key & broadcast small table on all nodes to avoid shuffeling.
-	when both are large tables --> 
-		repartition the large tables on the join keys to reduce shuffle overhead
+	broad cast join if one table is small --> reratition larger table based on join key.
+	partition pruning: filter data before join to reduce shuffle overhead
+	skewed joins: if one of key in join is highly skewed then implement slating
+	when both are large tables --> repartition and sort based on the join keys to reduce shuffle overhead
+		large_df = large_df.repartition(10, 'id').sortWithinPartitions('id')
+	SSMJ: shuffle - sort - slower performance
+	SMJ: requires explicit repartition and sorting - after no shuffle and sort when join - faster performanance
 
 ==>> Data Skew: uneven data distribution during shuffle operations like groupBy, join (job taking time, uneven resource utilization, OOM/data spill)
 	slating in Join:
