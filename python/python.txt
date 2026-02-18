@@ -1,0 +1,91 @@
+============================================================================================================================================================
+====================================>> concepts
+
+>> Interpreter: The programme that runs your code.
+>> Virtual Environment: Python interpreter + dependencies  - Keeps dependencies isolated from other projects
+	python -m venv myenv	/ 	venv\Scripts\activate	/		deactivate	/
+>> pip - tool for install python packages
+>> pypi - centralized repository for py packages
+	pip install <package-name>	/ pip install -r requirements.txt  / 	pip freeze > requirements.txt
+>> terminate the python programme  ---> sys.exit()
+>> Shebang: #!/usr/bin/python3.5  -  tells the operating system which interpreter to use to run the file. 
+>> variables, lists, tuple, set, dictionory
+>> Datatypes: None, Numeric (int, float, bool, complex), sequence(list, tuple, set, range, string), mapping(dictinory)
+>> 
+operators: arthematic: + - *	/ 	%	**	//
+ASSIGNMENT: = 	X += 3
+comparision: == 	!= 	>	<	>=	<=
+logical: and or not   
+identify: print(x is z) 
+membership:  print("pineapple" not in x)
+>> swap variables
+>> user input: input / int / eval / python file.py 6(sys.argv[1]) 2 /
+>> if elif else / while loop / for loop / for else / break continue pass /
+>> why arrays than lists: Optimized/faster, memory efficient for mathematical operations for numerical data.
+   Why NumPy: to work with multi-dimensional arrays 
+   why Pandas:  handle tabulaer data - data scientist life easier and effective (Python - Need to write code, Excel - Can not handle large data)
+>> functions: positional / keyworded / default / variable length: def sum(a, *b): / keyword variable length: def person(name, **data) /Global variable & local variable  
+   recursion: function calling it self ex: factorial using recurssion
+   anonymous function, short, one-line function: lambda -- map, filter, reduce
+   List comprehensation: create new list from existiong list or other iterals
+>> iterators: is an object - Returns data one element at a time - __iter__()  - __next__()
+   Generators gives iterators using yield.
+
+>> decorator: adding extra feature to the existing function without touching them.
+>> Special variable: __name__ == __main__
+>> OOPS: Class, object/instance of class, constructer (__init__), self referring object, 
+   variables: instance & class var
+   methods: instance & class & static mtd
+   inheritance: single level & multi level & multiple,  constructor in inheritance: super().__init__/mtd | MRO
+   polymorphisum: Duck typing, operator overloading, method overloading: NA (achive by a=None), method overriding: child class method overrides parent class mtd 
+>> Encaptulation: 
+	public variable: can access outside class
+	private variable: cannt acces from outside of class
+	protected variable: can access from derived class, other not
+>> Abstract class & method
+ 
+>> Handlling errors: using the try-except block --> any error in the try block, exception will be raised and it caught by except block
+   compile time error: Syntatical, Logical error: wrong output - used * instead of +, run time error:  occur while the program is running --- print(5 / 0) 
+>> multi threading: You're doing multiple tasks at once — that's what multithreading is in a program.
+>> file handling, Comments
+>> library (group of packages) --> Package (folder - collection of modules) ---> module (file1.py)
+>> Why Logging Instead Print: Levels, Output Options, format, Production-Ready.
+>> file operations:
+-- Magic/Tunder/double underscore methods: enable you to define the behavour of objects for built-in operations such as arth ope, comp oper, more
+
+=============================>> QA
+
+>> Generate an Infinite Fibonacci Series Using a Generator. 
+>> Sort a List Without Using the sort Keyword
+>> Check Whether a String is a Palindrome or Not
+>> Python Program to Find the Factorial of a Number.
+>> Frequency of Words in a Sentence
+>> Find the Smallest and Largest Number in an Array
+
+>> Calculate the Intersection of Two Lists without using Built-in Functions:      print(set(ls1) & set(ls2)) or lss =[item for item in ls1 if item in ls2]
+>> Which data structure occupies more memory: list or tuple? Why? --> lists occupy more memory --> their size and contents can change, more methods
+>> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]  //
+>>  What is a constructor? -> is special method (__init__) and automatically called to initilize variables when a new instance of a class is created.
+>> Find out common letters between two strings Using Python
+>> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
+>> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
+>> number is prime or not
+
+>> find line_count, words, chars in the files
+>> Find the pair of numbers in this list whose sum is n no.
+>> Sort a List without using Sort keyword. built-in / bubble sort /
+	bubble sort: keep largest item at the end (6 items- 5comp in 1st round) 
+	selection sort: find min_index corresponding to lowest value and swap values
+	insertion sort: start at 2 element and compare previous elements (for almost sorted lists - o(n) not n2)
+>> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
+>> Longest Substring Without Repeating Characters: s = "abcabdbcefb" 
+
+
+
+>>
+Input: nums = [100, 4, 200, 1, 3, 2]
+Output: 4
+Explanation: The longest consecutive is [1, 2, 3, 4] which have a length of 4
+
+
+
