@@ -40,15 +40,20 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 
 >> Spark optimization techniques.
 ==> Use columnar file formats (parquet or orc) for better compression and faster reads than csv 
+
 ==> partitioning: distibute data into folders based on column values - best for low to medium cardinality columns & select only required partitions (filter or where) 
 	df.write.mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/con/') 
 	static partition pruning: 
    	dynamic partition pruning: get requ partions to scan during run time - spark uses results to scan only required partitions from other dataset.
 	config("spark.sql.optimizer.dynamicPartitionPruning.enabled", "true")
+
 ==>	bucketing: distribute data into fixed no of files based on hash of column - best for high cordinality columns and frequent joins - avoid shuffelling during the join. 
 	optimal buckets = size of dataset / 128-200mb
 	config('spark.sql.warehouse.dir', 'gs://gcs_bucket/warehouse') 
-   	df.write.mode('overwrite').bucketBy(2, 'product_id').sortBy("product_id").format("parquet").saveAsTable('buckted_table')/save('gcspath)  - 2buc*2part=4files
+   	df.write.mode('overwrite').partitionBy("listen_date").bucketBy(4, 'product_id').sortBy("product_id").saveAsTable('buckted_table')  
+   	df.write.mode('overwrite').bucketBy(4, 'product_id').sortBy("product_id").saveAsTable('buckted_table')  
+	df = spark.sql(query) # select * from t1 join t2 on t1.product_id = t2.product_id where date = date_col
+
 ==> Enable Dynamic Resource allocation for varying workloads to use resource efficiently (rec to set at cluster level)
 	gcloud dataproc clusters create my-cluster --region=us-central1 --properties=spark:spark.dynamicAllocation.enabled=true, spark:spark.shuffle.service.enabled=true,
 	spark:spark.dynamicAllocation.minExecutors=2, spark:spark.dynamicAllocation.maxExecutors=50, spark:spark.dynamicAllocation.initialExecutors=5
@@ -303,8 +308,28 @@ data = [
 Columns: user_id, product, date
 Find duplicate rows per user where product repeats across different dates, but count only unique product-user pairs.
 
+>>
+distinct() removes complete row duplicates
+dropDuplicates() removes duplicates based on specified columns. 
+window functions to retain the latest or most relevant record per business key
 
+>>
+✅ Data Quality (DQ) → checks basic correctness
+Example:
+ invoice_id not null
+ amount > 0
+ currency allowed
+ tax >= 0
 
+✅ Data Validation (DV) → checks business logic
+Example:
+ invoice must be unique
+ tax code must exist in master
+ tax must match calculation
+
+Key Takeaway
+ DQ ensures data is clean
+ DV ensures data is correct
 
 >>
 !apt-get install openjdk-11-jdk -y
