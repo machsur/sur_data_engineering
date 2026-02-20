@@ -19,6 +19,34 @@ I have worked on end-to-end data solutions — from ingestion and transformation
 Additionally, my GCP certifications demonstrate my strong foundation in cloud architecture and best practices.
 I focus not only on writing code but also on performance optimization, cost efficiency, and data quality — which are critical for modern data platforms.
 
+2. If business team blames data team for wrong dashboard numbers?
+
+Strong Answer:
+
+I would first avoid reacting defensively and focus on understanding the concern. I would review the data source, transformation logic, and dashboard queries to validate whether the issue is technical or due to a misunderstanding of business logic.
+If it’s a data issue, I would fix it quickly and explain the root cause transparently.
+If it’s a requirement mismatch, I would clarify definitions and align on metrics with the business team.
+My goal would be collaboration and clarity rather than assigning blame.
+
+1. If production pipeline fails at midnight, what will you do?
+
+Strong Answer:
+
+First, I would immediately acknowledge the alert and assess the severity of the issue. I would check logs, monitoring dashboards, and error messages to identify the root cause.
+If it’s a quick fix like a configuration or dependency issue, I would resolve it immediately. If it requires deeper investigation, I would trigger a rollback or temporary workaround to minimize business impact.
+I would also inform relevant stakeholders about the issue and expected resolution time.
+Once resolved, I would conduct a root cause analysis and implement preventive measures such as better monitoring, retries, or alert improvements to avoid recurrence.
+
+
+3. If client changes requirement at last minute?
+
+Strong Answer:
+
+First, I would assess the impact of the change — whether it affects data models, pipeline logic, timelines, or dependencies.
+I would discuss the impact clearly with stakeholders, including timeline adjustments if necessary.
+If the change is minor, I would accommodate it quickly.
+If it significantly affects delivery, I would propose a phased approach or revised deadline to maintain quality.
+I believe flexibility is important, but maintaining realistic expectations is equally critical.
 
 
 𝗦𝗤𝗟
