@@ -48,7 +48,125 @@ If the change is minor, I would accommodate it quickly.
 If it significantly affects delivery, I would propose a phased approach or revised deadline to maintain quality.
 I believe flexibility is important, but maintaining realistic expectations is equally critical.
 
+1. General / Introduction Questions
 
+Tell me about yourself.
+
+Walk me through your current role and responsibilities.
+
+Why are you looking for a job change?
+
+Why do you want to join our company?
+
+What do you know about our organization?
+
+Why should we hire you as a Data Engineer?
+
+🔹 2. Experience & Project-Based Questions
+
+What kind of data projects have you worked on?
+
+Describe your end-to-end data pipeline experience.
+
+What challenges did you face in your recent project?
+
+Have you handled production issues? Explain.
+
+How do you ensure data quality in pipelines?
+
+Have you worked with stakeholders or clients directly?
+
+👉 Since you have GCP experience, expect:
+
+Experience with BigQuery
+
+Airflow/Composer
+
+Cloud Storage
+
+Dataflow
+
+CI/CD for data pipelines
+
+🔹 3. Behavioral Questions (Very Important)
+
+Tell me about a time you handled a tight deadline.
+
+Describe a conflict with a teammate and how you handled it.
+
+Have you ever made a mistake in production? What did you learn?
+
+How do you prioritize multiple tasks?
+
+How do you handle pressure?
+
+Use STAR method (Situation, Task, Action, Result).
+
+🔹 4. Notice Period & Job Switch Questions
+
+Since you're serving notice, be ready for:
+
+What is your official last working date?
+
+Can you negotiate your notice period?
+
+Do you have any offers in hand?
+
+What is your expected CTC?
+
+Are you open to relocation?
+
+Why are you leaving your current company?
+
+⚠️ Important:
+Never speak negatively about current employer. Keep it professional:
+
+“I am looking for growth opportunities and more ownership in data engineering projects.”
+
+🔹 5. Salary Discussion Questions
+
+What is your current CTC?
+
+What is your expected CTC?
+
+Are you flexible on compensation?
+
+Do you have any competing offers?
+
+For you (based on previous info):
+
+Current: 13.2 LPA
+
+Expected: 16 LPA
+Be confident but flexible.
+
+🔹 6. Scenario-Based HR Questions
+
+If production pipeline fails at midnight, what will you do?
+
+If business team blames data team for wrong dashboard numbers?
+
+If client changes requirement at last minute?
+
+They test:
+
+Ownership
+
+Communication
+
+Accountability
+
+Calmness
+
+🔹 7. Cultural Fit Questions
+
+Do you prefer working independently or in a team?
+
+How do you upskill yourself?
+
+Where do you see yourself in 3–5 years?
+
+Are you comfortable working in shifts (if applicable)?
 𝗦𝗤𝗟
 
 >> Find employees who earn more than their managers
