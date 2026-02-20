@@ -6,19 +6,35 @@
 
 >> create dag file: multiple DAGs are defined in py script, same dag can be in multiple py scipts.
    1. import modules & operators    2. contruct dag object    3. define tasks    4. set task depencies
-   UI > admin > configurations 
    
+>>
+Git Repo
+   ├── dags/
+   ├── requirements.txt
+   └── ci-cd-pipeline.yaml
 
+>> commands
+pip install apache-airflow==2.3.3
+pip install apache-airflow-providers-google
+gcloud composer environments run --location=us-central1 --project=aesthetic-way-485114-u2 sur-com-env11 dags list
+gsutil cp -r C:\Users\macha\Downloads\pyws\deog\data gs://sur_test_buk/
 
->> * update/review packages in composer environment
-   composer2: gcs based approach
-   composer3: gcloud composer environments update <ENV_NAME> --location <REGION> --update-pypi-packages="pandas==2.1.4,pyarrow==15.0.0"
-              gcloud composer environments update <ENV_NAME> --location <REGION> --remove-pypi-packages="pandas"
-   * nexus credential in env vars: 
-      gcloud composer environments update <ENV_NAME> --location <REGION> --update-env-variables=NEXUS_USER=myuser,NEXUS_PASS=mypass,NEXUS_HOST=nexus.hsbc.net
-      gcloud composer environments update <ENV_NAME> --location <REGION> --update-pypi-repositories="{\"pypi_index_url\":                                                                  \"https://${NEXUS_USER}:${NEXUS_PASS}@${NEXUS_HOST}/repository/pypi/simple/\",    \"pypi_trusted_hosts\": [\"${NEXUS_HOST}\"]}"
-  * If credentials or repo URLs are needed BEFORE Airflow starts (e.g., to install packages) → Use ENV VARS
-    If values are needed DURING DAG execution → Use Airflow Variables
+>> Production Recommendation for package managment
+  Install package
+    # update env variable, install packages
+    gcloud composer environments list
+    gcloud composer environments update sur-com-env11 --location us-central1 --update-env-variables=NEXUS_USER=myuser,NEXUS_PASS=mypass,NEXUS_HOST=nexus.hsbc.net
+    or create artifact repo in gcp, sync nexus repo to artifact repo, grant access to composer sa on artifact repo, 
+    gcloud composer environments update sur-com-env11 --location us-central1 --update-pypi-packages-from-file requirements.txt
+    gcloud composer environments update sur-com-env11 --location us-central1 --update-pypi-packages="pandas==2.1.4,pyarrow==15.0.0"
+    gcloud composer environments describe sur-com-env11 --location us-central1 
+    gcloud composer environments restart sur-com-env11 --location us-central1 
+  Create verification DAG (pip_list.py)
+  Validate version: deploy dag and run the dag view all packages in the the logs 
+  Delete verification DAG
+  Note:
+  If credentials or repo URLs are needed BEFORE Airflow starts (e.g., to install packages) → Use ENV VARS
+  If values are needed DURING DAG execution → Use Airflow Variables
 
 
 
@@ -27,10 +43,7 @@
   Two different DAGs can: Run at the same time, Run in parallel, Use different or even same resources (unless you restrict them) 
   what controls parallel runs 1️⃣ Airflow environment limits (Worker count, CPU / memory 2️⃣ Pools (IMPORTANT) Used when DAGs share critical resources.
 
-pip install apache-airflow==2.3.3
-pip install apache-airflow-providers-google
-gcloud composer environments run --location=us-central1 --project=aesthetic-way-485114-u2 sur-com-env3 dags list
-gsutil cp -r C:\Users\macha\Downloads\pyws\deog\data gs://sur_test_buk/
+
 
 
 >>
