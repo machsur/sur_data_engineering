@@ -2,25 +2,29 @@
 ====================================>> concepts
 
 >> Interpreter: The programme that runs your code.
->> Virtual Environment: Python interpreter + dependencies  - Keeps dependencies isolated from other projects
-	python -m venv myenv	/ 	venv\Scripts\activate	/		deactivate	/
->> pip - tool for install python packages
->> pypi - centralized repository for py packages
-	pip install <package-name>	/ pip install -r requirements.txt  / 	pip freeze > requirements.txt
->> terminate the python programme  ---> sys.exit()
->> Shebang: #!/usr/bin/python3.5  -  tells the operating system which interpreter to use to run the file. 
->> variables, lists, tuple, set, dictionory
->> Datatypes: None, Numeric (int, float, bool, complex), sequence(list, tuple, set, range, string), mapping(dictinory)
->> 
-operators: arthematic: + - *	/ 	%	**	//
-ASSIGNMENT: = 	X += 3
-comparision: == 	!= 	>	<	>=	<=
-logical: and or not   
-identify: print(x is z) 
-membership:  print("pineapple" not in x)
->> swap variables
->> user input: input / int / eval / python file.py 6(sys.argv[1]) 2 /
+   Virtual Environment: Python interpreter + dependencies  - python -m venv myenv	/ 	activate	/	deactivate	/
+   pip - tool for install python packages
+   pypi - centralized repository for py packages:	pip install <package-name>	/ pip install -r requirements.txt  / 	pip freeze > requirements.txt
+   terminate the python programme  ---> sys.exit()
+   Shebang: #!/usr/bin/python3.5  -  tells the operating system which interpreter to use to run the file. 
+
+>> Datatypes: 
+None: declare a variable first, assign later - function that returns nothing actually returns None
+Numeric: int (5), float (7.0), bool (true), complex (2 + 4j)
+sequence:
+	range:
+	string:
+	list: 		ordered, 	changeble, 		duplicates
+	tuple:		ordered, 	no change, 		duplicates
+	set:		unorder, 	changeble, 		no duplicates
+mapping:
+	dictinory:  ordered,	changble,		no duplicate keys
+ iterator types:
+	iterator - Stores no data → produces one element on the fly (lazy evaluation) - cant be indexed - Exhaust after use
+	Generators gives iterators using yield - ideal for reading large files line-by-line, 
+
 >> if elif else / while loop / for loop / for else / break continue pass /
+
 >> why arrays than lists: Optimized/faster, memory efficient for mathematical operations for numerical data.
    Why NumPy: to work with multi-dimensional arrays 
    why Pandas:  handle tabulaer data - data scientist life easier and effective (Python - Need to write code, Excel - Can not handle large data)
@@ -28,8 +32,7 @@ membership:  print("pineapple" not in x)
    recursion: function calling it self ex: factorial using recurssion
    anonymous function, short, one-line function: lambda -- map, filter, reduce
    List comprehensation: create new list from existiong list or other iterals
->> iterators: is an object - Returns data one element at a time - __iter__()  - __next__()
-   Generators gives iterators using yield.
+
 
 >> decorator: adding extra feature to the existing function without touching them.
 >> Special variable: __name__ == __main__
