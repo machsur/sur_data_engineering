@@ -1,4 +1,3 @@
-============================================================================================================================================================
 ====================================>> concepts
 
 >> Interpreter: The programme that runs your code.
@@ -25,16 +24,18 @@ mapping:
 
 >> if elif else / while loop / for loop / for else / break continue pass /
 
->> why arrays than lists: Optimized/faster, memory efficient for mathematical operations for numerical data.
-   Why NumPy: to work with multi-dimensional arrays 
-   why Pandas:  handle tabulaer data - data scientist life easier and effective (Python - Need to write code, Excel - Can not handle large data)
 >> functions: positional / keyworded / default / variable length: def sum(a, *b): / keyword variable length: def person(name, **data) /Global variable & local variable  
    recursion: function calling it self ex: factorial using recurssion
    anonymous function, short, one-line function: lambda -- map, filter, reduce
    List comprehensation: create new list from existiong list or other iterals
+		[new_item for item in iterable]
+		[new_item for item in iterable if condition]
+		[expr_if_true if condition else expr_if_false for item in iterable]
 
+>> why arrays than lists: Optimized/faster, memory efficient for mathematical operations for numerical data.
+   Why NumPy: to work with multi-dimensional arrays 
+   why Pandas:  handle tabulaer data - data scientist life easier and effective (Python - Need to write code, Excel - Can not handle large data)
 
->> decorator: adding extra feature to the existing function without touching them.
 >> Special variable: __name__ == __main__
 >> OOPS: Class, object/instance of class, constructer (__init__), self referring object, 
    variables: instance & class var
@@ -46,7 +47,8 @@ mapping:
 	private variable: cannt acces from outside of class
 	protected variable: can access from derived class, other not
 >> Abstract class & method
- 
+>> decorator: adding extra feature to the existing function without touching them.
+
 >> Handlling errors: using the try-except block --> any error in the try block, exception will be raised and it caught by except block
    compile time error: Syntatical, Logical error: wrong output - used * instead of +, run time error:  occur while the program is running --- print(5 / 0) 
 >> multi threading: You're doing multiple tasks at once — that's what multithreading is in a program.
@@ -82,9 +84,6 @@ mapping:
 	insertion sort: start at 2 element and compare previous elements (for almost sorted lists - o(n) not n2)
 >> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
 >> Longest Substring Without Repeating Characters: s = "abcabdbcefb" 
-
-
-
 >>
 Input: nums = [100, 4, 200, 1, 3, 2]
 Output: 4
