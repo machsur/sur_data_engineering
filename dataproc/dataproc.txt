@@ -314,22 +314,26 @@ dropDuplicates() removes duplicates based on specified columns.
 window functions to retain the latest or most relevant record per business key
 
 >>
-✅ Data Quality (DQ) → checks basic correctness
-Example:
- invoice_id not null
- amount > 0
- currency allowed
- tax >= 0
+✅ Data Quality (DQ) → ensure data to clean 
+Example: invoice_id not null,  amount > 0, currency allowed,  tax >= 0
+✅ Data Validation (DV): ensures data is correct  → checks business logic
+Example: invoice must be unique,  tax code must exist in master, tax must match calculation
 
-✅ Data Validation (DV) → checks business logic
-Example:
- invoice must be unique
- tax code must exist in master
- tax must match calculation
+>> we need to derive the overall journey (start → end) for that customer.
+	customer_od, from_city, to_city, journey_order
+	 FIRST_VALUE(from_city) OVER (PARTITION BY customer_id ORDER BY journey_order) AS from_city,
+ 	LAST_VALUE(to_city) OVER (PARTITION BY customer_id ORDER BY journey_order ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING ) AS to_city
 
-Key Takeaway
- DQ ensures data is clean
- DV ensures data is correct
+>>
+Write a query to return, for each city, the person with the third‑highest expenditure (showing name, city, and amount). If a city has fewer than three people, return the minimum expenditure person’s details instead.
+name, city, amount
+WITH cte AS (SELECT name, city, amount,
+ ROW_NUMBER() OVER (PARTITION BY city ORDER BY amount DESC) AS rn_desc,
+ ROW_NUMBER() OVER (PARTITION BY city ORDER BY amount ASC) AS rn_asc,
+ COUNT(*) OVER (PARTITION BY city) AS cnt FROM expenditure)
+
+SELECT name, city, amount FROM cte WHERE (cnt >= 3 AND rn_desc = 3) OR (cnt < 3 AND rn_asc = 1);
+
 
 >>
 !apt-get install openjdk-11-jdk -y
