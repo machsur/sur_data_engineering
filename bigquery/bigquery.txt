@@ -144,4 +144,15 @@ Row 1: 1 Staff 1, 2 Staff 2
 Row 2: 3 Staff 3, 4 Staff 4
 1️⃣ CONCAT(): 2️⃣ NTILE(4): 0r floor((rownumber - 1) /2 + 1) 3️⃣ STRING_AGG():
 
+>>
+retun keys that forms palindrome based on value column - 
+key, value, sequence
+SELECT key_id FROM tbl GROUP BY key_id HAVING CONCAT(string_agg(value)) = REVERSE(CONCAT(string_agg(value)));
+
+
+
+
+
+
+
 
