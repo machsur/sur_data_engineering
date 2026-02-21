@@ -348,6 +348,13 @@ result = spark.sql(query) 	# query = """ select * from st t1 join pm t2 on t1.pr
 result.show()
 
 >>
+RDD: The low-level abstraction, Immutable distributed collection of objects, Provides fine-grained control, Uses (map, flatMap, filter), Introduced in early Spark versions.
+DataFrame: High-level structured API, schema-based, Similar to table in relational database, Optimized by Catalyst Optimizer, Built on top of RDD.
+When to Use RDD? Working with unstructured data, Custom complex transformations not supported by DataFrame
+When to Use DataFrame? ETL pipelines, SQL queries, Aggregations, Joins, Performance-sensitive workloads.
+
+
+>>
 !apt-get install openjdk-11-jdk -y
 !wget -q https://downloads.apache.org/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz
 !tar xf spark-3.4.1-bin-hadoop3.tgz
