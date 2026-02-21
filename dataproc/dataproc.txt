@@ -334,6 +334,18 @@ WITH cte AS (SELECT name, city, amount,
 
 SELECT name, city, amount FROM cte WHERE (cnt >= 3 AND rn_desc = 3) OR (cnt < 3 AND rn_asc = 1);
 
+>> 
+Partitioning vs Bucketing – End-to-End Example (Retail Domain)
+sales_transactions (very large table – billions of rows): sale_id (string), product_id (string), quantity (int), amount (double), sale_date (string), store_id (string)
+product_master (medium-sized dimension table): product_id (string), product_name (string), category (string), price (double)
+#Requirements: Partition by sale_date, Bucket by product_id, Perform optimized join.
+	In retail systems, transaction tables are very large and frequently filtered by date. 
+	Since product joins are frequent and large-scale, I bucket both tables on product_id to reduce shuffle during joins. 
+config('spark.sql.warehouse.dir', 'gs://gcs_bucket/warehouse') 
+sales_df.write.mode('overwrite').partitionBy("sale_date").bucketBy(4, 'product_id').sortBy("product_id").saveAsTable('sales_transactions')  
+product_df.write.mode('overwrite').bucketBy(4, 'product_id').sortBy("product_id").saveAsTable('product_master')  
+result = spark.sql(query) 	# query = """ select * from st t1 join pm t2 on t1.product_id = t2.product_id where sales_date = '2026-02-01' """
+result.show()
 
 >>
 !apt-get install openjdk-11-jdk -y
