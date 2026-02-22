@@ -36,18 +36,18 @@ mapping:
    Why NumPy: to work with multi-dimensional arrays 
    why Pandas:  handle tabulaer data - data scientist life easier and effective (Python - Need to write code, Excel - Can not handle large data)
 
->> Special variable: __name__ == __main__
->> OOPS: Class, object/instance of class, constructer (__init__), self referring object, 
-   variables: instance & class var
-   methods: instance & class & static mtd
-   inheritance: single level & multi level & multiple,  constructor in inheritance: super().__init__/mtd | MRO
-   polymorphisum: Duck typing, operator overloading, method overloading: NA (achive by a=None), method overriding: child class method overrides parent class mtd 
->> Encaptulation: 
+>> 
+OOPS: Class, object/instance of class, constructer (__init__), self referring object, 
+variables: instance & class var
+methods: instance & class & static mtd
+inheritance: single level & multi level & multiple,  constructor in inheritance: super().__init__/mtd | MRO
+polymorphisum: Duck typing, operator overloading, method overloading: NA (achive by a=None), method overriding: child class method overrides parent class mtd 
+Encaptulation: 
 	public variable: can access outside class
 	private variable: cannt acces from outside of class
 	protected variable: can access from derived class, other not
->> Abstract class & method
->> decorator: adding extra feature to the existing function without touching them.
+Abstract class & method
+decorator: adding extra feature to the existing function without touching them.
 
 >> Handlling errors: using the try-except block --> any error in the try block, exception will be raised and it caught by except block
    compile time error: Syntatical, Logical error: wrong output - used * instead of +, run time error:  occur while the program is running --- print(5 / 0) 
@@ -74,7 +74,6 @@ logging.basicConfig(filename='sur.log', filemode='a',
 >> Python Program to Find the Factorial of a Number.
 >> Frequency of Words in a Sentence
 >> Find the Smallest and Largest Number in an Array
-
 >> Calculate the Intersection of Two Lists without using Built-in Functions:      print(set(ls1) & set(ls2)) or lss =[item for item in ls1 if item in ls2]
 >> Which data structure occupies more memory: list or tuple? Why? --> lists occupy more memory --> their size and contents can change, more methods
 >> List Comprehension: [x for x in ls if x % 3 == 0]  //  ["Even" if x % 2 == 0 else "Odd" for x in range(5)]  //
@@ -83,14 +82,16 @@ logging.basicConfig(filename='sur.log', filemode='a',
 >> convert two list into dict: result = dict(zip(keys, values))  	// 	convert dict into tuple:     result = tuple(my_dict.items())
 >> *args and **kwargs: Allows function to accept any number of positional arguments (tuple) & any number of keyword arguments (dict)
 >> number is prime or not
-
 >> find line_count, words, chars in the files
 >> Find the pair of numbers in this list whose sum is n no.
+
 >> Sort a List without using Sort keyword. built-in / bubble sort /
 	bubble sort: keep largest item at the end (6 items- 5comp in 1st round) 
 	selection sort: find min_index corresponding to lowest value and swap values
 	insertion sort: start at 2 element and compare previous elements (for almost sorted lists - o(n) not n2)
->> shallow & deep copy - way to duplicate lists etc - behave diff for nested structures (like lists inside lists) - Affects original & original safe when nested changed
+
+>> shallow: Only top-level duplicated, inner elements shared
+   deep copy: [[A'], [B]] are independent clones - original is safe
 
 >> Longest Substring Without Repeating Characters: s = "abcabdbcefb" 
 
