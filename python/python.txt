@@ -52,9 +52,17 @@ mapping:
 >> Handlling errors: using the try-except block --> any error in the try block, exception will be raised and it caught by except block
    compile time error: Syntatical, Logical error: wrong output - used * instead of +, run time error:  occur while the program is running --- print(5 / 0) 
 >> multi threading: You're doing multiple tasks at once — that's what multithreading is in a program.
->> file handling, Comments
->> library (group of packages) --> Package (folder - collection of modules) ---> module (file1.py)
+>>  
+module (file1.py - collection of functions) 
+Package (folder - collection of modules)  - init file, file1.py, file2.py, ... 
+library (collection of packages)  - ex: numpy, pandas
+framework: collection of libraries with architexture - MVC & MVT archi - Model View Controller Template
 >> Why Logging Instead Print: Levels, Output Options, format, Production-Ready.
+logging.basicConfig(filename='sur.log', filemode='a', 
+                    format="%(asctime)s %(levelname)s %(name)s %(filename)s %(lineno)d %(message)s",
+                    datefmt="%Y-%m-%d %H:%M:%S",
+                    style="%",
+                    level=logging.INFO)
 >> file operations:
 -- Magic/Tunder/double underscore methods: enable you to define the behavour of objects for built-in operations such as arth ope, comp oper, more
 
