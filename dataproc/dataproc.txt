@@ -175,9 +175,9 @@ getOrCreate()
 
 >>  
 extract part 	- 	substring(col, pos, len) 
-substring_index(col, delim, count) – before/after delimiter
-locate(substr, col[, pos]) / instr("text", "World")
-regexp_replace(col("first"), 'Ali', '') / translate(col("first"), 'Al', '') / 
+extract before/after delimiter  - substring_index(col, delim, count) – - df.withColumn('nc', substring_index("email", '@', 1/-1)).show()
+find the index: locate(substr, col[, pos]) / instr("text", "World") - df.withColumn('nc', instr("email", '@')).show()
+replace the pattern - regexp_replace(col("first"), 'Ali', '') / translate(col("first"), 'Al', '') / 
 element size	-	length("text").alias("len")
 remove spaces  - 	trim("text").alias("trim")  / ltrim / rtrim / 
 capitalize 	-	upper("first").alias("first_upper")	/ lower / initcap /
