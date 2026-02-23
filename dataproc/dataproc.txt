@@ -70,8 +70,8 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 	based on data size (SP=100GB/128MB = 800) based on cluster cores (min SP = 160 cores *2-3 = 320) ==> set for 800
 	AQE: Enable AQE to dynamically adjust no of shuffle partitions - if data size is large and behaviour is unpredictable
 	set initial shuffle partitions: spark.sql.shuffle.partitions		
-	SP is small- coalsece with 64mb - (spark.sql.adaptive.coalescePartitions.enabled", "true") - spark.sql.adaptive.shuffle.targetShufffleFileInputSize, "64MB"
-	SP is large - AQE splits into smaller ones - ("spark.sql.files.maxPartitionBytes", "128mb")
+	data per SP is small- coalsece with 64mb - (spark.sql.adaptive.coalescePartitions.enabled", "true") - spark.sql.adaptive.shuffle.targetShufffleFileInputSize, "64MB"
+	data per SP is large - AQE splits into smaller ones - ("spark.sql.files.maxPartitionBytes", "128mb")
 	Note: else, repartition the df based key column and then perform wide transformation
 
 ==> optimize joins
