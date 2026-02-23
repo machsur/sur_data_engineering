@@ -32,7 +32,7 @@ Spark executor memory management
  
 Spark deployment modes: Local, Client (app driver runs on the client machine) and cluster mode (app driver runs any one of node in the cluster)
 
-executor tuning: rule of thumb - leave 1 core & some memory for system processes, 3-5 cores/executor, leave 1Exe for app master container at cluster level
+executor tuning: rule of thumb - leave 1 core & some memory for system processes at node level, 3-5 cores/executor, leave 1Exe for app master container at cluster level
 	cluster capacity : 10 nodes (16 cores 64gb ram) 
 	reserved : 1 c 8gb per node for system processes - ramaining: 15c 56gb ram
     executors per node = 15c/5 = 3  total executors = 10 nodes * 3 = 30
