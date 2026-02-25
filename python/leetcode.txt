@@ -1,4 +1,4 @@
-==========>
+==========> 1
 # merge overlapping intervals
 # out put: [[1, 6], [8, 10], [15, 18]]
 ls = [[2, 6], [1, 3], [8, 10], [15, 18]]
@@ -18,7 +18,23 @@ class Solution:
 obj1 = Solution()
 print(obj1.merge(ls))
 
-===========>
+===========> 2
+# move zeros to end
+# output: [1, 5, 3, 12, 0, 0]
+ls = [1, 5, 0, 3, 0, 12]
+class Solution:
+    def moveZeros(self, ls: list[int]) -> list[int]:
+        i = 0
+        for j in range(len(ls)):
+            if ls[j] != 0:
+                ls[i], ls[j] = ls[j], ls[i]
+                i += 1
+        return ls
+
+obj1 = Solution()
+print(obj1.moveZeros(ls))
+
+=============> 3
 
 
 
