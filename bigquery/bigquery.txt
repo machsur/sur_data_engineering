@@ -152,6 +152,12 @@ retun keys that forms palindrome based on value column -
 key, value, sequence
 SELECT key_id FROM tbl GROUP BY key_id HAVING CONCAT(string_agg(value)) = REVERSE(CONCAT(string_agg(value)));
 
+>>
+Each row represents when a user logged in to use the app.
+Identify users who logged in at least twice in the year 2025
+For each user, calculate the number of days between their first and last login in that year.
+Output the user_id and the days_between their first and last login.
+user_id, session_id, login_time, device
 
 
 
