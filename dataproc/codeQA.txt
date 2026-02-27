@@ -14,5 +14,60 @@ WHEN NOT MATCHED THEN
 =================>
 SCD2
 
+target_data = [
+    (1, "Ravi", "Bangalore", "2023-01-01", None, "Y"),
+    (2, "Anu", "Chennai", "2023-03-10", None, "Y"),
+    (4, "John", "Mumbai", "2023-05-01", None, "Y")
+]
+source_data = [
+    (1, "Ravi", "Hyderabad"),   # changed
+    (2, "Anu", "Chennai"),      # unchanged
+    (3, "Kiran", "Pune"),       # new
+    (5, "Meena", "Delhi")       # new
+]
+# Identify changed records
+current_target = target_df.filter("is_current='Y'")
+joined = current_target.alias("t").join(source_df.alias("s"), "cust_id")
+changed = joined.filter(col("t.city") != col("s.city"))
+# update old version
+update = changed.select(col("t.cust_id"), col("t.name"), col("t.city"), col("t.start_date"), current_date().alias("end_date"), lit("N").alias("is_current"))
+# Insert new version
+new_versions = changed.select(col("s.cust_id"), col("s.name"), col("s.city"), current_date().alias("start_date"), lit(None).cast("string").alias("end_date"), lit("Y").alias("is_current"))
+# Unchanged records
+unchanged = current_target.alias("t").join(changed.select(col("t.cust_id")).distinct(),  "cust_id", "left_anti")
+# Brand new customers
+new_customers = source_df.join(current_target, "cust_id", "left_anti").withColumn("start_date", current_date()).withColumn("end_date", lit(None).cast("string")).withColumn("is_current", lit("Y"))
+# Final result
+final_df = unchanged.union(expired).union(new_versions).union(new_customers)
+final_df.show(truncate=False)
 
+
+CREATE OR REPLACE TEMP TABLE detect_changes AS
+WITH detect_changes_cte AS (
+  SELECT 
+      stg.customer_id, stg.customer_name AS stg_customer_name, stg.city AS stg_city,
+      dim.customer_name AS dim_customer_name, dim.city AS dim_city, dim.start_date, dim.end_date, dim.is_current,
+      CASE 
+          WHEN dim.customer_id IS NULL THEN 'I'  -- New record
+          WHEN dim.customer_name <> stg.customer_name OR dim.city <> stg.city THEN 'U'  -- Updated record
+          ELSE 'C'                               -- Current / no change
+      END AS change_type
+  FROM seraphic-camera-266118.scd2_implementation.customer_stg stg
+  LEFT JOIN seraphic-camera-266118.scd2_implementation.customer_dim dim
+    ON stg.customer_id = dim.customer_id AND dim.is_current = "Y"
+)
+SELECT * FROM detect_changes_cte;
+
+UPDATE seraphic-camera-266118.scd2_implementation.customer_dim AS dim
+SET end_date = CURRENT_DATE() and is_current = 'N'
+FROM detect_changes AS dc
+WHERE dim.customer_id = dc.customer_id
+  AND dim.is_current = "Y"
+  AND dc.change_type = 'U';
   
+INSERT INTO seraphic-camera-266118.scd2_implementation.customer_dim
+(customer_id, customer_name, city, start_date, end_date, is_current)
+SELECT customer_id, stg_customer_name, stg_city, CURRENT_DATE() AS start_date, NULL AS end_date, "Y" as is_current FROM detect_changes
+WHERE change_type IN ('I','U');
+
+==================>
