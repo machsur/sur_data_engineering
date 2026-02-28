@@ -108,21 +108,35 @@ df.withColumn('even', when(col('id')%2==0, col('id')).otherwise(lit(0))).show()
 >> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. 
 products_df.join(sales_df, "product_id", "left_anti").show()
 ===============>
->> Identify employees whose salary is greater than the average salary of their department.
+>> Identify employees whose salary is greater than the manager salary.
 emp.join(mgr, emp.manager_id==mgr.nemp_id, "left").filter(emp.salary > mgr.nsalary).select(emp.emp_name).show()
 ================>
 >> fill missing `purchase_amount` values with the average purchase amount of that product category. -->`cust_id`, `cust_name`, `city`, `pur_amount`, `product_category`. 
->> Replace null values in a column with the last non-null value in that partition. -----> last_value('cn', ignorenulls=True).over(window_spec)
+win_spc = Window.partitionBy("product_category").rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
+df.withColumn('pur_amount', coalesce(col("pur_amount"), avg(col("pur_amount")).over(win_spc))).show()
+==============>
+>> Fill the mean salary value in Null. 
+win_spc = Window.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
+df.withColumn('salary', coalesce(col("salary"), avg(col("salary")).over(win_spc))).show()
+=================>
+>> emp earning more than avg sal in their department:
+win_spc = Window.partitionBy("dept").rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
+df.withColumn('avg_sal', avg(col("salary")).over(win_spc)).filter(col("salary")>col("avg_sal")).select("emp_name").show()
+===============>
+>> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: 
+df.groupBy('id').agg(count('*').alias('cnt')).filter(col("cnt")==1).select(max("id")).show()
+===============>
 >> Categorize employees based on years of experience into Junior, Mid, and Senior levels.
+
+==================>
+>> Handling NULL values using the average salary | emp_id, salary: IFNULL(cn, rep_val) COALESCE(cn, rep_val1, rep_val2, ...) 
+>> Extract the Domain from the Email column 
+>> Word count program in pyspark rdd & DF
+>> Replace null values in a column with the last non-null value in that partition. -----> last_value('cn', ignorenulls=True).over(window_spec)
 >> Fill the mean salary value in Null. ---> avg_sal = df.select(mean(col('sal'))).collect()[0][0] --> df.fillna({'salary': avg_salary}).show() / avg_sal and cross join
 >> ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
 	Replace all NULL values in the Quantity column with 0 / Price column with the average price of the existing data / Fill missing Sales_Date with '2025-01-01'. / 
     Drop rows where the Product column is NULL / Drop rows where all columns are NULL.
->> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: df1=df.groupBy('id').agg(count('id').alias('count')).filter(col('count')==1)
->> emp earning more than avg sal in their department: 
->> Handling NULL values using the average salary | emp_id, salary: IFNULL(cn, rep_val) COALESCE(cn, rep_val1, rep_val2, ...) 
->> Extract the Domain from the Email column 
->> Word count program in pyspark rdd & DF
 >> count the number of null values in each column of df. 	df.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
 >> column Country: India Australia Pakistan | Output: India vs Australia India vs Pakistan Australia vs Pakistan
 	df.alias("a").crossJoin(df.alias("b")).filter(col("a.Country") < col("b.Country")).selectExpr("concat(a.Country, ' vs ', b.Country) as Matchup")
