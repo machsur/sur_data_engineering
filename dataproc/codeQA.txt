@@ -74,13 +74,10 @@ WHERE change_type IN ('I','U');
 display only last 4 characters of card number:
 df.withColumn('nc', lpad(right("card_number", lit(4)), 16, '*')).show()
 select lpad(right('1234567812345678', 4), 16, '*')
-
 =================>
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000)
-
 win_spec = Window.partitionBy('department').orderBy(col('salary').desc())
 df.withColumn('rn', row_number().over(win_spec)).filter(col('rn')<=3).drop('rn').show()
-
 ===============>
 >> What are the different ways to remove duplicate records 
 distinct() — remove exact duplicate rows (across all columns)
@@ -94,7 +91,6 @@ SELECT DISTINCT col1, col2 FROM `project.dataset.employees`;
 Window + row_number() / qualify: choose which duplicate to keep (e.g., latest timestamp)
 groupBy + agg() 
 groupBy + agg() and join back to pick all rows
-
 =================>
 >> find the top 5 most populous cities.    | City    | Population|
 df.orderBy(col("Population").desc()).limit(5)
@@ -109,8 +105,12 @@ df.withColumn('nc', split(col('name'), "[- ]")).show()
 >> split the data into two columns (Even, Odd) 
 df.withColumn('even', when(col('id')%2==0, col('id')).otherwise(lit(0))).show()
 ===============>
->> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. --> left join / filter null
+>> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. 
+products_df.join(sales_df, "product_id", "left_anti").show()
+===============>
 >> Identify employees whose salary is greater than the average salary of their department.
+emp.join(mgr, emp.manager_id==mgr.nemp_id, "left").filter(emp.salary > mgr.nsalary).select(emp.emp_name).show()
+================>
 >> fill missing `purchase_amount` values with the average purchase amount of that product category. -->`cust_id`, `cust_name`, `city`, `pur_amount`, `product_category`. 
 >> Replace null values in a column with the last non-null value in that partition. -----> last_value('cn', ignorenulls=True).over(window_spec)
 >> Categorize employees based on years of experience into Junior, Mid, and Senior levels.
