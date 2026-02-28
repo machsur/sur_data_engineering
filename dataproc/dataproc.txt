@@ -260,37 +260,6 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	'leftsemi', 'left_semi', 'semi': 3
 	'leftanti', 'left_anti', 'anti' : 2
 	'crossJoin': 25
->> display only last 4 characters of card number. : lpad(substring(col("card_no").cast("string"), -4, 4),16, '#')
->> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
->> What are the different ways to remove duplicate records ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy /
->> find the top 5 most populous cities.    | City    | Population|
->> calculate the average salary for each department.  emp_name, dept, salary
->> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")] 
->> split the data into two columns (Even, Odd) 
->> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. --> left join / filter null
->> Identify employees whose salary is greater than the average salary of their department.
->> fill missing `purchase_amount` values with the average purchase amount of that product category. -->`cust_id`, `cust_name`, `city`, `pur_amount`, `product_category`. 
->> Replace null values in a column with the last non-null value in that partition. -----> last_value('cn', ignorenulls=True).over(window_spec)
->> Categorize employees based on years of experience into Junior, Mid, and Senior levels.
->> Fill the mean salary value in Null. ---> avg_sal = df.select(mean(col('sal'))).collect()[0][0] --> df.fillna({'salary': avg_salary}).show() / avg_sal and cross join
->> ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
-	Replace all NULL values in the Quantity column with 0 / Price column with the average price of the existing data / Fill missing Sales_Date with '2025-01-01'. / 
-    Drop rows where the Product column is NULL / Drop rows where all columns are NULL.
->> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: df1=df.groupBy('id').agg(count('id').alias('count')).filter(col('count')==1)
->> emp earning more than avg sal in their department: 
->> Handling NULL values using the average salary | emp_id, salary: IFNULL(cn, rep_val) COALESCE(cn, rep_val1, rep_val2, ...) 
->> Extract the Domain from the Email column 
->> Word count program in pyspark rdd & DF
->> count the number of null values in each column of df. 	df.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
->> column Country: India Australia Pakistan | Output: India vs Australia India vs Pakistan Australia vs Pakistan
-	df.alias("a").crossJoin(df.alias("b")).filter(col("a.Country") < col("b.Country")).selectExpr("concat(a.Country, ' vs ', b.Country) as Matchup")
->> Get the first and last transaction date for each customer. | row_number()
->> Find all employees whose names contain the letters "a" exactly twice:  length("name_lc") - length(regexp_replace("name_lc", "a", ""))
->> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
->> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
->> Write a query to count how many employees share the same salary.
->> employees who hired in last 90 days: 
->> Retrieve employees who joined in the last 6 months.
 
 >> why parquet?
 - Columnar format: Only reads the region column to filter — better compression better than rows..
