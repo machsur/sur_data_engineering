@@ -99,13 +99,16 @@ groupBy + agg() and join back to pick all rows
 >> find the top 5 most populous cities.    | City    | Population|
 df.orderBy(col("Population").desc()).limit(5)
 SELECT City, Population FROM `project.dataset.cities`ORDER BY Population DESC LIMIT 5;
-
 ================>
-
-
 >> calculate the average salary for each department.  emp_name, dept, salary
+df.groupBy("dept").agg(F.avg("salary").alias("avg_salary")).show()
+================>
 >> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")] 
+df.withColumn('nc', split(col('name'), "[- ]")).show()
+===============>
 >> split the data into two columns (Even, Odd) 
+df.withColumn('even', when(col('id')%2==0, col('id')).otherwise(lit(0))).show()
+===============>
 >> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. --> left join / filter null
 >> Identify employees whose salary is greater than the average salary of their department.
 >> fill missing `purchase_amount` values with the average purchase amount of that product category. -->`cust_id`, `cust_name`, `city`, `pur_amount`, `product_category`. 
