@@ -76,9 +76,33 @@ df.withColumn('nc', lpad(right("card_number", lit(4)), 16, '*')).show()
 select lpad(right('1234567812345678', 4), 16, '*')
 
 =================>
->> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000),
->> What are the different ways to remove duplicate records ---> distinct() / dropDuplicates(["name", 'id']) / row_number() / groupBy /
+>> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000)
+
+win_spec = Window.partitionBy('department').orderBy(col('salary').desc())
+df.withColumn('rn', row_number().over(win_spec)).filter(col('rn')<=3).drop('rn').show()
+
+===============>
+>> What are the different ways to remove duplicate records 
+distinct() — remove exact duplicate rows (across all columns)
+df.orderBy(desc('salary')).dropDuplicates(['department']).show()  ==> de-duplicate by subset of columns
+Window + row_number() : choose which duplicate to keep (e.g., latest timestamp)
+groupBy + agg() 
+groupBy + agg() and join back to pick all rows
+
+SELECT DISTINCT * FROM `project.dataset.employees`;
+SELECT DISTINCT col1, col2 FROM `project.dataset.employees`;
+Window + row_number() / qualify: choose which duplicate to keep (e.g., latest timestamp)
+groupBy + agg() 
+groupBy + agg() and join back to pick all rows
+
+=================>
 >> find the top 5 most populous cities.    | City    | Population|
+df.orderBy(col("Population").desc()).limit(5)
+SELECT City, Population FROM `project.dataset.cities`ORDER BY Population DESC LIMIT 5;
+
+================>
+
+
 >> calculate the average salary for each department.  emp_name, dept, salary
 >> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")] 
 >> split the data into two columns (Even, Odd) 
