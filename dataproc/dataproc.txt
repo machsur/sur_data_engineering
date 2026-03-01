@@ -109,18 +109,22 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
    
 ===================>> high-level api syntax
 
+>> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
+>> execute pyspark jobs
+jupiter notebook: for devlopment and debugging purpose
+terminal: production rec for submitting spark jobs
+	Using gcloud cli - gcloud dataproc jobs submit pyspark gs://sur_test_buk/dp11.py --cluster=cluster-1357 --region=us-central1
+	SSH into Master Node:  spark-submit gs://sur_test_buk/dp11.py		(validate pyspark exit() / spark-sql exit; )
+
 >>
+!yarn application -list, !yarn application -list -appStates FINISHED/RUNNING/FAILED/KILLED  (! - for linux command running in jupiter notebook),  !yarn application -kill app_id
+spark.sparkContext.applicationId 
+spark.stop() 
 df.rdd.getNumPartitions()
+agg_df.withColumn("partition_id", spark_partition_id()).groupBy("partition_id").agg(count("*")).show()
 spark.sparkContext.defaultMinPartitions
 spark.sparkContext.defaultParallelism
-spark.sparkContext.applicationId, spark.stop(), spark application -list, spark application -kill app_id
 spark_new_app_session = spark.newSession()
-
-.config('spark.sql.shuffle.partitions', '64') \   	# default 200 - usevally set 2 to 3 times number of cores
-
->> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
->> validate pyspark exit() / spark-sql exit; / 
->> execute gcs script: master node: spark-submit gs://buk/pysp1.py   >> submit pyspark job using UI >> gcloud dataproc jobs submit pyspark pysp1.py --cluster --region
 
 >>
 spark = SparkSession.builder.appName('surapp11')
