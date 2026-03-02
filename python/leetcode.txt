@@ -94,7 +94,24 @@ obj = Solution()
 print(obj.len_pre(ls))
 
 =====================> 6
+# find first unig character and its index from the string
+s = "abcdacced"
+class Solution:
+    def uniq_char(self, s: str) -> str:
+        dt = {}
+        for i in range(len(s)):
+            if s[i] not in dt:
+                dt[s[i]] = 1
+            else:
+                dt[s[i]] += 1
+        for index, char in enumerate(s):
+            if dt[char] == 1:
+                return f"the uniq char is {char} and index is {index}"
+        return "uniq char is not found"
+obj = Solution()
+print(obj.uniq_char(s))
 
+========================> 7
 
 
 
