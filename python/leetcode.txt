@@ -68,7 +68,41 @@ class Solution:
 obj = Solution()
 print(obj.two_sum(ls, n))
 
-====================>
+====================> 5
+# find longest common prefix
+# output = "fl
+ls = ['flower', 'flow', 'fl']
+class Solution:
+    def len_pre(self, ls: list[str]) -> str:
+        if len(ls) == 0:
+            return ""
+        min_len = len(ls[0])
+        for i in range(1, len(ls)):
+            min_len = min(len(ls[i]), min_len)
+        lcp = ""
+        i = 0
+        while i < min_len:
+            char = ls[0][i]
+            for j in range(1, len(ls)):
+                if char != ls[j][i]:
+                    return lcp
+            lcp = lcp + char
+            i += 1
+        return lcp
+
+obj = Solution()
+print(obj.len_pre(ls))
+
+=====================> 6
+
+
+
+
+
+
+
+
+
 
 
 
