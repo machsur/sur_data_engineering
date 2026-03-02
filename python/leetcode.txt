@@ -35,6 +35,40 @@ obj1 = Solution()
 print(obj1.moveZeros(ls))
 
 =============> 3
+# reverse a string in array, modify in place, with O(1) extra memory
+# output = ['o', 'l', 'l', 'e', 'h']
+ls = ['h', 'e', 'l', 'l', 'o']
+class Solution:
+    def rev_str(self, ls: list[str]) -> list[str]:
+        left = 0
+        right = len(ls) -1
+        while left < right:
+            ls[left], ls[right] = ls[right], ls[left]
+            left += 1
+            right -= 1
+        return ls
+obj1 = Solution()
+print(obj1.rev_str(ls))
+
+================> 4
+# two sum is equal to n, return index of two elements O(n)
+ls = [2, 4, 11, 7, 5, 17]
+n =9
+class Solution:
+    def two_sum(self, ls: list[int], n: int) -> list[tuple[int, int]]:
+        dt = {}
+        nls = []
+        for i in range(len(ls)):
+            compo = n - ls[i]
+            if compo not in dt:
+                dt[ls[i]] = i
+            else:
+                nls.append((dt[compo], i))
+        return nls
+obj = Solution()
+print(obj.two_sum(ls, n))
+
+====================>
 
 
 
