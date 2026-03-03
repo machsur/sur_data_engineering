@@ -142,7 +142,21 @@ s = Solution()
 print(s.intersection(ls1, ls2))
 
 =======================> 8
+# length of last word (no spaces)
+sen = "hi there   "
+class Solution:
+    def len_word(self, sen: str) -> int:
+        if len(sen) == 0:
+            return 0
+        ls = sen.split(" ")
+        i = 1
+        while ls[-i] == "":
+            i += 1
+        return len(ls[-i])
+s = Solution()
+print(s.len_word(sen))
 
+=====================> 9
 
 
 
