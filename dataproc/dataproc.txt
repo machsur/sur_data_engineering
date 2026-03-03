@@ -190,11 +190,11 @@ fill with some char 	-	lpad(col("first"), 8, "0").alias("lpad_first")  / rpad
 3 times	-	repeat(col("first"), 3).alias("first_x3")
 
 >> 
-to_date("date")
+to_date("dt") / to_timestamp("ts") /   yyyy, yy, M, MM, MMM, MMMM, d, dd, HH, hh, mm, ss  / to_timestamp(col("ts"), "yyyy/MM/dd HH:mm:ss")
 year(col("dt/ts"))  -  month / day / hour / minute / second 
 date_trunc("month", "dt/ts") 
-withColumn("ts2", expr("timestampadd(DAY, 1, ts) + INTERVAL 2 HOURS + INTERVAL 30 MINUTES"))  # ts + 1d 2h 30m
-withColumn("diff_minutes", expr("timestampdiff(MINUTE, ts, ts2)"))  # total minutes
+expr("timestampadd(day, 1, ts) + interval 5 hours") / expr("timestampadd(day, -1, ts) - interval 5 hours")
+expr("timestampdiff(second, dt, ts)")
 date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_timestamp("start_ts")) / 3600, 2)
 date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interval -2 year")
 
