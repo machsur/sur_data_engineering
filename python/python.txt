@@ -8,6 +8,13 @@
    Shebang: #!/usr/bin/python3.5  -  tells the operating system which interpreter to use to run the file. 
 
 >> Datatypes: 
+Numeric:        int, float, complex
+Sequence:       list, tuple, range, str
+Set:            set, frozenset
+Mapping:        dict
+Boolean:        bool
+Binary:         bytes, bytearray, memoryview
+Special:        NoneType
 None: declare a variable first, assign later - function that returns nothing actually returns None
 Numeric: int (5), float (7.0), bool (true), complex (2 + 4j)
 sequence:
