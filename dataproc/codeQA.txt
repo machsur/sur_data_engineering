@@ -160,3 +160,34 @@ SELECT countif(pur_amount is null) FROM `aesthetic-way-485114-u2.sur_test_ds11.c
 >> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
 >> Find all employees whose names contain the letters "a" exactly twice: SELECT * FROM employees WHERE LENGTH(name) - LENGTH(REPLACE(LOWER(name),'a','')) = 2
 >> Word count program in pyspark rdd & DF
+
+======================>
+have table column with 1, 3, 5, 6, 8, 10: find missing numbers
+
+min_value = df.agg(min(col("num"))).first()[0]
+max_value = df.agg(max(col("num"))).first()[0]
+df2 = spark.createDataFrame([(i,) for i in range(min_value, max_value+1)], ["num"])
+df2.subtract(df).show()		or 		df2.join(df, ["num"], "left_anti").show()
+
+SELECT num FROM UNNEST(GENERATE_ARRAY((SELECT MIN(num) FROM mytable), (SELECT MAX(num) FROM mytable))) AS num
+use "except distinct" of left join	
+
+===================>
+Input Table: Delivery_Partners( Brand_1,Brand_2,Brand_3,Winner)
+Expected Output: Brand, No Of Rides, Rides Won , Rides Lost
+
+df1 = df.select(explode(array("Brand_1", "Brand_2", "Brand_3")).alias("brand"), "Winner")
+df1.groupBy("brand").agg(count("*").alias("no_of_trails"), sum(when(df1.brand == df1.Winner, lit(1)).otherwise(lit(0))).alias("wins")) \
+.withColumn("no_of_losses", col("no_of_trails") - col("wins")).show()
+
+WITH Flattened_Rides AS (
+SELECT Brand_1 AS Brand, Winner FROM Delivery_Partner
+UNION ALL
+SELECT Brand_2 AS Brand, Winner FROM Delivery_Partner
+UNION ALL
+SELECT Brand_3 AS Brand, Winner FROM Delivery_Partner
+)
+SELECT Brand, COUNT(*) AS no_of_rides, SUM(CASE WHEN Brand = Winner THEN 1 ELSE 0 END) AS rides_won,
+ SUM(CASE WHEN Brand != Winner THEN 1 ELSE 0 END) AS rides_lost FROM Flattened_Rides GROUP BY Brand ORDER BY Brand;
+
+================>
