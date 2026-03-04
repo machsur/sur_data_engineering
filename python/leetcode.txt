@@ -157,8 +157,45 @@ s = Solution()
 print(s.len_word(sen))
 
 =====================> 9
+# find the longest substring without repeating characters
+def longest_substring(s):
+    if len(s) == 0:
+        return 0
+    start = 0
+    end = 0
+    max_length = 0
+    dt = {}
+    for end in range(len(s)):
+        if s[end] in dt and dt[s[end]] >= start:
+            start = dt[s[end]] + 1
+        dt[s[end]] = end
+        cur_length = end - start + 1
+        if cur_length > max_length:
+            max_length = cur_length
+            sub_string = s[start:end + 1]
+    return max_length, sub_string
+print(longest_substring("abcdecfeafb"))
 
+========================> 10
+# Given a string, reverse only the vowels while keeping other characters in the same position.
+s = "hello wabhorld" # Output: "holle werld"
+def reverse_vowels(s):
+    vowels = "aeiouAEIOU"
+    ls = list(s)
+    left, right = 0, len(ls) - 1
+    while left < right:
+        if ls[left] not in vowels:
+            left += 1
+        elif ls[right] not in vowels:
+            right -= 1
+        else:
+            ls[left], ls[right] = ls[right], ls[left]
+            left += 1
+            right -= 1
+    return ''.join(ls)
+print(reverse_vowels(s))
 
+============================>
 
 
 
