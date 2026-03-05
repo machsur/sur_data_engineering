@@ -190,8 +190,10 @@ fill with some char 	-	lpad(col("first"), 8, "0").alias("lpad_first")  / rpad
 3 times	-	repeat(col("first"), 3).alias("first_x3")
 
 >> 
-to_date("dt") / to_timestamp("ts") /   yyyy, yy, M, MM, MMM, MMMM, d, dd, HH, hh, mm, ss  / to_timestamp(col("ts"), "yyyy/MM/dd HH:mm:ss")
-year(col("dt/ts"))  -  month / day / hour / minute / second 
+ yyyy, yy, M, MM, MMM, MMMM, d, dd, HH, hh, mm, ss  / 
+/ year / month / day / hour / minute / second / dayofyear / dayofmonth / dayofweek / weekofyear /
+to_date("dt") / to_timestamp("ts") /  to_timestamp(col("ts"), "yyyy/MM/dd HH:mm:ss")
+year(col("dt/ts"))  -  
 date_trunc("month", "dt/ts") 
 expr("timestampadd(day, 1, ts) + interval 5 hours") / expr("timestampadd(day, -1, ts) - interval 5 hours")
 expr("timestampdiff(second, dt, ts)")
