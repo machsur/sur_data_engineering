@@ -161,7 +161,7 @@ SELECT countif(pur_amount is null) FROM `aesthetic-way-485114-u2.sur_test_ds11.c
 >> Find all employees whose names contain the letters "a" exactly twice: SELECT * FROM employees WHERE LENGTH(name) - LENGTH(REPLACE(LOWER(name),'a','')) = 2
 >> Word count program in pyspark rdd & DF
 
->>
+==============>>
 CITY_TABLE
 Delhi
 Mumbai
@@ -176,10 +176,19 @@ Delhi    Chennai
 Mumbai   Kolkata
 Mumbai   Chennai
 Kolkata  Chennai
-
 delhi-Mumbai should not be repeat as Mumbai-Delhi
+preserves input order for combinations
 
->>
+ws = Window.orderBy(lit(1))
+df1 = df.withColumn("ord", row_number().over(ws))
+a = df1.alias("a")
+b = df1.alias("b")
+a.crossJoin(b).filter(col("a.ord") < col("b.ord")).select(col("a.city").alias("source"), col("b.city").alias("dest")).show()
+
+WITH base AS (SELECT city,  ROW_NUMBER() OVER () AS ord FROM your_dataset.your_city_table)
+SELECT a.city AS source, b.city AS destination FROM base a JOIN base b ON a.ord < b.ord;
+
+======================>>
 🛑The Input Table:
 1 | Staff 1
 2 | Staff 2
@@ -189,7 +198,14 @@ Row 1: 1 Staff 1, 2 Staff 2
 Row 2: 3 Staff 3, 4 Staff 4
 1️⃣ CONCAT(): 2️⃣ NTILE(4): 0r floor((rownumber - 1) /2 + 1) 3️⃣ STRING_AGG():
 
->>
+ws = Window.orderBy(lit(1))
+df.withColumn('nc', concat(col("id").cast("string"), lit(" "), col("name"))) \
+.withColumn('rn', row_number().over(ws)) \
+.withColumn('grp', floor((col("rn")-lit(1))/lit(2)) + 1) \
+.groupBy(col("grp")).agg(collect_list(col("nc")).alias("arr")) \
+.withColumn("joined", concat_ws(", ", col("arr"))).show(truncate=False)
+
+========================>>
 retun keys that forms palindrome based on value column - 
 key, value, sequence
 SELECT key_id FROM tbl GROUP BY key_id HAVING CONCAT(string_agg(value)) = REVERSE(CONCAT(string_agg(value)));
