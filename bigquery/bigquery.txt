@@ -31,105 +31,63 @@
 >> Cost Controls: budget alerts, Set query usage limits, export Billing reports, Schedule queries during off-peak hours
 
 =========================
->> Syntax
-DATE(DC in iso) / PARSE_DATE(format, stringDC) / SAFE.PARSE_DATE(format, DC)	-	Y 2026, y 26/ m 01-12, B January, b Jan / d 01-31, A Monday, a Mon / 
+>> SQL Execution order: FROM / WHERE / GROUP BY$Agg / HAVING / WINDOW functions / qualify /SELECT / DISTINCT / ORDER BY / LIMIT or OFFSET
+
+>> Date functions
+/Y 2026, y 26/ m 01-12, B January, b Jan / d 01-31, A Monday, a Mon / H 00-23 I 01-12 / M 00-59 / S 00-59 / p AM or PM / Z UTC /
+/ year / month / day / hour / minute / second / microsecond / week / weekofday sun=1, sat=7 /
+DATE(DC in iso) / PARSE_DATE(format, stringDC) / SAFE.PARSE_DATE(format, DC)	-	
 FORMAT_DATE('%B %d, %Y', sale_date)
-extract(year from date)      						-     	year / month / day / hour / minute / second / microsecond /
+extract(year from date)      						-     	
 DATE_TRUNC(order_date, MONTH) 
 DATE_DIFF(order_date, previous_date, day) 
 Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
->> SQL Execution order: FROM / WHERE / GROUP BY$Agg / HAVING / WINDOW functions / qualify /SELECT / DISTINCT / ORDER BY / LIMIT or OFFSET
+
 >> view, materialized view and auth view (share results without giving access to source data): efficiently manage and secure your data access in BigQuery
->> Partitioning (single column, 4000 max) and clustering (sorts parti data in storage blocks, four col): Improved Query Performance, Cost Efficiency
->> Joins: - INNER JOIN / left join / right join / full outer join / cross join /
->> Time travel concept: SELECT * FROM `your_dataset.your_table` FOR SYSTEM_TIME AS OF TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
+	Partitioning (single column, 4000 max) and clustering (sorts parti data in storage blocks, four col): Improved Query Performance, Cost Efficiency
+	Joins: - INNER JOIN / left join / right join / full outer join / cross join /
+	Time travel concept: SELECT * FROM `your_dataset.your_table` FOR SYSTEM_TIME AS OF TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
+
 >> Window:   SUM(sales) OVER (PARTITION BY id ORDER BY updated_at ROWS BETWEEN UNBOUNDED/2 PRECEDING AND CURRENT ROW) AS rolling_sum
-   max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /  first_value(cn) / last_value(cn) / nth_value(cn, n) /
+   max(cn) / min(cn) / count(cn) / sum(cn) / avg(cn) /  first_value(cn) / last_value(cn ignore nulls) / nth_value(cn, n) /
    row_number() / rank() / dense_rank() /   lag(cn) / lead(cn) / ntile(n) – n groups /
    CUME_DIST() = Number of rows with values less than or equal to the current row / Total number of rows /   PERCENT_RANK() = Rank of current row−1 / Total rows−1
->> WITH CustomOrder AS (SELECT * FROM `p.d.table`) | SELECT * FROM CustomOrder ORDER BY emp_dept_sort, row_num;
->> MERGE INTO target_table AS T  USING source_table AS S  ON T.id = S.id
-   WHEN MATCHED THEN UPDATE SET T.name = S.name WHEN NOT MATCHED THEN INSERT (id, name) VALUES (S.id, S.name);
+
 >> Pivot: row into columns 	- product| month| sales  	- select * from table pivot(sum(sales) for month in ('Jan', 'Feb', 'Mar')); --> or use case statement
    SELECT customer_id, SUM(CASE WHEN region = 'North' THEN sales_amount ELSE 0 END) AS north_sales, .... FROM orders GROUP BY customer_id;
    unpivot: columns into rows 	- product | Jan | Feb | Mar	- select product, month, sales from table unpivot(sales for month in (Jan, Feb, Mar));
+
 >> Union all / Union distinct  / Except distinct / Intersect distinct / Table wildcards: test_*` where _Table_Suffix > 5
+
 >> CASE WHEN years_of_experience < 3 THEN 'Junior' WHEN years_of_experience BETWEEN 3 AND 7 THEN 'Mid' WHEN years_of_experience > 7 THEN 'Senior'  ELSE 'Unknown' END AS El
->> SPLIT(full_name, ' ')[OFFSET(0)]
->> +	 -	 * 	/ 	MOD(10, 3)		ROUND(value, digits) 	CEIL(value) 	FLOOR(value) 	ABS(value) 	POWER(x, y) 
->> coalesce(NULL, NULL, 'siva')		ifnull(cn, 'siva')
->> mask card number: CONCAT(REPEAT('*', 12), RIGHT(card_number, 4))
->> extract filename: SELECT _FILE_NAME AS file_name, * FROM `project.dataset.external_table`;
->> col null count: COUNTIF(column1 IS NULL) AS column1_null_count
->> Length /	Upper / Lower / Replace / substr / strpos / Trim / Starts_With / Ends_With	/SAFE_CAST / CAST    	   
+	SPLIT(full_name, ' ')[OFFSET(0)]
+	 +	 -	 * 	/ 	MOD(10, 3)		ROUND(value, digits) 	CEIL(value) 	FLOOR(value) 	ABS(value) 	POWER(x, y) 
+	coalesce(NULL, NULL, 'siva')		ifnull(cn, 'siva')
+	extract filename: SELECT _FILE_NAME AS file_name, * FROM `project.dataset.external_table`;
+	col null count: COUNTIF(column1 IS NULL) AS column1_null_count
+	Length /	Upper / Lower / Replace / substr / strpos / Trim / Starts_With / Ends_With	/SAFE_CAST / CAST    	   
 	round / abs	/ ceil / floor / safe_devide / 	if / case / generate_uuid()
 
 ===========================
 
-
-
->> Three options to load more data if the number partition is 4000/full in BigQuery #googlecloud: bq rm | delete | turn on partition expiration
 >> Interview Question What happens if u load 11 years of data into BigQuery with Partitioning enabled? 
    cant load data because > 4000 partitions
+
 >> What happens when a virus infected object is uploaded to Cloud Storage? ntg happens its object strorage not for scanning
->> SCD-1 & SCD-2 --> scd2.sql script
->> derive the overall journey (start → end) for that customer. cust_id, from_city, to_city, journy_order
- 	use first_value & last_value
->>  match_id, 	team1, 		team2, 		winner, 	result, 	match_date
-	1,  		'IND', 		'AUS', 		'IND',  	'WIN',  	'2024-01-01'
-    output:
-	team 	played	 wins  draws 	losses		points
+
 >> why avro format recommends for bigquery load?
 	schema support in the file itself, nested & repeated fields, more compression, splittable for parrallel processing - leads to faster load
+
 >> EXECUTE IMMEDIATE FORMAT('your SQL %s', value);   --> to run dynamic sql queries
 
-
 >> Common error found during proc execution:
-failed to parse input string "2026-01-15 :" / "202502023" : use safe_cast instead of cast
-cant replace table with different partitioning spec, instead drop table, then recreate it.
-divizon by zero error: if(den = 0, null, num/den)  /  nullif(den, 0) / 
-bad int64 value: 1.0 --> cast(col as int64) or asfe_cast(col as int64) 
-no dataset was found
+	failed to parse input string "2026-01-15 :" / "202502023" : use safe_cast instead of cast
+	cant replace table with different partitioning spec, instead drop table, then recreate it.
+	divizon by zero error: if(den = 0, null, num/den)  /  nullif(den, 0) / 
+	bad int64 value: 1.0 --> cast(col as int64) or asfe_cast(col as int64) 
+	no dataset was found
 
->>
-CITY_TABLE
-Delhi
-Mumbai
-Kolkata
-Chennai
 
-source   destination
--------  -----------
-Delhi    Mumbai
-Delhi    Kolkata
-Delhi    Chennai
-Mumbai   Kolkata
-Mumbai   Chennai
-Kolkata  Chennai
-
-delhi-Mumbai should not be repeat as Mumbai-Delhi
-
->>
-🛑The Input Table:
-1 | Staff 1
-2 | Staff 2
-
-🎯The Goal:
-Row 1: 1 Staff 1, 2 Staff 2
-Row 2: 3 Staff 3, 4 Staff 4
-1️⃣ CONCAT(): 2️⃣ NTILE(4): 0r floor((rownumber - 1) /2 + 1) 3️⃣ STRING_AGG():
-
->>
-retun keys that forms palindrome based on value column - 
-key, value, sequence
-SELECT key_id FROM tbl GROUP BY key_id HAVING CONCAT(string_agg(value)) = REVERSE(CONCAT(string_agg(value)));
-
->>
-Each row represents when a user logged in to use the app.
-Identify users who logged in at least twice in the year 2025
-For each user, calculate the number of days between their first and last login in that year.
-Output the user_id and the days_between their first and last login.
-user_id, session_id, login_time, device
 
 
 
