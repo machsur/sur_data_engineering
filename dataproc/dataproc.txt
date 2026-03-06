@@ -1,6 +1,5 @@
 
 ==================================================================DataProc======================================================================================
-hh
 >> 
 execution of spark application? (see in dataproc11 doc):
 once saprk app reuest submitted - it goes to Yarn - yarn creates application master (AM) container on any one of worker node - AM starts app driver nothing but JVM process and its job is to execute main() of spark app - driver programe request resources from yarn - yarn create executors and handover details back driver - before driver schedules tasks on executors, driver creates query plan and gives final pysical plan and creates dag by dag scheduler using pysical plan - driver schedule tasks - executors execute task and return results back to driver
@@ -267,17 +266,11 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 - Metadata: contains Min/Max values for each column in every data block - help skip blocks -  SELECT * FROM sales WHERE region = 'Asia'
 - Schema evolution: You can add new columns later without breaking old data.
 - Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
-
 >>
 ✅ Data Quality (DQ) → ensure data to clean 
 Example: invoice_id not null,  amount > 0, currency allowed,  tax >= 0
 ✅ Data Validation (DV): ensures data is correct  → checks business logic
 Example: invoice must be unique,  tax code must exist in master, tax must match calculation
-
-
-
-
-
 >> 
 Partitioning vs Bucketing – End-to-End Example (Retail Domain)
 sales_transactions (very large table – billions of rows): sale_id (string), product_id (string), quantity (int), amount (double), sale_date (string), store_id (string)
