@@ -74,10 +74,12 @@ WHERE change_type IN ('I','U');
 display only last 4 characters of card number:
 df.withColumn('nc', lpad(right("card_number", lit(4)), 16, '*')).show()
 select lpad(right('1234567812345678', 4), 16, '*')
+
 =================>
 >> Find the top 3 highest-paid employees from each department.   data = [(1, "Amit", "IT", 90000)
 win_spec = Window.partitionBy('department').orderBy(col('salary').desc())
 df.withColumn('rn', row_number().over(win_spec)).filter(col('rn')<=3).drop('rn').show()
+
 ===============>
 >> What are the different ways to remove duplicate records 
 distinct() — remove exact duplicate rows (across all columns)
@@ -91,75 +93,107 @@ SELECT DISTINCT col1, col2 FROM `project.dataset.employees`;
 Window + row_number() / qualify: choose which duplicate to keep (e.g., latest timestamp)
 groupBy + agg() 
 groupBy + agg() and join back to pick all rows
+
 =================>
 >> find the top 5 most populous cities.    | City    | Population|
 df.orderBy(col("Population").desc()).limit(5)
 SELECT City, Population FROM `project.dataset.cities`ORDER BY Population DESC LIMIT 5;
+
 ================>
 >> calculate the average salary for each department.  emp_name, dept, salary
 df.groupBy("dept").agg(F.avg("salary").alias("avg_salary")).show()
+
 ================>
 >> input = [(1,"Sagar-Prajapati"),(2,"Alex-John"),(3,"John Cena"),(4,"Kim Joe")] 
 df.withColumn('nc', split(col('name'), "[- ]")).show()
+
 ===============>
 >> split the data into two columns (Even, Odd) 
 df.withColumn('even', when(col('id')%2==0, col('id')).otherwise(lit(0))).show()
+
 ===============>
 >> identify products that have never been sold. product_id, product_name / sale_id, product_id, sale_date. 
 products_df.join(sales_df, "product_id", "left_anti").show()
+
 ===============>
 >> Identify employees whose salary is greater than the manager salary.
 emp.join(mgr, emp.manager_id==mgr.nemp_id, "left").filter(emp.salary > mgr.nsalary).select(emp.emp_name).show()
+
 ================>
 >> fill missing `purchase_amount` values with the average purchase amount of that product category. -->`cust_id`, `cust_name`, `city`, `pur_amount`, `product_category`. 
 win_spc = Window.partitionBy("product_category").rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
 df.withColumn('pur_amount', coalesce(col("pur_amount"), avg(col("pur_amount")).over(win_spc))).show()
+
 ==============>
 >> Fill the mean salary value in Null. 
 win_spc = Window.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
 df.withColumn('salary', coalesce(col("salary"), avg(col("salary")).over(win_spc))).show()
+
 =================>
 >> emp earning more than avg sal in their department:
 win_spc = Window.partitionBy("dept").rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
 df.withColumn('avg_sal', avg(col("salary")).over(win_spc)).filter(col("salary")>col("avg_sal")).select("emp_name").show()
+
 ===============>
 >> find max id excluding duplicates | 2, 6, 5, 6, 9, 9, 8: 
 df.groupBy('id').agg(count('*').alias('cnt')).filter(col("cnt")==1).select(max("id")).show()
+
 ===============>
 >> Categorize employees based on years of experience into Junior, Mid, and Senior levels.
+
 ==================>
 >> Extract the Domain from the Email column 
 df.withColumn('nc', split("nm", '@').getItem(1)).show()
 SELECT split('mach@gmail.com', '@')[offset(1)]
+
 ===================>
 >> Replace null values in a column with the last non-null value in that partition. 
 ws = Window.partitionBy("id").orderBy("ts")
 df.withColumn('nc', last_value("value", ignoreNulls=True).over(ws)).show()
 SELECT  *,  LAST_VALUE(value IGNORE NULLS) OVER (PARTITION BY id  ORDER BY ts) AS nc FROM `project.dataset.table`;
+
 ====================>
 >> count the number of null values in each column of df. 	
 df.select([count(when(col(c).isNull(), lit(1))) for c in df1.columns]).show()
 SELECT countif(pur_amount is null) FROM `aesthetic-way-485114-u2.sur_test_ds11.customer_purchases` 
-===================>
 
->> ["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
-	Replace all NULL values in the Quantity column with 0 / Price column with the average price of the existing data / Fill missing Sales_Date with '2025-01-01'. / 
-    Drop rows where the Product column is NULL / Drop rows where all columns are NULL.
->> column Country: India Australia Pakistan | Output: India vs Australia India vs Pakistan Australia vs Pakistan
-	df.alias("a").crossJoin(df.alias("b")).filter(col("a.Country") < col("b.Country")).selectExpr("concat(a.Country, ' vs ', b.Country) as Matchup")
->> Get the first and last transaction date for each customer. | row_number()
->> Find all employees whose names contain the letters "a" exactly twice:  length("name_lc") - length(regexp_replace("name_lc", "a", ""))
->> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
->> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
->> Write a query to count how many employees share the same salary.
->> employees who hired in last 90 days: 
->> Retrieve employees who joined in the last 6 months.
->> Replace NULL values in Quantity column with 0 / Price with avg price/Sales_Date with '2025-01-01'/ Drop rows where Product col is NULL & all columns are NULL.
->> number of patients per doctor including unassigned patients: docter_id | pationt_id, doctor_id
->> ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
->> find customers who made transactions in every month of the year | cust_id, date, purchage_amount
->> Find all employees whose names contain the letters "a" exactly twice: SELECT * FROM employees WHERE LENGTH(name) - LENGTH(REPLACE(LOWER(name),'a','')) = 2
->> Word count program in pyspark rdd & DF
+===================>
+["Sales_ID", "Product", "Quantity", "Price", "Region", "Sales_Date"]
+Replace all NULL values in the Quantity column with 0 
+Price column with the average price of the existing data 
+Fill missing Sales_Date with '2025-01-01'
+Drop rows where the Product column is NULL 
+Drop rows where all columns are NULL.
+
+==================>> 
+Write a query to count how many employees share the same salary.
+df.groupBy("salary").agg(count("*").alias("num_employees"))
+
+===================>> 
+Get the first and last transaction date for each customer. 
+df2.groupBy("customer_id").agg(min("transaction_date").alias("first_transaction_date"), max("transaction_date").alias("last_transaction_date")
+
+==================>> 
+employees who hired in last 90 days: 
+df2.filter(col("hire_date") >= (current_date() - expr("INTERVAL 90 DAYS")))
+Retrieve employees who joined in the last 6 months.
+df2.filter(col("join_date") >= add_months(current_date(), -6))
+
+=================>>
+number of patients per doctor including unassigned patients: docter_id | pationt_id, doctor_id
+
+=================>>
+ORDER_DAY, ORDER_ID, PRODUCT_ID, QUANTITY, PRICE | Get me all products that got sold both the days and the number of times the product is sold.  
+df1 = df.select("PRODUCT_ID", "ORDER_DAY").groupBy("PRODUCT_ID").agg(F.countDistinct("ORDER_DAY").alias("days_sold")).filter(F.col("days_sold") >= 2)
+df.join(df1, "PRODUCT_ID", "left_anti")
+
+=================>>
+find customers who made transactions in every month of the year | cust_id, date, purchage_amount
+
+================>>
+Find all employees whose names contain the letters "a" exactly twice: 
+df.filter(length(col("name")) - length(replace(col("name"), lit("a"), lit(""))) == 2).show()
+SELECT * FROM employees WHERE LENGTH(name) - LENGTH(REPLACE(LOWER(name),'a','')) = 2
 
 ==============>>
 CITY_TABLE
@@ -206,21 +240,30 @@ df.withColumn('nc', concat(col("id").cast("string"), lit(" "), col("name"))) \
 .withColumn("joined", concat_ws(", ", col("arr"))).show(truncate=False)
 
 ========================>>
-retun keys that forms palindrome based on value column - 
-key, value, sequence
+retun keys that forms palindrome based on value column : key, value, sequence
+df.groupBy("key").agg(collect_list(col("value")).alias("arr")) \
+.filter(concat_ws("", col("arr")) == reverse(concat_ws("", col("arr")))) \
+.select(col("key")).show()
+
 SELECT key_id FROM tbl GROUP BY key_id HAVING CONCAT(string_agg(value)) = REVERSE(CONCAT(string_agg(value)));
->> derive the overall journey (start → end) for that customer. cust_id, from_city, to_city, journy_order
+
+==========================>> 
+derive the overall journey (start → end) for that customer. cust_id, from_city, to_city, journy_order
  	use first_value & last_value
->>  match_id, 	team1, 		team2, 		winner, 	result, 	match_date
+
+==========================>>  
+match_id, 	team1, 		team2, 		winner, 	result, 	match_date
 	1,  		'IND', 		'AUS', 		'IND',  	'WIN',  	'2024-01-01'
     output:
 	team 	played	 wins  draws 	losses		points
->>
+
+==========================>>
 Each row represents when a user logged in to use the app.
 Identify users who logged in at least twice in the year 2025
 For each user, calculate the number of days between their first and last login in that year.
 Output the user_id and the days_between their first and last login.
 user_id, session_id, login_time, device
+
 ======================>
 have table column with 1, 3, 5, 6, 8, 10: find missing numbers
 
@@ -240,13 +283,7 @@ df1 = df.select(explode(array("Brand_1", "Brand_2", "Brand_3")).alias("brand"), 
 df1.groupBy("brand").agg(count("*").alias("no_of_trails"), sum(when(df1.brand == df1.Winner, lit(1)).otherwise(lit(0))).alias("wins")) \
 .withColumn("no_of_losses", col("no_of_trails") - col("wins")).show()
 
-WITH Flattened_Rides AS (
-SELECT Brand_1 AS Brand, Winner FROM Delivery_Partner
-UNION ALL
-SELECT Brand_2 AS Brand, Winner FROM Delivery_Partner
-UNION ALL
-SELECT Brand_3 AS Brand, Winner FROM Delivery_Partner
-)
+WITH flattened AS (SELECT brand, Winner  FROM `project.dataset.Delivery_Partner`,  UNNEST([Brand_1, Brand_2, Brand_3]) AS bran
 SELECT Brand, COUNT(*) AS no_of_rides, SUM(CASE WHEN Brand = Winner THEN 1 ELSE 0 END) AS rides_won,
  SUM(CASE WHEN Brand != Winner THEN 1 ELSE 0 END) AS rides_lost FROM Flattened_Rides GROUP BY Brand ORDER BY Brand;
 
