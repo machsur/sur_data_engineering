@@ -250,24 +250,17 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 	df.repartition(10, column): data distributed based hash of key column - prepare data for groupby, join operations
 >> extract filename: element_at(split(input_file_name(), "/"), -1)
 
+
 >> sc.parallelize: function to create a RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
    sc.textFile: function to read data from a text file from HDFS/S3/local FS. Best for large datasets.
 >> RDD - reduceByKey: local aggregation - less data for shuffling / DF - df.groupBy("dept").agg(sum("salary").as("total_salary"))
 	RDD- groupByKey: no local aggragation - more data for shuffling / DF - df.groupBy("dept").agg(collect_list("salary").as("salaries"))
 >> map() returns a single value for each input element / flatMap() return multiple values for each input element
 >> Difference between sortby and orderby? - sortBy is used with RDDs and orderBy is used with DataFrames.
-	
-==========================> coding QA
->> joins
-	data1 = [(1,), (1,), (None,), (0,), (3,)]
-	data2 = [(1,), (None,), (0,), (5,), (1,)]
-	'inner' : 5
-	'outer', 'full', 'fullouter', 'full_outer' : 9
-	'leftouter', 'left', 'left_outer': 7
-	'rightouter', 'right', 'right_outer': 7  
-	'leftsemi', 'left_semi', 'semi': 3
-	'leftanti', 'left_anti', 'anti' : 2
-	'crossJoin': 25
+
+>> Lineage in spark: logical execution plan - df.explain() - used to build DAG
+	Fault tolerance: if node of df partition fails, spark can recompute it from lineage or DAG
+	Checkponting: when long running jobs, foult tolerance is critical - do checkpointing to store df into reliable storage (gcs) - read it from checkpoint instead of start
 
 >> why parquet?
 - Columnar format: Only reads the region column to filter — better compression better than rows..
@@ -275,41 +268,15 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 - Schema evolution: You can add new columns later without breaking old data.
 - Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
 
->> You have a DataFrame:
-data = [
-    (1, "A", "2024-01-01"),
-    (1, "A", "2024-01-02"),
-    (1, "B", "2024-01-01"),
-    (2, "A", "2024-01-01"),
-]
-Columns: user_id, product, date
-Find duplicate rows per user where product repeats across different dates, but count only unique product-user pairs.
-
->>
-distinct() removes complete row duplicates
-dropDuplicates() removes duplicates based on specified columns. 
-window functions to retain the latest or most relevant record per business key
-
 >>
 ✅ Data Quality (DQ) → ensure data to clean 
 Example: invoice_id not null,  amount > 0, currency allowed,  tax >= 0
 ✅ Data Validation (DV): ensures data is correct  → checks business logic
 Example: invoice must be unique,  tax code must exist in master, tax must match calculation
 
->> we need to derive the overall journey (start → end) for that customer.
-	customer_od, from_city, to_city, journey_order
-	 FIRST_VALUE(from_city) OVER (PARTITION BY customer_id ORDER BY journey_order) AS from_city,
- 	LAST_VALUE(to_city) OVER (PARTITION BY customer_id ORDER BY journey_order ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING ) AS to_city
 
->>
-Write a query to return, for each city, the person with the third‑highest expenditure (showing name, city, and amount). If a city has fewer than three people, return the minimum expenditure person’s details instead.
-name, city, amount
-WITH cte AS (SELECT name, city, amount,
- ROW_NUMBER() OVER (PARTITION BY city ORDER BY amount DESC) AS rn_desc,
- ROW_NUMBER() OVER (PARTITION BY city ORDER BY amount ASC) AS rn_asc,
- COUNT(*) OVER (PARTITION BY city) AS cnt FROM expenditure)
 
-SELECT name, city, amount FROM cte WHERE (cnt >= 3 AND rn_desc = 3) OR (cnt < 3 AND rn_asc = 1);
+
 
 >> 
 Partitioning vs Bucketing – End-to-End Example (Retail Domain)
