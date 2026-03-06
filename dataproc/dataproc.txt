@@ -37,6 +37,10 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
     executors per node = 15c/5 = 3  total executors = 10 nodes * 3 = 30
 	memory per executor = 56gb / 3 = 18gb
 
+	data size = 20 gb (memory required : 3 * data szie)
+	cores = 20 / 200 mb = 100 cores
+	if you select n1-standard-8 (8cpu30gb) - 8 worker nodes - 2 exe/wn - 3 cores/executor - 12gb memory/executor
+
 >> Spark optimization techniques.
 ==> Use columnar file formats (parquet or orc) for better compression and faster reads than csv 
 
