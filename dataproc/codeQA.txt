@@ -70,6 +70,17 @@ INSERT INTO seraphic-camera-266118.scd2_implementation.customer_dim
 SELECT customer_id, stg_customer_name, stg_city, CURRENT_DATE() AS start_date, NULL AS end_date, "Y" as is_current FROM detect_changes
 WHERE change_type IN ('I','U');
 
+====================>> 
+joins
+	data1 = [(1,), (1,), (None,), (0,), (3,)]
+	data2 = [(1,), (None,), (0,), (5,), (1,)]
+	'inner' : 5
+	'outer', 'full', 'fullouter', 'full_outer' : 9
+	'leftouter', 'left', 'left_outer': 7
+	'rightouter', 'right', 'right_outer': 7  
+	'leftsemi', 'left_semi', 'semi': 3
+	'leftanti', 'left_anti', 'anti' : 2
+	'crossJoin': 25
 ==================>
 display only last 4 characters of card number:
 df.withColumn('nc', lpad(right("card_number", lit(4)), 16, '*')).show()
@@ -250,7 +261,10 @@ SELECT key_id FROM tbl GROUP BY key_id HAVING CONCAT(string_agg(value)) = REVERS
 ==========================>> 
 derive the overall journey (start → end) for that customer. cust_id, from_city, to_city, journy_order
  	use first_value & last_value
-
+>> we need to derive the overall journey (start → end) for that customer.
+	customer_od, from_city, to_city, journey_order
+	 FIRST_VALUE(from_city) OVER (PARTITION BY customer_id ORDER BY journey_order) AS from_city,
+ 	LAST_VALUE(to_city) OVER (PARTITION BY customer_id ORDER BY journey_order ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING ) AS to_city
 ==========================>>  
 match_id, 	team1, 		team2, 		winner, 	result, 	match_date
 	1,  		'IND', 		'AUS', 		'IND',  	'WIN',  	'2024-01-01'
@@ -288,3 +302,22 @@ SELECT Brand, COUNT(*) AS no_of_rides, SUM(CASE WHEN Brand = Winner THEN 1 ELSE 
  SUM(CASE WHEN Brand != Winner THEN 1 ELSE 0 END) AS rides_lost FROM Flattened_Rides GROUP BY Brand ORDER BY Brand;
 
 ================>
+>>
+Write a query to return, for each city, the person with the third‑highest expenditure (showing name, city, and amount). If a city has fewer than three people, return the minimum expenditure person’s details instead.
+name, city, amount
+WITH cte AS (SELECT name, city, amount,
+ ROW_NUMBER() OVER (PARTITION BY city ORDER BY amount DESC) AS rn_desc,
+ ROW_NUMBER() OVER (PARTITION BY city ORDER BY amount ASC) AS rn_asc,
+ COUNT(*) OVER (PARTITION BY city) AS cnt FROM expenditure)
+
+SELECT name, city, amount FROM cte WHERE (cnt >= 3 AND rn_desc = 3) OR (cnt < 3 AND rn_asc = 1);
+
+>> You have a DataFrame:
+data = [
+    (1, "A", "2024-01-01"),
+    (1, "A", "2024-01-02"),
+    (1, "B", "2024-01-01"),
+    (2, "A", "2024-01-01"),
+]
+Columns: user_id, product, date
+Find duplicate rows per user where product repeats across different dates, but count only unique product-user pairs.
