@@ -58,5 +58,10 @@ Same DAG → works in dev / qa / prod 🎯
 set variable: UI: Airflow UI → Admin → Variables → + (stores in metadata DB). 
 access: var1 = Variable.get("project_id", default_var="sur_project")  # default
 
+>> airflow sensors: designed to wait specific condition to meet - at regular intervals checks condition met or not 
+  ex: file need to be created, rable needs to updated in database
+
+  
+
 >>
    Xcom: review runtime variables for dag run using xcom
