@@ -111,7 +111,6 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 >> rdd.first() / rdd.collect() / rdd.take(3) / rdd1.countByValue()
    
 ===================>> high-level api syntax
-
 >> dataproc cluster: stagging bucket --> cluster metainfo, notebooks	temp bucket --> MR/spark job history, YARN logs
 >> execute pyspark jobs
 jupiter notebook: for devlopment and debugging purpose
@@ -205,7 +204,6 @@ date_diff("end_date", "start_date") / round((unix_timestamp("end_ts") - unix_tim
 date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interval -2 year")
 
 ==================> spark-sql 
-
 >> spark temp table (exists only for SS) / global temp table (exists all SS within same app)
    spark.sql('show databases') --> spark.sql('use db_name') --> spark.sql('show tables') --> spark.sql('show tables in global_temp')
    df.createOrReplaceTempView('customers') -->	df.createOrReplaceGlobalTempView('gcustomers')
@@ -219,7 +217,6 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
    spark.sql(''' create external table custe (customer_id STRING, ...) using csv location 'gs://surdatabuk/data/olist/olist_customers_dataset.csv' ''')
 
 =================>>  HiveQL: 
-
 >> sql like interface (HQL) --> translator ---> MR/spark/tej code (is abstraction for java or MR programe) >> cli: set hive.execution.engine=tez/spark/mr;
    table --> data (hdfs, s3, gcs) + metadata (hive stores metastore in it). 
 >>  Hive external table (data file in GCS)
@@ -236,7 +233,6 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 -- hive tables work like noraml database tables? 	hive is metastore and not storing any tables
 
 =================================>> CONCEPT interview QA
-
 >> What is the difference between RDD, DataFrame, and Dataset (best of rdd & df) ? 3 api to intract with spark for developers
 	SparkContext: entry point for RDD operations/functionality. SparkSession: Provides a unified entry point for DataFrame and Dataset APIs, SQL queries, and more. 
 	key-benfits of high level api compared to low-level api : schema awareness, ease of use, optimized, various file supports 
@@ -253,29 +249,30 @@ date_sub("start_date", 10) / date_add("start_date", 10) / expr("ts_col + interva
 >> df.repartition(10): random data distribution - to ensure parallelisum
 	df.repartition(10, column): data distributed based hash of key column - prepare data for groupby, join operations
 >> extract filename: element_at(split(input_file_name(), "/"), -1)
-
-
+==============
+>>
+RDD: The low-level abstraction, Immutable distributed collection of objects, Provides fine-grained control, Uses (map, flatMap, filter), Introduced in early Spark versions.
+DataFrame: High-level structured API, schema-based, Similar to table in relational database, Optimized by Catalyst Optimizer, Built on top of RDD.
+When to Use RDD? Working with unstructured data, Custom complex transformations not supported by DataFrame
+When to Use DataFrame? ETL pipelines, SQL queries, Aggregations, Joins, Performance-sensitive workloads.
 >> sc.parallelize: function to create a RDD from a local in-memory collection on the driver (e.g., a Python list). Best for small test data.
    sc.textFile: function to read data from a text file from HDFS/S3/local FS. Best for large datasets.
 >> RDD - reduceByKey: local aggregation - less data for shuffling / DF - df.groupBy("dept").agg(sum("salary").as("total_salary"))
 	RDD- groupByKey: no local aggragation - more data for shuffling / DF - df.groupBy("dept").agg(collect_list("salary").as("salaries"))
 >> map() returns a single value for each input element / flatMap() return multiple values for each input element
 >> Difference between sortby and orderby? - sortBy is used with RDDs and orderBy is used with DataFrames.
-
+===============
 >> Lineage in spark: logical execution plan - df.explain() - used to build DAG
 	Fault tolerance: if node of df partition fails, spark can recompute it from lineage or DAG
 	Checkponting: when long running jobs, foult tolerance is critical - do checkpointing to store df into reliable storage (gcs) - read it from checkpoint instead of start
-
 >> why parquet?
 - Columnar format: Only reads the region column to filter — better compression better than rows..
 - Metadata: contains Min/Max values for each column in every data block - help skip blocks -  SELECT * FROM sales WHERE region = 'Asia'
 - Schema evolution: You can add new columns later without breaking old data.
 - Spark optimization: Spark understands Parquet deeply and uses its metadata smartly.
 >>
-✅ Data Quality (DQ) → ensure data to clean 
-Example: invoice_id not null,  amount > 0, currency allowed,  tax >= 0
-✅ Data Validation (DV): ensures data is correct  → checks business logic
-Example: invoice must be unique,  tax code must exist in master, tax must match calculation
+Data Quality (DQ) → ensure data to clean - Example: invoice_id not null,  amount > 0, currency allowed,  tax >= 0
+Data Validation (DV): ensures data is correct  → checks business logic  - Example: invoice must be unique,  tax code must exist in master, tax must match calculation
 >> 
 Partitioning vs Bucketing – End-to-End Example (Retail Domain)
 sales_transactions (very large table – billions of rows): sale_id (string), product_id (string), quantity (int), amount (double), sale_date (string), store_id (string)
@@ -289,11 +286,6 @@ product_df.write.mode('overwrite').bucketBy(4, 'product_id').sortBy("product_id"
 result = spark.sql(query) 	# query = """ select * from st t1 join pm t2 on t1.product_id = t2.product_id where sales_date = '2026-02-01' """
 result.show()
 
->>
-RDD: The low-level abstraction, Immutable distributed collection of objects, Provides fine-grained control, Uses (map, flatMap, filter), Introduced in early Spark versions.
-DataFrame: High-level structured API, schema-based, Similar to table in relational database, Optimized by Catalyst Optimizer, Built on top of RDD.
-When to Use RDD? Working with unstructured data, Custom complex transformations not supported by DataFrame
-When to Use DataFrame? ETL pipelines, SQL queries, Aggregations, Joins, Performance-sensitive workloads.
 
 
 >>
