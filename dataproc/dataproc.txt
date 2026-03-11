@@ -61,11 +61,17 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 ==> Enable Dynamic Resource allocation for varying workloads to use resource efficiently (rec to set at cluster level)
 	gcloud dataproc clusters create my-cluster --region=us-central1 --properties=spark:spark.dynamicAllocation.enabled=true, spark:spark.shuffle.service.enabled=true,
 	spark:spark.dynamicAllocation.minExecutors=2, spark:spark.dynamicAllocation.maxExecutors=50, spark:spark.dynamicAllocation.initialExecutors=5
-==> Column pruning (select req columns) + filter pushdown (Reads only required row groups)
+
+==> always define schema expicitily. (inferschema reads all data twice)
+
+==> filter early and select req columns: filter pushdown (Reads only required row groups) + Column pruning (select req columns) 
 	config('spark.sql.parquet.filterPushDown', 'true')
-	df = spark.read.parquet(input_path).select("event_id", "user_id", "device_type", "event_type", "event_ts").filter(col("event_type") == "CLICK")
+	df = spark.read.parquet(input_path).filter(col("event_type") == "CLICK").select("event_id", "user_id", "device_type", "event_type", "event_ts")
+
 ==> Used caching for repeted data access:  df.cache() / df.persist(StorageLevel.MEMORY_AND_DISK_DESER_2) / df.unpersist() /
 	SER (ser format & lesser in size) is CPU intensive, memory saving as data is compact while DESER (memory as jvm objects) is CPU efficient, memory intensive
+
+==> two separate groupby involves two shuffles. so, combine into one groupby - one shuffle
 
 ==> tune shuffle partitions: any wide transformation (groupby, join) involves shuffeling
 	under partitioning: SP is low - large amount of data - skewed workloads and OOM errors
