@@ -325,3 +325,60 @@ eligible = agg_2025.filter(F.col("login_count_2025") >= 2)
 result = eligible.select("user_id", datediff(to_date("last_login_2025"), to_date("first_login_2025")).alias("days_between"))
 
 ======================>
+Scenario: "You have an employee table with departments and salaries. Identify the top 30% earners within each department for a performance bonus eligibility report."
+windowDept = Window.partitionBy("dept").orderBy(F.col("salary").desc())
+ranked = employees.withColumn("percent_rank", percent_rank().over(windowDept))
+top_30_percent = ranked.filter(col("percent_rank")<=0.3)
+
+====================>
+In a real-time data pipeline, how would you handle duplicate records?
+#Step1 – Start With the Problem.
+In one of my data engineering projects, we were processing e-commerce order data coming from multiple systems like mobile apps, websites, and partner APIs.
+Sometimes the same order event was sent multiple times due to network retries or system failures, which caused duplicate records in our data lake.
+
+If duplicates are not handled:
+Revenue calculations become wrong
+Customer analytics becomes incorrect
+Dashboards show inflated numbers
+
+#Step2 – Explain Where Deduplication Happens
+A good data engineer explains pipeline stages.
+Typical pipeline:
+Source Systems
+ ↓
+Kafka / Streaming
+ ↓
+Bronze Layer (Raw Data)
+ ↓
+Silver Layer (Cleaned Data)
+ ↓
+Gold Layer (Business Analytics)
+Deduplication usually happens in the Silver Layer.
+
+#Step3 – Explain the Deduplication Logic
+Duplicates are identified using business keys.
+order_id + timestamp
+If multiple records exist for the same order, we keep the latest record
+
+#Step4 – PySpark Implementation
+ 1. We partition by order_id
+ 2. Sort by latest timestamp
+ 3. Keep only the latest record
+This guarantees one unique record per order.
+
+In our real-time pipeline we received duplicate events due to retries from upstream systems.
+To handle this, we used window functions in PySpark, partitioned by the business key like order_id and ordered by timestamp, then kept the latest record using row_number().
+This logic was implemented in the Silver layer of our medallion architecture, ensuring downstream tables contained only unique records.
+
+====================>
+𝐂𝐨𝐝𝐢𝐧𝐠 𝐂𝐡𝐚𝐥𝐥𝐞𝐧𝐠𝐞 : 𝑪𝒂𝒍𝒄𝒖𝒍𝒂𝒕𝒆 𝒕𝒉𝒆 𝒓𝒖𝒏𝒏𝒊𝒏𝒈 𝒕𝒐𝒕𝒂𝒍 𝒐𝒇 𝒔𝒂𝒍𝒆𝒔 𝒃𝒚 𝒅𝒂𝒕𝒆
+input: sale_date, order_id, cust_id, sale_amount   o/p: sale_date, daily_sales, running_total
+
+total_sale_df = sales_details.groupBy("sale_date").agg(sum("sales_amount").alias("daily_sales"))
+window_spec = Window.orderBy("sale_date").rowsBetween(Window.unboundedPreceding, Window.currentRow)
+result_df = total_sale_df.withColumn("running_total", sum("daily_sales").over(window_spec)).orderBy("sale_date")
+
+WITH total_sale_cte AS (SELECT sale_date, Sum(sales_amount) AS daily_sales FROM   sales_details GROUP  BY sale_date)
+SELECT sale_date, daily_sales, Sum(daily_sales) OVER(ORDER BY sale_date) AS running_total FROM   total_sale_cte 
+
+=====================>
