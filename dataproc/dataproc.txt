@@ -44,7 +44,8 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 >> Spark optimization techniques.
 ==> Use columnar file formats (parquet or orc) for better compression and faster reads than csv 
 
-==> partitioning: distibute data into folders based on column values - best for low to medium cardinality columns & select only required partitions (filter or where) 
+==> partitioning: distibute data into folders based on column values - best for low to medium cardinality columns 
+	adv: fast access (select only required partitions) & ensure parallesium/resource utilization
 	df.write.mode('overwrite').partitionBy("listen_hour", "listen_date").parquet('/con/') 
 	static partition pruning: 
    	dynamic partition pruning: get requ partions to scan during run time - spark uses results to scan only required partitions from other dataset.
