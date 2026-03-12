@@ -74,8 +74,8 @@ executor tuning: rule of thumb - leave 1 core & some memory for system processes
 ==> two separate groupby involves two shuffles. so, combine into one groupby - one shuffle
 
 ==> tune shuffle partitions: any wide transformation (groupby, join) involves shuffeling
-	under partitioning: SP is low - large amount of data - skewed workloads and OOM errors
-	over partitioning: SP is high -  excessive task overhead and slow completion time
+	data per SP is high - skewed workloads and OOM errors
+	data per SP is low -  excessive task overhead and slow completion time
 	Manual Tuning: if data is small to medium - well understood
 	based on data size (SP=100GB/128MB = 800) based on cluster cores (min SP = 160 cores *2-3 = 320) ==> set for 800
 	AQE: Enable AQE to dynamically adjust no of shuffle partitions - if data size is large and behaviour is unpredictable
