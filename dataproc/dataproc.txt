@@ -197,6 +197,8 @@ capitalize 	-	upper("first").alias("first_upper")	/ lower / initcap /
 merge words	-	concat(col("first"), lit(" "), col("last")).alias("full_name_raw") / concat_ws(" ", "first", "last").alias("full_name_ws")
 fill with some char 	-	lpad(col("first"), 8, "0").alias("lpad_first")  / rpad
 3 times	-	repeat(col("first"), 3).alias("first_x3")
+generate array: 	df.withColumn('nc', sequence(lit("2026-03-01").cast("date"), current_date(), expr("interval 1 day")))
+					df.withColumn('nc', sequence(lit(0), lit(50), lit(5)))
 
 >> 
 / yyyy, yy, M, MM, MMM, MMMM, d, dd, HH, hh, mm, ss  / 
