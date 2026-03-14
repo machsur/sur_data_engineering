@@ -52,11 +52,26 @@ SubDAG creates a separate DAG inside a parent DAG. It has its own scheduler, sta
 TaskGroup - logically group related tasks within the same DAG, helps to create parallel processing of etl.
 👉 Today, TaskGroup is the recommended approach, and SubDAG is considered anti-pattern / deprecated in practice.
 
->>
-Variables - store configuration values outside your DAG code so you don’t hard-code environment-specific or sensitive values.
-Same DAG → works in dev / qa / prod 🎯
-set variable: UI: Airflow UI → Admin → Variables → + (stores in metadata DB). 
-access: var1 = Variable.get("project_id", default_var="sur_project")  # default
+================>>
+Variables - made changes easy,  environment-specific, security (stores in metadata DB) - masking if required.
+set variable: UI: Airflow UI → Admin → Variables
+
+from airflow.models import Variable
+project_id = Variable.get("project_id", default_var="sur_project")  # default
+
+bq_config = {"project": "my-project",  "dataset": "sales_data",  "table": "transactions"}
+config = Variable.get("bq_config", deserialize_json=True)
+project = config["project"]
+
+==============>
+Connections: used to store credentials and configuration required to connect to external systems like databases, APIs, or cloud services.
+
+==============>> 
+Jinja Template : used to dynamically generate task parameters at runtime. variables, macros, and expressions inside strings.
+{{ var.value.project_id }}  /   {{ var.json.bq_config.project }}
+{{ ds }}
+bash_command="echo {{ 'data_' + ds }}"
+
 
 >> airflow sensors: designed to wait specific condition to meet - at regular intervals checks condition met or not 
   ex: file need to be created, rable needs to updated in database
