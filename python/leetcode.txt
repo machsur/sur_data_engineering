@@ -35,7 +35,7 @@ obj1 = Solution()
 print(obj1.moveZeros(ls))
 
 =============> 3
-# reverse a string in array, modify in place, with O(1) extra memory
+# reverse a string in array, modify in place, with O(1) extra memory # two pointer approach
 # output = ['o', 'l', 'l', 'e', 'h']
 ls = ['h', 'e', 'l', 'l', 'o']
 class Solution:
@@ -206,8 +206,29 @@ def reverse_vowels(s):
     return ''.join(ls)
 print(reverse_vowels(s))
 
-============================>
+============================> 12
 
+# find no of substring arrays whose sum is equal to k
+ls = [3, 4, 7, 2, -3, 1, 4, 2, 1]
+k = 7
+class Solution:
+    def subarraySum(self, ls: list[int], k: int) -> int:
+        cum_sum = 0
+        dt = {0:1}
+        count = 0
+        for i in ls:
+            cum_sum = cum_sum + i
+            if (cum_sum-k) in dt:
+                count = count + dt[cum_sum-k]
+            if cum_sum in dt:
+                dt[cum_sum] += 1
+            else:
+                dt[cum_sum] = 1
+        return count
+obj = Solution()
+print(obj.subarraySum(ls, k))
+
+==============================>
 
 
 
