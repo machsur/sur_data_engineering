@@ -63,20 +63,68 @@ bq_config = {"project": "my-project",  "dataset": "sales_data",  "table": "trans
 config = Variable.get("bq_config", deserialize_json=True)
 project = config["project"]
 
-==============>
 Connections: used to store credentials and configuration required to connect to external systems like databases, APIs, or cloud services.
 
-==============>> 
+ 
 Jinja Template : used to dynamically generate task parameters at runtime. variables, macros, and expressions inside strings.
 {{ var.value.project_id }}  /   {{ var.json.bq_config.project }}
 {{ ds }}
 bash_command="echo {{ 'data_' + ds }}"
 
+===============>
+sensors: A file is uploaded to Google Cloud Storage, and the pipeline should start only after the file arrives.
+triggers:  After data ingestion DAG finishes, it triggers a data transformation DAG.
 
->> airflow sensors: designed to wait specific condition to meet - at regular intervals checks condition met or not 
-  ex: file need to be created, rable needs to updated in database
+    wait_for_file = GCSObjectExistenceSensor(
+        task_id="wait_for_file",
+        bucket="data-bucket",
+        object="input/customers.csv",
+        poke_interval=30,
+        timeout=600,
+        mode="reschedule" or "poke" / deferrable=True
+    )
+
+poke → worker continuously occupied
+reschedule → worker released between checks
+deferrable → async trigger handles waiting, no worker usage
+
+>> Worker occupied entire time (sensors - poke mode)
+Worker starts task
+↓
+Sensor checks condition
+↓
+Sleep for poke_interval
+↓
+Check again
+↓
+Repeat until success or timeout
+
+>> Worker used briefly Then released
+Worker checks condition
+↓
+If false → task paused
+↓
+Worker released
+↓
+Scheduler wakes task later
+↓
+Condition checked again
+
+>> Almost zero worker usage
+Worker starts sensor
+↓
+Registers async trigger
+↓
+Worker exits
+↓
+Triggerer process monitors condition
+↓
+When event occurs → task resumes
+
+
+
 
   
 
->>
+====================>>
    Xcom: review runtime variables for dag run using xcom
