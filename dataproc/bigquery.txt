@@ -87,6 +87,11 @@ Date_add(order_date, INTERVAL 5 day) / Date_sub(order_date, INTERVAL 5 day)
 	bad int64 value: 1.0 --> cast(col as int64) or asfe_cast(col as int64) 
 	no dataset was found
 
+>>
+CDC = Detecting changes
+SCD = Managing changes historically in dimensional models
+CDC feeds SCD: Most modern ETL architectures use CDC as the input mechanism to update SCD dimensions.
+
 
 
 
